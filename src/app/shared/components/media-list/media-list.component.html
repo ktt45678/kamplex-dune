@@ -1,0 +1,47 @@
+<ng-container *ngIf="loading; else mediaLoaded">
+  <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+    <div *ngFor="let item of skeletonArray">
+      <div class="aspect-w-2 aspect-h-3 mb-1">
+        <p-skeleton animation="none" width="100%" height="100%" borderRadius="2px"></p-skeleton>
+      </div>
+      <div class="flex justify-between mb-2">
+        <p-skeleton animation="none" width="42px" height="18px"></p-skeleton>
+        <p-skeleton animation="none" width="64px" height="18px"></p-skeleton>
+      </div>
+      <p-skeleton animation="none" width="100%" height="20px" styleClass="mb-1"></p-skeleton>
+      <p-skeleton animation="none" width="80%" height="20px"></p-skeleton>
+    </div>
+  </div>
+</ng-container>
+<ng-template #mediaLoaded>
+  <ng-container *ngIf="mediaList">
+    <p *ngIf="!mediaList.results.length" class="text-center">No results were found</p>
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+      <a class="opacity-100 hover:opacity-70 transition-opacity duration-200"
+        *ngFor="let media of mediaList.results; trackBy: trackId" [routerLink]="['/details', media._id]">
+        <div class="aspect-w-2 aspect-h-3">
+          <img *ngIf="media.posterUrl; else noPoster" class="rounded-t-sm object-cover" [lazyLoad]="media.posterUrl"
+            [defaultImage]="media.smallPosterUrl" [alt]="media.title">
+          <ng-template #noPoster>
+            <img class="rounded-t-sm object-cover" lazyLoad="assets/images/media-poster-md.png"
+              defaultImage="assets/images/media-poster-sm.png" [alt]="media.title">
+          </ng-template>
+        </div>
+        <p class="left-0 bottom-0 right-0 bg-indigo-700 flex content-between py-1 px-2 rounded-b-sm">
+          <small class="text-white text-xs font-semibold">
+            {{ (media.releaseDate | date: 'yyyy') || 'Unknown year' }}
+          </small>
+          <small class="text-white text-xs font-semibold ml-auto" *ngIf="media.type === MediaType.MOVIE; else notMovie">
+            {{ media.runtime || 0 }} min
+          </small>
+          <ng-template #notMovie>
+            <small class="text-white text-xs font-semibold ml-auto" *ngIf="media.type === MediaType.TV">
+              {{ media.episodeCount || 0 }}
+            </small>
+          </ng-template>
+        </p>
+        <p class="text-white text-base font-bold">{{ media.title || 'Unknown' }}</p>
+      </a>
+    </div>
+  </ng-container>
+</ng-template>

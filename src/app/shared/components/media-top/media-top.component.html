@@ -1,0 +1,45 @@
+<ng-container *ngIf="loading; else mediaLoaded">
+  <ul class="bg-neutral-850 overflow-hidden rounded-sm list-none">
+    <li *ngFor="let item of skeletonArray" class="bg-neutral-850 p-1">
+      <div class="flex">
+        <div class="w-1/5">
+          <p-skeleton animation="none" width="100%" height="100%" borderRadius="0.125rem"
+            styleClass="aspect-w-2 aspect-h-3">
+          </p-skeleton>
+        </div>
+        <div class="w-4/5 px-2 py-1">
+          <p-skeleton animation="none" width="100%" height="28px"></p-skeleton>
+          <p-skeleton animation="none" width="40%" height="20px" styleClass="mt-2"></p-skeleton>
+        </div>
+      </div>
+    </li>
+  </ul>
+</ng-container>
+<ng-template #mediaLoaded>
+  <ng-container *ngIf="mediaList">
+    <p *ngIf="!mediaList.results.length" class="text-center">No results were found</p>
+    <ul class="bg-neutral-850 overflow-hidden rounded-sm list-none">
+      <li *ngFor="let media of mediaList.results; trackBy: trackId"
+        class="bg-neutral-850 hover:bg-neutral-700 transition-colors duration-200 delay-75 hover:transition-none p-1">
+        <a [routerLink]="['/details', media._id]">
+          <div class="flex">
+            <div class="object-cover w-1/5">
+              <img *ngIf="media.thumbnailPosterUrl; else noPoster" class="rounded-sm"
+                [lazyLoad]="media.thumbnailPosterUrl" [defaultImage]="media.smallPosterUrl" [alt]="media.title">
+              <ng-template #noPoster>
+                <img class="rounded-sm" lazyLoad="assets/images/media-poster-md.png"
+                  defaultImage="assets/images/media-poster-sm.png" [alt]="media.title">
+              </ng-template>
+            </div>
+            <div class="w-4/5 px-2 py-1">
+              <p class="text-white text-base font-bold line-clamp-2">{{ media.title || 'Unknown' }}</p>
+              <p class="text-gray-400 text-sm font-medium">
+                <i class="pi pi-eye"></i> 928
+              </p>
+            </div>
+          </div>
+        </a>
+      </li>
+    </ul>
+  </ng-container>
+</ng-template>

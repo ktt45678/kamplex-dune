@@ -1,0 +1,29 @@
+<div class="max-w-8xl mx-auto">
+  <div class="mt-0 lg:mt-8 mx-0 lg:mx-4">
+    <app-featured-media [mediaList]="featuredMedia" swiperClass="rounded-none lg:rounded-2xl shadow-md"></app-featured-media>
+  </div>
+</div>
+<div class="max-w-8xl mx-auto">
+  <div class="flex flex-wrap mx-4">
+    <div class="w-full xl:w-3/4">
+      <div class="mt-4">
+        <h3 class="text-white text-lg font-bold uppercase">Recently Added</h3>
+      </div>
+      <div class="my-4">
+        <app-media-list [mediaList]="mediaList" [loading]="loadingMediaList"></app-media-list>
+      </div>
+    </div>
+    <div class="w-full xl:w-1/4">
+      <div class="ml-0 xl:ml-4 my-4 flex flex-wrap">
+        <div class="w-full sm:w-1/2 xl:w-full pr-0 sm:pr-1 xl:pr-0">
+          <h3 class="text-white text-lg font-bold uppercase">Most viewed</h3>
+          <app-media-top [mediaList]="mostViewedMedia" [loading]="loadingMediaList" [itemLimit]="5"></app-media-top>
+        </div>
+        <div class="w-full sm:w-1/2 xl:w-full mt-2 sm:mt-0 xl:mt-2 pl-0 sm:pl-1 xl:pl-0">
+          <h3 class="text-white text-lg font-bold uppercase">Top rated</h3>
+          <app-media-top [mediaList]="mostViewedMedia" [loading]="loadingMediaList" [itemLimit]="5"></app-media-top>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

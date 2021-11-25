@@ -1,0 +1,21 @@
+{
+  "description": "Error 482: The value of 'description' is missing",
+  "information": "Information",
+  "aboutUs": "About us",
+  "project": "Project",
+  "hosting": "Hosting",
+  "repository": "Repository",
+  "support": "Support",
+  "faq": "FAQ",
+  "privacy": "Privacy",
+  "termOfUse": "Term of use",
+  "helpCenter": "Help center",
+  "contact": "Contact",
+  "address": "Address",
+  "addressValue": "Vietnam",
+  "email": "Email",
+  "emailValue": "support@kamplex.tk",
+  "phone": "Phone",
+  "phoneValue": "0123456789",
+  "copyright": "2021 Kam Corp © All Rights not Reserved"
+}

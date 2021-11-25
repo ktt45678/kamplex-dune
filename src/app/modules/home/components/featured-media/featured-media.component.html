@@ -1,0 +1,45 @@
+<ng-container *transloco="let t">
+  <swiper [config]="swiperConfig" *ngIf="mediaList" [ngClass]="swiperClass || ''">
+    <ng-template swiperSlide *ngFor="let media of mediaList">
+      <div role="banner" aria-label="Media backdrop" *ngIf="media.backdropUrl && media.thumbnailBackdropUrl"
+        class="fixed block w-full h-full bg-cover bg-no-repeat bg-center brightness-40 -z-1"
+        [lazyLoad]="media.backdropUrl" [defaultImage]="media.thumbnailBackdropUrl">
+      </div>
+      <div class="max-w-8xl mx-auto">
+        <div class="grid items-center h-full max-w-8xl mx-5%">
+          <div class="flex flex-col flex-grow my-20">
+            <h1
+              class="text-white text-center text-3xl md:text-5xl md:leading-5xl md:text-left font-bold mb-4 line-clamp-2">
+              {{ media.title }}
+            </h1>
+            <div class="justify-center md:justify-start flex items-center mb-2">
+              <p-badge [value]="(media.releaseDate | date:'yyyy') || 'Unknown'" styleClass="text-gray-200 bg-gray-500">
+              </p-badge>
+              <p-badge [value]="media.runtime + ''" styleClass="text-gray-200 bg-gray-500" class="ml-1.5"></p-badge>
+            </div>
+            <p class="text-gray-300 text-base md:text-lg font-semibold text-center md:text-left mb-2 line-clamp-1">
+              {{ media.genres[0].name }}
+            </p>
+            <p class="text-gray-200 text-sm md:text-base mb-4 line-clamp-2 md:line-clamp-5 lg:line-clamp-5">
+              {{ media.overview }}
+            </p>
+            <div class="text-center md:text-left">
+              <button type="button" role="navigation" aria-label="Play media" pButton icon="pi pi-play" iconPos="left"
+                label="Play" routerLink="/watch"
+                class="p-button-rounded block sm:inline-flex w-full sm:w-auto max-w-xs sm:max-w-none text-white not-disabled:hover:!text-gray-600 text-lg sm:text-xl mt-2 sm:mt-0 mx-auto sm:mx-0 px-8">
+              </button>
+              <button type="button" role="navigation" aria-label="View media details" routerLink="#" disabled="true"
+                pButton icon="pi pi-info-circle" label="Details"
+                class="p-button-rounded block sm:inline-flex w-full sm:w-auto max-w-xs sm:max-w-none text-white not-disabled:hover:!text-gray-600 text-lg sm:text-xl mt-2 sm:mt-0 mx-auto sm:mr-0 sm:ml-2.5 px-8">
+              </button>
+              <button type="button" role="button" aria-label="Add media to playlist" routerLink="#" disabled="true"
+                pButton icon="pi pi-plus" label="Playlist"
+                class="p-button-rounded block sm:inline-flex w-full sm:w-auto max-w-xs sm:max-w-none text-white not-disabled:hover:!text-gray-600 text-lg sm:text-xl mt-2 sm:mt-0 mx-auto sm:mr-0 sm:ml-2.5 px-8">
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+  </swiper>
+</ng-container>

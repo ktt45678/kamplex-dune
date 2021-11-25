@@ -1,0 +1,89 @@
+<footer>
+  <ng-container *transloco="let t">
+    <div class="bg-neutral-900">
+      <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+        <div class="grid sm:grid-cols-3 lg:grid-cols-4">
+          <div class="mb-8">
+            <a class="inline-block" routerLink="#" aria-label="Navigate to home page">
+              <img class="w-52" src="/assets/images/logo-text.png" alt="Footer logo">
+            </a>
+            <p class="mt-5 text-gray-200 text-sm">{{ t('homeFooter.description') }}</p>
+          </div>
+          <div class="mb-8 pl-0 sm:pl-5">
+            <h3
+              class="relative mb-6 mr-6 pb-3 text-white text-2xl font-semibold border-b border-solid border-gray-800 before:bg-red-600 before:absolute before:-bottom-px before:left-0 before:h-px before:w-36">
+              {{ t('homeFooter.information') }}</h3>
+            <ul class="pl-0 mb-0 list-none" role="list">
+              <li class="mb-2.5 text-sm font-medium">
+                <a class="inline-block text-gray-200 hover:text-gray-600 transition-all" routerLink="/">{{
+                  t('homeFooter.aboutUs') }}
+                </a>
+              </li>
+              <li class="mb-2.5 text-sm font-medium">
+                <a class="inline-block text-gray-200 hover:text-gray-600 transition-all" routerLink="/">{{
+                  t('homeFooter.project') }}
+                </a>
+              </li>
+              <li class="mb-2.5 text-sm font-medium">
+                <a class="inline-block text-gray-200 hover:text-gray-600 transition-all" routerLink="/">{{
+                  t('homeFooter.hosting')
+                  }}</a>
+              </li>
+              <li class="mb-2.5 text-sm font-medium">
+                <a class="inline-block text-gray-200 hover:text-gray-600 transition-all" routerLink="/">{{
+                  t('homeFooter.repository') }}
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div class="mb-8">
+            <h3
+              class="relative mb-6 mr-6 pb-3 text-white text-2xl font-semibold border-b border-solid border-gray-800 before:bg-red-600 before:absolute before:-bottom-px before:left-0 before:h-px before:w-24">
+              {{ t('homeFooter.support') }}</h3>
+            <ul class="pl-0 mb-0 list-none">
+              <li class="mb-2.5 text-sm font-medium">
+                <a class="inline-block text-gray-200 hover:text-gray-600 transition-all" routerLink="/">{{
+                  t('homeFooter.faq') }}</a>
+              </li>
+              <li class="mb-2.5 text-sm font-medium">
+                <a class="inline-block text-gray-200 hover:text-gray-600 transition-all" routerLink="/">{{
+                  t('homeFooter.privacy')
+                  }}</a>
+              </li>
+              <li class="mb-2.5 text-sm font-medium">
+                <a class="inline-block text-gray-200 hover:text-gray-600 transition-all" routerLink="/">{{
+                  t('homeFooter.termOfUse') }}</a>
+              </li>
+              <li class="mb-2.5 text-sm font-medium">
+                <a class="inline-block text-gray-200 hover:text-gray-600 transition-all" routerLink="/">{{
+                  t('homeFooter.helpCenter') }}</a>
+              </li>
+            </ul>
+          </div>
+          <div class="mb-8">
+            <h3
+              class="relative mb-6 mr-6 pb-3 text-white text-2xl font-semibold border-b border-solid border-gray-800 before:bg-red-600 before:absolute before:-bottom-px before:left-0 before:h-px before:w-24">
+              {{ t('homeFooter.contact') }}</h3>
+            <ul class="pl-0 mb-0 list-none">
+              <li class="relative text-sm text-gray-200 font-medium mb-2">
+                <span class="inline-block font-normal mr-1">{{ t('homeFooter.address') }}: </span>{{
+                t('homeFooter.addressValue') }}
+              </li>
+              <li class="relative text-sm text-gray-200 font-medium mb-2">
+                <span class="inline-block font-normal mr-1">{{ t('homeFooter.email') }}: </span>{{
+                t('homeFooter.emailValue') }}
+              </li>
+              <li class="relative text-sm text-gray-200 font-medium mb-2">
+                <span class="inline-block font-normal mr-1">{{ t('homeFooter.phone') }}: </span>{{
+                t('homeFooter.phoneValue') }}
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="text-center mt-14 py-6 border-t border-solid border-gray-800">
+          <p class="text-gray-400">{{ t('homeFooter.copyright') }}</p>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</footer>
