@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Meta } from '@angular/platform-browser';
 
 import { Media, Paginated } from '../../../../core/models';
 import { MediaService } from '../../../../core/services';
@@ -17,9 +18,27 @@ export class HomeComponent implements OnInit {
   mediaList?: Paginated<Media>;
   mostViewedMedia?: Paginated<Media>;
 
-  constructor(private ref: ChangeDetectorRef, private mediaService: MediaService) { }
+  constructor(private ref: ChangeDetectorRef, private meta: Meta, private mediaService: MediaService) { }
 
   ngOnInit(): void {
+    this.meta.addTags([
+      {
+        name: 'description',
+        content: 'KamPlex version 2'
+      },
+      {
+        property: 'og:site_name',
+        content: 'KamPlex'
+      },
+      {
+        property: 'og:title',
+        content: 'KamPlex - Home'
+      },
+      {
+        property: 'og:description',
+        content: 'Official KamPlex version 2'
+      }
+    ]);
     this.loadingMediaList = true;
     this.mediaService.findAll().subscribe({
       next: data => {
