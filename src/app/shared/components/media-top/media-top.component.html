@@ -23,13 +23,16 @@
         class="bg-neutral-850 hover:bg-neutral-700 transition-colors duration-200 delay-75 hover:transition-none p-1">
         <a [routerLink]="['/details', media._id]">
           <div class="flex">
-            <div class="object-cover w-1/5">
-              <img *ngIf="media.thumbnailPosterUrl; else noPoster" class="rounded-sm"
-                [lazyLoad]="media.thumbnailPosterUrl" [defaultImage]="media.smallPosterUrl" [alt]="media.title">
-              <ng-template #noPoster>
-                <img class="rounded-sm" lazyLoad="assets/images/media-poster-md.png"
-                  defaultImage="assets/images/media-poster-sm.png" [alt]="media.title">
-              </ng-template>
+            <div class="w-1/5">
+              <div class="aspect-w-2 aspect-h-3 rounded-sm overflow-hidden"
+                [ngStyle]="{ 'background-color': media.posterColor ? '#' + (media.posterColor | toString:16) : '#000' }">
+                <img *ngIf="media.thumbnailPosterUrl; else noPoster" class="object-cover"
+                  [lazyLoad]="media.thumbnailPosterUrl" [alt]="media.title">
+                <ng-template #noPoster>
+                  <img class="object-cover" lazyLoad="assets/images/media-poster-md.png"
+                    defaultImage="assets/images/media-poster-sm.png" [alt]="media.title">
+                </ng-template>
+              </div>
             </div>
             <div class="w-4/5 px-2 py-1">
               <p class="text-white text-base font-bold line-clamp-2">{{ media.title || 'Unknown' }}</p>

@@ -7,6 +7,7 @@ import { BadgeModule } from 'primeng/badge';
 import { ButtonModule } from 'primeng/button';
 
 import { HomeRoutingModule } from './home-routing.module';
+import { NumberPipeModule } from '../../shared/pipes/number-pipe';
 import { HomeComponent } from './pages/home/home.component';
 import { HomeLayoutModule } from '../../shared/layouts/home-layout';
 import { MediaListModule } from '../../shared/components/media-list';
@@ -22,6 +23,7 @@ import { MediaFilterModule } from '../../shared/components/media-filter';
   imports: [
     CommonModule,
     HomeRoutingModule,
+    NumberPipeModule,
     TranslocoModule,
     LazyLoadImageModule,
     SwiperModule,

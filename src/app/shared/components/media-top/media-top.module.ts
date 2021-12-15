@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { LazyLoadImageModule } from 'ng-lazyload-image';
 import { SkeletonModule } from 'primeng/skeleton';
 
+import { NumberPipeModule } from '../../pipes/number-pipe';
 import { MediaTopComponent } from './media-top.component';
 
 @NgModule({
@@ -12,7 +13,8 @@ import { MediaTopComponent } from './media-top.component';
     CommonModule,
     RouterModule,
     LazyLoadImageModule,
-    SkeletonModule
+    SkeletonModule,
+    NumberPipeModule
   ],
   exports: [MediaTopComponent]
 })

@@ -1,9 +1,10 @@
 <ng-container *transloco="let t">
   <swiper [config]="swiperConfig" *ngIf="mediaList" [ngClass]="swiperClass || ''">
     <ng-template swiperSlide *ngFor="let media of mediaList">
-      <div role="banner" aria-label="Media backdrop" *ngIf="media.backdropUrl && media.thumbnailBackdropUrl"
+      <div role="banner" aria-label="Media backdrop" *ngIf="media.backdropUrl"
         class="fixed block w-full h-full bg-cover bg-no-repeat bg-center brightness-40 -z-1"
-        [lazyLoad]="media.backdropUrl" [defaultImage]="media.thumbnailBackdropUrl">
+        [lazyLoad]="media.backdropUrl"
+        [ngStyle]="{ 'background-color': media.backdropColor ? '#' + (media.backdropColor | toString:16) : '#000' }">
       </div>
       <div class="max-w-8xl mx-auto">
         <div class="grid items-center h-full max-w-8xl mx-5%">

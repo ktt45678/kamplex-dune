@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { LazyLoadImageModule } from 'ng-lazyload-image';
 import { SkeletonModule } from 'primeng/skeleton';
 
+import { NumberPipeModule } from '../../pipes/number-pipe';
 import { MediaListComponent } from './media-list.component';
 
 @NgModule({
@@ -12,7 +13,8 @@ import { MediaListComponent } from './media-list.component';
     CommonModule,
     RouterModule,
     LazyLoadImageModule,
-    SkeletonModule
+    SkeletonModule,
+    NumberPipeModule
   ],
   exports: [MediaListComponent]
 })

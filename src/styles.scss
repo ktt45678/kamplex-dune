@@ -46,10 +46,9 @@ img:focus, a:focus {
 }
 
 .ng-lazyloaded {
-  transition: filter 0.2s;
+  transition: opacity 0.2s;
 }
 
 .ng-lazyloading {
-  filter: blur(5px);
-  -webkit-filter: blur(5px);
+  opacity: 0;
 }
