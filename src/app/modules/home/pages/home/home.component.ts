@@ -24,7 +24,7 @@ export class HomeComponent implements OnInit {
     this.meta.addTags([
       {
         name: 'description',
-        content: 'KamPlex version 2'
+        content: 'KamPlex Version 2'
       },
       {
         property: 'og:site_name',
@@ -36,7 +36,7 @@ export class HomeComponent implements OnInit {
       },
       {
         property: 'og:description',
-        content: 'Official KamPlex version 2'
+        content: 'KamPlex v2 Dev Test'
       }
     ]);
     this.loadingMediaList = true;
