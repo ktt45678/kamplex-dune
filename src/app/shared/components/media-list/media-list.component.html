@@ -1,47 +1,46 @@
 <ng-container *ngIf="loading; else mediaLoaded">
-  <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+  <div class="tw-grid tw-grid-cols-2 md:tw-grid-cols-3 lg:tw-grid-cols-4 xl:tw-grid-cols-6 tw-gap-4">
     <div *ngFor="let item of skeletonArray">
-      <div class="aspect-w-2 aspect-h-3 mb-1">
+      <div class="tw-aspect-w-2 tw-aspect-h-3 tw-mb-2">
         <p-skeleton animation="none" width="100%" height="100%" borderRadius="2px"></p-skeleton>
       </div>
-      <div class="flex justify-between mb-2">
-        <p-skeleton animation="none" width="42px" height="18px"></p-skeleton>
-        <p-skeleton animation="none" width="64px" height="18px"></p-skeleton>
-      </div>
-      <p-skeleton animation="none" width="100%" height="20px" styleClass="mb-1"></p-skeleton>
+      <p-skeleton animation="none" width="100%" height="20px" styleClass="tw-mb-1"></p-skeleton>
       <p-skeleton animation="none" width="80%" height="20px"></p-skeleton>
     </div>
   </div>
 </ng-container>
 <ng-template #mediaLoaded>
   <ng-container *ngIf="mediaList">
-    <p *ngIf="!mediaList.results.length" class="text-center">No results were found</p>
-    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
-      <a class="opacity-100 hover:opacity-70 transition-opacity duration-200"
+    <p *ngIf="!mediaList.results.length" class="tw-text-center">No results were found</p>
+    <div
+      class="tw-grid tw-grid-cols-2 sm:tw-grid-cols-3 md:tw-grid-cols-4 lg:tw-grid-cols-5 xl:tw-grid-cols-6 tw-gap-4">
+      <a class="tw-opacity-100 hover:tw-opacity-70 tw-transition-opacity tw-duration-200"
         *ngFor="let media of mediaList.results; trackBy: trackId" [routerLink]="['/details', media._id]">
-        <div class="aspect-w-2 aspect-h-3 rounded-t-sm overflow-hidden"
+        <div class="tw-aspect-w-2 tw-aspect-h-3 tw-rounded-t-sm tw-overflow-hidden"
           [ngStyle]="{ 'background-color': media.posterColor ? '#' + (media.posterColor | toString:16) : '#000' }">
-          <img *ngIf="media.thumbnailPosterUrl; else noPoster" class="object-cover"
+          <img *ngIf="media.thumbnailPosterUrl; else noPoster" class="tw-object-cover"
             [lazyLoad]="media.thumbnailPosterUrl" [alt]="media.title">
           <ng-template #noPoster>
-            <img class="object-cover" lazyLoad="assets/images/media-poster-md.png"
+            <img class="tw-object-cover" lazyLoad="assets/images/media-poster-md.png"
               defaultImage="assets/images/media-poster-sm.png" [alt]="media.title">
           </ng-template>
         </div>
-        <p class="left-0 bottom-0 right-0 bg-indigo-700 flex content-between py-1 px-2 rounded-b-sm">
-          <small class="text-white text-xs font-semibold">
-            {{ (media.releaseDate | date: 'yyyy') || 'Unknown year' }}
+        <p
+          class="tw-left-0 tw-bottom-0 tw-right-0 tw-bg-indigo-700 tw-flex tw-content-between tw-py-1 tw-px-2 tw-rounded-b-sm">
+          <small class="tw-text-white tw-text-xs tw-font-semibold">
+            {{ media.releaseDate.year }}
           </small>
-          <small class="text-white text-xs font-semibold ml-auto" *ngIf="media.type === MediaType.MOVIE; else notMovie">
+          <small class="tw-text-white tw-text-xs tw-font-semibold tw-ml-auto"
+            *ngIf="media.type === MediaType.MOVIE; else notMovie">
             {{ media.runtime || 0 }} min
           </small>
           <ng-template #notMovie>
-            <small class="text-white text-xs font-semibold ml-auto" *ngIf="media.type === MediaType.TV">
-              {{ media.episodeCount || 0 }}
+            <small class="tw-text-white tw-text-xs tw-font-semibold tw-ml-auto" *ngIf="media.type === MediaType.TV">
+              {{ media.tv.episodeCount }}
             </small>
           </ng-template>
         </p>
-        <p class="text-white text-base font-bold">{{ media.title || 'Unknown' }}</p>
+        <p class="tw-text-white tw-text-sm tw-font-bold tw-mt-2">{{ media.title }}</p>
       </a>
     </div>
   </ng-container>

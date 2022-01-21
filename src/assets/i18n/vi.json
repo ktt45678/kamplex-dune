@@ -1,1 +1,50 @@
-{}
+{
+  "homeFooter": {
+    "description": "Trang web xem phim trực tuyến",
+    "information": "Thông tin",
+    "aboutUs": "Về chúng tôi",
+    "project": "Thông tin dự án",
+    "hosting": "Hosting",
+    "repository": "Repository",
+    "support": "Hỗ trợ",
+    "faq": "Câu hỏi thường gặp",
+    "privacy": "Quyền riêng tư",
+    "termOfUse": "Điều khoản sử dụng",
+    "helpCenter": "Trung tâm trợ giúp",
+    "contact": "Liên hệ",
+    "address": "Địa chỉ",
+    "addressValue": "Việt Nam",
+    "email": "Email",
+    "emailValue": "support@kamplex.tk",
+    "phone": "Điện thoại",
+    "phoneValue": "0123456789",
+    "copyright": "2021 Kam Corp © All Rights not Reserved"
+  },
+  "homeHeader": {
+    "home": "Trang chủ",
+    "movies": "Phim lẻ",
+    "tvShows": "Phim bộ",
+    "signIn": "Đăng nhập",
+    "signUp": "Đăng ký"
+  },
+  "validationErrors": {
+    "general": {
+      "email": {
+        "required": "Địa chỉ email là bắt buộc",
+        "email": "Địa chỉ email phải hợp lệ"
+      },
+      "password": {
+        "required": "Mật khẩu là bắt buộc"
+      }
+    },
+    "signIn": {
+      "email": {
+        "required": "{{ validationErrors.general.email.required }}",
+        "email": "{{ validationErrors.general.email.email }}"
+      },
+      "password": {
+        "required": "{{ validationErrors.general.password.required }}"
+      }
+    }
+  }
+}

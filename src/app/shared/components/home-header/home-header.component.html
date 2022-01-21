@@ -1,37 +1,37 @@
 <header>
   <ng-container *transloco="let t">
-    <nav id="navbar" class="z-10"
-      [ngClass]="isFixedNavbar ? 'fixed top-0 left-0 right-0 bg-transparent transition-colors duration-200' : 'bg-neutral-900'">
-      <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="relative flex justify-between h-14">
-          <div class="flex items-center">
-            <a routerLink="/" class="block">
-              <img class="h-3 md:h-4 w-auto" src="assets/images/logo-text.png" alt="KamPlex">
+    <nav id="navbar" class="tw-z-10"
+      [ngClass]="isFixedNavbar ? 'tw-fixed tw-top-0 tw-left-0 tw-right-0 tw-bg-transparent tw-transition-colors tw-duration-200' : 'tw-bg-neutral-900'">
+      <div class="tw-max-w-8xl tw-mx-auto tw-px-4 sm:tw-px-6 lg:tw-px-8">
+        <div class="tw-relative tw-flex tw-justify-between tw-h-14">
+          <div class="tw-flex tw-items-center">
+            <a routerLink="/" class="tw-block">
+              <img class="tw-h-3 md:tw-h-4 tw-w-auto" src="assets/images/logo-text.png" alt="KamPlex">
             </a>
-            <div class="hidden sm:block sm:ml-8">
-              <div class="flex">
-                <a pButton routerLink="#" class="p-button-text p-button-secondary text-sm md:text-base"
+            <div class="tw-hidden sm:tw-block sm:tw-ml-8">
+              <div class="tw-flex">
+                <a pButton routerLink="/" class="p-button-text p-button-secondary tw-text-sm md:tw-text-base"
                   aria-current="page" [label]="t('homeHeader.home')">
                 </a>
-                <a pButton routerLink="#" class="p-button-text p-button-secondary text-sm md:text-base"
+                <a pButton routerLink="/media" class="p-button-text p-button-secondary tw-text-sm md:tw-text-base"
                   [label]="t('homeHeader.movies')">
                 </a>
-                <a pButton routerLink="#" class="p-button-text p-button-secondary text-sm md:text-base"
+                <a pButton routerLink="/media" class="p-button-text p-button-secondary tw-text-sm md:tw-text-base"
                   [label]="t('homeHeader.tvShows')">
                 </a>
               </div>
             </div>
           </div>
-          <div class="hidden sm:flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-            <a pButton routerLink="#" class="p-button-text p-button-secondary text-sm md:text-base"
+          <div class="tw-hidden sm:tw-flex tw-items-center tw-pr-2 sm:tw-static sm:tw-inset-auto sm:tw-ml-6 sm:tw-pr-0">
+            <a pButton routerLink="/sign-in" class="p-button-text p-button-secondary tw-text-sm md:tw-text-base"
               [label]="t('homeHeader.signIn')">
             </a>
-            <a pButton routerLink="#" class="p-button-text p-button-secondary text-sm md:text-base"
+            <a pButton routerLink="/sign-up" class="p-button-text p-button-secondary tw-text-sm md:tw-text-base"
               [label]="t('homeHeader.signUp')">
             </a>
           </div>
-          <div class="flex sm:hidden items-center sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-            <div class="flex items-center sm:hidden">
+          <div class="tw-flex sm:tw-hidden tw-items-center sm:tw-static sm:tw-inset-auto sm:tw-ml-6 sm:tw-pr-0">
+            <div class="tw-flex tw-items-center sm:tw-hidden">
               <!-- Mobile menu button-->
               <button pButton (click)="onOpenMenu()" type="button" aria-label="Toggle navbar"
                 class="p-button-rounded p-button-text p-button-secondary" icon="pi pi-bars"></button>
@@ -41,15 +41,19 @@
       </div>
 
       <!-- Mobile menu, show/hide based on menu state. -->
-      <div class="sm:hidden" [ngClass]="isMobileMenuOpened ? 'block' : 'hidden'">
-        <div class="px-2 pt-2 pb-3 space-y-1">
-          <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
-          <a pButton routerLink="#" class="p-button-text p-button-secondary block" [label]="t('homeHeader.home')"></a>
-          <a pButton routerLink="#" class="p-button-text p-button-secondary block" [label]="t('homeHeader.movies')"></a>
-          <a pButton routerLink="#" class="p-button-text p-button-secondary block"
+      <div class="sm:tw-hidden" [ngClass]="isMobileMenuOpened ? 'tw-block' : 'tw-hidden'">
+        <div class="tw-px-2 tw-pt-2 tw-pb-3 tw-space-y-1">
+          <!-- Current: "tw-bg-gray-900 tw-text-white", Default: "tw-text-gray-300 hover:tw-bg-gray-700 hover:tw-text-white" -->
+          <a pButton routerLink="/" class="p-button-text p-button-secondary tw-block"
+            [label]="t('homeHeader.home')"></a>
+          <a pButton routerLink="/media" class="p-button-text p-button-secondary tw-block"
+            [label]="t('homeHeader.movies')"></a>
+          <a pButton routerLink="/media" class="p-button-text p-button-secondary tw-block"
             [label]="t('homeHeader.tvShows')"></a>
-          <a pButton routerLink="#" class="p-button-text p-button-secondary block" [label]="t('homeHeader.signIn')"></a>
-          <a pButton routerLink="#" class="p-button-text p-button-secondary block" [label]="t('homeHeader.signUp')"></a>
+          <a pButton routerLink="/sign-in" class="p-button-text p-button-secondary tw-block"
+            [label]="t('homeHeader.signIn')"></a>
+          <a pButton routerLink="/sign-up" class="p-button-text p-button-secondary tw-block"
+            [label]="t('homeHeader.signUp')"></a>
         </div>
       </div>
     </nav>

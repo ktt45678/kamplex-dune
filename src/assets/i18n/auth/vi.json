@@ -1,0 +1,10 @@
+{
+  "signIn": {
+    "formHeader": "Đăng nhập",
+    "email": "Địa chỉ email",
+    "password": "Mật khẩu",
+    "resetPassword": "Quên mật khẩu?",
+    "signUp": "Tạo tài khoản",
+    "submit": "Đăng nhập"
+  }
+}

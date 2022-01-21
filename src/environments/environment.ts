@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  apiUrl: 'https://kamplex2-dev.azurewebsites.net/api'
+  apiUrl: 'https://dev.kamplexapi.tk/api'
 };
 
 /*

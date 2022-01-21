@@ -5,21 +5,15 @@ import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
   selector: 'app-home-header',
   templateUrl: './home-header.component.html',
   styleUrls: ['./home-header.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [
-    {
-      provide: TRANSLOCO_SCOPE,
-      useValue: 'homeHeader'
-    }
-  ]
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HomeHeaderComponent implements OnInit {
   @Input() isFixedNavbar: boolean = false;
 
   isMobileMenuOpened: boolean = false;
   currentPageYOffset: number;
-  bgTransparent: string = 'bg-transparent';
-  bgDark: string = 'bg-neutral-900';
+  bgTransparent: string = 'tw-bg-transparent';
+  bgDark: string = 'tw-bg-neutral-900';
 
   constructor() {
     this.currentPageYOffset = window.pageYOffset;

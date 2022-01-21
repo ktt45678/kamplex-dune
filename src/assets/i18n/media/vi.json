@@ -1,0 +1,45 @@
+{
+  "details": {
+    "runtimeValue": "{{ runtime }} phút",
+    "originalTitle": "Tên gốc",
+    "overview": "Mô tả",
+    "producers": "Sản xuất bởi",
+    "releaseDate": "Ngày phát hành"
+  },
+  "filter": {
+    "search": "Tìm kiếm - Điền ít nhất 3 kí tự",
+    "genre": "Thể loại",
+    "sort": "Sắp xếp",
+    "type": "Loại phim",
+    "status": "Tình trạng",
+    "country": "Quốc gia",
+    "year": "Năm phát hành",
+    "beginFilter": "Lọc"
+  },
+  "mediaTypes": {
+    "movie": "Phim lẻ",
+    "tvShow": "Phim bộ"
+  },
+  "sortOptions": {
+    "nameAscending": "Tên (Tăng dần)",
+    "nameDescending": "Tên (Giảm dần)",
+    "releaseDateAscending": "Ngày phát hành (Tăng dần)",
+    "releaseDateDescending": "Ngày phát hành (Giảm dần)",
+    "dateAddedAscending": "Ngày tạo (Tăng dần)",
+    "dateAddedDescending": "Ngày tạo (Tăng dần)",
+    "dateUpdatedAscending": "Ngày cập nhật (Tăng dần)",
+    "dateUpdatedDescending": "Ngày cập nhật (Giảm dần)",
+    "viewsAscending": "Lượt xem (Tăng dần)",
+    "viewsDescending": "Lượt xem (Giảm dần)",
+    "scoreAscending": "Điểm (Tăng dần)",
+    "scoreDescending": "Điểm (Giảm dần)",
+    "totalRatingsAscending": "Số người đánh giá (Tăng dần)",
+    "totalRatingsDescending": "Số người đánh giá (Giảm dần)"
+  },
+  "statusOptions": {
+    "upcoming": "Sắp ra mắt",
+    "released": "Đã phát hành",
+    "airing": "Đang phát sóng",
+    "aired": "Đã phát sóng"
+  }
+}

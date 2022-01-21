@@ -34,4 +34,12 @@ export class FeaturedMediaComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  onFeaturedSwiperKeydown(event: KeyboardEvent) {
+    event.preventDefault();
+  }
+
+  trackId(index: number, item: any): any {
+    return item?._id || null;
+  }
+
 }

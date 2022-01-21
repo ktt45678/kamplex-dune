@@ -1,4 +1,4 @@
-import { Genre } from '.';
+import { Genre, ShortDate, TVShowEpisodeCount } from '.';
 
 export class Media {
   _id!: string;
@@ -11,9 +11,11 @@ export class Media {
   genres!: Genre[];
   originalLanguage?: string;
   adult!: boolean;
-  episodeCount?: number;
-  releaseDate!: string;
+  releaseDate!: ShortDate;
+  tv!: TVShowEpisodeCount;
   views!: number;
+  dailyViews!: number;
+  weeklyViews!: number;
   ratingCount!: number;
   ratingAverage!: number;
   posterUrl?: string;

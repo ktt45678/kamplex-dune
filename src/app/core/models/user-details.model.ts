@@ -1,7 +1,7 @@
-import { User } from '.';
+import { ShortDate, User } from '.';
 
 export class UserDetails extends User {
   email?: string;
-  birthdate?: string;
+  birthdate?: ShortDate;
   verified?: boolean;
 }

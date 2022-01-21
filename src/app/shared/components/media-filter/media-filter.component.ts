@@ -1,25 +1,36 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { TranslocoService, TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { takeUntil } from 'rxjs';
 
-import { IYearPickerOption } from '../../../core/interfaces/media';
+import { DropdownOptionDto } from '../../../core/dto/media';
+import { DestroyService } from '../../../core/services/destroy.service';
 import { MediaFilterService } from './media-filter.service';
 
 @Component({
   selector: 'app-media-filter',
   templateUrl: './media-filter.component.html',
   styleUrls: ['./media-filter.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [
+    DestroyService,
+    {
+      provide: TRANSLOCO_SCOPE,
+      useValue: 'media'
+    }
+  ]
 })
 export class MediaFilterComponent implements OnInit {
 
   countries: any[];
-  yearOptions: IYearPickerOption[];
-  sortOptions: any[];
-  typeOptions: any[];
-  selectedCountry?: any;
+  yearOptions: DropdownOptionDto[];
+  sortOptions?: DropdownOptionDto[];
+  typeOptions?: DropdownOptionDto[];
+  statusOptions?: DropdownOptionDto[];
+  selectedCountry?: DropdownOptionDto;
   filterForm: FormGroup;
 
-  constructor(private mediaFilterService: MediaFilterService) {
+  constructor(private mediaFilterService: MediaFilterService, private translocoService: TranslocoService, private destroyService: DestroyService) {
     this.filterForm = new FormGroup({
       genres: new FormControl([]),
       sort: new FormControl(),
@@ -30,39 +41,49 @@ export class MediaFilterComponent implements OnInit {
       year: new FormControl()
     });
     this.countries = [
-      { name: 'Australia', code: 'AU' },
-      { name: 'Brazil', code: 'BR' },
-      { name: 'China', code: 'CN' },
-      { name: 'Egypt', code: 'EG' },
-      { name: 'France', code: 'FR' },
-      { name: 'Germany', code: 'DE' },
-      { name: 'India', code: 'IN' },
-      { name: 'Japan', code: 'JP' },
-      { name: 'Spain', code: 'ES' },
-      { name: 'United States of Chapter 2', code: 'US' }
+      { label: 'Australia', value: 'AU' },
+      { label: 'Brazil', value: 'BR' },
+      { label: 'China', value: 'CN' },
+      { label: 'Egypt', value: 'EG' },
+      { label: 'France', value: 'FR' },
+      { label: 'Germany', value: 'DE' },
+      { label: 'India', value: 'IN' },
+      { label: 'Japan', value: 'JP' },
+      { label: 'Spain', value: 'ES' },
+      { label: 'United States of Chapter 2', value: 'US' }
     ];
     this.yearOptions = this.mediaFilterService.createYearList();
-    this.typeOptions = [
-      { value: 'movie', label: 'Movie' },
-      { value: 'tv', label: 'TV Show' }
-    ];
-    this.sortOptions = [
-      { value: 'asc(name)', label: 'Name (Ascending)' },
-      { value: 'desc(name)', label: 'Name (Descending)' },
-      { value: 'asc(releaseDate)', label: 'Release date (Ascending)' },
-      { value: 'desc(releaseDate)', label: 'Release date (Descending)' },
-      { value: 'asc(updatedAt)', label: 'Date updated (Ascending)' },
-      { value: 'desc(updatedAt)', label: 'Date updated (Descending)' },
-      { value: 'asc(views)', label: 'Views (Ascending)' },
-      { value: 'desc(views)', label: 'Views (Descending)' },
-      { value: 'asc(ratingAverage)', label: 'Score (Ascending)' },
-      { value: 'desc(ratingAverage)', label: 'Score (Descending)' },
-      { value: 'asc(ratingCount)', label: 'Total ratings (Ascending)' },
-      { value: 'desc(ratingCount)', label: 'Total ratings (Descending)' }
-    ]
   }
 
   ngOnInit(): void {
+    this.translocoService.selectTranslation('media').pipe(takeUntil(this.destroyService)).subscribe(t => {
+      this.typeOptions = [
+        { value: 'movie', label: t['mediaTypes.movie'] },
+        { value: 'tv', label: t['mediaTypes.tvShow'] }
+      ];
+      this.sortOptions = [
+        { value: 'asc(name)', label: t['sortOptions.nameAscending'] },
+        { value: 'desc(name)', label: t['sortOptions.nameDescending'] },
+        { value: 'asc(releaseDate)', label: t['sortOptions.releaseDateAscending'] },
+        { value: 'desc(releaseDate)', label: t['sortOptions.releaseDateDescending'] },
+        { value: 'asc(views)', label: t['sortOptions.viewsAscending'] },
+        { value: 'desc(views)', label: t['sortOptions.viewsDescending'] },
+        { value: 'asc(ratingAverage)', label: t['sortOptions.scoreAscending'] },
+        { value: 'desc(ratingAverage)', label: t['sortOptions.scoreDescending'] },
+        { value: 'asc(ratingCount)', label: t['sortOptions.totalRatingsAscending'] },
+        { value: 'desc(ratingCount)', label: t['sortOptions.totalRatingsDescending'] },
+        { value: 'asc(createdAt)', label: t['sortOptions.dateAddedAscending'] },
+        { value: 'desc(createdAt)', label: t['sortOptions.dateAddedDescending'] },
+        { value: 'asc(updatedAt)', label: t['sortOptions.dateUpdatedAscending'] },
+        { value: 'desc(updatedAt)', label: t['sortOptions.dateUpdatedDescending'] }
+      ];
+      this.statusOptions = [
+        { value: 'upcoming', label: t['statusOptions.upcoming'] },
+        { value: 'released', label: t['statusOptions.released'] },
+        { value: 'airing', label: t['statusOptions.airing'] },
+        { value: 'aired', label: t['statusOptions.aired'] }
+      ];
+    });
   }
 
   onFilterFormSubmit(): void {

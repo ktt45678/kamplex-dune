@@ -18,3 +18,5 @@ export * from './movie.model';
 export * from './tv-show.model';
 export * from './tv-episode.model';
 export * from './paginated.model';
+export * from './short-date.model';
+export * from './tv-show-episode-count.model';

@@ -5,14 +5,15 @@ const _ = require('lodash');
 process.env.TAILWIND_MODE = guessProductionMode() ? 'build' : 'watch';
 
 module.exports = {
-  prefix: '',
+  prefix: 'tw-',
   mode: 'jit',
-  purge: {
-    content: [
-      './src/**/*.{html,ts,css,scss,sass,less,styl}',
-    ]
+  content: [
+    './src/**/*.{html,ts,css,scss,sass,less,styl}',
+  ],
+  corePlugins: {
+    preflight: false,
   },
-  darkMode: false, // or 'media' or 'class'
+  darkMode: 'class', // or 'media' or 'class'
   theme: {
     dropdownColumns: theme => ({
       '2': theme('width.1/2'),
@@ -25,22 +26,17 @@ module.exports = {
         'border': '0 0 0 1px rgba(0, 0, 0, 0.1)'
       },
       brightness: {
+        '20': '.2',
+        '25': '.25',
+        '30': '.3',
+        '35': '.35',
         '40': '.4'
       },
       colors: {
         neutral: {
-          '50': '#fafafa',
-          '100': '#f5f5f5',
-          '200': '#e5e5e5',
-          '300': '#d4d4d4',
-          '400': '#a3a3a3',
-          '500': '#737373',
-          '600': '#525252',
           '650': '#424242',
-          '700': '#404040',
-          '800': '#262626',
           '850': '#212121',
-          '900': '#171717'
+          '875': '#1e1e1e'
         }
       },
       lineHeight: {
@@ -63,9 +59,6 @@ module.exports = {
         '-1': '-1'
       }
     },
-  },
-  variants: {
-    extend: {},
   },
   plugins: [
     require('@tailwindcss/aspect-ratio'),

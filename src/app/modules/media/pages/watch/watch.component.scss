@@ -4,16 +4,14 @@
   --plyr-menu-color: #ffffff;
   --plyr-tooltip-color: #ffffff;
   --plyr-tooltip-background: rgba(28, 28, 28, 0.9);
-  --plyr-font-size-large: 2rem;
+  --plyr-font-size-large: 1.5rem;
   --plyr-font-size-xlarge: 2rem;
 }
 
 :host::ng-deep {
-  .plyr audio, .plyr iframe, .plyr video {
-    display: block;
-    width: 100vw;
-    height: 100vh;
-    margin: auto;
+  .plyr__video-wrapper {
+    @apply tw-aspect-w-16;
+    @apply tw-aspect-h-9;
   }
   .plyr--loading {
     position: relative;
@@ -34,11 +32,16 @@
       animation: rotate 1s infinite linear;
     }
   }
-  @media only screen and (orientation: portrait) {
-    .plyr audio, .plyr iframe, .plyr video {
-      height: auto;
-    }
-  }
+}
+
+video::cue {
+	color: white;
+	background-color: transparent;
+	text-shadow:
+		-1px -1px 0 #000,
+		1px -1px 0 #000,
+		-1px 1px 0 #000,
+		1px 1px 0 #000;
 }
 
 @-webkit-keyframes rotate {

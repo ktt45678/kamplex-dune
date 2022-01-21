@@ -1,41 +1,43 @@
 <ng-container *transloco="let t">
-  <swiper [config]="swiperConfig" *ngIf="mediaList" [ngClass]="swiperClass || ''">
-    <ng-template swiperSlide *ngFor="let media of mediaList">
+  <swiper [config]="swiperConfig" *ngIf="mediaList" [ngClass]="swiperClass || ''"
+    (keydown)="onFeaturedSwiperKeydown($event)">
+    <ng-template swiperSlide *ngFor="let media of mediaList; trackBy:trackId">
       <div role="banner" aria-label="Media backdrop" *ngIf="media.backdropUrl"
-        class="fixed block w-full h-full bg-cover bg-no-repeat bg-center brightness-40 -z-1"
+        class="tw-fixed tw-block tw-w-full tw-h-full tw-bg-cover tw-bg-no-repeat tw-bg-center tw-brightness-40 tw--z-1"
         [lazyLoad]="media.backdropUrl"
         [ngStyle]="{ 'background-color': media.backdropColor ? '#' + (media.backdropColor | toString:16) : '#000' }">
       </div>
-      <div class="max-w-8xl mx-auto">
-        <div class="grid items-center h-full max-w-8xl mx-5%">
-          <div class="flex flex-col flex-grow my-20">
+      <div class="tw-max-w-8xl tw-mx-auto">
+        <div class="tw-grid tw-items-center tw-h-full tw-max-w-8xl tw-mx-5%">
+          <div class="tw-flex tw-flex-col tw-grow tw-my-20">
             <h1
-              class="text-white text-center text-3xl md:text-5xl md:leading-5xl md:text-left font-bold mb-4 line-clamp-2">
+              class="tw-text-white tw-text-center md:tw-text-left tw-text-3xl md:tw-text-5xl md:tw-leading-5xl tw-font-bold tw-mb-4 tw-line-clamp-2">
               {{ media.title }}
             </h1>
-            <div class="justify-center md:justify-start flex items-center mb-2">
-              <p-badge [value]="(media.releaseDate | date:'yyyy') || 'Unknown'" styleClass="text-gray-200 bg-gray-500">
+            <div class="tw-justify-center md:tw-justify-start tw-flex tw-items-center tw-mb-2">
+              <p-badge [value]="media.releaseDate.year + ''" styleClass="tw-text-gray-200 tw-bg-gray-500">
               </p-badge>
-              <p-badge [value]="media.runtime + ''" styleClass="text-gray-200 bg-gray-500" class="ml-1.5"></p-badge>
+              <p-badge [value]="media.runtime + ' min'" styleClass="tw-text-gray-200 tw-bg-gray-500" class="tw-ml-1.5">
+              </p-badge>
             </div>
-            <p class="text-gray-300 text-base md:text-lg font-semibold text-center md:text-left mb-2 line-clamp-1">
-              {{ media.genres[0].name }}
+            <p class="tw-mb-4 tw-space-x-2">
+              <span *ngFor="let genre of media.genres; trackBy:trackId"
+                class="tw-text-gray-300 tw-text-base md:tw-text-lg tw-font-semibold tw-text-center md:tw-text-left">
+                {{ genre.name }}
+              </span>
             </p>
-            <p class="text-gray-200 text-sm md:text-base mb-4 line-clamp-2 md:line-clamp-5 lg:line-clamp-5">
-              {{ media.overview }}
-            </p>
-            <div class="text-center md:text-left">
+            <div class="tw-text-center md:tw-text-left">
               <button type="button" role="navigation" aria-label="Play media" pButton icon="pi pi-play" iconPos="left"
-                label="Play" routerLink="/watch"
-                class="p-button-rounded block sm:inline-flex w-full sm:w-auto max-w-xs sm:max-w-none text-white not-disabled:hover:!text-gray-600 text-lg sm:text-xl mt-2 sm:mt-0 mx-auto sm:mx-0 px-8">
+                label="Play" [routerLink]="['/watch', media._id]"
+                class="p-button-rounded tw-block sm:tw-inline-flex tw-w-full sm:tw-w-auto tw-max-w-xs sm:tw-max-w-none tw-text-white not-disabled:hover:!tw-text-gray-600 tw-text-lg sm:tw-text-xl tw-mt-2 sm:tw-mt-0 tw-mx-auto sm:tw-mx-0 tw-px-8">
               </button>
-              <button type="button" role="navigation" aria-label="View media details" routerLink="#" disabled="true"
-                pButton icon="pi pi-info-circle" label="Details"
-                class="p-button-rounded block sm:inline-flex w-full sm:w-auto max-w-xs sm:max-w-none text-white not-disabled:hover:!text-gray-600 text-lg sm:text-xl mt-2 sm:mt-0 mx-auto sm:mr-0 sm:ml-2.5 px-8">
+              <button type="button" role="navigation" aria-label="View media details"
+                [routerLink]="['/details', media._id]" pButton icon="pi pi-info-circle" label="Details"
+                class="p-button-secondary p-button-rounded tw-block sm:tw-inline-flex tw-w-full sm:tw-w-auto tw-max-w-xs sm:tw-max-w-none tw-text-white not-disabled:hover:!tw-text-gray-600 tw-text-lg sm:tw-text-xl tw-mt-2 sm:tw-mt-0 tw-mx-auto sm:tw-mr-0 sm:tw-ml-2.5 tw-px-8">
               </button>
               <button type="button" role="button" aria-label="Add media to playlist" routerLink="#" disabled="true"
                 pButton icon="pi pi-plus" label="Playlist"
-                class="p-button-rounded block sm:inline-flex w-full sm:w-auto max-w-xs sm:max-w-none text-white not-disabled:hover:!text-gray-600 text-lg sm:text-xl mt-2 sm:mt-0 mx-auto sm:mr-0 sm:ml-2.5 px-8">
+                class="p-button-secondary p-button-rounded tw-block sm:tw-inline-flex tw-w-full sm:tw-w-auto tw-max-w-xs sm:tw-max-w-none tw-text-white not-disabled:hover:!tw-text-gray-600 tw-text-lg sm:tw-text-xl tw-mt-2 sm:tw-mt-0 tw-mx-auto sm:tw-mr-0 sm:tw-ml-2.5 tw-px-8">
               </button>
             </div>
           </div>

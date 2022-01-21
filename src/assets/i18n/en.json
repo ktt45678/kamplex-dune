@@ -1,1 +1,50 @@
-{}
+{
+  "homeFooter": {
+    "description": "Online Movie and TV Show streaming site",
+    "information": "Information",
+    "aboutUs": "About us",
+    "project": "Project",
+    "hosting": "Hosting",
+    "repository": "Repository",
+    "support": "Support",
+    "faq": "FAQ",
+    "privacy": "Privacy",
+    "termOfUse": "Term of use",
+    "helpCenter": "Help center",
+    "contact": "Contact",
+    "address": "Address",
+    "addressValue": "Vietnam",
+    "email": "Email",
+    "emailValue": "support@kamplex.tk",
+    "phone": "Phone",
+    "phoneValue": "0123456789",
+    "copyright": "2021 Kam Corp © All Rights not Reserved"
+  },
+  "homeHeader": {
+    "home": "Home",
+    "movies": "Movies",
+    "tvShows": "TV Shows",
+    "signIn": "Sign in",
+    "signUp": "Sign up"
+  },
+  "validationErrors": {
+    "general": {
+      "email": {
+        "required": "Email is required",
+        "email": "Email must be valid"
+      },
+      "password": {
+        "required": "Password is required"
+      }
+    },
+    "signIn": {
+      "email": {
+        "required": "{{ validationErrors.general.email.required }}",
+        "email": "{{ validationErrors.general.email.email }}"
+      },
+      "password": {
+        "required": "{{ validationErrors.general.password.required }}"
+      }
+    }
+  }
+}

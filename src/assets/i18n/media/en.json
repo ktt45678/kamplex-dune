@@ -1,0 +1,45 @@
+{
+  "details": {
+    "runtimeValue": "{{ runtime }} min",
+    "originalTitle": "Original title",
+    "overview": "Overview",
+    "producers": "Producers",
+    "releaseDate": "Release date"
+  },
+  "filter": {
+    "search": "Search - Enter at least 3 characters",
+    "genre": "Genres",
+    "sort": "Sort",
+    "type": "Type",
+    "status": "Status",
+    "country": "Country",
+    "year": "Year",
+    "beginFilter": "Filter"
+  },
+  "mediaTypes": {
+    "movie": "Movie",
+    "tvShow": "TV Show"
+  },
+  "sortOptions": {
+    "nameAscending": "Name (Ascending)",
+    "nameDescending": "Name (Descending)",
+    "releaseDateAscending": "Release date (Ascending)",
+    "releaseDateDescending": "Release date (Descending)",
+    "dateAddedAscending": "Date added (Ascending)",
+    "dateAddedDescending": "Date added (Ascending)",
+    "dateUpdatedAscending": "Date updated (Ascending)",
+    "dateUpdatedDescending": "Date updated (Descending)",
+    "viewsAscending": "Views (Ascending)",
+    "viewsDescending": "Views (Descending)",
+    "scoreAscending": "Score (Ascending)",
+    "scoreDescending": "Score (Descending)",
+    "totalRatingsAscending": "Total ratings (Ascending)",
+    "totalRatingsDescending": "Total ratings (Descending)"
+  },
+  "statusOptions": {
+    "upcoming": "Upcoming",
+    "released": "Released",
+    "airing": "Airing",
+    "aired": "Aired"
+  }
+}

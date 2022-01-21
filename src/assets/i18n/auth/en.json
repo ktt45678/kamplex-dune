@@ -1,0 +1,10 @@
+{
+  "signIn": {
+    "formHeader": "Sign in",
+    "email": "Email",
+    "password": "Password",
+    "resetPassword": "Forgot password?",
+    "signUp": "Create account",
+    "submit": "Sign in"
+  }
+}

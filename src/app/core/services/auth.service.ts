@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import jwt_decode from 'jwt-decode';
 
 import { UserDetails, JWTWithPayload } from '../models';
-import { ISignIn, ISignUp } from '../interfaces/auth';
+import { SignInDto, SignUpDto } from '../dto/auth';
 
 @Injectable({
   providedIn: 'root'
@@ -36,7 +36,7 @@ export class AuthService {
     this.currentUserSubject.next(user);
   }
 
-  signIn(body: ISignIn) {
+  signIn(body: SignInDto) {
     return this.http.post<JWTWithPayload>('auth/sign-in', body).pipe(tap(data => {
       localStorage.setItem('accessToken', data.accessToken);
       localStorage.setItem('refreshToken', data.refreshToken);
@@ -45,7 +45,7 @@ export class AuthService {
     }));
   }
 
-  signUp(body: ISignUp) {
+  signUp(body: SignUpDto) {
     return this.http.post('auth/sign-up', body);
   }
 

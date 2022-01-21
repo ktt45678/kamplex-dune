@@ -1,31 +1,34 @@
-<form [formGroup]="filterForm">
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-    <span class="p-input-icon-left">
-      <i class="pi pi-search text-xs"></i>
-      <input type="text" pInputText placeholder="Search" formControlName="search" class="w-full p-inputtext-xs" />
-    </span>
-    <p-multiSelect formControlName="genres" [options]="countries" optionLabel="name" [baseZIndex]="100"
-      scrollHeight="300px" [filter]="false" placeholder="Genres"
-      styleClass="w-full p-multiselect-xs" panelStyleClass="dropdown-cols-1 md:dropdown-cols-2">
-    </p-multiSelect>
-    <p-dropdown formControlName="sort" [options]="sortOptions" optionLabel="label" optionValue="value"
-      [baseZIndex]="100" scrollHeight="300px" [showClear]="true" placeholder="Sort"
-      styleClass="w-full p-dropdown-xs">
-    </p-dropdown>
-    <p-dropdown formControlName="type" [options]="typeOptions" optionLabel="label" optionValue="value"
-      [baseZIndex]="100" [showClear]="true" placeholder="Type" styleClass="w-full p-dropdown-xs">
-    </p-dropdown>
-    <p-dropdown formControlName="status" [options]="countries" optionLabel="name" [baseZIndex]="100"
-      scrollHeight="300px" [showClear]="true" placeholder="Status" styleClass="w-full p-dropdown-xs">
-    </p-dropdown>
-    <p-dropdown formControlName="country" [options]="countries" optionLabel="name" [baseZIndex]="100"
-      scrollHeight="300px" [showClear]="true" placeholder="Country" styleClass="w-full p-dropdown-xs"
-      panelStyleClass="dropdown-cols-1 md:dropdown-cols-2">
-    </p-dropdown>
-    <p-dropdown formControlName="year" [options]="yearOptions" optionLabel="label" optionValue="value"
-      [baseZIndex]="100" scrollHeight="300px" [showClear]="true" placeholder="Year" styleClass="w-full p-dropdown-xs"
-      panelStyleClass="dropdown-cols-1 md:dropdown-cols-3">
-    </p-dropdown>
-    <button pButton type="submit" label="Filter" class="p-button-sm block" icon="pi pi-filter"></button>
-  </div>
-</form>
+<ng-container *transloco="let t">
+  <form [formGroup]="filterForm">
+    <div class="tw-grid tw-grid-cols-1 sm:tw-grid-cols-2 lg:tw-grid-cols-4 tw-gap-4">
+      <span class="p-input-icon-left">
+        <i class="pi pi-search tw-text-xs"></i>
+        <input type="text" pInputText [placeholder]="t('media.filter.search')" formControlName="search"
+          class="tw-w-full p-inputtext-xs" />
+      </span>
+      <p-multiSelect formControlName="genres" [options]="countries" [baseZIndex]="100" scrollHeight="400px"
+        [showHeader]="false" [placeholder]="t('media.filter.genre')" styleClass="tw-w-full p-multiselect-xs"
+        panelStyleClass="tw-dropdown-cols-1 md:tw-dropdown-cols-2">
+      </p-multiSelect>
+      <p-dropdown formControlName="sort" [options]="sortOptions || []" [baseZIndex]="100" scrollHeight="400px"
+        [showClear]="true" [placeholder]="t('media.filter.sort')" styleClass="tw-w-full p-dropdown-xs">
+      </p-dropdown>
+      <p-dropdown formControlName="type" [options]="typeOptions || []" [baseZIndex]="100" [showClear]="true"
+        [placeholder]="t('media.filter.type')" styleClass="tw-w-full p-dropdown-xs">
+      </p-dropdown>
+      <p-dropdown formControlName="status" [options]="statusOptions || []" [baseZIndex]="100" scrollHeight="400px"
+        [showClear]="true" [placeholder]="t('media.filter.status')" styleClass="tw-w-full p-dropdown-xs">
+      </p-dropdown>
+      <p-dropdown formControlName="country" [options]="countries" [baseZIndex]="100" scrollHeight="400px"
+        [showClear]="true" [placeholder]="t('media.filter.country')" styleClass="tw-w-full p-dropdown-xs"
+        panelStyleClass="tw-dropdown-cols-1 md:tw-dropdown-cols-2">
+      </p-dropdown>
+      <p-dropdown formControlName="year" [options]="yearOptions" [baseZIndex]="100" scrollHeight="400px"
+        [showClear]="true" [placeholder]="t('media.filter.year')" styleClass="tw-w-full p-dropdown-xs"
+        panelStyleClass="tw-dropdown-cols-1 md:tw-dropdown-cols-3">
+      </p-dropdown>
+      <button pButton type="submit" [label]="t('media.filter.beginFilter')" class="p-button-sm tw-block"
+        icon="pi pi-filter"></button>
+    </div>
+  </form>
+</ng-container>
