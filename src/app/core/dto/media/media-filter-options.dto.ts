@@ -4,6 +4,6 @@ export class MediaFilterOptionsDto {
   search?: string;
   type?: string;
   status?: string;
-  country?: string;
+  originalLanguage?: string;
   year?: number;
 }

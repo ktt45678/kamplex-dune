@@ -10,31 +10,52 @@
             </a>
             <div class="tw-hidden sm:tw-block sm:tw-ml-8">
               <div class="tw-flex">
-                <a pButton routerLink="/" class="p-button-text p-button-secondary tw-text-sm md:tw-text-base"
-                  aria-current="page" [label]="t('homeHeader.home')">
+                <a routerLink="/"
+                  class="tw-text-white tw-text-sm md:tw-text-base tw-font-medium tw-mx-2 tw-p-2 tw-border-b-2 tw-border-transparent hover:tw-border-b-white tw-transition-colors tw-duration-200"
+                  aria-current="page">
+                  {{ t('homeHeader.home') }}
                 </a>
-                <a pButton routerLink="/media" class="p-button-text p-button-secondary tw-text-sm md:tw-text-base"
-                  [label]="t('homeHeader.movies')">
+                <a routerLink="/media"
+                  class="tw-text-white tw-text-sm md:tw-text-base tw-font-medium tw-mx-2 tw-p-2 tw-border-b-2 tw-border-transparent hover:tw-border-b-white tw-transition-colors tw-duration-200">
+                  {{ t('homeHeader.movies') }}
                 </a>
-                <a pButton routerLink="/media" class="p-button-text p-button-secondary tw-text-sm md:tw-text-base"
-                  [label]="t('homeHeader.tvShows')">
+                <a routerLink="/media"
+                  class="tw-text-white tw-text-sm md:tw-text-base tw-font-medium tw-mx-2 tw-p-2 tw-border-b-2 tw-border-transparent hover:tw-border-b-white tw-transition-colors tw-duration-200">
+                  {{ t('homeHeader.tvShows') }}
+                </a>
+                <a routerLink="/search"
+                  class="tw-text-white tw-text-sm md:tw-text-base tw-font-medium tw-mx-2 tw-p-2 tw-border-b-2 tw-border-transparent hover:tw-border-b-white tw-transition-colors tw-duration-200">
+                  Search
                 </a>
               </div>
             </div>
           </div>
-          <div class="tw-hidden sm:tw-flex tw-items-center tw-pr-2 sm:tw-static sm:tw-inset-auto sm:tw-ml-6 sm:tw-pr-0">
-            <a pButton routerLink="/sign-in" class="p-button-text p-button-secondary tw-text-sm md:tw-text-base"
-              [label]="t('homeHeader.signIn')">
-            </a>
-            <a pButton routerLink="/sign-up" class="p-button-text p-button-secondary tw-text-sm md:tw-text-base"
-              [label]="t('homeHeader.signUp')">
-            </a>
+          <div class="tw-hidden sm:tw-flex tw-items-center tw-pr-2 sm:tw-ml-6 sm:tw-pr-0">
+            <ng-container *ngIf="currentUser; else notLoggedIn">
+              <button type="button" role="navigation" aria-label="User profile"
+                class="tw-flex tw-items-center tw-rounded-3xl tw-bg-transparent tw-p-1 hover:tw-bg-neutral-650">
+                <img class="tw-block tw-w-9 tw-rounded-full" [src]="currentUser.avatarUrl" [alt]="currentUser.username">
+                <p class="tw-text-white tw-font-medium tw-mx-2">{{ currentUser.username }}</p>
+              </button>
+              <button pButton type="button" icon="pi pi-ellipsis-v" aria-label="User menu"
+                (click)="userMenu.toggle($event)"
+                class="p-button-rounded p-button-text p-button-secondary p-button-sm tw-ml-2">
+              </button>
+              <p-menu #userMenu [popup]="true" [model]="userMenuItems"></p-menu>
+            </ng-container>
+            <ng-template #notLoggedIn>
+              <a routerLink="/sign-in"
+                class="tw-text-white tw-text-sm md:tw-text-base tw-font-medium tw-mx-2 tw-p-2 tw-border-b-2 tw-border-transparent hover:tw-border-b-white tw-transition-colors tw-duration-200">
+                {{ t('homeHeader.signIn') }}
+              </a>
+            </ng-template>
           </div>
           <div class="tw-flex sm:tw-hidden tw-items-center sm:tw-static sm:tw-inset-auto sm:tw-ml-6 sm:tw-pr-0">
             <div class="tw-flex tw-items-center sm:tw-hidden">
               <!-- Mobile menu button-->
-              <button pButton (click)="onOpenMenu()" type="button" aria-label="Toggle navbar"
-                class="p-button-rounded p-button-text p-button-secondary" icon="pi pi-bars"></button>
+              <button pButton (click)="onOpenMenu()" icon="pi pi-bars" type="button" aria-label="Toggle navbar"
+                class="p-button-rounded p-button-text p-button-secondary" icon="pi pi-bars">
+              </button>
             </div>
           </div>
         </div>
@@ -44,16 +65,14 @@
       <div class="sm:tw-hidden" [ngClass]="isMobileMenuOpened ? 'tw-block' : 'tw-hidden'">
         <div class="tw-px-2 tw-pt-2 tw-pb-3 tw-space-y-1">
           <!-- Current: "tw-bg-gray-900 tw-text-white", Default: "tw-text-gray-300 hover:tw-bg-gray-700 hover:tw-text-white" -->
-          <a pButton routerLink="/" class="p-button-text p-button-secondary tw-block"
-            [label]="t('homeHeader.home')"></a>
-          <a pButton routerLink="/media" class="p-button-text p-button-secondary tw-block"
-            [label]="t('homeHeader.movies')"></a>
-          <a pButton routerLink="/media" class="p-button-text p-button-secondary tw-block"
-            [label]="t('homeHeader.tvShows')"></a>
-          <a pButton routerLink="/sign-in" class="p-button-text p-button-secondary tw-block"
-            [label]="t('homeHeader.signIn')"></a>
-          <a pButton routerLink="/sign-up" class="p-button-text p-button-secondary tw-block"
-            [label]="t('homeHeader.signUp')"></a>
+          <button role="navigation" pButton routerLink="/" class="p-button-text p-button-secondary tw-block tw-w-full"
+            [label]="t('homeHeader.home')"></button>
+          <button role="navigation" pButton routerLink="/media"
+            class="p-button-text p-button-secondary tw-block tw-w-full" [label]="t('homeHeader.movies')"></button>
+          <button role="navigation" pButton routerLink="/media"
+            class="p-button-text p-button-secondary tw-block tw-w-full" [label]="t('homeHeader.tvShows')"></button>
+          <button role="navigation" pButton routerLink="/sign-in"
+            class="p-button-text p-button-secondary tw-block tw-w-full" [label]="t('homeHeader.signIn')"></button>
         </div>
       </div>
     </nav>

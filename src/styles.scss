@@ -1,44 +1,57 @@
 /* You can add global styles to this file, and also import other style files */
-@import '../node_modules/plyr/dist/plyr.css';
-@import '../node_modules/primeicons/primeicons.css';
-@import './assets/css/primeng/md-dark-indigo-custom.css';
-@import '../node_modules/primeng/resources/primeng.min.css';
-@import '../node_modules/swiper/swiper.scss';
-@import '../node_modules/swiper/modules/autoplay/autoplay.scss';
-@import '../node_modules/swiper/modules/navigation/navigation.scss';
-@import '../node_modules/swiper/modules/pagination/pagination.scss';
-@import '../node_modules/tailwindcss/base';
-@import './assets/css/tailwindcss/preflight-custom.css';
-@import '../node_modules/tailwindcss/components';
-@import '../node_modules/tailwindcss/utilities';
+@import "../node_modules/plyr/dist/plyr.css";
+@import "../node_modules/bootstrap-icons/font/bootstrap-icons.scss";
+@import "../node_modules/primeicons/primeicons.css";
+@import "./assets/css/primeng/md-dark-indigo-custom.css";
+@import "../node_modules/primeng/resources/primeng.min.css";
+@import "../node_modules/swiper/swiper.scss";
+@import "../node_modules/swiper/modules/autoplay/autoplay.scss";
+@import "../node_modules/swiper/modules/navigation/navigation.scss";
+@import "../node_modules/swiper/modules/pagination/pagination.scss";
+@import "../node_modules/tailwindcss/base";
+@import "./assets/css/tailwindcss/preflight-custom.css";
+@import "../node_modules/tailwindcss/components";
+@import "../node_modules/tailwindcss/utilities";
 
 html {
   &::-webkit-scrollbar {
-    width: 5px;
-    height: 5px;
+    width: 6.5px;
+    height: 6.5px;
   }
   &::-webkit-scrollbar-track {
     background: #424242;
+    border-radius: 5px;
   }
   &::-webkit-scrollbar-thumb {
     background: #646464;
+    border-radius: 5px;
   }
 }
 
 body {
-  font-family: Roboto, Helvetica Neue Light, Helvetica Neue, Helvetica, Arial, Lucida Grande, sans-serif;
+  font-family: Roboto, Helvetica Neue Light, Helvetica Neue, Helvetica, Arial,
+    Lucida Grande, sans-serif;
   background-color: #111111;
   color: #888888;
 }
 
-img:focus, a:focus {
+img:focus,
+a:focus {
   outline: none;
 }
 
+/*
 .ng-lazyloaded {
   transition: opacity 0.2s;
 }
+*/
 
 .ng-lazyloading {
   opacity: 0;
+}
+
+.ng-lazyloaded + .ng-lazyload-placeholder {
+  display: none;
+  //opacity: 0;
+  //transition: opacity 0.2s;
 }

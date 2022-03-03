@@ -2,15 +2,24 @@
   <ng-container *ngIf="media">
     <div role="banner" aria-label="Background"
       class="tw-fixed tw-inset-0 tw-block tw-w-full tw-h-full tw-bg-cover tw-bg-no-repeat tw-bg-center tw-brightness-25 tw--z-1"
-      *ngIf="media.backdropUrl" [lazyLoad]="media.backdropUrl"
-      [ngStyle]="{ 'background-color': media.backdropColor ? '#' + (media.backdropColor | toString:16) : '#000' }">
+      *ngIf="media.thumbnailBackdropUrl" [lazyLoad]="media.thumbnailBackdropUrl"
+      [ngStyle]="{ 'background-color': media.backdropColor ? '#' + (media.backdropColor | toString:16) : '#212121' }">
     </div>
-    <div class="tw-my-0 sm:tw-my-8 tw-max-w-7xl tw-mx-auto">
-      <div class="tw-bg-neutral-850/90 tw-shadow-md tw-rounded-md tw-px-4 tw-py-8">
+    <div class="lg:tw-my-8 tw-max-w-7xl tw-mx-auto">
+      <div class="tw-bg-neutral-850/90 tw-shadow-md lg:tw-mx-8 lg:tw-rounded-md tw-px-6 tw-py-8">
         <div class="tw-flex tw-flex-wrap">
           <div class="tw-w-2/5 sm:tw-w-1/5 tw-mx-auto sm:tw-mx-0">
-            <div class="tw-aspect-w-2 tw-aspect-h-3">
-              <img class="tw-object-cover tw-rounded-xl" [src]="media.thumbnailPosterUrl" [alt]="media.title">
+            <div class="tw-aspect-w-2 tw-aspect-h-3 tw-rounded-xl tw-overflow-hidden">
+              <img *ngIf="media.thumbnailPosterUrl; else noPoster" class="tw-object-cover"
+                [lazyLoad]="media.thumbnailPosterUrl" [alt]="media.title"
+                errorImage="assets/images/media-poster-md.png">
+              <div *ngIf="media.posterColor" class="ng-lazyload-placeholder tw-w-full tw-h-full"
+                [ngStyle]="{ 'background-color': media.posterColor | hexColor }">
+              </div>
+              <ng-template #noPoster>
+                <img class="tw-object-cover" lazyLoad="assets/images/media-poster-md.png"
+                  defaultImage="assets/images/media-poster-sm.png" [alt]="media.title">
+              </ng-template>
             </div>
           </div>
           <div class="tw-w-full sm:tw-w-4/5 tw-mt-4 sm:tw-mt-0 sm:tw-pl-8">
@@ -19,18 +28,31 @@
               {{ media.title }}
             </p>
             <p *ngIf="media.originalTitle"
-              class="tw-text-gray-400 tw-text-center sm:tw-text-left tw-text-sm md:tw-text-base tw-mt-1">
+              class="tw-text-slate-400 tw-text-center sm:tw-text-left tw-text-sm md:tw-text-base tw-mt-1">
               {{ media.originalTitle }}
             </p>
             <p class="tw-text-white tw-text-base tw-mt-4 tw-text-center sm:tw-text-left">
-              <span class="tw-border tw-text-sm tw-px-1.5 tw-py-1 tw-rounded-2xl">Movie</span>
+              <span *ngIf="media.type === MediaType.MOVIE; else isTV"
+                class="tw-border tw-text-sm tw-px-1.5 tw-py-1 tw-rounded-2xl">Movie</span>
+              <ng-template #isTV>
+                <span class="tw-border tw-text-sm tw-px-1.5 tw-py-1 tw-rounded-2xl">TV Show</span>
+              </ng-template>
               <span class="tw-ml-3 tw-text-base">
                 <i class="pi pi-clock tw-text-sm"></i>
                 {{ t('media.details.runtimeValue', { runtime: media.runtime}) }}
               </span>
-              <span *ngFor="let genre of media.genres; trackBy: trackId" class="tw-ml-2 tw-text-base">
-                {{ genre.name }}
-              </span>
+            </p>
+            <p class="tw-text-white tw-text-base tw-mt-4 tw-text-center sm:tw-text-left">
+              <ng-container *ngIf="media.genres.length; else noGenres">
+                <span *ngFor="let genre of media.genres; trackBy: trackId" class="tw-ml-2 tw-text-base">
+                  {{ genre.name }}
+                </span>
+              </ng-container>
+              <ng-template #noGenres>
+                <span class="tw-text-gray-400 tw-ml-2 tw-text-base tw-italic">
+                  {{ t('media.details.noGenres') }}
+                </span>
+              </ng-template>
             </p>
             <div class="tw-mt-4">
               <button type="button" role="navigation" aria-label="Play media" pButton icon="pi pi-play" iconPos="left"
@@ -51,11 +73,17 @@
             <p class="tw-text-white tw-text-base sm:tw-text-lg tw-font-medium tw-leading-5 tw-mt-4">
               {{ t('media.details.producers') }}
             </p>
-            <p class="tw-text-white tw-text-sm sm:tw-text-base tw-space-x-2 tw-mt-2">
+            <p *ngIf="media.producers.length; else noProducers"
+              class="tw-text-white tw-text-sm sm:tw-text-base tw-space-x-2 tw-mt-2">
               <span *ngFor="let producer of media.producers; trackBy: trackId">
                 {{ producer.name }}
               </span>
             </p>
+            <ng-template #noProducers>
+              <p class="tw-text-gray-400 tw-text-sm sm:tw-text-base tw-space-x-2 tw-mt-2 tw-italic">
+                {{ t('media.details.noProducers') }}
+              </p>
+            </ng-template>
             <p class="tw-text-white tw-text-base sm:tw-text-lg tw-font-medium tw-leading-5 tw-mt-4">
               {{ t('media.details.releaseDate') }}
             </p>
@@ -64,28 +92,30 @@
             </p>
           </div>
         </div>
-        <div class="tw-mt-4">
+        <div class="tw-mt-12">
           <p class="tw-text-white tw-font-semibold tw-text-xl sm:tw-text-2xl">Videos</p>
           <div *ngIf="media.videos.length; else noVideos" class="tw-flex">
             <div *ngFor="let video of media.videos; let index = index; trackBy:trackId"
               class="tw-w-1/3 tw-cursor-pointer tw-rounded-xl" key="index" (click)="viewVideo(index)">
               <div class="tw-aspect-w-16 tw-aspect-h-9">
                 <img [src]="youtubeThumbnailUrl + video.key + '/hqdefault.jpg'" [alt]="video.key || ''"
-                  class="tw-rounded-xl tw-object-cover" />
+                  class="tw-rounded-xl tw-object-cover hover:tw-brightness-75 tw-transition-all tw-duration-200" />
               </div>
             </div>
+            <p-dialog [header]="media.videos[activeVideoIndex].name" [(visible)]="displayVideo" [modal]="true"
+              styleClass="p-dialog-header-sm tw-w-2/3 tw-h-auto !tw-max-h-full" [draggable]="false" [resizable]="false"
+              [dismissableMask]="true" transitionOptions="0ms linear" contentStyleClass="!tw-p-0">
+              <div class="tw-aspect-w-16 tw-aspect-h-9">
+                <iframe [src]="youtubeUrl + media.videos[activeVideoIndex].key + '?autoplay=1' | safeUrl: 'resourceUrl'"
+                  allowfullscreen width="100%" height="auto"></iframe>
+              </div>
+            </p-dialog>
           </div>
           <ng-template #noVideos>
-            <p class="tw-text-white tw-text-base">No videos available</p>
+            <p class="tw-text-gray-400 tw-text-base tw-italic">
+              {{ t('media.details.noVideos') }}
+            </p>
           </ng-template>
-          <p-dialog header="Video" [(visible)]="displayVideo" [modal]="true"
-            styleClass="tw-w-2/3 tw-h-auto !tw-max-h-full" [draggable]="false" [resizable]="false"
-            [dismissableMask]="true" transitionOptions="0ms linear" contentStyleClass="!tw-p-0">
-            <div class="tw-aspect-w-16 tw-aspect-h-9">
-              <iframe [src]="youtubeUrl + media.videos[activeVideoIndex].key + '?autoplay=1' | safeUrl: 'resourceUrl'"
-                allowfullscreen width="100%" height="auto"></iframe>
-            </div>
-          </p-dialog>
         </div>
       </div>
     </div>

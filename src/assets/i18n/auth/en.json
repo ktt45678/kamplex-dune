@@ -1,10 +1,24 @@
 {
   "signIn": {
-    "formHeader": "Sign in",
+    "formHeader": "Sign In",
     "email": "Email",
     "password": "Password",
     "resetPassword": "Forgot password?",
     "signUp": "Create account",
     "submit": "Sign in"
+  },
+  "signUp": {
+    "formHeader": "Create Account",
+    "username": "Username",
+    "email": "{{ auth.signIn.email }}",
+    "password": "{{ auth.signIn.password }}",
+    "birthdate": "Date of birth",
+    "birthdateDay": "Day",
+    "birthdateMonth": "Month",
+    "birthdateYear": "Year",
+    "signIn": "Sign in",
+    "submit": "Sign up",
+    "successMessageSummary": "Sign up success",
+    "successMessageDetail": "Check your email to activate your account"
   }
 }

@@ -1,0 +1,35 @@
+<ng-container *transloco="let t">
+  <h3 class="tw-text-white tw-text-2xl tw-font-bold tw-text-center tw-mb-4">
+    {{ t('admin.updateProducer.formHeader') }}
+  </h3>
+  <form [formGroup]="updateProducerForm" (ngSubmit)="onUpdateProducerFormSubmit()">
+    <label for="name" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
+      {{ t('admin.updateProducer.name') }}
+    </label>
+    <input formControlName="name" class="tw-w-full" id="name" type="text" aria-describedby="name-error" pInputText
+      [disabledControl]="isUpdatingProducer" controlAutofocus>
+    <small id="name-error"
+      class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
+      [ngClass]="(updateProducerForm.controls['name'].dirty || updateProducerForm.controls['name'].touched)
+          && updateProducerForm.controls['name'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
+      {{ updateProducerForm.controls['name'].errors | firstErrorKey:'updateProducer':'name' }}
+    </small>
+    <label for="country" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
+      {{ t('admin.updateProducer.country') }}
+    </label>
+    <p-dropdown id="country" formControlName="country" [options]="countryOptions || []" scrollHeight="250px"
+      [placeholder]="t('admin.updateProducer.countryPlaceholder')" [showClear]="true" appendTo="body"
+      panelStyleClass="p-dropdown-sm" styleClass="tw-w-full tw-mb-4" [disabledControl]="isUpdatingProducer">
+    </p-dropdown>
+    <div class="tw-flex tw-mt-4">
+      <div class="tw-ml-auto">
+        <button pButton type="button" [label]="t('admin.updateProducer.cancel')" (click)="onUpdateProducerFormCancel()"
+          class="p-button-text p-button-secondary p-button-sm">
+        </button>
+        <button pButton type="submit" [label]="t('admin.updateProducer.submit')"
+          class="p-button-success p-button-sm tw-ml-1" [disabled]="isUpdatingProducer">
+        </button>
+      </div>
+    </div>
+  </form>
+</ng-container>

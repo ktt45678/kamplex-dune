@@ -5,6 +5,7 @@ import { catchError, Observable, throwError } from 'rxjs';
 import { MessageService } from 'primeng/api';
 
 import { AuthService } from '../services';
+import { ToastKey } from '../enums';
 
 @Injectable()
 export class HttpErrorInterceptor implements HttpInterceptor {
@@ -13,7 +14,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     return next.handle(request).pipe(catchError((error: HttpErrorResponse) => {
-      const key = 'app-toast';
+      const key = ToastKey.APP;
       const severity = 'error';
       const life = 10000;
       if (error.status) {
@@ -21,16 +22,16 @@ export class HttpErrorInterceptor implements HttpInterceptor {
         const detail = error.error.message || 'Request failed';
         switch (error.status) {
           case 401:
-            if (this.authService.accessTokenValue) {
+            if (this.authService.refreshTokenValue) {
               this.authService.signOut();
               location.reload();
             }
             this.zone.run(() => this.messageService.add({ key, severity, summary, detail, life }));
             break;
-          case 404:
-            this.router.navigate(['/']);
-            this.zone.run(() => this.messageService.add({ key, severity, summary, detail, life }));
-            break;
+          //case 404:
+          //  this.router.navigate(['/']);
+          //  this.zone.run(() => this.messageService.add({ key, severity, summary, detail, life }));
+          //  break;
           default:
             this.zone.run(() => this.messageService.add({ key, severity, summary, detail, life }));
             break;

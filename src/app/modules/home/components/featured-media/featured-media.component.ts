@@ -12,6 +12,7 @@ SwiperCore.use([Autoplay, Navigation, Pagination]);
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FeaturedMediaComponent implements OnInit {
+  @Input() loading: boolean = false;
   @Input() swiperClass?: string;
   @Input() mediaList?: Media[];
   swiperConfig: SwiperOptions = {

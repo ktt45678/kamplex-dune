@@ -1,0 +1,168 @@
+<ng-container *transloco="let t">
+  <div class="tw-bg-neutral-850 tw-rounded-md tw-m-4 tw-p-4">
+    <p-toolbar styleClass="tw-mb-4">
+      <ng-template pTemplate="left">
+        <span class="p-input-icon-left">
+          <i class="pi pi-search"></i>
+          <input pInputText class="p-inputtext-sm" type="text"
+            (input)="mediaTable.filter($any($event).target.value, 'title', 'contains')"
+            [placeholder]="t('admin.media.searchPlaceholder')" />
+        </span>
+      </ng-template>
+      <ng-template pTemplate="right">
+        <button pButton pRipple [label]="t('admin.media.createMovie')" icon="pi pi-plus" class="p-button"
+          (click)="showCreateMediaDialog(MediaType.MOVIE)">
+        </button>
+        <button pButton pRipple [label]="t('admin.media.createTV')" icon="pi pi-plus" class="p-button tw-ml-2"
+          (click)="showCreateMediaDialog(MediaType.TV)">
+        </button>
+      </ng-template>
+    </p-toolbar>
+    <p-table #mediaTable styleClass="p-datatable-sm tw-bg-neutral-875 tw-p-4 tw-rounded-md"
+      [value]="mediaList?.results || []" [rows]="rowsPerPage" [totalRecords]="mediaList?.totalResults || 0"
+      [paginator]="true" [rowsPerPageOptions]="[10, 25, 50]" responsiveLayout="scroll" [rowTrackBy]="trackId"
+      [rowHover]="true" [lazy]="true" (onLazyLoad)="loadMedia()" [loading]="loadingMediaList"
+      [currentPageReportTemplate]="t('admin.media.pageReport')" [showCurrentPageReport]="true">
+      <ng-template pTemplate="caption">
+        <h4 class="tw-mb-2">{{ t('admin.media.tableHeader') }}</h4>
+      </ng-template>
+      <ng-template pTemplate="header">
+        <tr>
+          <th class="tw-w-96" pSortableColumn="title">
+            {{ t('admin.media.title') }} <p-sortIcon field="title"></p-sortIcon>
+          </th>
+          <th class="tw-w-28">
+            {{ t('admin.media.type') }}
+          </th>
+          <th class="tw-w-52">
+            {{ t('admin.media.episodesOrDuration') }}
+          </th>
+          <th class="tw-w-64">
+            {{ t('admin.media.backdrop') }}
+          </th>
+          <th class="tw-w-36">
+            {{ t('admin.media.releaseDate') }}
+          </th>
+          <th class="tw-w-auto">
+            {{ t('admin.media.rating') }}
+          </th>
+          <th class="tw-w-20">
+            {{ t('admin.media.status') }}
+          </th>
+          <th class="tw-w-48"></th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-media>
+        <tr>
+          <td class="tw-flex tw-w-96">
+            <input #inputPoster hidden="true" type="file" onclick="this.value = null"
+              (change)="uploadPoster(media, $event)" accept=".jpg, .jpeg, .png" />
+            <div *ngIf="media.thumbnailPosterUrl; else noPoster" class="tw-w-24">
+              <div class="tw-aspect-w-2 tw-aspect-h-3">
+                <img class="tw-rounded-md" [src]="media.thumbnailPosterUrl" [alt]="media.title">
+                <div class="row-image-actions tw-flex tw-justify-center tw-items-center">
+                  <button pButton type="button" icon="pi pi-images" pTooltip="Change this poster" [showDelay]="1000"
+                    (click)="inputPoster.click()" [disabled]="inputPoster.disabled"
+                    class="p-button-rounded p-button-success p-button-sm">
+                  </button>
+                  <button pButton type="button" icon="pi pi-times" pTooltip="Delete this poster" [showDelay]="1000"
+                    (click)="deletePoster(media, $event)" class="p-button-rounded p-button-danger p-button-sm tw-ml-1">
+                  </button>
+                </div>
+              </div>
+            </div>
+            <ng-template #noPoster>
+              <button
+                class="tw-bg-transparent tw-text-white tw-w-24 tw-rounded-md tw-border-white tw-border-2 tw-border-dashed disabled:tw-border-gray-500 disabled:tw-text-gray-500"
+                (click)="inputPoster.click()" pTooltip="Add a poster" [showDelay]="1000"
+                [disabled]="inputPoster.disabled">
+                <div class="tw-aspect-w-2 tw-aspect-h-3">
+                  <div class="tw-flex tw-justify-center tw-items-center">
+                    <i class="pi pi-plus"></i>
+                  </div>
+                </div>
+              </button>
+            </ng-template>
+            <div class="tw-ml-2">
+              <p class="tw-text-base tw-font-semibold tw-line-clamp-2">{{ media.title }}</p>
+              <p class="tw-text-sm tw-text-slate-400 tw-line-clamp-2">{{ media.originalTitle }}</p>
+            </div>
+          </td>
+          <ng-container *ngIf="media.type === MediaType.MOVIE; else isTV">
+            <td class="tw-w-24 tw-text-sm">{{ t('admin.media.movie') }}</td>
+            <td class="tw-w-40 tw-text-sm">
+              {{ t('admin.media.runtimeValue', { runtime: media.runtime }) }}
+            </td>
+          </ng-container>
+          <ng-template #isTV>
+            <td class="tw-w-24 tw-text-sm">{{ t('admin.media.tv') }}</td>
+            <td class="tw-w-40 tw-text-sm">
+              <p>{{ t('admin.media.episodeCountValue', { episodeCount: media.tv.episodeCount }) }}</p>
+              <p>{{ t('admin.media.episodeRuntimeValue', { runtime: media.runtime }) }}</p>
+            </td>
+          </ng-template>
+          <td class="tw-w-52">
+            <input #inputBackdrop hidden="true" type="file" onclick="this.value = null"
+              (change)="uploadBackdrop(media, $event)" accept=".jpg, .jpeg, .png" />
+            <div *ngIf="media.thumbnailBackdropUrl; else noBackdrop" class="tw-w-48">
+              <div class="tw-aspect-w-16 tw-aspect-h-9">
+                <img class="tw-rounded-md" [src]="media.thumbnailBackdropUrl" [alt]="media.title">
+                <div class="row-image-actions tw-flex tw-justify-center tw-items-center">
+                  <button pButton type="button" icon="pi pi-images" pTooltip="Change this backdrop" [showDelay]="1000"
+                    (click)="inputBackdrop.click()" [disabled]="inputBackdrop.disabled"
+                    class="p-button-rounded p-button-success p-button-sm">
+                  </button>
+                  <button pButton type="button" icon="pi pi-times" pTooltip="Delete this backdrop" [showDelay]="1000"
+                    (click)="deleteBackdrop(media, $event)"
+                    class="p-button-rounded p-button-danger p-button-sm tw-ml-1">
+                  </button>
+                </div>
+              </div>
+            </div>
+            <ng-template #noBackdrop>
+              <button
+                class="tw-bg-transparent tw-text-white tw-w-48 tw-rounded-md tw-border-white tw-border-2 tw-border-dashed disabled:tw-border-gray-500 disabled:tw-text-gray-500"
+                (click)="inputBackdrop.click()" pTooltip="Add a backdrop" [showDelay]="1000"
+                [disabled]="inputBackdrop.disabled">
+                <div class="tw-aspect-w-16 tw-aspect-h-9">
+                  <div class="tw-flex tw-justify-center tw-items-center">
+                    <i class="pi pi-plus"></i>
+                  </div>
+                </div>
+              </button>
+            </ng-template>
+          </td>
+          <td class="tw-w-36 tw-text-sm">{{ media.releaseDate | shortDate }}</td>
+          <td class="tw-w-auto tw-text-sm">
+            <i class="pi pi-star-fill tw-text-yellow-500"></i> {{ media.ratingAverage }}
+          </td>
+          <td class="tw-w-20 tw-text-sm" [ngSwitch]="media.pStatus">
+            <ng-container *ngSwitchCase="MediaStatus.PENDING">{{ t('admin.media.statusPending') }}</ng-container>
+            <ng-container *ngSwitchCase="MediaStatus.REVIEW">{{ t('admin.media.statusReview') }}</ng-container>
+            <ng-container *ngSwitchCase="MediaStatus.PROCESSING">{{ t('admin.media.statusProcessing') }}</ng-container>
+            <ng-container *ngSwitchCase="MediaStatus.DONE">{{ t('admin.media.statusDone') }}</ng-container>
+            <ng-container *ngSwitchDefault>{{ t('admin.media.statusUnknown') }}</ng-container>
+          </td>
+          <td>
+            <button pButton icon="pi pi-cog"
+              class="p-button-outlined p-button-rounded p-button-info p-button-sm tw-mr-2"
+              (click)="showConfigureMediaDialog(media)">
+            </button>
+            <button pButton icon="pi pi-pencil"
+              class="p-button-outlined p-button-rounded p-button-success p-button-sm tw-mr-2"
+              (click)="showUpdateMediaDialog(media)">
+            </button>
+            <button pButton icon="pi pi-trash" class="p-button-outlined p-button-rounded p-button-danger p-button-sm"
+              [disabled]="media.pStatus === MediaStatus.PROCESSING" (click)="showDeleteMediaDialog(media)">
+            </button>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+    <p-confirmDialog key="default" [style]="{width: '500px'}" [baseZIndex]="1000"
+      acceptButtonStyleClass="p-button-danger p-button-sm"
+      rejectButtonStyleClass="p-button-text p-button-secondary p-button-sm" rejectIcon="" acceptIcon=""
+      [dismissableMask]="true">
+    </p-confirmDialog>
+  </div>
+</ng-container>

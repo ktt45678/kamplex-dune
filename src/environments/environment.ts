@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  apiUrl: 'https://dev.kamplexapi.tk/api'
+  apiUrl: 'http://192.168.1.10:3000/api'
 };
 
 /*

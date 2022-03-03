@@ -21,10 +21,12 @@ export class Media {
   posterUrl?: string;
   thumbnailPosterUrl?: string;
   smallPosterUrl?: string;
+  fullPosterUrl?: string;
   posterColor?: number;
   backdropUrl?: string;
   thumbnailBackdropUrl?: string;
   smallBackdropUrl?: string;
+  fullBackdropUrl?: string;
   backdropColor?: number;
   createdAt!: Date;
   updatedAt!: Date;

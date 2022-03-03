@@ -4,32 +4,40 @@ import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { LazyLoadImageModule } from 'ng-lazyload-image';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
+import { PaginatorModule } from 'primeng/paginator';
 
 import { MediaRoutingModule } from './media-routing.module';
-import { HomeLayoutModule } from '../../shared/layouts/home-layout';
+import { MediaFilterModule } from '../../shared/components/media-filter';
+import { MediaListModule } from '../../shared/components/media-list';
+import { MediaTopModule } from '../../shared/components/media-top';
 import { WatchComponent } from './pages/watch/watch.component';
 import { DetailsComponent } from './pages/details/details.component';
+import { UrlPipeModule } from '../../shared/pipes/url-pipe/url-pipe.module';
 import { MediaService } from '../../core/services';
 import { NumberPipeModule } from '../../shared/pipes/number-pipe';
 import { DatePipeModule } from '../../shared/pipes/date-pipe';
-import { UrlPipeModule } from '../../shared/pipes/url-pipe/url-pipe.module';
+import { SearchComponent } from './pages/search/search.component';
 
 @NgModule({
   declarations: [
     WatchComponent,
-    DetailsComponent
+    DetailsComponent,
+    SearchComponent
   ],
   imports: [
     CommonModule,
     MediaRoutingModule,
-    HomeLayoutModule,
+    MediaFilterModule,
+    MediaListModule,
+    MediaTopModule,
     TranslocoModule,
     LazyLoadImageModule,
     NumberPipeModule,
     DatePipeModule,
     UrlPipeModule,
     ButtonModule,
-    DialogModule
+    DialogModule,
+    PaginatorModule
   ],
   providers: [
     MediaService,

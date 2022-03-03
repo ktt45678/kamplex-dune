@@ -12,6 +12,7 @@ import { MediaService } from '../../../../core/services';
   providers: [MediaService]
 })
 export class HomeComponent implements OnInit {
+  loadingFeaturedMedia: boolean = false;
   loadingMediaList: boolean = false;
   loadingMediaTop: boolean = false;
   featuredMedia?: Media[];
@@ -39,20 +40,23 @@ export class HomeComponent implements OnInit {
         content: 'KamPlex v2 Dev Test'
       }
     ]);
+    this.loadingFeaturedMedia = true;
     this.loadingMediaList = true;
-    this.mediaService.findAll().subscribe({
+    this.loadingMediaTop = true;
+    this.mediaService.findPage().subscribe({
       next: data => {
         this.featuredMedia = data.results.slice(0, 5);
         this.mediaList = data;
         this.mostViewedMedia = {
           ...data,
           results: data.results.slice(0, 5)
-        }
-      },
-      complete: () => {
-        this.loadingMediaList = false;
+        };
         this.ref.markForCheck();
       }
+    }).add(() => {
+      this.loadingFeaturedMedia = false;
+      this.loadingMediaList = false;
+      this.loadingMediaTop = false;
     });
   }
 

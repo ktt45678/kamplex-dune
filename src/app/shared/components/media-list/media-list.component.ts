@@ -34,7 +34,7 @@ export class MediaListComponent implements OnInit {
   }
 
   trackId(index: number, item: any): any {
-    return item?._id || null;
+    return item?._id;
   }
 
 }

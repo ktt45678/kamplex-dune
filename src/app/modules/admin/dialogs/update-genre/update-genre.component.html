@@ -1,0 +1,44 @@
+<ng-container *transloco="let t">
+  <h3 class="tw-text-white tw-text-2xl tw-font-bold tw-text-center tw-mb-4">
+    {{ t('admin.updateGenre.formHeader') }}
+  </h3>
+  <form [formGroup]="updateGenreForm" (ngSubmit)="onUpdateGenreFormSubmit()">
+    <label for="name" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
+      {{ t('admin.updateGenre.name') }}
+    </label>
+    <input formControlName="name" class="tw-w-full" id="name" type="text" aria-describedby="name-error" pInputText
+      [disabledControl]="isUpdatingGenre" controlAutofocus>
+    <small id="name-error"
+      class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
+      [ngClass]="(updateGenreForm.controls['name'].dirty || updateGenreForm.controls['name'].touched)
+          && updateGenreForm.controls['name'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
+      {{ updateGenreForm.controls['name'].errors | firstErrorKey:'updateGenre':'name' }}
+    </small>
+    <div class="tw-flex tw-mt-4">
+      <label for="is-translation" class="tw-inline-block tw-text-base tw-font-medium">
+        {{ t('admin.updateGenre.isTranslation') }}
+      </label>
+      <p-inputSwitch formControlName="isTranslation" id="is-translation" class="tw-ml-auto"
+        [disabledControl]="isUpdatingGenre"></p-inputSwitch>
+    </div>
+    <div class="tw-flex tw-mt-4 tw-mb-8">
+      <label for="translate" class="tw-inline-block tw-text-base tw-font-medium">
+        {{ t('admin.updateGenre.translate') }}
+      </label>
+      <p-dropdown formControlName="translate" id="translate" class="tw-ml-auto" panelStyleClass="p-dropdown-sm"
+        appendTo="body" [options]="translateOptions"
+        [disabledControl]="isUpdatingGenre || !updateGenreForm.value['isTranslation']">
+      </p-dropdown>
+    </div>
+    <div class="tw-flex tw-mt-4">
+      <div class="tw-ml-auto">
+        <button pButton type="button" [label]="t('admin.updateGenre.cancel')" (click)="onUpdateGenreFormCancel()"
+          class="p-button-text p-button-secondary p-button-sm">
+        </button>
+        <button pButton type="submit" [label]="t('admin.updateGenre.submit')"
+          class="p-button-success p-button-sm tw-ml-1" [disabled]="isUpdatingGenre">
+        </button>
+      </div>
+    </div>
+  </form>
+</ng-container>

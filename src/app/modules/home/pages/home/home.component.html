@@ -1,6 +1,7 @@
 <div class="tw-max-w-8xl tw-mx-auto">
   <div class="tw-mt-0 lg:tw-mt-8 tw-mx-0 lg:tw-mx-4">
-    <app-featured-media [mediaList]="featuredMedia" swiperClass="tw-rounded-none lg:tw-rounded-2xl">
+    <app-featured-media [mediaList]="featuredMedia" [loading]="loadingFeaturedMedia"
+      swiperClass="tw-rounded-none lg:tw-rounded-2xl">
     </app-featured-media>
   </div>
 </div>
@@ -8,7 +9,7 @@
   <div class="tw-flex tw-flex-wrap tw-mx-4">
     <div class="tw-w-full xl:tw-w-3/4">
       <div class="tw-mt-4">
-        <h3 class="tw-text-white tw-text-lg tw-font-bold tw-uppercase">Recently Added</h3>
+        <h3 class="tw-text-gray-200 tw-text-lg tw-font-bold tw-uppercase">Recently Added</h3>
       </div>
       <div class="tw-my-4">
         <app-media-list [mediaList]="mediaList" [loading]="loadingMediaList"></app-media-list>
@@ -17,11 +18,11 @@
     <div class="tw-w-full xl:tw-w-1/4">
       <div class="tw-ml-0 xl:tw-ml-4 tw-my-4 tw-flex tw-flex-wrap">
         <div class="tw-w-full sm:tw-w-1/2 xl:tw-w-full tw-pr-0 sm:tw-pr-1 xl:tw-pr-0">
-          <h3 class="tw-text-white tw-text-lg tw-font-bold tw-uppercase tw-mb-2">Most viewed</h3>
+          <h3 class="tw-text-gray-200 tw-text-lg tw-font-bold tw-uppercase tw-mb-2">Most viewed</h3>
           <app-media-top [mediaList]="mostViewedMedia" [loading]="loadingMediaList" [itemLimit]="5"></app-media-top>
         </div>
         <div class="tw-w-full sm:tw-w-1/2 xl:tw-w-full tw-mt-2 sm:tw-mt-0 xl:tw-mt-2 tw-pl-0 sm:tw-pl-1 xl:tw-pl-0">
-          <h3 class="tw-text-white tw-text-lg tw-font-bold tw-uppercase tw-mb-2">Top rated</h3>
+          <h3 class="tw-text-gray-200 tw-text-lg tw-font-bold tw-uppercase tw-mb-2">Top rated</h3>
           <app-media-top [mediaList]="mostViewedMedia" [loading]="loadingMediaList" [itemLimit]="5"></app-media-top>
         </div>
       </div>

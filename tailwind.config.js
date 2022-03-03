@@ -74,7 +74,7 @@ module.exports = {
               '> *': {
                 'min-width': value,
                 'width': value,
-                'flex': '1 0 auto'
+                'flex': '0 1 auto'
               }
             }
           }
@@ -96,6 +96,11 @@ module.exports = {
       addVariant('not-disabled', ({ modifySelectors, separator }) => {
         modifySelectors(({ className }) => {
           return `.${e(`not(disabled)${separator}${className}`)}:not(disabled)`
+        })
+      });
+      addVariant('not-first', ({ modifySelectors, separator }) => {
+        modifySelectors(({ className }) => {
+          return `.${e(`not(first-child)${separator}${className}`)}:not(:first-child)`
         })
       });
     })

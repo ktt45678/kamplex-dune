@@ -1,4 +1,4 @@
-import { ErrorHandler, NgModule } from '@angular/core';
+import { APP_INITIALIZER, ErrorHandler, NgModule } from '@angular/core';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -8,11 +8,14 @@ import { ToastModule } from 'primeng/toast';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { HomeLayoutModule } from './shared/layouts/home-layout';
 import { environment } from '../environments/environment';
 import { TranslocoRootModule } from './transloco-root.module';
 import { BaseUrlInterceptor } from './core/interceptors/base-url.interceptor';
 import { HttpErrorInterceptor } from './core/interceptors/http-error.interceptor';
 import { GlobalErrorHandler } from './core/handlers/global-error-handler';
+import { AppInitializer } from './core/initializers/app.initializer';
+import { AuthService } from './core/services';
 
 @NgModule({
   declarations: [
@@ -30,10 +33,17 @@ import { GlobalErrorHandler } from './core/handlers/global-error-handler';
     }),
     HttpClientModule,
     TranslocoRootModule,
+    HomeLayoutModule,
     ToastModule
   ],
   providers: [
     MessageService,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: AppInitializer,
+      multi: true,
+      deps: [AuthService]
+    },
     {
       provide: ErrorHandler,
       useClass: GlobalErrorHandler

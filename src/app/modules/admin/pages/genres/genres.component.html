@@ -1,0 +1,62 @@
+<ng-container *transloco="let t">
+  <div class="tw-bg-neutral-850 tw-rounded-md tw-m-4 tw-p-4">
+    <p-toolbar styleClass="tw-mb-4">
+      <ng-template pTemplate="left">
+        <span class="p-input-icon-left">
+          <i class="pi pi-search"></i>
+          <input pInputText class="p-inputtext-sm" type="text"
+            (input)="genreTable.filter($any($event).target.value, 'name', 'contains')"
+            [placeholder]="t('admin.genres.searchPlaceholder')" />
+        </span>
+      </ng-template>
+      <ng-template pTemplate="right">
+        <button pButton pRipple [label]="t('admin.genres.create')" icon="pi pi-plus" class="p-button"
+          (click)="showCreateGenreDialog()">
+        </button>
+      </ng-template>
+    </p-toolbar>
+    <p-table #genreTable styleClass="p-datatable-sm tw-bg-neutral-875 tw-p-4 tw-rounded-md"
+      [value]="genreList?.results || []" [rows]="rowsPerPage" [totalRecords]="genreList?.totalResults || 0"
+      [paginator]="true" [rowsPerPageOptions]="[10, 25, 50]" responsiveLayout="scroll" [(selection)]="selectedGenres"
+      dataKey="_id" [rowTrackBy]="trackId" [rowHover]="true" [lazy]="true" (onLazyLoad)="loadGenres()"
+      [loading]="loadingGenreList" [currentPageReportTemplate]="t('admin.genres.pageReport')"
+      [showCurrentPageReport]="true">
+      <ng-template pTemplate="caption">
+        <h4 class="tw-mb-2">{{ t('admin.genres.tableHeader') }}</h4>
+      </ng-template>
+      <ng-template pTemplate="header">
+        <tr>
+          <th class="tw-w-12">
+            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+          </th>
+          <th class="tw-w-auto" pSortableColumn="name">{{ t('admin.genres.name') }} <p-sortIcon field="name">
+            </p-sortIcon>
+          </th>
+          <th class="tw-w-32"></th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-genre>
+        <tr>
+          <td>
+            <p-tableCheckbox [value]="genre"></p-tableCheckbox>
+          </td>
+          <td class="tw-text-sm">{{ genre.name }}</td>
+          <td>
+            <button pButton icon="pi pi-pencil"
+              class="p-button-outlined p-button-rounded p-button-success p-button-sm tw-mr-2"
+              (click)="showUpdateGenreDialog(genre)">
+            </button>
+            <button pButton pRipple icon="pi pi-trash"
+              class="p-button-outlined p-button-rounded p-button-danger p-button-sm"
+              (click)="showDeleteGenreDialog(genre)">
+            </button>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+    <p-confirmDialog [style]="{width: '500px'}" [baseZIndex]="1000" acceptButtonStyleClass="p-button-danger p-button-sm"
+      rejectButtonStyleClass="p-button-text p-button-secondary p-button-sm" rejectIcon="" acceptIcon=""
+      [dismissableMask]="true">
+    </p-confirmDialog>
+  </div>
+</ng-container>

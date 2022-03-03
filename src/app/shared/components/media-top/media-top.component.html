@@ -24,10 +24,13 @@
         <a [routerLink]="['/details', media._id]">
           <div class="tw-flex">
             <div class="tw-w-1/5">
-              <div class="tw-aspect-w-2 tw-aspect-h-3 tw-rounded-sm tw-overflow-hidden"
-                [ngStyle]="{ 'background-color': media.posterColor ? '#' + (media.posterColor | toString:16) : '#000' }">
+              <div class="tw-aspect-w-2 tw-aspect-h-3 tw-rounded-md tw-overflow-hidden">
                 <img *ngIf="media.thumbnailPosterUrl; else noPoster" class="tw-object-cover"
-                  [lazyLoad]="media.thumbnailPosterUrl" [alt]="media.title">
+                  [lazyLoad]="media.thumbnailPosterUrl" [alt]="media.title"
+                  errorImage="assets/images/media-poster-md.png">
+                <div *ngIf="media.posterColor" class="ng-lazyload-placeholder tw-w-full tw-h-full"
+                  [ngStyle]="{ 'background-color': media.posterColor | hexColor }">
+                </div>
                 <ng-template #noPoster>
                   <img class="tw-object-cover" lazyLoad="assets/images/media-poster-md.png"
                     defaultImage="assets/images/media-poster-sm.png" [alt]="media.title">

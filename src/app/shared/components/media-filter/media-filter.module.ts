@@ -6,6 +6,8 @@ import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { InputTextModule } from 'primeng/inputtext';
+import { ToggleButtonModule } from 'primeng/togglebutton';
+import {TooltipModule} from 'primeng/tooltip';
 
 import { MediaFilterComponent } from './media-filter.component';
 import { MediaFilterService } from './media-filter.service';
@@ -19,7 +21,9 @@ import { MediaFilterService } from './media-filter.service';
     ButtonModule,
     DropdownModule,
     MultiSelectModule,
-    InputTextModule
+    InputTextModule,
+    ToggleButtonModule,
+    TooltipModule
   ],
   providers: [MediaFilterService],
   exports: [MediaFilterComponent]

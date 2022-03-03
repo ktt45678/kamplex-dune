@@ -1,34 +1,46 @@
 <ng-container *transloco="let t">
-  <form [formGroup]="filterForm">
+  <form [formGroup]="filterForm" (ngSubmit)="onFilterFormSubmit()">
     <div class="tw-grid tw-grid-cols-1 sm:tw-grid-cols-2 lg:tw-grid-cols-4 tw-gap-4">
       <span class="p-input-icon-left">
         <i class="pi pi-search tw-text-xs"></i>
         <input type="text" pInputText [placeholder]="t('media.filter.search')" formControlName="search"
           class="tw-w-full p-inputtext-xs" />
       </span>
-      <p-multiSelect formControlName="genres" [options]="countries" [baseZIndex]="100" scrollHeight="400px"
-        [showHeader]="false" [placeholder]="t('media.filter.genre')" styleClass="tw-w-full p-multiselect-xs"
-        panelStyleClass="tw-dropdown-cols-1 md:tw-dropdown-cols-2">
+      <p-multiSelect formControlName="genres" [options]="genres || []" optionLabel="name" optionValue="_id"
+        [baseZIndex]="100" scrollHeight="400px" [appendTo]="multiSelectZone" [showHeader]="false"
+        [placeholder]="t('media.filter.genre')" styleClass="tw-w-full p-multiselect-xs"
+        panelStyleClass="md:tw-dropdown-cols-4 md:tw-max-w-xl">
       </p-multiSelect>
       <p-dropdown formControlName="sort" [options]="sortOptions || []" [baseZIndex]="100" scrollHeight="400px"
-        [showClear]="true" [placeholder]="t('media.filter.sort')" styleClass="tw-w-full p-dropdown-xs">
+        [showClear]="true" [appendTo]="dropdownZone" [placeholder]="t('media.filter.sort')"
+        styleClass="tw-w-full p-dropdown-xs" panelStyleClass="md:tw-dropdown-cols-2 md:tw-max-w-lg">
       </p-dropdown>
-      <p-dropdown formControlName="type" [options]="typeOptions || []" [baseZIndex]="100" [showClear]="true"
-        [placeholder]="t('media.filter.type')" styleClass="tw-w-full p-dropdown-xs">
+      <p-dropdown [hidden]="!showAdvanced" formControlName="type" [options]="typeOptions || []" [baseZIndex]="100"
+        [showClear]="true" [appendTo]="dropdownZone" [placeholder]="t('media.filter.type')"
+        styleClass="tw-w-full p-dropdown-xs">
       </p-dropdown>
-      <p-dropdown formControlName="status" [options]="statusOptions || []" [baseZIndex]="100" scrollHeight="400px"
-        [showClear]="true" [placeholder]="t('media.filter.status')" styleClass="tw-w-full p-dropdown-xs">
+      <p-dropdown [hidden]="!showAdvanced" formControlName="status" [options]="statusOptions || []" [baseZIndex]="100"
+        scrollHeight="400px" [showClear]="true" [appendTo]="dropdownZone" [placeholder]="t('media.filter.status')"
+        styleClass="tw-w-full p-dropdown-xs">
       </p-dropdown>
-      <p-dropdown formControlName="country" [options]="countries" [baseZIndex]="100" scrollHeight="400px"
-        [showClear]="true" [placeholder]="t('media.filter.country')" styleClass="tw-w-full p-dropdown-xs"
-        panelStyleClass="tw-dropdown-cols-1 md:tw-dropdown-cols-2">
+      <p-dropdown [hidden]="!showAdvanced" formControlName="originalLanguage" [options]="languages || []" [baseZIndex]="100"
+        scrollHeight="400px" [showClear]="true" [appendTo]="dropdownZone" [placeholder]="t('media.filter.language')"
+        styleClass="tw-w-full p-dropdown-xs" panelStyleClass="md:tw-dropdown-cols-4 md:tw-max-w-2xl">
       </p-dropdown>
-      <p-dropdown formControlName="year" [options]="yearOptions" [baseZIndex]="100" scrollHeight="400px"
-        [showClear]="true" [placeholder]="t('media.filter.year')" styleClass="tw-w-full p-dropdown-xs"
-        panelStyleClass="tw-dropdown-cols-1 md:tw-dropdown-cols-3">
+      <p-dropdown [hidden]="!showAdvanced" formControlName="year" [options]="yearOptions || []" [baseZIndex]="100"
+        scrollHeight="400px" [showClear]="true" [appendTo]="dropdownZone" [placeholder]="t('media.filter.year')"
+        styleClass="tw-w-full p-dropdown-xs" panelStyleClass="md:tw-dropdown-cols-4 md:tw-max-w-xl">
       </p-dropdown>
       <button pButton type="submit" [label]="t('media.filter.beginFilter')" class="p-button-sm tw-block"
         icon="pi pi-filter"></button>
     </div>
+    <div class="tw-flex tw-mt-4">
+      <p-toggleButton formControlName="showAdvanced" class="tw-ml-auto" styleClass="p-button-sm"
+        onIcon="pi pi-angle-double-up" offIcon="pi pi-angle-double-down" pTooltip="Toggle advanced options"
+        [showDelay]="1000" tooltipPosition="bottom" (onChange)="showAdvanced = $event.checked">
+      </p-toggleButton>
+    </div>
   </form>
+  <div #dropdownZone class="p-dropdown-xs"></div>
+  <div #multiSelectZone class="p-multiselect-xs"></div>
 </ng-container>

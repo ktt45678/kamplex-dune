@@ -2,10 +2,12 @@ import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@
 import { Meta } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { takeUntil } from 'rxjs';
+import { StateChange } from 'ng-lazyload-image';
 
 import { MediaDetails } from '../../../../core/models';
 import { MediaService } from '../../../../core/services';
 import { DestroyService } from '../../../../core/services';
+import { MediaType } from '../../../../core/enums';
 
 @Component({
   selector: 'app-details',
@@ -15,6 +17,7 @@ import { DestroyService } from '../../../../core/services';
   providers: [DestroyService]
 })
 export class DetailsComponent implements OnInit {
+  MediaType = MediaType;
   media?: MediaDetails;
   displayVideo: boolean = false;
   activeVideoIndex: number = 0;

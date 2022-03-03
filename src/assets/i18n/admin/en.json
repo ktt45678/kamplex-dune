@@ -1,0 +1,103 @@
+{
+  "createGenre": {
+    "formHeader": "Create Genre",
+    "name": "Name",
+    "cancel": "Cancel",
+    "submit": "Create"
+  },
+  "createProducer": {
+    "formHeader": "Create Producer",
+    "name": "{{ admin.createGenre.name }}",
+    "country": "Country (optional)",
+    "countryPlaceholder": "No country selected",
+    "cancel": "{{ admin.createGenre.cancel }}",
+    "submit": "{{ admin.createGenre.submit }}"
+  },
+  "updateGenre": {
+    "formHeader": "Update Genre",
+    "name": "{{ admin.createGenre.name }}",
+    "isTranslation": "Is this a translation?",
+    "translate": "Select language",
+    "cancel": "{{ admin.createGenre.cancel }}",
+    "submit": "Save Changes"
+  },
+  "updateProducer": {
+    "formHeader": "Update Producer",
+    "name": "{{ admin.createGenre.name }}",
+    "country": "{{ admin.createProducer.country }}",
+    "countryPlaceholder": "{{ admin.createProducer.countryPlaceholder }}",
+    "cancel": "{{ admin.createGenre.cancel }}",
+    "submit": "{{ admin.updateGenre.submit }}"
+  },
+  "createMedia": {
+    "formHeader": "Create Media",
+    "title": "Title",
+    "titlePlaceholder": "Primary title of the show",
+    "originalTitle": "Original title (optional)",
+    "originalTitlePlaceholder": "Title in original language, prefer latin characters",
+    "overview": "Overview",
+    "overviewPlaceholder": "Short description of the show",
+    "originalLanguage": "Original language (Optional)",
+    "originalLanguagePlaceholder": "Language of the show",
+    "genres": "Genres (optional)",
+    "createGenreByName": "Create Genre: {{ name }}",
+    "createProducerByName": "Create Producer: {{ name }}",
+    "producers": "Producers (optional)",
+    "runtime": "Running time",
+    "runtimePlaceholder": "How long does it take to finish a movie/episode?",
+    "adult": "Is this show only for adult?",
+    "releaseDate": "Release date",
+    "lastAirDate": "Last air date",
+    "day": "Day",
+    "month": "Month",
+    "year": "Year",
+    "visibility": "Visibility",
+    "status": "Status",
+    "cancel": "Cancel",
+    "submit": "Create"
+  },
+  "addMediaVideo": {
+    "name": "Name",
+    "url": "YouTube URL",
+    "submit": "Add Video"
+  },
+  "genres": {
+    "searchPlaceholder": "Search...",
+    "create": "New",
+    "tableHeader": "Manage Genres",
+    "name": "{{ admin.createGenre.name }}",
+    "pageReport": "Showing '{first'} to '{last'} of '{totalRecords'} entries"
+  },
+  "producers": {
+    "searchPlaceholder": "{{ admin.genres.searchPlaceholder }}",
+    "create": "{{ admin.genres.create }}",
+    "tableHeader": "Manage Producers",
+    "name": "{{ admin.createGenre.name }}",
+    "country": "Country",
+    "pageReport": "Showing '{first'} to '{last'} of '{totalRecords'} entries"
+  },
+  "media": {
+    "searchPlaceholder": "{{ admin.genres.searchPlaceholder }}",
+    "createMovie": "New Movie",
+    "createTV": "New TV Show",
+    "tableHeader": "Manage Media",
+    "title": "Title",
+    "type": "Type",
+    "episodesOrDuration": "Episodes/Duration",
+    "movie": "Movie",
+    "tv": "TV Show",
+    "runtimeValue": "{{ runtime }} min",
+    "episodeCountValue": "{ episodeCount, plural, =0 {no episodes} one {1 episode} other {# episodes} }",
+    "episodeRuntimeValue": "({{ runtime }} min each)",
+    "backdrop": "Backdrop",
+    "rating": "Rating",
+    "status": "Status",
+    "statusPending": "Pending",
+    "statusReview": "In review",
+    "statusProcessing": "Processing",
+    "statusDone": "Done",
+    "statusUnknown": "Unknown",
+    "releaseDate": "Release date",
+    "pageReport": "Showing '{first'} to '{last'} of '{totalRecords'} entries"
+  }
+}

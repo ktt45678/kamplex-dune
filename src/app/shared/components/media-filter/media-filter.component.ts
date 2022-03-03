@@ -1,10 +1,11 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { TranslocoService, TRANSLOCO_SCOPE } from '@ngneat/transloco';
-import { takeUntil } from 'rxjs';
+import { first } from 'rxjs';
 
 import { DropdownOptionDto } from '../../../core/dto/media';
-import { DestroyService } from '../../../core/services/destroy.service';
+import { Genre } from '../../../core/models';
+import { GenresService } from '../../../core/services';
 import { MediaFilterService } from './media-filter.service';
 
 @Component({
@@ -13,7 +14,7 @@ import { MediaFilterService } from './media-filter.service';
   styleUrls: ['./media-filter.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
-    DestroyService,
+    GenresService,
     {
       provide: TRANSLOCO_SCOPE,
       useValue: 'media'
@@ -22,41 +23,37 @@ import { MediaFilterService } from './media-filter.service';
 })
 export class MediaFilterComponent implements OnInit {
 
-  countries: any[];
-  yearOptions: DropdownOptionDto[];
+  showAdvanced: boolean = false;
+  languages?: DropdownOptionDto[];
+  genres?: Genre[];
+  yearOptions?: DropdownOptionDto[];
   sortOptions?: DropdownOptionDto[];
   typeOptions?: DropdownOptionDto[];
   statusOptions?: DropdownOptionDto[];
   selectedCountry?: DropdownOptionDto;
   filterForm: FormGroup;
 
-  constructor(private mediaFilterService: MediaFilterService, private translocoService: TranslocoService, private destroyService: DestroyService) {
+  constructor(private mediaFilterService: MediaFilterService, private translocoService: TranslocoService,
+    private genresService: GenresService) {
     this.filterForm = new FormGroup({
       genres: new FormControl([]),
       sort: new FormControl(),
       search: new FormControl(null, [Validators.minLength(3), Validators.maxLength(100)]),
       type: new FormControl(),
       status: new FormControl(),
-      country: new FormControl(),
-      year: new FormControl()
+      originalLanguage: new FormControl(),
+      year: new FormControl(),
+      showAdvanced: new FormControl(this.showAdvanced)
     });
-    this.countries = [
-      { label: 'Australia', value: 'AU' },
-      { label: 'Brazil', value: 'BR' },
-      { label: 'China', value: 'CN' },
-      { label: 'Egypt', value: 'EG' },
-      { label: 'France', value: 'FR' },
-      { label: 'Germany', value: 'DE' },
-      { label: 'India', value: 'IN' },
-      { label: 'Japan', value: 'JP' },
-      { label: 'Spain', value: 'ES' },
-      { label: 'United States of Chapter 2', value: 'US' }
-    ];
-    this.yearOptions = this.mediaFilterService.createYearList();
   }
 
   ngOnInit(): void {
-    this.translocoService.selectTranslation('media').pipe(takeUntil(this.destroyService)).subscribe(t => {
+    this.loadGenres();
+    this.yearOptions = this.mediaFilterService.createYearList();
+    this.mediaFilterService.createLanguageList().pipe(first()).subscribe({
+      next: languages => this.languages = languages
+    });
+    this.translocoService.selectTranslation('media').pipe(first()).subscribe(t => {
       this.typeOptions = [
         { value: 'movie', label: t['mediaTypes.movie'] },
         { value: 'tv', label: t['mediaTypes.tvShow'] }
@@ -70,8 +67,6 @@ export class MediaFilterComponent implements OnInit {
         { value: 'desc(views)', label: t['sortOptions.viewsDescending'] },
         { value: 'asc(ratingAverage)', label: t['sortOptions.scoreAscending'] },
         { value: 'desc(ratingAverage)', label: t['sortOptions.scoreDescending'] },
-        { value: 'asc(ratingCount)', label: t['sortOptions.totalRatingsAscending'] },
-        { value: 'desc(ratingCount)', label: t['sortOptions.totalRatingsDescending'] },
         { value: 'asc(createdAt)', label: t['sortOptions.dateAddedAscending'] },
         { value: 'desc(createdAt)', label: t['sortOptions.dateAddedDescending'] },
         { value: 'asc(updatedAt)', label: t['sortOptions.dateUpdatedAscending'] },
@@ -86,9 +81,30 @@ export class MediaFilterComponent implements OnInit {
     });
   }
 
+  loadGenres(): void {
+    this.genresService.findAll('asc(name)').subscribe({
+      next: genres => this.genres = genres
+    });
+  }
+
   onFilterFormSubmit(): void {
+    if (this.filterForm.invalid) return;
+    if (!this.filterForm.value['showAdvanced']) {
+      this.mediaFilterService.setOptions({
+        search: this.filterForm.value['search'] || undefined,
+        genres: this.filterForm.value['genres'],
+        sort: this.filterForm.value['sort']
+      });
+      return;
+    }
     this.mediaFilterService.setOptions({
-      genres: []
+      search: this.filterForm.value['search'],
+      genres: this.filterForm.value['genres'],
+      sort: this.filterForm.value['sort'],
+      type: this.filterForm.value['type'],
+      status: this.filterForm.value['status'],
+      originalLanguage: this.filterForm.value['originalLanguage'],
+      year: this.filterForm.value['year']
     });
   }
 

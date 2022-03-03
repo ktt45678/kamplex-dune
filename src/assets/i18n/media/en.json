@@ -1,18 +1,22 @@
 {
   "details": {
     "runtimeValue": "{{ runtime }} min",
-    "originalTitle": "Original title",
+    "noGenres": "No genres found",
     "overview": "Overview",
     "producers": "Producers",
-    "releaseDate": "Release date"
+    "noProducers": "No producers found",
+    "releaseDate": "Release date",
+    "noVideos": "No videos found",
+    "episodeCountValue": "{{ episodeCount }} episodes",
+    "originalTitle": "Original title"
   },
   "filter": {
-    "search": "Search - Enter at least 3 characters",
+    "search": "Search (3 characters or more)",
     "genre": "Genres",
     "sort": "Sort",
     "type": "Type",
     "status": "Status",
-    "country": "Country",
+    "language": "Language",
     "year": "Year",
     "beginFilter": "Filter"
   },
@@ -21,8 +25,8 @@
     "tvShow": "TV Show"
   },
   "sortOptions": {
-    "nameAscending": "Name (Ascending)",
-    "nameDescending": "Name (Descending)",
+    "nameAscending": "Name (A-Z)",
+    "nameDescending": "Name (Z-A)",
     "releaseDateAscending": "Release date (Ascending)",
     "releaseDateDescending": "Release date (Descending)",
     "dateAddedAscending": "Date added (Ascending)",
@@ -32,9 +36,7 @@
     "viewsAscending": "Views (Ascending)",
     "viewsDescending": "Views (Descending)",
     "scoreAscending": "Score (Ascending)",
-    "scoreDescending": "Score (Descending)",
-    "totalRatingsAscending": "Total ratings (Ascending)",
-    "totalRatingsDescending": "Total ratings (Descending)"
+    "scoreDescending": "Score (Descending)"
   },
   "statusOptions": {
     "upcoming": "Upcoming",

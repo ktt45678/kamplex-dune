@@ -1,0 +1,39 @@
+{
+  "createGenre": {
+    "formHeader": "Create a new Genre",
+    "name": "Missing value for 'admin.createGenre.name'",
+    "cancel": "Missing value for 'admin.createGenre.cancel'",
+    "submit": "Missing value for 'admin.createGenre.submit'"
+  },
+  "createProducer": {
+    "formHeader": "Missing value for 'admin.createProducer.formHeader'",
+    "name": "Missing value for 'admin.createProducer.name'",
+    "country": "Missing value for 'admin.createProducer.country'",
+    "countryPlaceholder": "Missing value for 'admin.createProducer.countryPlaceholder'",
+    "cancel": "Missing value for 'admin.createProducer.cancel'",
+    "submit": "Missing value for 'admin.createProducer.submit'"
+  },
+  "updateGenre": {
+    "formHeader": "Missing value for 'admin.updateGenre.formHeader'",
+    "name": "Missing value for 'admin.updateGenre.name'",
+    "isTranslation": "Missing value for 'admin.updateGenre.isTranslation'",
+    "translate": "Missing value for 'admin.updateGenre.translate'",
+    "cancel": "Missing value for 'admin.updateGenre.cancel'",
+    "submit": "Missing value for 'admin.updateGenre.submit'"
+  },
+  "updateProducer": {
+    "formHeader": "Missing value for 'admin.updateProducer.formHeader'",
+    "name": "Missing value for 'admin.updateProducer.name'",
+    "country": "Missing value for 'admin.updateProducer.country'",
+    "countryPlaceholder": "Missing value for 'admin.updateProducer.countryPlaceholder'",
+    "cancel": "Missing value for 'admin.updateProducer.cancel'",
+    "submit": "Missing value for 'admin.updateProducer.submit'"
+  },
+  "genres": {
+    "searchPlaceholder": "Missing value for 'admin.genres.searchPlaceholder'",
+    "create": "Missing value for 'admin.genres.create'",
+    "tableHeader": "Missing value for 'admin.genres.tableHeader'",
+    "name": "Missing value for 'admin.genres.name'",
+    "pageReport": "Missing value for 'admin.genres.pageReport'"
+  }
+}

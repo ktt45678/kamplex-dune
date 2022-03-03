@@ -1,16 +1,18 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { map, Observable, Subject } from 'rxjs';
+import { TranslocoService } from '@ngneat/transloco';
 
+import { LANGUAGE_CODES } from '../../../core/data';
 import { MediaFilterOptionsDto, DropdownOptionDto } from '../../../core/dto/media';
 
 @Injectable()
 export class MediaFilterService {
-  private options: BehaviorSubject<MediaFilterOptionsDto | undefined>;
+  private options: Subject<MediaFilterOptionsDto>;
 
-  options$: Observable<MediaFilterOptionsDto | undefined>;
+  options$: Observable<MediaFilterOptionsDto>;
 
-  constructor() {
-    this.options = new BehaviorSubject<MediaFilterOptionsDto | undefined>(undefined);
+  constructor(private translocoService: TranslocoService) {
+    this.options = new Subject<MediaFilterOptionsDto>();
     this.options$ = this.options.asObservable();
   }
 
@@ -29,5 +31,18 @@ export class MediaFilterService {
       startYear++;
     }
     return years;
+  }
+
+  createLanguageList(): Observable<DropdownOptionDto[]> {
+    return this.translocoService.selectTranslation('languages').pipe(map(t => {
+      const languageOptions: DropdownOptionDto[] = [];
+      LANGUAGE_CODES.forEach((code) => {
+        languageOptions.push({
+          label: t[code],
+          value: code
+        });
+      });
+      return languageOptions;
+    }));
   }
 }

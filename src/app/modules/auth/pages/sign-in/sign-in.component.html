@@ -3,16 +3,16 @@
     <p-progressBar mode="indeterminate" [ngClass]="isSigningIn ? 'tw-visible' : 'tw-invisible'"></p-progressBar>
     <div class="tw-px-10 tw-py-14 tw-shadow-md">
       <h3 class="tw-text-white tw-text-3xl tw-font-bold tw-text-center tw-mb-8">{{ t('auth.signIn.formHeader') }}</h3>
-      <form [formGroup]="signInForm" (ngSubmit)="onSignInFormSubmit()" formHandler>
+      <form [formGroup]="signInForm" (ngSubmit)="onSignInFormSubmit()">
         <span class="p-float-label">
           <input formControlName="email" class="tw-w-full" id="email" type="text" aria-describedby="email-error"
             pInputText [disabledControl]="isSigningIn" controlAutofocus>
           <label for="email">{{ t('auth.signIn.email') }}</label>
         </span>
         <small id="email-error"
-          class="p-error tw-text-xs tw-leading-8 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
+          class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
           [ngClass]="(signInForm.controls['email'].dirty || signInForm.controls['email'].touched) && signInForm.controls['email'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
-          {{signInForm.controls['email'].errors | firstErrorKey:'signIn':'email'}}
+          {{ signInForm.controls['email'].errors | firstErrorKey:'signIn':'email' }}
         </small>
         <span class="p-float-label">
           <input formControlName="password" class="tw-w-full" id="password" type="password"
@@ -20,15 +20,15 @@
           <label for="password">{{ t('auth.signIn.password') }}</label>
         </span>
         <small id="password-error"
-          class="p-error tw-text-xs tw-leading-8 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
+          class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
           [ngClass]="(signInForm.controls['password'].dirty || signInForm.controls['password'].touched) && signInForm.controls['password'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
           {{ signInForm.controls['password'].errors | firstErrorKey:'signIn':'password' }}
         </small>
         <div class="tw-flex tw-flex-wrap-reverse tw-mt-4">
           <div class="tw-mr-auto">
-            <button pButton routerLink="/reset-password" [label]="t('auth.signIn.resetPassword')"
+            <button pButton type="button" routerLink="/reset-password" [label]="t('auth.signIn.resetPassword')"
               class="p-button-text p-button-sm tw-block !tw-p-1 tw-text-left" [disabled]="isSigningIn"></button>
-            <button pButton routerLink="/sign-up" [label]="t('auth.signIn.signUp')"
+            <button pButton type="button" routerLink="/sign-up" [label]="t('auth.signIn.signUp')"
               class="p-button-text p-button-sm tw-mt-1 tw-block !tw-p-1 tw-text-left" [disabled]="isSigningIn"></button>
           </div>
           <div class="tw-ml-auto">

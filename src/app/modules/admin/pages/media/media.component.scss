@@ -1,0 +1,14 @@
+:host::ng-deep {
+  .p-datatable-tbody {
+    > tr {
+      .row-image-actions {
+        visibility: hidden;
+      }
+    }
+    > tr:hover {
+      .row-image-actions {
+        visibility: visible;
+      }
+    }
+  }
+}

@@ -10,7 +10,7 @@ export class User {
   lastActiveAt!: string;
   createdAt!: string;
   avatarUrl?: string;
-  avatarThumbnailUrl?: string;
-  avatarColor?: number;
   thumbnailAvatarUrl?: string;
+  fullAvatarUrl?: string;
+  avatarColor?: number;
 }

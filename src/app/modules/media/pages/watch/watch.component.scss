@@ -9,14 +9,10 @@
 }
 
 :host::ng-deep {
-  .plyr__video-wrapper {
-    @apply tw-aspect-w-16;
-    @apply tw-aspect-h-9;
-  }
   .plyr--loading {
     position: relative;
     &:before {
-      content: '';
+      content: "";
       position: absolute;
       z-index: 1;
       top: 50%;
@@ -32,16 +28,6 @@
       animation: rotate 1s infinite linear;
     }
   }
-}
-
-video::cue {
-	color: white;
-	background-color: transparent;
-	text-shadow:
-		-1px -1px 0 #000,
-		1px -1px 0 #000,
-		-1px 1px 0 #000,
-		1px 1px 0 #000;
 }
 
 @-webkit-keyframes rotate {

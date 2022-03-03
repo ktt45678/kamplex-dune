@@ -11,42 +11,52 @@ import { SignInDto, SignUpDto } from '../dto/auth';
 })
 export class AuthService {
   private refreshTokenTimeout?: any;
+  private _accessToken: string | null;
+  private _refreshToken: string | null;
   private currentUserSubject: BehaviorSubject<UserDetails | null>;
-  public currentUser: Observable<UserDetails | null>;
+  public currentUser$: Observable<UserDetails | null>;
 
   constructor(private http: HttpClient) {
-    const user = this.accessTokenValue ? jwt_decode<UserDetails>(this.accessTokenValue) : null;
-    this.currentUserSubject = new BehaviorSubject<UserDetails | null>(user);
-    this.currentUser = this.currentUserSubject.asObservable();
+    this._accessToken = null;
+    this._refreshToken = localStorage.getItem('refreshToken');
+    this.currentUserSubject = new BehaviorSubject<UserDetails | null>(null);
+    this.currentUser$ = this.currentUserSubject.asObservable();
   }
 
   public get accessTokenValue() {
-    return localStorage.getItem('accessToken');
+    return this._accessToken;
   }
 
   public get refreshTokenValue() {
-    return localStorage.getItem('refreshToken');
+    return this._refreshToken;
   }
 
-  public get currentUserValue(): UserDetails | null {
+  public get currentUser(): UserDetails | null {
     return this.currentUserSubject.value;
   }
 
-  public set currentUserValue(user: UserDetails | null) {
+  public set currentUser(user: UserDetails | null) {
     this.currentUserSubject.next(user);
   }
 
   signIn(body: SignInDto) {
     return this.http.post<JWTWithPayload>('auth/sign-in', body).pipe(tap(data => {
-      localStorage.setItem('accessToken', data.accessToken);
-      localStorage.setItem('refreshToken', data.refreshToken);
+      this._accessToken = data.accessToken;
+      this._refreshToken = data.refreshToken;
       this.currentUserSubject.next(data.payload);
+      localStorage.setItem('refreshToken', data.refreshToken);
       this.startRefreshTokenTimer();
     }));
   }
 
   signUp(body: SignUpDto) {
-    return this.http.post('auth/sign-up', body);
+    return this.http.post<JWTWithPayload>('auth/sign-up', body).pipe(tap(data => {
+      this._accessToken = data.accessToken;
+      this._refreshToken = data.refreshToken;
+      this.currentUserSubject.next(data.payload);
+      localStorage.setItem('refreshToken', data.refreshToken);
+      this.startRefreshTokenTimer();
+    }));
   }
 
   sendConfirmEmail(body: any = {}) {
@@ -66,21 +76,22 @@ export class AuthService {
   }
 
   refreshToken() {
-    return this.http.post<JWTWithPayload>('auth/refresh-token', { token: this.refreshTokenValue }).pipe(tap(data => {
-      localStorage.setItem('accessToken', data.accessToken);
-      localStorage.setItem('refreshToken', data.refreshToken);
+    return this.http.post<JWTWithPayload>('auth/refresh-token', { refreshToken: this.refreshTokenValue }).pipe(tap(data => {
+      this._accessToken = data.accessToken;
+      this._refreshToken = data.refreshToken;
       this.currentUserSubject.next(data.payload);
+      localStorage.setItem('refreshToken', data.refreshToken);
       this.startRefreshTokenTimer();
     }));
   }
 
   signOut() {
-    this.http.post('auth/revoke-token', { token: this.refreshTokenValue }).pipe(tap(() => {
+    this.http.post('auth/revoke-token', { refreshToken: this.refreshTokenValue }).subscribe().add(() => {
       this.currentUserSubject.next(null);
-      localStorage.removeItem('accessToken');
+      this._accessToken = null;
       localStorage.removeItem('refreshToken');
       this.stopRefreshTokenTimer();
-    }));
+    });
   }
 
   private startRefreshTokenTimer() {

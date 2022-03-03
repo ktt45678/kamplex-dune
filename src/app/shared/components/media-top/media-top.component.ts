@@ -32,7 +32,7 @@ export class MediaTopComponent implements OnInit {
   }
 
   trackId(index: number, item: any): any {
-    return item?._id || null;
+    return item?._id;
   }
 
 }

@@ -2,7 +2,7 @@
   <div class="tw-grid tw-grid-cols-2 md:tw-grid-cols-3 lg:tw-grid-cols-4 xl:tw-grid-cols-6 tw-gap-4">
     <div *ngFor="let item of skeletonArray">
       <div class="tw-aspect-w-2 tw-aspect-h-3 tw-mb-2">
-        <p-skeleton animation="none" width="100%" height="100%" borderRadius="2px"></p-skeleton>
+        <p-skeleton animation="none" width="100%" height="100%" borderRadius="6px"></p-skeleton>
       </div>
       <p-skeleton animation="none" width="100%" height="20px" styleClass="tw-mb-1"></p-skeleton>
       <p-skeleton animation="none" width="80%" height="20px"></p-skeleton>
@@ -16,17 +16,19 @@
       class="tw-grid tw-grid-cols-2 sm:tw-grid-cols-3 md:tw-grid-cols-4 lg:tw-grid-cols-5 xl:tw-grid-cols-6 tw-gap-4">
       <a class="tw-opacity-100 hover:tw-opacity-70 tw-transition-opacity tw-duration-200"
         *ngFor="let media of mediaList.results; trackBy: trackId" [routerLink]="['/details', media._id]">
-        <div class="tw-aspect-w-2 tw-aspect-h-3 tw-rounded-t-sm tw-overflow-hidden"
-          [ngStyle]="{ 'background-color': media.posterColor ? '#' + (media.posterColor | toString:16) : '#000' }">
+        <div class="tw-aspect-w-2 tw-aspect-h-3 tw-rounded-t-md tw-overflow-hidden">
           <img *ngIf="media.thumbnailPosterUrl; else noPoster" class="tw-object-cover"
-            [lazyLoad]="media.thumbnailPosterUrl" [alt]="media.title">
+            [lazyLoad]="media.thumbnailPosterUrl" [alt]="media.title" errorImage="assets/images/media-poster-md.png">
+          <div *ngIf="media.posterColor" class="ng-lazyload-placeholder tw-w-full tw-h-full"
+            [ngStyle]="{ 'background-color': media.posterColor | hexColor }">
+          </div>
           <ng-template #noPoster>
             <img class="tw-object-cover" lazyLoad="assets/images/media-poster-md.png"
               defaultImage="assets/images/media-poster-sm.png" [alt]="media.title">
           </ng-template>
         </div>
         <p
-          class="tw-left-0 tw-bottom-0 tw-right-0 tw-bg-indigo-700 tw-flex tw-content-between tw-py-1 tw-px-2 tw-rounded-b-sm">
+          class="tw-left-0 tw-bottom-0 tw-right-0 tw-bg-indigo-700 tw-flex tw-content-between tw-py-1 tw-px-2 tw-rounded-b-md">
           <small class="tw-text-white tw-text-xs tw-font-semibold">
             {{ media.releaseDate.year }}
           </small>
@@ -36,7 +38,7 @@
           </small>
           <ng-template #notMovie>
             <small class="tw-text-white tw-text-xs tw-font-semibold tw-ml-auto" *ngIf="media.type === MediaType.TV">
-              {{ media.tv.episodeCount }}
+              {{ media.tv.episodeCount }} episodes
             </small>
           </ng-template>
         </p>

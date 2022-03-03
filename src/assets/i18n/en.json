@@ -29,12 +29,24 @@
   },
   "validationErrors": {
     "general": {
+      "username": {
+        "required": "Username is required",
+        "minlength": "Username must be at least 3 characters",
+        "maxlength": "Username must not be longer than 32 characters"
+      },
       "email": {
         "required": "Email is required",
         "email": "Email must be valid"
       },
       "password": {
-        "required": "Password is required"
+        "required": "Password is required",
+        "minlength": "Password must be at least 8 characters",
+        "maxlength": "Password must not be longer than 128 characters"
+      },
+      "birthdate": {
+        "required": "Date of birth is required",
+        "validShortDate": "Date of birth must be a valid date",
+        "shortDateBefore": "Date of birth must be before today"
       }
     },
     "signIn": {
@@ -43,7 +55,81 @@
         "email": "{{ validationErrors.general.email.email }}"
       },
       "password": {
-        "required": "{{ validationErrors.general.password.required }}"
+        "required": "{{ validationErrors.general.password.required }}",
+        "maxlength": "{{ validationErrors.general.password.maxlength }}"
+      }
+    },
+    "signUp": {
+      "username": {
+        "required": "{{ validationErrors.general.username.required }}",
+        "maxlength": "{{ validationErrors.general.username.maxlength }}",
+        "minlength": "{{ validationErrors.general.username.minlength }}"
+      },
+      "email": {
+        "required": "{{ validationErrors.general.email.required }}",
+        "email": "{{ validationErrors.general.email.email }}"
+      },
+      "password": {
+        "required": "{{ validationErrors.general.password.required }}",
+        "maxlength": "{{ validationErrors.general.password.maxlength }}",
+        "minlength": "{{ validationErrors.general.password.minlength }}"
+      },
+      "birthdate": {
+        "required": "{{ validationErrors.general.birthdate.required }}",
+        "validShortDate": "{{ validationErrors.general.birthdate.validShortDate }}",
+        "shortDateBefore": "{{ validationErrors.general.birthdate.shortDateBefore }}"
+      }
+    },
+    "createGenre": {
+      "name": {
+        "required": "Name is required",
+        "maxlength": "Name must not be longer than 32 characters"
+      }
+    },
+    "updateGenre": {
+      "name": {
+        "maxlength": "{{ validationErrors.createGenre.name.maxlength }}"
+      }
+    },
+    "createProducer": {
+      "name": {
+        "required": "Name is required",
+        "maxlength": "Name must not be longer than 150 characters"
+      }
+    },
+    "updateProducer": {
+      "name": {
+        "required": "{{ validationErrors.createProducer.name.required }}",
+        "maxlength": "{{ validationErrors.createProducer.name.maxlength }}"
+      }
+    },
+    "createMedia": {
+      "title": {
+        "required": "Title is required",
+        "maxlength": "Title must not be longer than 500 characters"
+      },
+      "originalTitle": {
+        "maxlength": "Original title must not be longer than 500 characters"
+      },
+      "overview": {
+        "required": "Overview time is required",
+        "minlength": "Overview must be at least 10 characters",
+        "maxlength": "Overview must not be longer than 2000 characters"
+      },
+      "runtime": {
+        "required": "Running time is required"
+      },
+      "releaseDate": {
+        "required": "Release date is required",
+        "validShortDate": "Release date must be a valid date"
+      },
+      "lastAirDate": {
+        "validShortDate": "Last air date must be a valid date"
+      }
+    },
+    "addMediaVideo": {
+      "url": {
+        "required": "URL is required"
       }
     }
   }
