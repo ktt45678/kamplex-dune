@@ -34,7 +34,9 @@ module.exports = {
       },
       colors: {
         neutral: {
+          '625': '#393939',
           '650': '#424242',
+          '675': '#464646',
           '850': '#212121',
           '875': '#1e1e1e'
         }
@@ -96,11 +98,6 @@ module.exports = {
       addVariant('not-disabled', ({ modifySelectors, separator }) => {
         modifySelectors(({ className }) => {
           return `.${e(`not(disabled)${separator}${className}`)}:not(disabled)`
-        })
-      });
-      addVariant('not-first', ({ modifySelectors, separator }) => {
-        modifySelectors(({ className }) => {
-          return `.${e(`not(first-child)${separator}${className}`)}:not(:first-child)`
         })
       });
     })

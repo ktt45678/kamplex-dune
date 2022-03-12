@@ -7,7 +7,7 @@ module.exports = {
   ],
   css: [`dist/${defaultProject}/*.css`],
   safelist: {
-    standard: [/tw-/]
+    standard: [/tw-|plyr/]
   },
   output: `dist/${defaultProject}`
 };

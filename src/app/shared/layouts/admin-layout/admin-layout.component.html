@@ -1,0 +1,13 @@
+<p-tabMenu [model]="tabMenuItems" [scrollable]="true" class="md:tw-hidden"></p-tabMenu>
+<div *ngFor="let upload of (uploadQueue | async)">
+  <p>{{ upload.file.name }}</p>
+  <p>{{ upload.progress }}</p>
+</div>
+<div class="tw-flex tw-my-4">
+  <div class="tw-w-60 tw-ml-4 tw-rounded-md tw-min-h-screen tw-hidden md:tw-block">
+    <p-menu [model]="sideBarItems" styleClass="tw-w-full tw-h-full tw-border-0 tw-rounded-md"></p-menu>
+  </div>
+  <div class="tw-w-full md:tw-w-[calc(100%-10rem)]">
+    <router-outlet></router-outlet>
+  </div>
+</div>

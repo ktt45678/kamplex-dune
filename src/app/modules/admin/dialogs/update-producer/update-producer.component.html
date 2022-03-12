@@ -2,7 +2,7 @@
   <h3 class="tw-text-white tw-text-2xl tw-font-bold tw-text-center tw-mb-4">
     {{ t('admin.updateProducer.formHeader') }}
   </h3>
-  <form [formGroup]="updateProducerForm" (ngSubmit)="onUpdateProducerFormSubmit()">
+  <form [formGroup]="updateProducerForm" formHandler (ngSubmit)="onUpdateProducerFormSubmit()">
     <label for="name" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
       {{ t('admin.updateProducer.name') }}
     </label>

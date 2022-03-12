@@ -1,6 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 @import "../node_modules/plyr/dist/plyr.css";
-@import "../node_modules/bootstrap-icons/font/bootstrap-icons.scss";
+@import "./assets/css/material-icons/style.css";
 @import "../node_modules/primeicons/primeicons.css";
 @import "./assets/css/primeng/md-dark-indigo-custom.css";
 @import "../node_modules/primeng/resources/primeng.min.css";
@@ -54,4 +54,22 @@ a:focus {
   display: none;
   //opacity: 0;
   //transition: opacity 0.2s;
+}
+
+@layer components {
+  .tw-divider {
+    @apply tw-border-neutral-625 tw-border-t tw-my-5 tw-px-5;
+  }
+
+  .tw-divider-2 {
+    @apply tw-border-neutral-625 tw-border-t tw-my-10 tw-px-10;
+  }
+
+  .tw-upload-file {
+    @apply tw-border-neutral-500;
+  }
+
+  .tw-upload-file-over {
+    @apply tw-border-gray-400 tw-text-gray-400;
+  }
 }

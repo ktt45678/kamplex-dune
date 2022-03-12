@@ -19,12 +19,18 @@
               <p-badge [value]="media.runtime + ' min'" styleClass="tw-text-gray-200 tw-bg-gray-500" class="tw-ml-1.5">
               </p-badge>
             </div>
-            <p *ngIf="media.genres.length"
+            <p *ngIf="media.genres.length; else noGenres"
               class="tw-text-gray-300 tw-text-base md:tw-text-lg tw-font-semibold tw-text-center md:tw-text-left tw-mb-4 tw-space-x-2">
               <span *ngFor="let genre of media.genres; trackBy:trackId">
                 {{ genre.name }}
               </span>
             </p>
+            <ng-template #noGenres>
+              <p
+                class="tw-text-gray-400 tw-italic tw-text-base md:tw-text-lg tw-font-semibold tw-text-center md:tw-text-left tw-mb-4 tw-space-x-2">
+                No genres found
+              </p>
+            </ng-template>
             <div class="tw-text-center md:tw-text-left tw-mt-2">
               <button type="button" role="navigation" aria-label="Play media" pButton icon="pi pi-play" iconPos="left"
                 label="Play" [routerLink]="['/watch', media._id]"

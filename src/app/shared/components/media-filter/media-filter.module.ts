@@ -7,10 +7,11 @@ import { DropdownModule } from 'primeng/dropdown';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { InputTextModule } from 'primeng/inputtext';
 import { ToggleButtonModule } from 'primeng/togglebutton';
-import {TooltipModule} from 'primeng/tooltip';
+import { TooltipModule } from 'primeng/tooltip';
 
 import { MediaFilterComponent } from './media-filter.component';
 import { MediaFilterService } from './media-filter.service';
+import { FormDirectiveModule } from '../../directives/form-directive';
 
 @NgModule({
   declarations: [MediaFilterComponent],
@@ -18,6 +19,7 @@ import { MediaFilterService } from './media-filter.service';
     CommonModule,
     ReactiveFormsModule,
     TranslocoModule,
+    FormDirectiveModule,
     ButtonModule,
     DropdownModule,
     MultiSelectModule,

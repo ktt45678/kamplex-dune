@@ -1,4 +1,5 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild, Renderer2, Inject } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmationService } from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
@@ -19,8 +20,7 @@ import { MediaStatus, MediaType } from '../../../../core/enums';
   selector: 'app-media',
   templateUrl: './media.component.html',
   styleUrls: ['./media.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [MediaService]
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MediaComponent implements OnInit {
   MediaType = MediaType;
@@ -31,8 +31,9 @@ export class MediaComponent implements OnInit {
   rowsPerPage: number = 10;
   mediaList?: Paginated<Media>;
 
-  constructor(private ref: ChangeDetectorRef, private route: ActivatedRoute, private router: Router,
-    public dialogService: DialogService, private confirmationService: ConfirmationService, private mediaService: MediaService) { }
+  constructor(@Inject(DOCUMENT) private document: Document, private ref: ChangeDetectorRef, private renderer: Renderer2,
+    private route: ActivatedRoute, private router: Router, public dialogService: DialogService,
+    private confirmationService: ConfirmationService, private mediaService: MediaService) { }
 
   ngOnInit(): void {
 
@@ -49,8 +50,9 @@ export class MediaComponent implements OnInit {
       if (this.mediaTable.sortField) {
         params.sort = `${sortOrder}(${this.mediaTable.sortField})`;
       }
-      if (this.mediaTable.filters['title'] && !Array.isArray(this.mediaTable.filters['title'])) {
-        (params.search = this.mediaTable.filters['title'].value);
+      if (this.mediaTable.filters['title'] && !Array.isArray(this.mediaTable.filters['title'])
+        && this.mediaTable.filters['title'].value.length >= 3) {
+        params.search = this.mediaTable.filters['title'].value;
       }
     } else {
       params.page = 1;
@@ -96,8 +98,8 @@ export class MediaComponent implements OnInit {
       width: '100%',
       height: '100%',
       modal: true,
-      styleClass: 'p-dialog-header-sm',
-      contentStyle: { 'margin-top': '-1.5rem' }
+      showHeader: false,
+      styleClass: 'p-dialog-header-sm !tw-max-h-full'
     });
   }
 
@@ -137,12 +139,12 @@ export class MediaComponent implements OnInit {
   uploadPoster(media: Media, event: Event) {
     const element = <HTMLInputElement>event.target;
     if (!element.files?.length) return;
-    element.disabled = true;
+    this.renderer.setProperty(element, 'disabled', true);
     this.mediaService.uploadPoster(media._id, element.files[0]).subscribe({
       next: () => this.loadMedia()
     }).add(() => {
-      if (document.body.contains(element)) {
-        element.disabled = false;
+      if (this.document.body.contains(element)) {
+        this.renderer.setProperty(element, 'disabled', false);
         this.ref.markForCheck();
       }
     });
@@ -158,10 +160,10 @@ export class MediaComponent implements OnInit {
       defaultFocus: 'none',
       accept: () => {
         const element = <HTMLButtonElement>event.target;
-        element.disabled = true;
+        this.renderer.setProperty(element, 'disabled', true);
         this.ref.markForCheck();
         this.mediaService.deletePoster(media._id).subscribe().add(() => {
-          element.disabled = true;
+          this.renderer.setProperty(element, 'disabled', false);
           this.loadMedia();
         });
       }
@@ -171,12 +173,12 @@ export class MediaComponent implements OnInit {
   uploadBackdrop(media: Media, event: Event) {
     const element = <HTMLInputElement>event.target;
     if (!element.files?.length) return;
-    element.disabled = true;
+    this.renderer.setProperty(element, 'disabled', true);
     this.mediaService.uploadBackdrop(media._id, element.files[0]).subscribe({
       next: () => this.loadMedia()
     }).add(() => {
-      if (document.body.contains(element)) {
-        element.disabled = false;
+      if (this.document.body.contains(element)) {
+        this.renderer.setProperty(element, 'disabled', false);
         this.ref.markForCheck();
       }
     });
@@ -192,10 +194,10 @@ export class MediaComponent implements OnInit {
       defaultFocus: 'none',
       accept: () => {
         const element = <HTMLButtonElement>event.target;
-        element.disabled = true;
+        this.renderer.setProperty(element, 'disabled', true);
         this.ref.markForCheck();
         this.mediaService.deleteBackdrop(media._id).subscribe().add(() => {
-          element.disabled = true;
+          this.renderer.setProperty(element, 'disabled', false);
           this.loadMedia();
         });
       }

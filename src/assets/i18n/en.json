@@ -128,8 +128,26 @@
       }
     },
     "addMediaVideo": {
+      "name": {
+        "maxlength": "Name must not be longer than 50 characters"
+      },
       "url": {
         "required": "URL is required"
+      }
+    },
+    "updateMediaVideo": {
+      "name": {
+        "maxlength": "{{ validationErrors.addMediaVideo.name.maxlength }}"
+      }
+    },
+    "addMediaSubtitle": {
+      "language": {
+        "required": "Subtitle language is required"
+      },
+      "file": {
+        "required": "File is required",
+        "maxFileSize": "Maximum file size is 500KB",
+        "fileExtension": "Invalid subtitle file"
       }
     }
   }

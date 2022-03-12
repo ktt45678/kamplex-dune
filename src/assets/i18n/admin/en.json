@@ -1,4 +1,13 @@
 {
+  "menu": {
+    "media": "Media",
+    "genres": "Genres",
+    "producers": "Producers",
+    "users": "Users",
+    "roles": "Roles",
+    "auditLog": "Audit Log",
+    "settings": "Settings"
+  },
   "createGenre": {
     "formHeader": "Create Genre",
     "name": "Name",
@@ -16,7 +25,7 @@
   "updateGenre": {
     "formHeader": "Update Genre",
     "name": "{{ admin.createGenre.name }}",
-    "isTranslation": "Is this a translation?",
+    "isTranslation": "Translate to other language?",
     "translate": "Select language",
     "cancel": "{{ admin.createGenre.cancel }}",
     "submit": "Save Changes"
@@ -53,13 +62,54 @@
     "year": "Year",
     "visibility": "Visibility",
     "status": "Status",
-    "cancel": "Cancel",
+    "cancel": "{{ admin.createGenre.cancel }}",
     "submit": "Create"
   },
+  "configureMedia": {
+    "videos": "{{ media.details.videos }}",
+    "addVideo": "Add Video",
+    "updateVideo": "Edit",
+    "deleteVideo": "Delete",
+    "subtitles": "Subtitles",
+    "language": "Language",
+    "noSubtitles": "No subtitles found",
+    "addSubtitle": "Add Subtitle",
+    "source": "Source",
+    "noSource": "No source was found",
+    "addSource": "Add Source"
+  },
   "addMediaVideo": {
-    "name": "Name",
+    "formHeader": "{{ admin.configureMedia.addVideo }}",
+    "name": "Name (Optional)",
     "url": "YouTube URL",
-    "submit": "Add Video"
+    "previewVideo": "Preview",
+    "submit": "Add",
+    "cancel": "{{ admin.createGenre.cancel }}"
+  },
+  "updateMediaVideo": {
+    "formHeader": "Update Video",
+    "name": "{{ admin.addMediaVideo.name }}",
+    "url": "{{ admin.addMediaVideo.url }}",
+    "previewVideo": "{{ admin.addMediaVideo.previewVideo }}",
+    "isTranslation": "{{ admin.updateGenre.isTranslation }}",
+    "translate": "{{ admin.updateGenre.translate }}",
+    "submit": "{{ admin.updateGenre.submit }}",
+    "cancel": "{{ admin.createGenre.cancel }}"
+  },
+  "addMediaSubtitle": {
+    "formHeader": "{{ admin.configureMedia.addSubtitle }}",
+    "language": "Subtitle language",
+    "languagePlaceholder": "Select a language",
+    "file": "Subtitle file",
+    "chooseFile": "Choose File",
+    "submit": "{{ admin.addMediaVideo.submit }}",
+    "cancel": "{{ admin.createGenre.cancel }}"
+  },
+  "addMediaSource": {
+    "formHeader": "{{ admin.configureMedia.addSource }}",
+    "chooseFile": "{{ admin.addMediaSubtitle.chooseFile }}",
+    "submit": "{{ admin.addMediaVideo.submit }}",
+    "cancel": "{{ admin.createGenre.cancel }}"
   },
   "genres": {
     "searchPlaceholder": "Search...",
@@ -87,7 +137,7 @@
     "movie": "Movie",
     "tv": "TV Show",
     "runtimeValue": "{{ runtime }} min",
-    "episodeCountValue": "{ episodeCount, plural, =0 {no episodes} one {1 episode} other {# episodes} }",
+    "episodeCountValue": "{ episodeCount, plural, =0 {No episodes} one {1 episode} other {# episodes} }",
     "episodeRuntimeValue": "({{ runtime }} min each)",
     "backdrop": "Backdrop",
     "rating": "Rating",

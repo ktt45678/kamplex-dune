@@ -3,7 +3,7 @@
     <p-progressBar mode="indeterminate" [ngClass]="isSigningUp ? 'tw-visible' : 'tw-invisible'"></p-progressBar>
     <div class="tw-px-10 tw-py-14 tw-shadow-md">
       <h3 class="tw-text-white tw-text-3xl tw-font-bold tw-text-center tw-mb-8">{{ t('auth.signUp.formHeader') }}</h3>
-      <form [formGroup]="signUpForm" (ngSubmit)="onsignUpFormSubmit()">
+      <form [formGroup]="signUpForm" formHandler (ngSubmit)="onsignUpFormSubmit()">
         <span class="p-float-label">
           <input formControlName="username" class="tw-w-full" id="username" type="text"
             aria-describedby="username-error" pInputText [disabledControl]="isSigningUp" controlAutofocus>

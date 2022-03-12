@@ -1,21 +1,23 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
+import { takeUntil } from 'rxjs';
 
-import { GenresService } from '../../../../core/services';
+import { DestroyService, GenresService } from '../../../../core/services';
 
 @Component({
   selector: 'app-create-genre',
   templateUrl: './create-genre.component.html',
   styleUrls: ['./create-genre.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [GenresService]
+  providers: [DestroyService]
 })
 export class CreateGenreComponent implements OnInit {
-  isCreatingGenre: boolean = false;
+  creatingGenre: boolean = false;
   createGenreForm: FormGroup;
 
-  constructor(private ref: ChangeDetectorRef, private dialogRef: DynamicDialogRef, private genresService: GenresService) {
+  constructor(private ref: ChangeDetectorRef, private dialogRef: DynamicDialogRef, private genresService: GenresService,
+    private destroyService: DestroyService) {
     this.createGenreForm = new FormGroup({
       name: new FormControl('', [Validators.required, Validators.maxLength(32)])
     });
@@ -26,13 +28,13 @@ export class CreateGenreComponent implements OnInit {
 
   onCreateGenreFormSubmit(): void {
     if (this.createGenreForm.invalid) return;
-    this.isCreatingGenre = true;
+    this.creatingGenre = true;
     this.genresService.create({
       name: this.createGenreForm.value['name']
-    }).subscribe({
+    }).pipe(takeUntil(this.destroyService)).subscribe({
       next: () => this.dialogRef.close(true),
       error: () => {
-        this.isCreatingGenre = false;
+        this.creatingGenre = false;
         this.ref.markForCheck();
       }
     });

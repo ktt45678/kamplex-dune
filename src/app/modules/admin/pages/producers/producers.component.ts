@@ -16,8 +16,7 @@ import { UpdateProducerComponent } from '../../dialogs/update-producer';
   selector: 'app-producers',
   templateUrl: './producers.component.html',
   styleUrls: ['./producers.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [ProducersService]
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProducersComponent implements OnInit {
   @ViewChild('producerTable') producerTable?: Table;

@@ -22,7 +22,6 @@ import { MediaFilterService } from './media-filter.service';
   ]
 })
 export class MediaFilterComponent implements OnInit {
-
   showAdvanced: boolean = false;
   languages?: DropdownOptionDto[];
   genres?: Genre[];

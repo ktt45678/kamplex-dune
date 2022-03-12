@@ -16,8 +16,7 @@ import { UpdateGenreComponent } from '../../dialogs/update-genre';
   selector: 'app-genres',
   templateUrl: './genres.component.html',
   styleUrls: ['./genres.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [GenresService]
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GenresComponent implements OnInit {
   @ViewChild('genreTable') genreTable?: Table;

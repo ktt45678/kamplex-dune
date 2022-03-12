@@ -1,0 +1,55 @@
+<ng-container *transloco="let t">
+  <h3 class="tw-text-white tw-text-2xl tw-font-bold tw-text-center tw-mb-4">
+    {{ t('admin.addMediaVideo.formHeader') }}
+  </h3>
+  <form [formGroup]="addVideoForm" formHandler (ngSubmit)="onAddVideoFormSubmit()">
+    <div class="tw-flex tw-flex-wrap">
+      <div class="tw-w-full md:tw-w-2/5">
+        <label for="name" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
+          {{ t('admin.addMediaVideo.name') }}
+        </label>
+        <input formControlName="name" class="tw-w-full" id="name" type="text" aria-describedby="name-error" pInputText
+          [disabledControl]="addingVideo">
+        <small id="name-error"
+          class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
+          [ngClass]="(addVideoForm.controls['name'].dirty || addVideoForm.controls['name'].touched)
+            && addVideoForm.controls['name'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
+          {{ addVideoForm.controls['name'].errors | firstErrorKey:'addMediaVideo':'name' }}
+        </small>
+      </div>
+      <div class="tw-w-full md:tw-w-3/5 md:tw-pl-2">
+        <label for="url" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
+          {{ t('admin.addMediaVideo.url') }}
+        </label>
+        <input formControlName="url" class="tw-w-full" id="url" type="text" aria-describedby="url-error" pInputText
+          [disabledControl]="addingVideo" controlAutofocus>
+        <small id="url-error"
+          class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
+          [ngClass]="(addVideoForm.controls['url'].dirty || addVideoForm.controls['url'].touched)
+            && addVideoForm.controls['url'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
+          {{ addVideoForm.controls['url'].errors | firstErrorKey:'addMediaVideo':'url' }}
+        </small>
+      </div>
+    </div>
+    <div class="tw-aspect-w-16 tw-aspect-h-9 tw-mt-2">
+      <iframe *ngIf="previewVideoKey; else noPreviewVideo"
+        [src]="youtubeUrl + previewVideoKey + '?autoplay=0' | safeUrl: 'resourceUrl'" allowfullscreen width="100%"
+        height="auto" class="tw-rounded-md"></iframe>
+      <ng-template #noPreviewVideo>
+        <div class="tw-flex tw-justify-center tw-items-center tw-rounded-md tw-border-2">
+          <span>{{ t('admin.addMediaVideo.previewVideo') }}</span>
+        </div>
+      </ng-template>
+    </div>
+    <div class="tw-flex tw-mt-4">
+      <div class="tw-ml-auto">
+        <button pButton type="button" [label]="t('admin.addMediaVideo.cancel')" (click)="onAddVideoFormCancel()"
+          class="p-button-text p-button-secondary p-button-sm">
+        </button>
+        <button pButton type="submit" class="p-button p-button-sm tw-ml-1" [label]="t('admin.addMediaVideo.submit')"
+          [disabled]="addingVideo">
+        </button>
+      </div>
+    </div>
+  </form>
+</ng-container>

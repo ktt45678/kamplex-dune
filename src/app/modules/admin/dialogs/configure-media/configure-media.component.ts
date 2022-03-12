@@ -1,14 +1,18 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, Renderer2, Inject } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { ConfirmationService } from 'primeng/api';
-import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { delay } from 'rxjs';
-import Swiper, { SwiperOptions } from 'swiper';
+import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { first } from 'rxjs';
+import { SwiperOptions } from 'swiper';
 
-import { MediaType } from '../../../../core/enums';
-import { MediaDetails, MediaVideo } from '../../../../core/models';
+import { MediaStatus, MediaType } from '../../../../core/enums';
+import { MediaDetails, MediaVideo, MediaSubtitle } from '../../../../core/models';
 import { MediaService } from '../../../../core/services';
+import { AddVideoComponent } from '../add-video';
+import { AddSubtitleComponent } from '../add-subtitle';
+import { UpdateVideoComponent } from '../update-video';
+import { AddSourceComponent } from '../add-source';
 
 @Component({
   selector: 'app-configure-media',
@@ -16,40 +20,46 @@ import { MediaService } from '../../../../core/services';
   styleUrls: ['./configure-media.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
-    MediaService,
     {
       provide: TRANSLOCO_SCOPE,
-      useValue: 'media'
+      useValue: 'media',
+      multi: true
+    },
+    {
+      provide: TRANSLOCO_SCOPE,
+      useValue: 'languages',
+      multi: true
     }
   ]
 })
 export class ConfigureMediaComponent implements OnInit {
   MediaType = MediaType;
+  MediaStatus = MediaStatus;
   loadingMedia: boolean = false;
+  loadingVideo: boolean = false;
   displayVideo: boolean = false;
-  isAddingVideo: boolean = false;
+  deletingVideo: boolean = false;
   activeVideoIndex: number = 0;
   youtubeUrl = 'https://www.youtube.com/embed/';
   youtubeThumbnailUrl = 'https://img.youtube.com/vi/';
   media?: MediaDetails;
 
-  addVideoForm: FormGroup;
   swiperConfig: SwiperOptions;
 
-  constructor(private ref: ChangeDetectorRef, private dialogRef: DynamicDialogRef, private config: DynamicDialogConfig,
+  constructor(@Inject(DOCUMENT) private document: Document, private ref: ChangeDetectorRef, private renderer: Renderer2,
+    private dialogRef: DynamicDialogRef, private config: DynamicDialogConfig, public dialogService: DialogService,
     private confirmationService: ConfirmationService, private mediaService: MediaService) {
-    this.addVideoForm = new FormGroup({
-      name: new FormControl(''),
-      url: new FormControl('', [Validators.required])
-    });
     this.swiperConfig = {
       autoplay: false,
-      navigation: true,
+      navigation: {
+        prevEl: '#swiper-prev-video',
+        nextEl: '#swiper-next-video'
+      },
       loop: false,
       pagination: false,
       allowTouchMove: true,
       slidesPerView: 1,
-      spaceBetween: 5,
+      spaceBetween: 6,
       breakpoints: {
         640: {
           slidesPerView: 2
@@ -79,33 +89,63 @@ export class ConfigureMediaComponent implements OnInit {
 
   loadVideos(): void {
     const mediaId = this.config.data['_id'];
+    this.loadingVideo = true;
     this.mediaService.findAllVideos(mediaId).subscribe(videos => {
-      if (this.media) {
-        this.media = { ...this.media, videos };
-        this.ref.markForCheck();
-      }
+      if (!this.media) return;
+      this.media = { ...this.media, videos };
+    }).add(() => {
+      this.loadingVideo = false;
+      this.ref.detectChanges();
     });
   }
 
   viewVideo(index: number): void {
+    if (this.loadingVideo) return;
     this.activeVideoIndex = index;
     this.displayVideo = true;
   }
 
-  onAddVideoFormSubmit(): void {
-    const mediaId = this.config.data['_id'];
-    this.mediaService.addVideo(mediaId, {
-      name: this.addVideoForm.value['name'],
-      url: this.addVideoForm.value['url'],
-    }).subscribe({
-      next: () => this.loadVideos()
-    }).add(() => {
-      this.addVideoForm.reset();
+  showAddVideoDialog(): void {
+    if (!this.media) return;
+    const dialogRef = this.dialogService.open(AddVideoComponent, {
+      data: this.media,
+      width: '700px',
+      modal: true,
+      dismissableMask: true,
+      styleClass: 'p-dialog-header-sm',
+      contentStyle: { 'margin-top': '-1.5rem' }
+    });
+    dialogRef.onClose.pipe(first()).subscribe((videos: MediaVideo[]) => {
+      if (!videos || !this.media) return;
+      this.media = { ...this.media, videos };
       this.ref.markForCheck();
+    });
+    dialogRef.onDestroy.pipe(first()).subscribe(() => {
+      this.blockScroll();
     });
   }
 
-  deleteVideo(video: MediaVideo, event: Event) {
+  showUpdateVideoDialog(video: MediaVideo): void {
+    if (!this.media) return;
+    const dialogRef = this.dialogService.open(UpdateVideoComponent, {
+      data: { media: this.media, video },
+      width: '700px',
+      modal: true,
+      dismissableMask: true,
+      styleClass: 'p-dialog-header-sm',
+      contentStyle: { 'margin-top': '-1.5rem' }
+    });
+    dialogRef.onClose.pipe(first()).subscribe((videos: MediaVideo[]) => {
+      if (!videos || !this.media) return;
+      this.media = { ...this.media, videos };
+      this.ref.markForCheck();
+    });
+    dialogRef.onDestroy.pipe(first()).subscribe(() => {
+      this.blockScroll();
+    });
+  }
+
+  deleteVideo(video: MediaVideo, event: Event): void {
     const mediaId = this.config.data['_id'];
     this.confirmationService.confirm({
       key: 'inModal',
@@ -115,25 +155,91 @@ export class ConfigureMediaComponent implements OnInit {
       defaultFocus: 'none',
       accept: () => {
         const element = event.target instanceof HTMLButtonElement ? event.target : <HTMLButtonElement>(<HTMLSpanElement>event.target).parentElement;
-        element.disabled = true;
+        this.renderer.setProperty(element, 'disabled', true);
         this.ref.markForCheck();
         this.mediaService.deleteVideo(mediaId, video._id).subscribe({
-          next: () => this.loadVideos(),
+          next: () => {
+            if (!this.media) return;
+            const videos = this.media.videos.filter(v => v._id !== video._id);
+            this.media = { ...this.media, videos };
+          },
           error: () => {
-            element.disabled = false;
-            this.ref.markForCheck();
+            this.renderer.setProperty(element, 'disabled', false);
           }
-        });
+        }).add(() => this.ref.markForCheck());
       }
     });
   }
 
-  onUpdateVideoSwiper(swiper: any) {
-    swiper.activeIndex = swiper.activeIndex + 1;
+  showAddSubtitleDialog(): void {
+    if (!this.media) return;
+    const dialogRef = this.dialogService.open(AddSubtitleComponent, {
+      data: this.media,
+      width: '500px',
+      modal: true,
+      dismissableMask: true,
+      styleClass: 'p-dialog-header-sm',
+      contentStyle: { 'margin-top': '-1.5rem' }
+    });
+    dialogRef.onClose.pipe(first()).subscribe((subtitles: MediaSubtitle[]) => {
+      if (!subtitles || !this.media) return;
+      this.media = { ...this.media, movie: { ...this.media.movie, subtitles } };
+      this.ref.markForCheck();
+    });
+    dialogRef.onDestroy.pipe(first()).subscribe(() => {
+      this.blockScroll();
+    });
+  }
+
+  deleteSubtitle(subtitle: MediaSubtitle, event: Event): void {
+    const mediaId = this.config.data['_id'];
+    this.confirmationService.confirm({
+      key: 'inModal',
+      message: `Are you sure you want to delete this subtitle? This action cannot be undone.`,
+      header: 'Delete Subtitle',
+      icon: 'pi pi-info-circle',
+      defaultFocus: 'none',
+      accept: () => {
+        const element = event.target instanceof HTMLButtonElement ? event.target : <HTMLButtonElement>(<HTMLSpanElement>event.target).parentElement;
+        this.renderer.setProperty(element, 'disabled', true);
+        this.ref.markForCheck();
+        this.mediaService.deleteMovieSubtitle(mediaId, subtitle._id).subscribe({
+          next: () => {
+            if (!this.media) return;
+            const subtitles = this.media.movie.subtitles.filter(v => v._id !== subtitle._id);
+            this.media = { ...this.media, movie: { ...this.media.movie, subtitles } };
+          },
+          error: () => {
+            this.renderer.setProperty(element, 'disabled', false);
+          }
+        }).add(() => this.ref.markForCheck());
+      }
+    });
+  }
+
+  showAddSourceDialog(): void {
+    if (!this.media) return;
+    const dialogRef = this.dialogService.open(AddSourceComponent, {
+      data: this.media,
+      width: '500px',
+      modal: true,
+      dismissableMask: true,
+      styleClass: 'p-dialog-header-sm',
+      contentStyle: { 'margin-top': '-1.5rem' }
+    });
+    //dialogRef.onClose.pipe(first()).subscribe() => {
+    //});
+    dialogRef.onDestroy.pipe(first()).subscribe(() => {
+      this.blockScroll();
+    });
   }
 
   blockScroll(): void {
-    document.body.classList.add('p-overflow-hidden');
+    this.renderer.addClass(this.document.body, 'p-overflow-hidden');
+  }
+
+  closeDialog(): void {
+    this.dialogRef.close();
   }
 
   trackId(index: number, item: any): any {

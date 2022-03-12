@@ -2,7 +2,7 @@
   <h3 class="tw-text-white tw-text-2xl tw-font-bold tw-text-center tw-mb-4">
     {{ t('admin.createMedia.formHeader') }}
   </h3>
-  <form [formGroup]="createMediaForm" (ngSubmit)="onCreateMediaFormSubmit()">
+  <form [formGroup]="createMediaForm" formHandler (ngSubmit)="onCreateMediaFormSubmit()">
     <div class="p-scrollbar tw-overflow-y-auto tw-h-[calc(80vh-6rem)] tw-px-6">
       <div class="tw-flex tw-flex-wrap">
         <div class="tw-w-full md:tw-w-1/2">

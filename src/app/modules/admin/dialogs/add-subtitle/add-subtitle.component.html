@@ -1,0 +1,54 @@
+<ng-container *transloco="let t">
+  <h3 class="tw-text-white tw-text-2xl tw-font-bold tw-text-center tw-mb-4">
+    {{ t('admin.addMediaSubtitle.formHeader') }}
+  </h3>
+  <form [formGroup]="addSubtitleForm" formHandler (ngSubmit)="onAddSubtitleFormSubmit()">
+    <label for="language" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
+      {{ t('admin.addMediaSubtitle.language') }}
+    </label>
+    <p-dropdown formControlName="language" [placeholder]="t('admin.addMediaSubtitle.languagePlaceholder')"
+      [options]="languages || []" [baseZIndex]="100" scrollHeight="400px" [showClear]="true" appendTo="body"
+      [disabledControl]="addingSubtitle" styleClass="tw-w-full"
+      panelStyleClass="md:tw-dropdown-cols-4 md:tw-max-w-2xl p-dropdown-xs">
+    </p-dropdown>
+    <small id="language-error"
+      class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
+      [ngClass]="(addSubtitleForm.controls['language'].dirty || addSubtitleForm.controls['language'].touched)
+              && addSubtitleForm.controls['language'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
+      {{ addSubtitleForm.controls['language'].errors | firstErrorKey:'addMediaSubtitle':'language' }}
+    </small>
+    <input formControlName="file" hidden="true" [value]="null" aria-describedby="file-error" />
+    <app-file-upload accept=".vtt" [label]="t('admin.addMediaSubtitle.chooseFile')" [disabled]="addingSubtitle"
+      (onFileChange)="addSubtitleToForm($event)">
+    </app-file-upload>
+    <!--label for="file" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
+      {{ t('admin.addMediaSubtitle.file') }}
+    </label>
+    <input #inputSubtitle hidden="true" type="file" onclick="this.value = null" (change)="getFileFromInput($event)"
+      accept=".vtt" />
+    <div class="p-inputgroup">
+      <input formControlName="file" class="p-inputtext-sm tw-w-full" id="file" type="text"
+        [value]="addSubtitleForm.controls['file'].value?.name" aria-describedby="file-error" pInputText readonly
+        [disabledControl]="addingSubtitle">
+      <button pButton type="button" class="p-button-secondary" icon="pi pi-upload" ariaLabel="Select subtitle"
+        (click)="inputSubtitle.click()" [disabled]="addingSubtitle">
+      </button>
+    </div-->
+    <small id="file-error"
+      class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
+      [ngClass]="(addSubtitleForm.controls['file'].dirty || addSubtitleForm.controls['file'].touched)
+              && addSubtitleForm.controls['file'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
+      {{ addSubtitleForm.controls['file'].errors | firstErrorKey:'addMediaSubtitle':'file' }}
+    </small>
+    <div class="tw-flex tw-mt-4">
+      <div class="tw-ml-auto">
+        <button pButton type="button" [label]="t('admin.addMediaSubtitle.cancel')" (click)="onAddSubtitleFormCancel()"
+          class="p-button-text p-button-secondary p-button-sm">
+        </button>
+        <button pButton type="submit" class="p-button p-button-sm tw-ml-1" [label]="t('admin.addMediaSubtitle.submit')"
+          [disabled]="addingSubtitle">
+        </button>
+      </div>
+    </div>
+  </form>
+</ng-container>

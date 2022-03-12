@@ -18,7 +18,7 @@ export class BaseUrlInterceptor implements HttpInterceptor {
     this.authService.accessTokenValue && (headers.Authorization = this.authService.accessTokenValue);
     const apiReq = request.clone({
       url: canInsertBaseUrl ? `${environment.apiUrl}/${request.url}` : request.url,
-      setHeaders: headers
+      setHeaders: canInsertBaseUrl ? headers : {}
     });
     return next.handle(apiReq);
   }

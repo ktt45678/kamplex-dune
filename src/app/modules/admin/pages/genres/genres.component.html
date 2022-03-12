@@ -1,5 +1,5 @@
 <ng-container *transloco="let t">
-  <div class="tw-bg-neutral-850 tw-rounded-md tw-m-4 tw-p-4">
+  <div class="tw-bg-neutral-850 tw-rounded-md tw-mx-4 tw-p-4">
     <p-toolbar styleClass="tw-mb-4">
       <ng-template pTemplate="left">
         <span class="p-input-icon-left">
@@ -10,7 +10,7 @@
         </span>
       </ng-template>
       <ng-template pTemplate="right">
-        <button pButton pRipple [label]="t('admin.genres.create')" icon="pi pi-plus" class="p-button"
+        <button pButton [label]="t('admin.genres.create')" icon="pi pi-plus" class="p-button"
           (click)="showCreateGenreDialog()">
         </button>
       </ng-template>
@@ -46,8 +46,7 @@
               class="p-button-outlined p-button-rounded p-button-success p-button-sm tw-mr-2"
               (click)="showUpdateGenreDialog(genre)">
             </button>
-            <button pButton pRipple icon="pi pi-trash"
-              class="p-button-outlined p-button-rounded p-button-danger p-button-sm"
+            <button pButton icon="pi pi-trash" class="p-button-outlined p-button-rounded p-button-danger p-button-sm"
               (click)="showDeleteGenreDialog(genre)">
             </button>
           </td>

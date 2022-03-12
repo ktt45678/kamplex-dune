@@ -1,23 +1,24 @@
 <ng-container *transloco="let t">
-  <div class="tw-bg-neutral-850 tw-rounded-md tw-m-4 tw-p-4">
-    <p-toolbar styleClass="tw-mb-4">
-      <ng-template pTemplate="left">
-        <span class="p-input-icon-left">
+  <div class="tw-bg-neutral-850 tw-rounded-md tw-mx-4 tw-p-4">
+    <div class="tw-flex tw-flex-wrap tw-mb-4">
+      <div class="tw-w-full md:tw-w-auto tw-mr-auto tw-mt-2 md:tw-mt-0">
+        <span class="p-input-icon-left tw-w-full">
           <i class="pi pi-search"></i>
-          <input pInputText class="p-inputtext-sm" type="text"
+          <input pInputText class="p-inputtext-sm tw-w-full" type="text"
             (input)="mediaTable.filter($any($event).target.value, 'title', 'contains')"
             [placeholder]="t('admin.media.searchPlaceholder')" />
         </span>
-      </ng-template>
-      <ng-template pTemplate="right">
-        <button pButton pRipple [label]="t('admin.media.createMovie')" icon="pi pi-plus" class="p-button"
+      </div>
+      <div class="tw-w-full tw-ml-auto tw-mt-2 md:tw-mt-0 md:tw-w-auto">
+        <button pButton [label]="t('admin.media.createMovie')" icon="pi pi-plus" class="p-button tw-w-full sm:tw-w-auto"
           (click)="showCreateMediaDialog(MediaType.MOVIE)">
         </button>
-        <button pButton pRipple [label]="t('admin.media.createTV')" icon="pi pi-plus" class="p-button tw-ml-2"
+        <button pButton [label]="t('admin.media.createTV')" icon="pi pi-plus"
+          class="p-button tw-w-full sm:tw-w-auto sm:tw-ml-2 tw-mt-2 sm:tw-mt-0"
           (click)="showCreateMediaDialog(MediaType.TV)">
         </button>
-      </ng-template>
-    </p-toolbar>
+      </div>
+    </div>
     <p-table #mediaTable styleClass="p-datatable-sm tw-bg-neutral-875 tw-p-4 tw-rounded-md"
       [value]="mediaList?.results || []" [rows]="rowsPerPage" [totalRecords]="mediaList?.totalResults || 0"
       [paginator]="true" [rowsPerPageOptions]="[10, 25, 50]" responsiveLayout="scroll" [rowTrackBy]="trackId"
@@ -37,9 +38,6 @@
           <th class="tw-w-52">
             {{ t('admin.media.episodesOrDuration') }}
           </th>
-          <th class="tw-w-64">
-            {{ t('admin.media.backdrop') }}
-          </th>
           <th class="tw-w-36">
             {{ t('admin.media.releaseDate') }}
           </th>
@@ -49,7 +47,7 @@
           <th class="tw-w-20">
             {{ t('admin.media.status') }}
           </th>
-          <th class="tw-w-48"></th>
+          <th class="tw-w-32"></th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-media>
@@ -73,7 +71,7 @@
             </div>
             <ng-template #noPoster>
               <button
-                class="tw-bg-transparent tw-text-white tw-w-24 tw-rounded-md tw-border-white tw-border-2 tw-border-dashed disabled:tw-border-gray-500 disabled:tw-text-gray-500"
+                class="tw-bg-transparent tw-text-white tw-w-24 tw-rounded-md tw-border-2 tw-border-dashed disabled:tw-border-gray-500 disabled:tw-text-gray-500"
                 (click)="inputPoster.click()" pTooltip="Add a poster" [showDelay]="1000"
                 [disabled]="inputPoster.disabled">
                 <div class="tw-aspect-w-2 tw-aspect-h-3">
@@ -101,37 +99,6 @@
               <p>{{ t('admin.media.episodeRuntimeValue', { runtime: media.runtime }) }}</p>
             </td>
           </ng-template>
-          <td class="tw-w-52">
-            <input #inputBackdrop hidden="true" type="file" onclick="this.value = null"
-              (change)="uploadBackdrop(media, $event)" accept=".jpg, .jpeg, .png" />
-            <div *ngIf="media.thumbnailBackdropUrl; else noBackdrop" class="tw-w-48">
-              <div class="tw-aspect-w-16 tw-aspect-h-9">
-                <img class="tw-rounded-md" [src]="media.thumbnailBackdropUrl" [alt]="media.title">
-                <div class="row-image-actions tw-flex tw-justify-center tw-items-center">
-                  <button pButton type="button" icon="pi pi-images" pTooltip="Change this backdrop" [showDelay]="1000"
-                    (click)="inputBackdrop.click()" [disabled]="inputBackdrop.disabled"
-                    class="p-button-rounded p-button-success p-button-sm">
-                  </button>
-                  <button pButton type="button" icon="pi pi-times" pTooltip="Delete this backdrop" [showDelay]="1000"
-                    (click)="deleteBackdrop(media, $event)"
-                    class="p-button-rounded p-button-danger p-button-sm tw-ml-1">
-                  </button>
-                </div>
-              </div>
-            </div>
-            <ng-template #noBackdrop>
-              <button
-                class="tw-bg-transparent tw-text-white tw-w-48 tw-rounded-md tw-border-white tw-border-2 tw-border-dashed disabled:tw-border-gray-500 disabled:tw-text-gray-500"
-                (click)="inputBackdrop.click()" pTooltip="Add a backdrop" [showDelay]="1000"
-                [disabled]="inputBackdrop.disabled">
-                <div class="tw-aspect-w-16 tw-aspect-h-9">
-                  <div class="tw-flex tw-justify-center tw-items-center">
-                    <i class="pi pi-plus"></i>
-                  </div>
-                </div>
-              </button>
-            </ng-template>
-          </td>
           <td class="tw-w-36 tw-text-sm">{{ media.releaseDate | shortDate }}</td>
           <td class="tw-w-auto tw-text-sm">
             <i class="pi pi-star-fill tw-text-yellow-500"></i> {{ media.ratingAverage }}
@@ -147,10 +114,6 @@
             <button pButton icon="pi pi-cog"
               class="p-button-outlined p-button-rounded p-button-info p-button-sm tw-mr-2"
               (click)="showConfigureMediaDialog(media)">
-            </button>
-            <button pButton icon="pi pi-pencil"
-              class="p-button-outlined p-button-rounded p-button-success p-button-sm tw-mr-2"
-              (click)="showUpdateMediaDialog(media)">
             </button>
             <button pButton icon="pi pi-trash" class="p-button-outlined p-button-rounded p-button-danger p-button-sm"
               [disabled]="media.pStatus === MediaStatus.PROCESSING" (click)="showDeleteMediaDialog(media)">

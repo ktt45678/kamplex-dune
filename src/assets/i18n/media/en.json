@@ -6,6 +6,7 @@
     "producers": "Producers",
     "noProducers": "No producers found",
     "releaseDate": "Release date",
+    "videos": "Videos",
     "noVideos": "No videos found",
     "episodeCountValue": "{{ episodeCount }} episodes",
     "originalTitle": "Original title"

@@ -12,7 +12,6 @@ import { MediaService } from '../../../../core/services';
   styleUrls: ['./view-media.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
-    MediaService,
     {
       provide: TRANSLOCO_SCOPE,
       useValue: 'media'

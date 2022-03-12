@@ -1,0 +1,15 @@
+<ng-container *transloco="let t">
+  <h3 class="tw-text-white tw-text-2xl tw-font-bold tw-text-center tw-mb-4">
+    {{ t('admin.addMediaSource.formHeader') }}
+  </h3>
+  <app-file-upload accept=".mp4, .mkv, .webm" [label]="t('admin.addMediaSource.chooseFile')" [disabled]="addingSource"
+    (onFileChange)="uploadFile($event)">
+  </app-file-upload>
+  <div class="tw-flex tw-mt-4">
+    <div class="tw-ml-auto">
+      <button pButton type="button" [label]="t('admin.addMediaSubtitle.cancel')" (click)="onAddSourceFormCancel()"
+        class="p-button-text p-button-secondary p-button-sm">
+      </button>
+    </div>
+  </div>
+</ng-container>

@@ -1,17 +1,17 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { first } from 'rxjs';
+import { first, takeUntil } from 'rxjs';
 
 import { DropdownOptionDto } from '../../../../core/dto/media';
-import { ItemDataService, ProducersService } from '../../../../core/services';
+import { DestroyService, ItemDataService, ProducersService } from '../../../../core/services';
 
 @Component({
   selector: 'app-update-producer',
   templateUrl: './update-producer.component.html',
   styleUrls: ['./update-producer.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [ProducersService, ItemDataService]
+  providers: [ItemDataService, DestroyService]
 })
 export class UpdateProducerComponent implements OnInit {
   isUpdatingProducer: boolean = false;
@@ -19,7 +19,8 @@ export class UpdateProducerComponent implements OnInit {
   countryOptions?: DropdownOptionDto[];
 
   constructor(private ref: ChangeDetectorRef, private dialogRef: DynamicDialogRef, private config: DynamicDialogConfig,
-    private itemDataService: ItemDataService, private producersService: ProducersService) {
+    private producersService: ProducersService, private itemDataService: ItemDataService,
+    private destroyService: DestroyService) {
     this.updateProducerForm = new FormGroup({
       name: new FormControl(this.config.data['name'] || '', [Validators.required, Validators.maxLength(150)]),
       country: new FormControl(this.config.data['country'] || null)
@@ -38,7 +39,7 @@ export class UpdateProducerComponent implements OnInit {
     this.producersService.update(this.config.data['_id'], {
       name: this.updateProducerForm.value['name'],
       country: this.updateProducerForm.value['country']
-    }).subscribe({
+    }).pipe(takeUntil(this.destroyService)).subscribe({
       next: () => this.dialogRef.close(true),
       error: () => {
         this.isUpdatingProducer = false;

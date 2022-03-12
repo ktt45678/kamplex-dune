@@ -27,7 +27,7 @@ export class TranslocoHttpLoader implements TranslocoLoader {
     TranslocoMessageFormatModule.forRoot(),
     TranslocoPersistTranslationsModule.forRoot({
       loader: TranslocoHttpLoader,
-      ttl: 30,
+      ttl: environment.production ? 3600 : 30,
       storage: {
         provide: PERSIST_TRANSLATIONS_STORAGE,
         useValue: localForage

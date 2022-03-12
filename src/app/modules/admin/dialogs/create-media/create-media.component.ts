@@ -2,12 +2,12 @@ import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { TranslocoService } from '@ngneat/transloco';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { first } from 'rxjs';
+import { first, takeUntil } from 'rxjs';
 
 import { CreateMediaDto, DropdownOptionDto } from '../../../../core/dto/media';
 import { MediaType } from '../../../../core/enums';
 import { Genre, Producer } from '../../../../core/models';
-import { GenresService, ItemDataService, MediaService, ProducersService } from '../../../../core/services';
+import { DestroyService, GenresService, ItemDataService, MediaService, ProducersService } from '../../../../core/services';
 import { shortDate } from '../../../../core/validators';
 
 @Component({
@@ -15,7 +15,7 @@ import { shortDate } from '../../../../core/validators';
   templateUrl: './create-media.component.html',
   styleUrls: ['./create-media.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [MediaService, GenresService, ProducersService, ItemDataService]
+  providers: [ItemDataService, DestroyService]
 })
 export class CreateMediaComponent implements OnInit {
   MediaType = MediaType;
@@ -24,13 +24,13 @@ export class CreateMediaComponent implements OnInit {
   days: DropdownOptionDto[];
   months: DropdownOptionDto[];
   years: DropdownOptionDto[];
-  languages: DropdownOptionDto[];
-  genreSuggestions: Genre[];
-  producerSuggestions: Producer[];
+  languages: DropdownOptionDto[] = [];
+  genreSuggestions: Genre[] = [];
+  producerSuggestions: Producer[] = [];
 
   constructor(private ref: ChangeDetectorRef, private dialogRef: DynamicDialogRef,
     private config: DynamicDialogConfig, private mediaService: MediaService, private genresService: GenresService,
-    private producersService: ProducersService, private itemDataService: ItemDataService,
+    private producersService: ProducersService, private itemDataService: ItemDataService, private destroyService: DestroyService,
     private translocoService: TranslocoService) {
     const type = this.config.data['type'] || MediaType.MOVIE;
     this.createMediaForm = new FormGroup({
@@ -60,9 +60,6 @@ export class CreateMediaComponent implements OnInit {
     this.days = this.itemDataService.createDateList();
     this.months = this.itemDataService.createMonthList();
     this.years = this.itemDataService.createYearList();
-    this.languages = [];
-    this.genreSuggestions = [];
-    this.producerSuggestions = [];
   }
 
   ngOnInit(): void {
@@ -107,8 +104,8 @@ export class CreateMediaComponent implements OnInit {
 
   onCreateMediaFormSubmit(): void {
     if (this.createMediaForm.invalid) return;
-    const genreIds = this.createMediaForm.value['genres'].map((g: Genre) => g._id);
-    const producerIds = this.createMediaForm.value['producers'].map((p: Producer) => p._id);
+    const genreIds = this.createMediaForm.value['genres']?.map((g: Genre) => g._id) || [];
+    const producerIds = this.createMediaForm.value['producers']?.map((p: Producer) => p._id) || [];
     this.isCreatingMedia = true;
     const createMediaDto: CreateMediaDto = ({
       type: this.createMediaForm.value['type'],
@@ -135,7 +132,7 @@ export class CreateMediaComponent implements OnInit {
         year: this.createMediaForm.value['lastAirDateYear']
       }
     }
-    this.mediaService.create(createMediaDto).subscribe({
+    this.mediaService.create(createMediaDto).pipe(takeUntil(this.destroyService)).subscribe({
       next: () => this.dialogRef.close(true),
       error: () => {
         this.isCreatingMedia = false;

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { TranslocoService } from '@ngneat/transloco';
 import { map, Observable } from 'rxjs';
 
-import { COUNTRY_CODES, LANGUAGE_CODES } from '../data';
+import { COUNTRY_CODES, LANGUAGE_CODES, TRANSLATE_CODES } from '../data';
 import { DropdownOptionDto } from '../dto/media';
 
 @Injectable()
@@ -60,16 +60,46 @@ export class ItemDataService {
     }));
   }
 
-  createLanguageList(): Observable<DropdownOptionDto[]> {
+  createLanguageList(disabledValues?: string[]): Observable<DropdownOptionDto[]> {
     return this.translocoService.selectTranslation('languages').pipe(map(t => {
       const languageOptions: DropdownOptionDto[] = [];
-      LANGUAGE_CODES.forEach((code) => {
-        languageOptions.push({
+      if (!disabledValues) {
+        LANGUAGE_CODES.forEach((code) => {
+          languageOptions.push({
+            label: t[code],
+            value: code
+          });
+        });
+      } else {
+        LANGUAGE_CODES.forEach((code) => {
+          const option: DropdownOptionDto = {
+            label: t[code],
+            value: code
+          };
+          const valueIndex = disabledValues.indexOf(code);
+          if (valueIndex > -1) {
+            option.disabled = true;
+            disabledValues.splice(valueIndex, 1);
+          } else {
+            option.disabled = false;
+          }
+          languageOptions.push(option);
+        });
+      }
+      return languageOptions;
+    }));
+  }
+
+  createTranslateOptions(): Observable<DropdownOptionDto[]> {
+    return this.translocoService.selectTranslation('languages').pipe(map(t => {
+      const translateOptions: DropdownOptionDto[] = [];
+      TRANSLATE_CODES.forEach(code => {
+        translateOptions.push({
           label: t[code],
           value: code
         });
       });
-      return languageOptions;
+      return translateOptions;
     }));
   }
 }

@@ -1,0 +1,12 @@
+<div dragDropFile (fileDropped)="submitFile($event)" [disabled]="disabled"
+  class="tw-flex tw-justify-center tw-items-center tw-border-2 tw-border-dashed tw-rounded-md disabled:tw-border-gray-600 disabled:tw-text-gray-600"
+  [ngClass]="styleClass">
+  <div class="tw-text-center tw-mx-4">
+    <input #inputFile hidden="true" type="file" id="file-upload" onclick="this.value = null"
+      (change)="onFileInputChange($event)" [attr.accept]="accept" />
+    <button pButton type="button" class="p-button-secondary" [label]="label" icon="pi pi-upload" iconPos="right"
+      ariaLabel="Select file" (click)="inputFile.click()" [disabled]="disabled">
+    </button>
+    <p *ngIf="selectedFileName" class="tw-text-base tw-line-clamp-2 tw-mt-2">{{ selectedFileName }}</p>
+  </div>
+</div>

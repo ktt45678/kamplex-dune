@@ -10,6 +10,7 @@ export class FormHandlerDirective {
 
   constructor(private formGroup: FormGroupDirective, private element: ElementRef) { }
 
+  /*
   @HostListener('document:keydown.enter', ['$event'])
   enterKeydown(e: KeyboardEvent) {
     e.preventDefault();
@@ -23,6 +24,7 @@ export class FormHandlerDirective {
     this.formGroup.ngSubmit.emit(e);
     this.submit();
   }
+  */
 
   @HostListener('submit')
   submit() {

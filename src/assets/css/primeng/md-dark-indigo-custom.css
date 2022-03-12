@@ -7274,3 +7274,11 @@ p-inputnumber.ng-touched.ng-invalid > .p-inputnumber > .p-inputtext {
   width: 1.875rem;
   height: 1.875rem !important;
 }
+
+.p-tabmenu .p-tabmenu-nav {
+  border: none;
+}
+
+.p-menuitem-link-active {
+  background: rgba(255, 255, 255, 0.12);
+}

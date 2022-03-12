@@ -1,25 +1,25 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
-import { first } from 'rxjs';
+import { first, takeUntil } from 'rxjs';
 
 import { DropdownOptionDto } from '../../../../core/dto/media';
-import { ItemDataService, ProducersService } from '../../../../core/services';
+import { DestroyService, ItemDataService, ProducersService } from '../../../../core/services';
 
 @Component({
   selector: 'app-create-producer',
   templateUrl: './create-producer.component.html',
   styleUrls: ['./create-producer.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [ProducersService, ItemDataService]
+  providers: [ItemDataService, DestroyService]
 })
 export class CreateProducerComponent implements OnInit {
   isCreatingProducer: boolean = false;
   createProducerForm: FormGroup;
   countryOptions?: DropdownOptionDto[];
 
-  constructor(private ref: ChangeDetectorRef, private dialogRef: DynamicDialogRef, private itemDataService: ItemDataService,
-    private producersService: ProducersService) {
+  constructor(private ref: ChangeDetectorRef, private dialogRef: DynamicDialogRef, private producersService: ProducersService,
+    private itemDataService: ItemDataService, private destroyService: DestroyService) {
     this.createProducerForm = new FormGroup({
       name: new FormControl('', [Validators.required, Validators.maxLength(150)]),
       country: new FormControl(null)
@@ -38,7 +38,7 @@ export class CreateProducerComponent implements OnInit {
     this.producersService.create({
       name: this.createProducerForm.value['name'],
       country: this.createProducerForm.value['country']
-    }).subscribe({
+    }).pipe(takeUntil(this.destroyService)).subscribe({
       next: () => this.dialogRef.close(true),
       error: () => {
         this.isCreatingProducer = false;
