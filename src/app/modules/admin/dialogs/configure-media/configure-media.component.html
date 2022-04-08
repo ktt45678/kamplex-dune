@@ -1,210 +1,229 @@
 <ng-container *transloco="let t">
-  <div class="tw-fixed tw-right-10 tw-top-10">
+  <div class="tw-fixed tw-right-10 tw-top-10 tw-z-10">
     <button type="button" role="button" aria-label="Close dialog" pButton icon="pi pi-times"
       class="p-button-outlined p-button-rounded p-button-secondary p-button-text tw-ml-auto" (click)="closeDialog()">
     </button>
   </div>
-  <div *ngIf="media" class="tw-mx-20 tw-my-14">
-    <div class="tw-flex tw-flex-wrap">
-      <div class="tw-w-2/5 sm:tw-w-1/5 tw-mx-auto sm:tw-mx-0">
-        <div class="tw-aspect-w-2 tw-aspect-h-3 tw-rounded-xl tw-overflow-hidden">
-          <img *ngIf="media.thumbnailPosterUrl; else noPoster" class="tw-object-cover"
-            [lazyLoad]="media.thumbnailPosterUrl" [alt]="media.title" errorImage="assets/images/media-poster-md.png">
-          <div *ngIf="media.posterColor" class="ng-lazyload-placeholder tw-w-full tw-h-full"
-            [ngStyle]="{ 'background-color': media.posterColor | hexColor }">
+  <div *ngIf="media" class="tw-max-w-7xl tw-mx-auto tw-my-14">
+    <app-vertical-tab>
+      <!--General info-->
+      <app-tab-panel [header]="t('admin.configureMedia.general')">
+        <div class="tw-flex tw-flex-wrap">
+          <div class="tw-w-2/5 sm:tw-w-1/5 tw-mx-auto sm:tw-mx-0">
+            <div class="tw-aspect-w-2 tw-aspect-h-3 tw-rounded-xl tw-overflow-hidden">
+              <img *ngIf="media.thumbnailPosterUrl; else noPoster" class="tw-object-cover"
+                [lazyLoad]="media.thumbnailPosterUrl" [alt]="media.title"
+                errorImage="assets/images/media-poster-md.png">
+              <div *ngIf="media.posterColor" class="ng-lazyload-placeholder tw-w-full tw-h-full"
+                [ngStyle]="{ 'background-color': media.posterColor | hexColor }">
+              </div>
+              <ng-template #noPoster>
+                <img class="tw-object-cover" lazyLoad="assets/images/media-poster-md.png"
+                  defaultImage="assets/images/media-poster-sm.png" [alt]="media.title">
+              </ng-template>
+            </div>
           </div>
-          <ng-template #noPoster>
-            <img class="tw-object-cover" lazyLoad="assets/images/media-poster-md.png"
-              defaultImage="assets/images/media-poster-sm.png" [alt]="media.title">
-          </ng-template>
+          <div class="tw-w-full sm:tw-w-4/5 tw-mt-4 sm:tw-mt-0 sm:tw-pl-8">
+            <p
+              class="tw-text-white tw-text-center sm:tw-text-left tw-text-xl sm:tw-text-2xl md:tw-text-3xl tw-font-bold">
+              {{ media.title }}
+            </p>
+            <p *ngIf="media.originalTitle"
+              class="tw-text-slate-400 tw-text-center sm:tw-text-left tw-text-sm md:tw-text-base tw-mt-1">
+              {{ media.originalTitle }}
+            </p>
+            <p class="tw-text-white tw-text-base tw-mt-4 tw-text-center sm:tw-text-left">
+              <span class="tw-border tw-text-sm tw-px-1.5 tw-py-1 tw-rounded-2xl">
+                {{ media.type === MediaType.MOVIE ? t('media.mediaTypes.movie') : t('media.mediaTypes.tvShow') }}
+              </span>
+              <span class="tw-ml-3 tw-text-base">
+                <i class="pi pi-clock tw-text-sm"></i>
+                {{ t('media.details.runtimeValue', { runtime: media.runtime}) }}
+              </span>
+            </p>
+            <p class="tw-text-white tw-text-base tw-mt-4 tw-text-center sm:tw-text-left">
+              <ng-container *ngIf="media.genres.length; else noGenres">
+                <span *ngFor="let genre of media.genres; trackBy: trackId" class="tw-ml-2 tw-text-base">
+                  {{ genre.name }}
+                </span>
+              </ng-container>
+              <ng-template #noGenres>
+                <span class="tw-text-gray-400 tw-ml-2 tw-text-base tw-italic">
+                  {{ t('media.details.noGenres') }}
+                </span>
+              </ng-template>
+            </p>
+            <div class="tw-mt-4">
+              <button type="button" role="navigation" aria-label="Play media" pButton icon="pi pi-play" iconPos="left"
+                label="Play" [routerLink]="['/watch', media._id]"
+                class="p-button-rounded tw-block sm:tw-inline-flex tw-w-full sm:tw-w-auto tw-max-w-xs sm:tw-max-w-none tw-text-white not-disabled:hover:!tw-text-gray-600 tw-text-lg sm:tw-text-xl tw-mt-2 sm:tw-mt-0 tw-mx-auto sm:tw-mx-0 tw-px-8">
+              </button>
+              <button type="button" role="button" aria-label="Add media to playlist" routerLink="#" disabled="true"
+                pButton icon="pi pi-plus" label="Playlist"
+                class="p-button-rounded tw-block sm:tw-inline-flex tw-w-full sm:tw-w-auto tw-max-w-xs sm:tw-max-w-none tw-text-white not-disabled:hover:!tw-text-gray-600 tw-text-lg sm:tw-text-xl tw-mt-2 sm:tw-mt-0 tw-mx-auto sm:tw-mr-0 sm:tw-ml-2.5 tw-px-8">
+              </button>
+            </div>
+            <p class="tw-text-white tw-text-base sm:tw-text-lg tw-font-medium tw-leading-5 tw-mt-4">
+              {{ t('media.details.overview') }}
+            </p>
+            <p class="tw-text-white tw-text-sm sm:tw-text-base tw-mt-2">
+              {{ media.overview }}
+            </p>
+            <p class="tw-text-white tw-text-base sm:tw-text-lg tw-font-medium tw-leading-5 tw-mt-4">
+              {{ t('media.details.producers') }}
+            </p>
+            <p *ngIf="media.producers.length; else noProducers"
+              class="tw-text-white tw-text-sm sm:tw-text-base tw-space-x-2 tw-mt-2">
+              <span *ngFor="let producer of media.producers; trackBy: trackId">
+                {{ producer.name }}
+              </span>
+            </p>
+            <ng-template #noProducers>
+              <p class="tw-text-gray-400 tw-text-sm sm:tw-text-base tw-space-x-2 tw-mt-2 tw-italic">
+                {{ t('media.details.noProducers') }}
+              </p>
+            </ng-template>
+            <p class="tw-text-white tw-text-base sm:tw-text-lg tw-font-medium tw-leading-5 tw-mt-4">
+              {{ t('media.details.releaseDate') }}
+            </p>
+            <p class="tw-text-white tw-text-sm sm:tw-text-base tw-mt-2">
+              {{ media.releaseDate | shortDate }}
+            </p>
+          </div>
         </div>
-      </div>
-      <div class="tw-w-full sm:tw-w-4/5 tw-mt-4 sm:tw-mt-0 sm:tw-pl-8">
-        <p class="tw-text-white tw-text-center sm:tw-text-left tw-text-xl sm:tw-text-2xl md:tw-text-3xl tw-font-bold">
-          {{ media.title }}
-        </p>
-        <p *ngIf="media.originalTitle"
-          class="tw-text-slate-400 tw-text-center sm:tw-text-left tw-text-sm md:tw-text-base tw-mt-1">
-          {{ media.originalTitle }}
-        </p>
-        <p class="tw-text-white tw-text-base tw-mt-4 tw-text-center sm:tw-text-left">
-          <span class="tw-border tw-text-sm tw-px-1.5 tw-py-1 tw-rounded-2xl">
-            {{ media.type === MediaType.MOVIE ? t('media.mediaTypes.movie') : t('media.mediaTypes.tvShow') }}
-          </span>
-          <span class="tw-ml-3 tw-text-base">
-            <i class="pi pi-clock tw-text-sm"></i>
-            {{ t('media.details.runtimeValue', { runtime: media.runtime}) }}
-          </span>
-        </p>
-        <p class="tw-text-white tw-text-base tw-mt-4 tw-text-center sm:tw-text-left">
-          <ng-container *ngIf="media.genres.length; else noGenres">
-            <span *ngFor="let genre of media.genres; trackBy: trackId" class="tw-ml-2 tw-text-base">
-              {{ genre.name }}
-            </span>
+      </app-tab-panel>
+      <!--Videos-->
+      <app-tab-panel [header]="t('admin.configureMedia.videos')">
+        <div>
+          <p class="tw-text-white tw-font-semibold tw-text-xl sm:tw-text-xl">{{ t('admin.configureMedia.videos') }}</p>
+          <div class="tw-text-right tw-my-3">
+            <button pButton type="button" role="dialog" [label]="t('admin.configureMedia.addVideo')"
+              (click)="showAddVideoDialog()">
+            </button>
+          </div>
+          <ng-container *ngIf="media.videos.length; else noVideos">
+            <div class="tw-flex">
+              <button role="navigation" pButton type="button" icon="pi pi-angle-left tw-text-3xl" id="swiper-prev-video"
+                class="p-button-rounded p-button-text -tw-ml-12 tw-self-center" ariaLabel="Previous video">
+              </button>
+              <swiper #swiperVideos [config]="swiperConfig" class="tw-flex-1">
+                <ng-template swiperSlide *ngFor="let video of media.videos; let index = index; trackBy: trackId">
+                  <div
+                    class="tw-aspect-w-16 tw-aspect-h-9 tw-rounded-t-md tw-overflow-hidden tw-cursor-pointer hover:tw-brightness-75 tw-transition-all tw-duration-200"
+                    (click)="viewVideo(index)">
+                    <img [src]="youtubeThumbnailUrl + video.key + '/hqdefault.jpg'" [alt]="video.key || ''"
+                      class="tw-object-cover" />
+                    <div class="tw-flex tw-justify-center tw-items-center">
+                      <i class="mi mi-play-circle-outline tw-text-5xl md:tw-text-6xl"></i>
+                    </div>
+                  </div>
+                  <div class="tw-border-neutral-675 tw-border-x tw-border-b tw-rounded-b-md tw-flex">
+                    <button pButton type="button" [label]="t('admin.configureMedia.updateVideo')"
+                      class="p-button-secondary p-button-text p-button-sm tw-w-1/2"
+                      (click)="showUpdateVideoDialog(video)">
+                    </button>
+                    <button pButton type="button" [label]="t('admin.configureMedia.deleteVideo')"
+                      class="p-button-secondary p-button-text p-button-sm tw-w-1/2"
+                      (click)="deleteVideo(video, $event)">
+                    </button>
+                  </div>
+                </ng-template>
+              </swiper>
+              <button role="navigation" pButton type="button" icon="pi pi-angle-right tw-text-3xl"
+                id="swiper-next-video" class="p-button-rounded p-button-text -tw-mr-12 tw-self-center"
+                ariaLabel="Next video">
+              </button>
+            </div>
+            <p-dialog [header]="media.videos[activeVideoIndex]?.name || ''" [(visible)]="displayVideo"
+              (onHide)="blockScroll()" [modal]="true" styleClass="p-dialog-header-sm tw-w-2/3 tw-h-auto !tw-max-h-full"
+              [draggable]="false" [resizable]="false" [dismissableMask]="true" transitionOptions="0ms linear"
+              contentStyleClass="!tw-p-0">
+              <div class="tw-aspect-w-16 tw-aspect-h-9">
+                <iframe
+                  [src]="youtubeUrl + media.videos[activeVideoIndex]?.key + '?autoplay=1' | safeUrl: 'resourceUrl'"
+                  allowfullscreen width="100%" height="auto"></iframe>
+              </div>
+            </p-dialog>
           </ng-container>
-          <ng-template #noGenres>
-            <span class="tw-text-gray-400 tw-ml-2 tw-text-base tw-italic">
-              {{ t('media.details.noGenres') }}
-            </span>
+          <ng-template #noVideos>
+            <p class="tw-text-gray-400 tw-text-base tw-italic">
+              {{ t('media.details.noVideos') }}
+            </p>
           </ng-template>
-        </p>
-        <div class="tw-mt-4">
-          <button type="button" role="navigation" aria-label="Play media" pButton icon="pi pi-play" iconPos="left"
-            label="Play" [routerLink]="['/watch', media._id]"
-            class="p-button-rounded tw-block sm:tw-inline-flex tw-w-full sm:tw-w-auto tw-max-w-xs sm:tw-max-w-none tw-text-white not-disabled:hover:!tw-text-gray-600 tw-text-lg sm:tw-text-xl tw-mt-2 sm:tw-mt-0 tw-mx-auto sm:tw-mx-0 tw-px-8">
-          </button>
-          <button type="button" role="button" aria-label="Add media to playlist" routerLink="#" disabled="true" pButton
-            icon="pi pi-plus" label="Playlist"
-            class="p-button-rounded tw-block sm:tw-inline-flex tw-w-full sm:tw-w-auto tw-max-w-xs sm:tw-max-w-none tw-text-white not-disabled:hover:!tw-text-gray-600 tw-text-lg sm:tw-text-xl tw-mt-2 sm:tw-mt-0 tw-mx-auto sm:tw-mr-0 sm:tw-ml-2.5 tw-px-8">
-          </button>
         </div>
-        <p class="tw-text-white tw-text-base sm:tw-text-lg tw-font-medium tw-leading-5 tw-mt-4">
-          {{ t('media.details.overview') }}
-        </p>
-        <p class="tw-text-white tw-text-sm sm:tw-text-base tw-mt-2">
-          {{ media.overview }}
-        </p>
-        <p class="tw-text-white tw-text-base sm:tw-text-lg tw-font-medium tw-leading-5 tw-mt-4">
-          {{ t('media.details.producers') }}
-        </p>
-        <p *ngIf="media.producers.length; else noProducers"
-          class="tw-text-white tw-text-sm sm:tw-text-base tw-space-x-2 tw-mt-2">
-          <span *ngFor="let producer of media.producers; trackBy: trackId">
-            {{ producer.name }}
-          </span>
-        </p>
-        <ng-template #noProducers>
-          <p class="tw-text-gray-400 tw-text-sm sm:tw-text-base tw-space-x-2 tw-mt-2 tw-italic">
-            {{ t('media.details.noProducers') }}
+      </app-tab-panel>
+      <!--Subtitles-->
+      <app-tab-panel [header]="t('admin.configureMedia.subtitles')" *ngIf="media.type === MediaType.MOVIE">
+        <div>
+          <p class="tw-text-white tw-font-semibold tw-text-xl sm:tw-text-xl">{{ t('admin.configureMedia.subtitles') }}
           </p>
-        </ng-template>
-        <p class="tw-text-white tw-text-base sm:tw-text-lg tw-font-medium tw-leading-5 tw-mt-4">
-          {{ t('media.details.releaseDate') }}
-        </p>
-        <p class="tw-text-white tw-text-sm sm:tw-text-base tw-mt-2">
-          {{ media.releaseDate | shortDate }}
-        </p>
-      </div>
-    </div>
-    <div role="separator" class="tw-divider-2"></div>
-    <div>
-      <p class="tw-text-white tw-font-semibold tw-text-xl sm:tw-text-xl">{{ t('admin.configureMedia.videos') }}</p>
-      <div class="tw-text-right tw-my-3">
-        <button pButton type="button" role="dialog" [label]="t('admin.configureMedia.addVideo')"
-          (click)="showAddVideoDialog()">
-        </button>
-      </div>
-      <ng-container *ngIf="media.videos.length; else noVideos">
-        <div class="tw-flex">
-          <button role="navigation" pButton type="button" icon="pi pi-angle-left tw-text-3xl" id="swiper-prev-video"
-            class="p-button-rounded p-button-text -tw-ml-12 tw-self-center" ariaLabel="Previous video">
-          </button>
-          <swiper #swiperVideos [config]="swiperConfig" class="tw-flex-1">
-            <ng-template swiperSlide *ngFor="let video of media.videos; let index = index; trackBy: trackId">
-              <div
-                class="tw-aspect-w-16 tw-aspect-h-9 tw-rounded-t-md tw-overflow-hidden tw-cursor-pointer hover:tw-brightness-75 tw-transition-all tw-duration-200"
-                (click)="viewVideo(index)">
-                <img [src]="youtubeThumbnailUrl + video.key + '/hqdefault.jpg'" [alt]="video.key || ''"
-                  class="tw-object-cover" />
-                <div class="tw-flex tw-justify-center tw-items-center">
-                  <i class="mi mi-play-circle-outline tw-text-5xl md:tw-text-6xl"></i>
-                </div>
-              </div>
-              <div class="tw-border-neutral-675 tw-border-x tw-border-b tw-rounded-b-md tw-flex">
-                <button pButton type="button" [label]="t('admin.configureMedia.updateVideo')"
-                  class="p-button-secondary p-button-text p-button-sm tw-w-1/2" (click)="showUpdateVideoDialog(video)">
-                </button>
-                <button pButton type="button" [label]="t('admin.configureMedia.deleteVideo')"
-                  class="p-button-secondary p-button-text p-button-sm tw-w-1/2" (click)="deleteVideo(video, $event)">
-                </button>
-              </div>
-            </ng-template>
-          </swiper>
-          <button role="navigation" pButton type="button" icon="pi pi-angle-right tw-text-3xl" id="swiper-next-video"
-            class="p-button-rounded p-button-text -tw-mr-12 tw-self-center" ariaLabel="Next video">
-          </button>
+          <div class="tw-text-right tw-my-3">
+            <button pButton role="dialog" type="button" [label]="t('admin.configureMedia.addSubtitle')"
+              (click)="showAddSubtitleDialog()">
+            </button>
+          </div>
+          <ng-container *ngIf="media.movie.subtitles.length; else noSubtitles">
+            <p-table #subtitleTable styleClass="p-datatable-sm tw-bg-neutral-875 tw-p-4 tw-rounded-md"
+              [value]="media.movie.subtitles" responsiveLayout="scroll" [rowTrackBy]="trackId" [rowHover]="true">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th pSortableColumn="language">
+                    {{ t('admin.configureMedia.language') }} <p-sortIcon field="language"></p-sortIcon>
+                  </th>
+                  <th class="tw-w-16"></th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-subtitle>
+                <tr>
+                  <td>
+                    {{ t('languages.' + subtitle.language) }}
+                  </td>
+                  <td>
+                    <button pButton icon="pi pi-trash"
+                      class="p-button-outlined p-button-rounded p-button-danger p-button-sm"
+                      (click)="deleteSubtitle(subtitle, $event)">
+                    </button>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </ng-container>
+          <ng-template #noSubtitles>
+            <p class="tw-text-gray-400 tw-text-base tw-italic">
+              {{ t('admin.configureMedia.noSubtitles') }}
+            </p>
+          </ng-template>
         </div>
-        <p-dialog [header]="media.videos[activeVideoIndex]?.name || ''" [(visible)]="displayVideo"
-          (onHide)="blockScroll()" [modal]="true" styleClass="p-dialog-header-sm tw-w-2/3 tw-h-auto !tw-max-h-full"
-          [draggable]="false" [resizable]="false" [dismissableMask]="true" transitionOptions="0ms linear"
-          contentStyleClass="!tw-p-0">
-          <div class="tw-aspect-w-16 tw-aspect-h-9">
-            <iframe [src]="youtubeUrl + media.videos[activeVideoIndex]?.key + '?autoplay=1' | safeUrl: 'resourceUrl'"
-              allowfullscreen width="100%" height="auto"></iframe>
+      </app-tab-panel>
+      <!--Source-->
+      <app-tab-panel [header]="t('admin.configureMedia.source')" *ngIf="media.type === MediaType.MOVIE">
+        <div>
+          <p class="tw-text-white tw-font-semibold tw-text-xl sm:tw-text-xl">{{ t('admin.configureMedia.source')
+            }}</p>
+          <div class="tw-text-right tw-my-3">
+            <button pButton role=" dialog" type="button" class="p-button-danger p-button-outlined tw-ml-2"
+              [label]="t('admin.configureMedia.deleteSource')" (click)="deleteSource($event)" [disabled]="false">
+            </button>
           </div>
-        </p-dialog>
-      </ng-container>
-      <ng-template #noVideos>
-        <p class="tw-text-gray-400 tw-text-base tw-italic">
-          {{ t('media.details.noVideos') }}
-        </p>
-      </ng-template>
-    </div>
-    <div role="separator" class="tw-divider-2"></div>
-    <ng-container *ngIf="media.type === MediaType.MOVIE">
-      <div>
-        <p class="tw-text-white tw-font-semibold tw-text-xl sm:tw-text-xl">{{ t('admin.configureMedia.subtitles') }}</p>
-        <div class="tw-text-right tw-my-3">
-          <button pButton role="dialog" type="button" [label]="t('admin.configureMedia.addSubtitle')"
-            (click)="showAddSubtitleDialog()">
-          </button>
+          <ng-container [ngSwitch]="media.movie.status">
+            <div *ngSwitchCase="MediaSourceStatus.PENDING">
+              <app-file-upload accept=".mp4, .mkv, .webm, .m2ts" [label]="t('admin.addMediaSource.chooseFile')"
+                [disabled]="uploadingSource" (onFileChange)="uploadSource($event)">
+              </app-file-upload>
+            </div>
+            <div *ngSwitchCase="MediaSourceStatus.PROCESSING">
+              {{ t('admin.media.statusProcessing') }}
+            </div>
+            <div *ngSwitchCase="MediaSourceStatus.READY">
+              {{ t('admin.media.statusReady') }}
+            </div>
+            <div *ngSwitchCase="MediaSourceStatus.DONE">
+              {{ t('admin.media.statusDone') }}
+            </div>
+          </ng-container>
         </div>
-        <ng-container *ngIf="media.movie.subtitles.length; else noSubtitles">
-          <p-table #subtitleTable styleClass="p-datatable-sm tw-bg-neutral-875 tw-p-4 tw-rounded-md"
-            [value]="media.movie.subtitles" responsiveLayout="scroll" [rowTrackBy]="trackId" [rowHover]="true">
-            <ng-template pTemplate="header">
-              <tr>
-                <th pSortableColumn="language">
-                  {{ t('admin.configureMedia.language') }} <p-sortIcon field="language"></p-sortIcon>
-                </th>
-                <th class="tw-w-16"></th>
-              </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-subtitle>
-              <tr>
-                <td>
-                  {{ t('languages.' + subtitle.language) }}
-                </td>
-                <td>
-                  <button pButton icon="pi pi-trash"
-                    class="p-button-outlined p-button-rounded p-button-danger p-button-sm"
-                    (click)="deleteSubtitle(subtitle, $event)">
-                  </button>
-                </td>
-              </tr>
-            </ng-template>
-          </p-table>
-        </ng-container>
-        <ng-template #noSubtitles>
-          <p class="tw-text-gray-400 tw-text-base tw-italic">
-            {{ t('admin.configureMedia.noSubtitles') }}
-          </p>
-        </ng-template>
-      </div>
-      <div role="separator" class="tw-divider-2"></div>
-      <div>
-        <p class="tw-text-white tw-font-semibold tw-text-xl sm:tw-text-xl">{{ t('admin.configureMedia.source') }}</p>
-        <div class="tw-text-right tw-my-3">
-          <button pButton role="dialog" type="button" [label]="t('admin.configureMedia.addSource')"
-            (click)="showAddSourceDialog()">
-          </button>
-        </div>
-        <ng-container [ngSwitch]="media.movie.status">
-          <div *ngSwitchCase="MediaStatus.PENDING">
-            {{ t('admin.configureMedia.noSource') }}
-          </div>
-          <div *ngSwitchCase="MediaStatus.REVIEW">
-            {{ t('admin.media.statusReview') }}
-          </div>
-          <div *ngSwitchCase="MediaStatus.PROCESSING">
-            {{ t('admin.media.statusProcessing') }}
-          </div>
-          <div *ngSwitchCase="MediaStatus.DONE">
-            {{ t('admin.media.statusDone') }}
-          </div>
-        </ng-container>
-      </div>
-    </ng-container>
+      </app-tab-panel>
+    </app-vertical-tab>
     <p-confirmDialog [blockScroll]="false" key="inModal" [style]="{width: '500px'}" [baseZIndex]="1000"
       acceptButtonStyleClass="p-button-danger p-button-sm"
       rejectButtonStyleClass="p-button-text p-button-secondary p-button-sm" rejectIcon="" acceptIcon=""

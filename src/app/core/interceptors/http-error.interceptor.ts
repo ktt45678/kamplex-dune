@@ -1,5 +1,4 @@
 import { Injectable, NgZone } from '@angular/core';
-import { Router } from '@angular/router';
 import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor, HttpErrorResponse } from '@angular/common/http';
 import { catchError, Observable, throwError } from 'rxjs';
 import { MessageService } from 'primeng/api';
@@ -10,9 +9,16 @@ import { ToastKey } from '../enums';
 @Injectable()
 export class HttpErrorInterceptor implements HttpInterceptor {
 
-  constructor(private zone: NgZone, private router: Router, private messageService: MessageService, private authService: AuthService) { }
+  constructor(private zone: NgZone, private messageService: MessageService, private authService: AuthService) { }
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
+    const ngIntercept = request.headers.get('x-ng-intercept');
+    if (ngIntercept) {
+      const canIntercept = ngIntercept !== 'ignore';
+      const canInterceptError = ngIntercept.includes('http-error');
+      if (!canIntercept || !canInterceptError)
+        return next.handle(request);
+    }
     return next.handle(request).pipe(catchError((error: HttpErrorResponse) => {
       const key = ToastKey.APP;
       const severity = 'error';

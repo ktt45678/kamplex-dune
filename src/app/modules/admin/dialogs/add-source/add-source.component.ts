@@ -23,7 +23,8 @@ export class AddSourceComponent implements OnInit {
   uploadFile(file: File): void {
     const mediaId = this.config.data._id;
     this.addingSource = true;
-    this.queueUploadService.addToQueue(file, `media/${mediaId}/movie/source`, `media/${mediaId}/movie/source/:id`);
+    this.queueUploadService.addToQueue(mediaId, file, `media/${mediaId}/movie/source`, `media/${mediaId}/movie/source/:id`);
+    this.dialogRef.close();
   }
 
   onAddSourceFormCancel(): void {

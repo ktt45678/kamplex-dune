@@ -115,8 +115,10 @@
               class="p-button-outlined p-button-rounded p-button-info p-button-sm tw-mr-2"
               (click)="showConfigureMediaDialog(media)">
             </button>
-            <button pButton icon="pi pi-trash" class="p-button-outlined p-button-rounded p-button-danger p-button-sm"
-              [disabled]="media.pStatus === MediaStatus.PROCESSING" (click)="showDeleteMediaDialog(media)">
+            <button pButton icon="pi pi-ellipsis-h"
+              class="p-button-outlined p-button-rounded p-button-secondary p-button-sm" (click)="media.type === MediaType.MOVIE ?
+              toggleMediaMenu(movieMenu, $event, media) :
+              toggleMediaMenu(tvMenu, $event, media)">
             </button>
           </td>
         </tr>
@@ -128,4 +130,7 @@
       [dismissableMask]="true">
     </p-confirmDialog>
   </div>
+  <p-menu #movieMenu [popup]="true" [appendTo]="mediaMenuZone" [model]="movieMenuItems"></p-menu>
+  <p-menu #tvMenu [popup]="true" [appendTo]="mediaMenuZone" [model]="tvMenuItems"></p-menu>
+  <div #mediaMenuZone></div>
 </ng-container>

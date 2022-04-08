@@ -99,32 +99,20 @@ export class MediaService {
     return this.http.delete(`media/${id}/movie/subtitles/${subtitleId}`);
   }
 
+  checkMediaStream(url: string) {
+    return this.http.get(url, {
+      headers: {
+        'Range': 'bytes=0-500',
+        'x-ng-intercept': 'ignore'
+      }
+    });
+  }
+
   addMovieSource(id: string, file: File) {
-    /*
-    return this.http.post<UploadSession>(`media/${id}/movie/source`, {
-      filename: file.name,
-      mimeType: file.type,
-      size: file.size
-    }).pipe(switchMap((session: UploadSession) => {
-      const upload = UpChunk.createUpload({
-        endpoint: session.url,
-        chunkSize: 30720,
-        file
-      });
-      return new Observable<{ sessionId: string, fileId: string }>(subscriber => {
-        upload.on('chunkSuccess', (event) => {
-          const response = event.detail.response;
-          if (response.statusCode === 201 || response.statusCode === 200) {
-            const body = JSON.parse(response.body);
-            subscriber.next({ sessionId: session._id, fileId: body.id });
-          }
-        });
-      });
-    }), switchMap(data => {
-      return this.http.post<UploadSession>(`media/${id}/movie/source/${data.sessionId}`, {
-        fileId: data.fileId
-      });
-    }));
-    */
+
+  }
+
+  deleteMovieSource(id: string) {
+    return this.http.delete(`media/${id}/movie/source`);
   }
 }

@@ -2,7 +2,7 @@
   <h3 class="tw-text-white tw-text-2xl tw-font-bold tw-text-center tw-mb-4">
     {{ t('admin.addMediaSource.formHeader') }}
   </h3>
-  <app-file-upload accept=".mp4, .mkv, .webm" [label]="t('admin.addMediaSource.chooseFile')" [disabled]="addingSource"
+  <app-file-upload accept=".mp4, .mkv, .webm, .m2ts" [label]="t('admin.addMediaSource.chooseFile')" [disabled]="addingSource"
     (onFileChange)="uploadFile($event)">
   </app-file-upload>
   <div class="tw-flex tw-mt-4">

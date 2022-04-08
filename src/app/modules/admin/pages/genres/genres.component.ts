@@ -1,5 +1,6 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { TranslocoService } from '@ngneat/transloco';
 import { ConfirmationService } from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
 import { Table } from 'primeng/table';
@@ -26,7 +27,8 @@ export class GenresComponent implements OnInit {
   selectedGenres?: Genre[];
 
   constructor(private ref: ChangeDetectorRef, private route: ActivatedRoute, private router: Router,
-    public dialogService: DialogService, private confirmationService: ConfirmationService, private genresService: GenresService) { }
+    public dialogService: DialogService, private confirmationService: ConfirmationService, private genresService: GenresService,
+    private translocoService: TranslocoService) { }
 
   ngOnInit(): void {
   }
@@ -88,10 +90,10 @@ export class GenresComponent implements OnInit {
   showDeleteGenreDialog(genre: Genre): void {
     const safeGenreName = escape(genre.name);
     this.confirmationService.confirm({
-      message: `Are you sure you want to delete <strong>${safeGenreName}</strong>? This action cannot be undone.`,
-      header: 'Delete Genre',
+      message: this.translocoService.translate('admin.genres.deleteConfirmation', { name: safeGenreName }),
+      header: this.translocoService.translate('admin.genres.deleteConfirmationHeader'),
       icon: 'pi pi-info-circle',
-      defaultFocus: 'none',
+      defaultFocus: 'reject',
       accept: () => this.removeGenre(genre._id)
     });
   }

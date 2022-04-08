@@ -10,7 +10,7 @@ import { ButtonModule } from 'primeng/button';
 import { ChipModule } from 'primeng/chip';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputTextareaModule } from 'primeng/inputtextarea';
-import { ToolbarModule } from 'primeng/toolbar';
+import { MenuModule } from 'primeng/menu';
 import { TooltipModule } from 'primeng/tooltip';
 import { TableModule } from 'primeng/table';
 import { ProgressBarModule } from 'primeng/progressbar';
@@ -21,6 +21,7 @@ import { RadioButtonModule } from 'primeng/radiobutton';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { DropdownModule } from 'primeng/dropdown';
+import { TabViewModule } from 'primeng/tabview';
 
 import { AdminRoutingModule } from './admin-routing.module';
 import { AdminLayoutModule } from '../../shared/layouts/admin-layout';
@@ -30,6 +31,7 @@ import { ProducersComponent } from './pages/producers/producers.component';
 import { CreateGenreComponent } from './dialogs/create-genre/create-genre.component';
 import { UpdateGenreComponent } from './dialogs/update-genre/update-genre.component';
 import { FileUploadModule } from '../../shared/components/file-upload';
+import { VerticalTabModule } from '../../shared/components/vertical-tab';
 import { FormDirectiveModule } from '../../shared/directives/form-directive';
 import { ValidationPipeModule } from '../../shared/pipes/validation-pipe';
 import { DatePipeModule } from '../../shared/pipes/date-pipe';
@@ -47,6 +49,7 @@ import { AddSubtitleComponent } from './dialogs/add-subtitle/add-subtitle.compon
 import { ViewMediaComponent } from './dialogs/view-media/view-media.component';
 import { ConfigureMediaComponent } from './dialogs/configure-media/configure-media.component';
 import { AddSourceComponent } from './dialogs/add-source/add-source.component';
+import { ConfirmDeactivateGuard } from '../../core/guards';
 import { GenresService, MediaService, ProducersService, QueueUploadService } from '../../core/services';
 
 @NgModule({
@@ -76,6 +79,7 @@ import { GenresService, MediaService, ProducersService, QueueUploadService } fro
     TranslocoModule,
     AdminLayoutModule,
     FileUploadModule,
+    VerticalTabModule,
     FormDirectiveModule,
     ValidationPipeModule,
     DatePipeModule,
@@ -88,7 +92,7 @@ import { GenresService, MediaService, ProducersService, QueueUploadService } fro
     ChipModule,
     InputTextModule,
     InputTextareaModule,
-    ToolbarModule,
+    MenuModule,
     TooltipModule,
     TableModule,
     ProgressBarModule,
@@ -98,7 +102,8 @@ import { GenresService, MediaService, ProducersService, QueueUploadService } fro
     RadioButtonModule,
     InputSwitchModule,
     InputNumberModule,
-    DropdownModule
+    DropdownModule,
+    TabViewModule
   ],
   providers: [
     DialogService,
@@ -107,6 +112,7 @@ import { GenresService, MediaService, ProducersService, QueueUploadService } fro
     GenresService,
     ProducersService,
     QueueUploadService,
+    ConfirmDeactivateGuard,
     {
       provide: TRANSLOCO_SCOPE,
       useValue: 'admin'

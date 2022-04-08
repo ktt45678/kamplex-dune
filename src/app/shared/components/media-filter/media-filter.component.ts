@@ -1,9 +1,9 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, Output, EventEmitter } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { TranslocoService, TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { first } from 'rxjs';
 
-import { DropdownOptionDto } from '../../../core/dto/media';
+import { DropdownOptionDto, MediaFilterOptionsDto } from '../../../core/dto/media';
 import { Genre } from '../../../core/models';
 import { GenresService } from '../../../core/services';
 import { MediaFilterService } from './media-filter.service';
@@ -22,6 +22,8 @@ import { MediaFilterService } from './media-filter.service';
   ]
 })
 export class MediaFilterComponent implements OnInit {
+  @Output() onChange = new EventEmitter<MediaFilterOptionsDto>();
+
   showAdvanced: boolean = false;
   languages?: DropdownOptionDto[];
   genres?: Genre[];
@@ -89,14 +91,14 @@ export class MediaFilterComponent implements OnInit {
   onFilterFormSubmit(): void {
     if (this.filterForm.invalid) return;
     if (!this.filterForm.value['showAdvanced']) {
-      this.mediaFilterService.setOptions({
+      this.onChange.emit({
         search: this.filterForm.value['search'] || undefined,
         genres: this.filterForm.value['genres'],
         sort: this.filterForm.value['sort']
       });
       return;
     }
-    this.mediaFilterService.setOptions({
+    this.onChange.emit({
       search: this.filterForm.value['search'],
       genres: this.filterForm.value['genres'],
       sort: this.filterForm.value['sort'],

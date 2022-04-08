@@ -2,9 +2,8 @@ import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@
 import { ActivatedRoute, Router } from '@angular/router';
 import { delay, takeUntil } from 'rxjs';
 
-import { MediaFilterService } from '../../../../shared/components/media-filter';
 import { DestroyService, MediaService } from '../../../../core/services';
-import { PaginateMediaDto } from '../../../../core/dto/media';
+import { MediaFilterOptionsDto, PaginateMediaDto } from '../../../../core/dto/media';
 import { Media, Paginated } from '../../../../core/models';
 
 @Component({
@@ -20,19 +19,20 @@ export class SearchComponent implements OnInit {
   mediaList?: Paginated<Media>;
 
   constructor(private ref: ChangeDetectorRef, private route: ActivatedRoute, private router: Router,
-    private mediaService: MediaService, private mediaFilterService: MediaFilterService, private destroyService: DestroyService) { }
+    private mediaService: MediaService, private destroyService: DestroyService) { }
 
   ngOnInit(): void {
-    this.mediaFilterService.options$.pipe(takeUntil(this.destroyService)).subscribe(data => {
-      this.router.navigate([], { queryParams: data, queryParamsHandling: 'preserve' });
-    });
     this.route.queryParams.pipe(takeUntil(this.destroyService)).subscribe(qp => {
       this.findAllMedia(qp);
     });
   }
 
-  onPageChange(e: any): void {
-    this.router.navigate([], { queryParams: { page: e.page + 1 }, queryParamsHandling: 'merge' });
+  onMediaFilterUpdate(event: MediaFilterOptionsDto): void {
+    this.router.navigate([], { queryParams: event });
+  }
+
+  onPageChange(event: any): void {
+    this.router.navigate([], { queryParams: { page: event.page + 1 }, queryParamsHandling: 'merge' });
   }
 
   findAllMedia(options?: PaginateMediaDto) {

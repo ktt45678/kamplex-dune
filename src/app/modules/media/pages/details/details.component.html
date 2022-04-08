@@ -91,7 +91,7 @@
           </div>
         </div>
         <div class="tw-mt-12">
-          <p class="tw-text-white tw-font-semibold tw-text-xl sm:tw-text-2xl">{{ t('media.mediaTypes.movie') }}</p>
+          <p class="tw-text-white tw-font-semibold tw-text-xl sm:tw-text-2xl">{{ t('media.details.videos') }}</p>
           <div *ngIf="media.videos.length; else noVideos" class="tw-flex">
             <div *ngFor="let video of media.videos; let index = index; trackBy:trackId"
               class="tw-w-1/3 tw-cursor-pointer tw-rounded-xl" key="index" (click)="viewVideo(index)">

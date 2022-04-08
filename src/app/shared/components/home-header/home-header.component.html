@@ -10,23 +10,22 @@
             </a>
             <div class="tw-hidden sm:tw-block sm:tw-ml-8">
               <div class="tw-flex tw-items-center">
-                <a routerLink="/"
-                  class="tw-text-white tw-text-sm md:tw-text-base tw-font-medium tw-text-center tw-mx-2 tw-p-2 tw-border-b-2 tw-border-transparent hover:tw-border-b-white tw-transition-colors tw-duration-200"
-                  aria-current="page">
-                  {{ t('homeHeader.home') }}
-                </a>
-                <a routerLink="/media"
-                  class="tw-text-white tw-text-sm md:tw-text-base tw-font-medium tw-text-center tw-mx-2 tw-p-2 tw-border-b-2 tw-border-transparent hover:tw-border-b-white tw-transition-colors tw-duration-200">
-                  {{ t('homeHeader.movies') }}
-                </a>
-                <a routerLink="/media"
-                  class="tw-text-white tw-text-sm md:tw-text-base tw-font-medium tw-text-center tw-mx-2 tw-p-2 tw-border-b-2 tw-border-transparent hover:tw-border-b-white tw-transition-colors tw-duration-200">
-                  {{ t('homeHeader.tvShows') }}
-                </a>
-                <a routerLink="/search"
-                  class="tw-text-white tw-text-sm md:tw-text-base tw-font-medium tw-text-center tw-mx-2 tw-p-2 tw-border-b-2 tw-border-transparent hover:tw-border-b-white tw-transition-colors tw-duration-200">
-                  Search
-                </a>
+                <a routerLink="/" routerLinkActive="tw-border-b-white" [routerLinkActiveOptions]="{exact: true}" class="
+                tw-text-white tw-text-sm md:tw-text-base tw-font-medium tw-text-center tw-mx-2 tw-p-2 tw-border-b-2
+                  tw-border-transparent hover:tw-border-b-white tw-transition-colors tw-duration-200">{{
+                  t('homeHeader.home') }}</a>
+                <a routerLink="/media" routerLinkActive="tw-border-b-white"
+                  class="tw-text-white tw-text-sm md:tw-text-base tw-font-medium tw-text-center tw-mx-2
+                  tw-p-2 tw-border-b-2 tw-border-transparent hover:tw-border-b-white tw-transition-colors tw-duration-200">{{
+                  t('homeHeader.movies') }}</a>
+                <a routerLink="/media" routerLinkActive="tw-border-b-white"
+                  class="tw-text-white tw-text-sm md:tw-text-base tw-font-medium tw-text-center tw-mx-2
+                  tw-p-2 tw-border-b-2 tw-border-transparent hover:tw-border-b-white tw-transition-colors tw-duration-200">{{
+                  t('homeHeader.tvShows') }}</a>
+                <a routerLink="/search" routerLinkActive="tw-border-b-white"
+                  class="tw-text-white tw-text-sm md:tw-text-base tw-font-medium tw-text-center tw-mx-2
+                  tw-p-2 tw-border-b-2 tw-border-transparent hover:tw-border-b-white tw-transition-colors tw-duration-200">{{
+                  t('homeHeader.search') }}</a>
               </div>
             </div>
           </div>
@@ -41,13 +40,12 @@
                 (click)="userMenu.toggle($event)"
                 class="p-button-rounded p-button-text p-button-secondary p-button-sm tw-ml-2">
               </button>
-              <p-menu #userMenu [popup]="true" [model]="userMenuItems"></p-menu>
+              <p-menu #userMenu [popup]="true" [appendTo]="userMenuZone" [model]="userMenuItems"></p-menu>
             </ng-container>
             <ng-template #notLoggedIn>
-              <a routerLink="/sign-in"
-                class="tw-text-white tw-text-sm md:tw-text-base tw-font-medium tw-mx-2 tw-p-2 tw-border-b-2 tw-border-transparent hover:tw-border-b-white tw-transition-colors tw-duration-200">
-                {{ t('homeHeader.signIn') }}
-              </a>
+              <a routerLink="/sign-in" routerLinkActive="tw-border-b-white" class="tw-text-white tw-text-sm md:tw-text-base
+                tw-font-medium tw-mx-2 tw-p-2 tw-border-b-2 tw-border-transparent hover:tw-border-b-white tw-transition-colors
+                tw-duration-200">{{ t('homeHeader.signIn') }}</a>
             </ng-template>
           </div>
           <div class="tw-flex sm:tw-hidden tw-items-center sm:tw-static sm:tw-inset-auto sm:tw-ml-6 sm:tw-pr-0">
@@ -76,5 +74,6 @@
         </div>
       </div>
     </nav>
+    <div #userMenuZone></div>
   </ng-container>
 </header>

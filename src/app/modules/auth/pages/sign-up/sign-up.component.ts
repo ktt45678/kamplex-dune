@@ -37,7 +37,7 @@ export class SignUpComponent implements OnInit {
     });
     this.days = this.itemDataService.createDateList();
     this.months = this.itemDataService.createMonthList();
-    this.years = this.itemDataService.createYearList();
+    this.years = this.itemDataService.createYearList(1920);
   }
 
   ngOnInit(): void {

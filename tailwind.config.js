@@ -57,6 +57,9 @@ module.exports = {
         '3xl': '1600px',
         '4xl': '2000px'
       },
+      spacing: {
+        '30px': '30px'
+      },
       zIndex: {
         '-1': '-1'
       }
@@ -82,6 +85,13 @@ module.exports = {
           }
         }
       }));
+      addUtilities({
+        '.absolute-center': {
+          'top': '50%',
+          'left': '50%',
+          'transform': 'translate(-50%, -50%)'
+        }
+      });
       /*
       addUtilities(_.map(config('theme.spacing'), (value, key) => {
         return {

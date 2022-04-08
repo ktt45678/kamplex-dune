@@ -25,7 +25,8 @@
     "movies": "Movies",
     "tvShows": "TV Shows",
     "signIn": "Sign in",
-    "signUp": "Sign up"
+    "signUp": "Sign up",
+    "search": "Search"
   },
   "validationErrors": {
     "general": {

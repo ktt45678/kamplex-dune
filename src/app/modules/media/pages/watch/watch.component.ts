@@ -1,8 +1,8 @@
 import { Component, OnInit, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
 import { Meta } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
-import { takeUntil } from 'rxjs';
-import ISO6391 from 'iso-639-1';
+import { TranslocoService } from '@ngneat/transloco';
+import { of, switchMap, takeUntil, zipWith } from 'rxjs';
 import * as Plyr from 'plyr';
 
 import { MediaService } from '../../../../core/services';
@@ -17,9 +17,12 @@ import { DestroyService } from '../../../../core/services';
 })
 export class WatchComponent implements OnInit, OnDestroy {
   player?: Plyr;
+  sources: Plyr.Source[] = [];
+  tracks: Plyr.Track[] = [];
   selectedCodec: number = 1;
 
-  constructor(private meta: Meta, private mediaService: MediaService, private route: ActivatedRoute, private destroyService: DestroyService) { }
+  constructor(private meta: Meta, private mediaService: MediaService, private route: ActivatedRoute,
+    private translocoService: TranslocoService, private destroyService: DestroyService) { }
 
   ngOnInit(): void {
     this.player = new Plyr('#plyrPlayer', {
@@ -56,13 +59,15 @@ export class WatchComponent implements OnInit, OnDestroy {
         }
       ]);
     });
-    this.mediaService.findMovieStreams(id).subscribe(movie => {
+    this.translocoService.selectTranslation('languages').pipe(switchMap(t => {
+      return this.mediaService.findMovieStreams(id).pipe(zipWith(of(t)));
+    })).subscribe(([movie, t]) => {
       if (!this.player) return;
-      const sources: Plyr.Source[] = [];
-      const tracks: Plyr.Track[] = [];
+      this.sources = [];
+      this.tracks = [];
       movie.streams.forEach(stream => {
         if (stream.codec === this.selectedCodec) {
-          sources.push({
+          this.sources.push({
             src: stream.src,
             type: stream.mimeType,
             provider: 'html5',
@@ -71,19 +76,39 @@ export class WatchComponent implements OnInit, OnDestroy {
         }
       });
       movie.subtitles.forEach(subtitle => {
-        tracks.push({
+        this.tracks.push({
           kind: 'subtitles',
-          label: ISO6391.getName(subtitle.language),
+          label: t[subtitle.language],
           srcLang: subtitle.language,
           src: subtitle.src
         });
       });
       this.player.source = {
         type: 'video',
-        sources: sources,
-        tracks: tracks
+        sources: this.sources,
+        tracks: this.tracks
       };
     });
+  }
+
+  refreshMediaSource(): void {
+    if (!this.player) return;
+    const currentTime = this.player.currentTime;
+    console.log(currentTime);
+    //const currentUrl = (<any>this.player.elements.wrapper?.firstChild).currentSrc;
+    //const parsedUrl = new URL(currentUrl);
+    //const tempAuth = parsedUrl.searchParams.get('tempauth');
+    //if (!tempAuth) return;
+    //const decodedAuth = jwtDecode<any>(tempAuth);
+    //if (decodedAuth.exp * 1000 < Date.now()) {
+    console.log('refresh 2');
+    this.player.source = {
+      type: 'video',
+      sources: this.sources,
+      tracks: this.tracks
+    };
+    this.player.currentTime = currentTime;
+    //}
   }
 
   ngOnDestroy(): void {

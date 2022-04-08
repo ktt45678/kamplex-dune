@@ -1,14 +1,15 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, Renderer2, Inject } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
-import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
-import { ConfirmationService } from 'primeng/api';
+import { TranslocoService, TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { ConfirmationService, MenuItem } from 'primeng/api';
 import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { first } from 'rxjs';
 import { SwiperOptions } from 'swiper';
+import { first, of, switchMap, zipWith } from 'rxjs';
+import { escape } from 'lodash';
 
-import { MediaStatus, MediaType } from '../../../../core/enums';
+import { MediaSourceStatus, MediaStatus, MediaType } from '../../../../core/enums';
 import { MediaDetails, MediaVideo, MediaSubtitle } from '../../../../core/models';
-import { MediaService } from '../../../../core/services';
+import { MediaService, QueueUploadService } from '../../../../core/services';
 import { AddVideoComponent } from '../add-video';
 import { AddSubtitleComponent } from '../add-subtitle';
 import { UpdateVideoComponent } from '../update-video';
@@ -35,6 +36,7 @@ import { AddSourceComponent } from '../add-source';
 export class ConfigureMediaComponent implements OnInit {
   MediaType = MediaType;
   MediaStatus = MediaStatus;
+  MediaSourceStatus = MediaSourceStatus;
   loadingMedia: boolean = false;
   loadingVideo: boolean = false;
   displayVideo: boolean = false;
@@ -42,13 +44,16 @@ export class ConfigureMediaComponent implements OnInit {
   activeVideoIndex: number = 0;
   youtubeUrl = 'https://www.youtube.com/embed/';
   youtubeThumbnailUrl = 'https://img.youtube.com/vi/';
+  uploadingSource: boolean = false;
   media?: MediaDetails;
 
+  sideBarItems: MenuItem[] = [];
   swiperConfig: SwiperOptions;
 
   constructor(@Inject(DOCUMENT) private document: Document, private ref: ChangeDetectorRef, private renderer: Renderer2,
     private dialogRef: DynamicDialogRef, private config: DynamicDialogConfig, public dialogService: DialogService,
-    private confirmationService: ConfirmationService, private mediaService: MediaService) {
+    private confirmationService: ConfirmationService, private mediaService: MediaService,
+    private queueUploadService: QueueUploadService, private translocoService: TranslocoService) {
     this.swiperConfig = {
       autoplay: false,
       navigation: {
@@ -68,7 +73,7 @@ export class ConfigureMediaComponent implements OnInit {
           slidesPerView: 3
         },
         1024: {
-          slidesPerView: 4
+          slidesPerView: 5
         }
       }
     };
@@ -76,6 +81,28 @@ export class ConfigureMediaComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadMedia();
+    this.checkUploadInQueue();
+    this.translocoService.selectTranslation('media').pipe(switchMap(t2 => {
+      return this.translocoService.selectTranslation('admin').pipe(zipWith(of(t2)));
+    }), first()).subscribe(([t1, t2]) => {
+      this.sideBarItems = [
+        {
+          label: t1['configureMedia.general']
+        },
+        {
+          label: t1['configureMedia.images']
+        },
+        {
+          label: t2['details.videos']
+        },
+        {
+          label: t1['configureMedia.subtitles']
+        },
+        {
+          label: t1['configureMedia.source']
+        }
+      ];
+    });
   }
 
   loadMedia(): void {
@@ -149,10 +176,10 @@ export class ConfigureMediaComponent implements OnInit {
     const mediaId = this.config.data['_id'];
     this.confirmationService.confirm({
       key: 'inModal',
-      message: `Are you sure you want to delete this video? This action cannot be undone.`,
-      header: 'Delete Video',
+      message: this.translocoService.translate('admin.media.deleteVideoConfirmation'),
+      header: this.translocoService.translate('admin.media.deleteVideoConfirmationHeader'),
       icon: 'pi pi-info-circle',
-      defaultFocus: 'none',
+      defaultFocus: 'reject',
       accept: () => {
         const element = event.target instanceof HTMLButtonElement ? event.target : <HTMLButtonElement>(<HTMLSpanElement>event.target).parentElement;
         this.renderer.setProperty(element, 'disabled', true);
@@ -195,10 +222,10 @@ export class ConfigureMediaComponent implements OnInit {
     const mediaId = this.config.data['_id'];
     this.confirmationService.confirm({
       key: 'inModal',
-      message: `Are you sure you want to delete this subtitle? This action cannot be undone.`,
-      header: 'Delete Subtitle',
+      message: this.translocoService.translate('admin.media.deleteSubtitleConfirmation'),
+      header: this.translocoService.translate('admin.media.deleteSubtitleConfirmationHeader'),
       icon: 'pi pi-info-circle',
-      defaultFocus: 'none',
+      defaultFocus: 'reject',
       accept: () => {
         const element = event.target instanceof HTMLButtonElement ? event.target : <HTMLButtonElement>(<HTMLSpanElement>event.target).parentElement;
         this.renderer.setProperty(element, 'disabled', true);
@@ -231,6 +258,48 @@ export class ConfigureMediaComponent implements OnInit {
     //});
     dialogRef.onDestroy.pipe(first()).subscribe(() => {
       this.blockScroll();
+    });
+  }
+
+  checkUploadInQueue(): void {
+    const mediaId = this.config.data._id;
+    this.queueUploadService.uploadQueue.pipe(first()).subscribe({
+      next: (files) => {
+        this.uploadingSource = !!files.find(f => f.id === mediaId);
+        this.ref.markForCheck();
+      }
+    });
+  }
+
+  uploadSource(file: File): void {
+    const mediaId = this.config.data._id;
+    this.queueUploadService.addToQueue(mediaId, file, `media/${mediaId}/movie/source`, `media/${mediaId}/movie/source/:id`);
+    this.checkUploadInQueue();
+  }
+
+  deleteSource(event: Event): void {
+    const mediaId = this.config.data['_id'];
+    const safeMediaTitle = escape(this.config.data['title']);
+    this.confirmationService.confirm({
+      key: 'inModal',
+      message: this.translocoService.translate('admin.media.deleteSourceConfirmation', { name: safeMediaTitle }),
+      header: this.translocoService.translate('admin.media.deleteSourceConfirmationHeader'),
+      icon: 'pi pi-info-circle',
+      defaultFocus: 'reject',
+      accept: () => {
+        const element = event.target instanceof HTMLButtonElement ? event.target : <HTMLButtonElement>(<HTMLSpanElement>event.target).parentElement;
+        this.renderer.setProperty(element, 'disabled', true);
+        this.ref.markForCheck();
+        this.mediaService.deleteMovieSource(mediaId).subscribe({
+          next: () => {
+            if (!this.media) return;
+            this.media = { ...this.media, movie: { ...this.media.movie, status: MediaSourceStatus.PENDING } };
+          }
+        }).add(() => {
+          this.renderer.setProperty(element, 'disabled', false);
+          this.ref.markForCheck();
+        });
+      }
     });
   }
 

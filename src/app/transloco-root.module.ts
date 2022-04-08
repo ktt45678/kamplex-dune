@@ -18,7 +18,11 @@ export class TranslocoHttpLoader implements TranslocoLoader {
   constructor(private http: HttpClient) { }
 
   getTranslation(lang: string) {
-    return this.http.get<Translation>(`/assets/i18n/${lang}.json`);
+    return this.http.get<Translation>(`/assets/i18n/${lang}.json`, {
+      headers: {
+        'x-ng-intercept': 'ignore'
+      }
+    });
   }
 }
 

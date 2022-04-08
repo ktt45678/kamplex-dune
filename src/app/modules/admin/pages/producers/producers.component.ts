@@ -1,5 +1,6 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { TranslocoService } from '@ngneat/transloco';
 import { ConfirmationService } from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
 import { Table } from 'primeng/table';
@@ -26,7 +27,8 @@ export class ProducersComponent implements OnInit {
   selectedProducers?: Producer[];
 
   constructor(private ref: ChangeDetectorRef, private route: ActivatedRoute, private router: Router,
-    public dialogService: DialogService, private confirmationService: ConfirmationService, private producersService: ProducersService) { }
+    public dialogService: DialogService, private confirmationService: ConfirmationService,
+    private producersService: ProducersService, private translocoService: TranslocoService) { }
 
   ngOnInit(): void {
   }
@@ -88,10 +90,10 @@ export class ProducersComponent implements OnInit {
   showDeleteProducerDialog(producer: Producer): void {
     const safeProducerName = escape(producer.name);
     this.confirmationService.confirm({
-      message: `Are you sure you want to delete <strong>${safeProducerName}</strong>? This action cannot be undone.`,
-      header: 'Delete Producer',
+      message: this.translocoService.translate('admin.producers.deleteConfirmation', { name: safeProducerName }),
+      header: this.translocoService.translate('admin.producers.deleteConfirmationHeader'),
       icon: 'pi pi-info-circle',
-      defaultFocus: 'none',
+      defaultFocus: 'reject',
       accept: () => this.removeProducer(producer._id)
     });
   }

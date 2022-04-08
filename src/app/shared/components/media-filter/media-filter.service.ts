@@ -1,24 +1,14 @@
 import { Injectable } from '@angular/core';
-import { map, Observable, Subject } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { TranslocoService } from '@ngneat/transloco';
 
 import { LANGUAGE_CODES } from '../../../core/data';
-import { MediaFilterOptionsDto, DropdownOptionDto } from '../../../core/dto/media';
+import { DropdownOptionDto } from '../../../core/dto/media';
 
 @Injectable()
 export class MediaFilterService {
-  private options: Subject<MediaFilterOptionsDto>;
 
-  options$: Observable<MediaFilterOptionsDto>;
-
-  constructor(private translocoService: TranslocoService) {
-    this.options = new Subject<MediaFilterOptionsDto>();
-    this.options$ = this.options.asObservable();
-  }
-
-  setOptions(value: MediaFilterOptionsDto) {
-    this.options.next(value);
-  }
+  constructor(private translocoService: TranslocoService) { }
 
   createYearList(startYear: number = 1970): DropdownOptionDto[] {
     const currentYear = new Date().getFullYear();

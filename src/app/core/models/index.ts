@@ -1,4 +1,3 @@
-export * from './file-upload.model';
 export * from './genre-details.model';
 export * from './genre.model';
 export * from './jwt-with-payload.model';

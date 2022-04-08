@@ -8,6 +8,9 @@
     "auditLog": "Audit Log",
     "settings": "Settings"
   },
+  "uploadQueue": {
+    "uploading": "{ fileCount, plural, =0 {Not uploading} one {Uploading 1 file} other {Uploading # files} }"
+  },
   "createGenre": {
     "formHeader": "Create Genre",
     "name": "Name",
@@ -66,6 +69,8 @@
     "submit": "Create"
   },
   "configureMedia": {
+    "general": "General",
+    "images": "Images",
     "videos": "{{ media.details.videos }}",
     "addVideo": "Add Video",
     "updateVideo": "Edit",
@@ -76,7 +81,13 @@
     "addSubtitle": "Add Subtitle",
     "source": "Source",
     "noSource": "No source was found",
-    "addSource": "Add Source"
+    "addSource": "Add Source",
+    "addEpisode": "Add Episode",
+    "deleteSource": "Delete Source",
+    "deleteMovie": "Delete Movie",
+    "deleteTV": "Delete TV Show",
+    "deleteEpisode": "Delete Episode",
+    "deleteMedia": "Delete"
   },
   "addMediaVideo": {
     "formHeader": "{{ admin.configureMedia.addVideo }}",
@@ -116,7 +127,9 @@
     "create": "New",
     "tableHeader": "Manage Genres",
     "name": "{{ admin.createGenre.name }}",
-    "pageReport": "Showing '{first'} to '{last'} of '{totalRecords'} entries"
+    "pageReport": "Showing '{first'} to '{last'} of '{totalRecords'} entries",
+    "deleteConfirmationHeader": "Delete Genre",
+    "deleteConfirmation": "Are you sure you want to delete <strong>{{ name }}</strong>? This action cannot be undone."
   },
   "producers": {
     "searchPlaceholder": "{{ admin.genres.searchPlaceholder }}",
@@ -124,7 +137,9 @@
     "tableHeader": "Manage Producers",
     "name": "{{ admin.createGenre.name }}",
     "country": "Country",
-    "pageReport": "Showing '{first'} to '{last'} of '{totalRecords'} entries"
+    "pageReport": "Showing '{first'} to '{last'} of '{totalRecords'} entries",
+    "deleteConfirmationHeader": "Delete Producer",
+    "deleteConfirmation": "Are you sure you want to delete <strong>{{ name }}</strong>? This action cannot be undone."
   },
   "media": {
     "searchPlaceholder": "{{ admin.genres.searchPlaceholder }}",
@@ -138,16 +153,29 @@
     "tv": "TV Show",
     "runtimeValue": "{{ runtime }} min",
     "episodeCountValue": "{ episodeCount, plural, =0 {No episodes} one {1 episode} other {# episodes} }",
-    "episodeRuntimeValue": "({{ runtime }} min each)",
+    "episodeRuntimeValue": "{{ runtime }} min per ep",
     "backdrop": "Backdrop",
     "rating": "Rating",
     "status": "Status",
     "statusPending": "Pending",
     "statusReview": "In review",
     "statusProcessing": "Processing",
+    "statusReady": "Ready",
     "statusDone": "Done",
     "statusUnknown": "Unknown",
     "releaseDate": "Release date",
-    "pageReport": "Showing '{first'} to '{last'} of '{totalRecords'} entries"
+    "pageReport": "Showing '{first'} to '{last'} of '{totalRecords'} entries",
+    "deleteConfirmationHeader": "Delete Movie or TV Show",
+    "deleteConfirmation": "Are you sure you want to delete <strong>{{ name }}</strong>? This action cannot be undone.",
+    "deletePosterConfirmationHeader": "Delete Poster",
+    "deletePosterConfirmation": "Are you sure you want to delete <strong>{{ name }}'s poster</strong>? This action cannot be undone.",
+    "deleteBackdropConfirmationHeader": "Delete Backdrop",
+    "deleteBackdropConfirmation": "Are you sure you want to delete <strong>{{ name }}'s backdrop</strong>? This action cannot be undone.",
+    "deleteVideoConfirmationHeader": "Delete Video",
+    "deleteVideoConfirmation": "Are you sure you want to delete this video? This action cannot be undone.",
+    "deleteSubtitleConfirmationHeader": "Delete Subtitle",
+    "deleteSubtitleConfirmation": "Are you sure you want to delete this subtitle? This action cannot be undone.",
+    "deleteSourceConfirmationHeader": "Delete Source",
+    "deleteSourceConfirmation": "Are you sure you want to delete <strong>{{ name }}'s source</strong>? This action cannot be undone."
   }
 }
