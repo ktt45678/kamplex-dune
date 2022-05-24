@@ -11,7 +11,7 @@
           </label>
           <input formControlName="title" class="tw-w-full" id="title" type="text" aria-describedby="title-error"
             [placeholder]="t('admin.createMedia.titlePlaceholder')" pInputText [disabledControl]="isCreatingMedia"
-            controlAutofocus>
+            autofocus>
           <small id="title-error"
             class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
             [ngClass]="(createMediaForm.controls['title'].dirty || createMediaForm.controls['title'].touched)
@@ -86,9 +86,9 @@
           </label>
           <p-autoComplete formControlName="genres" [suggestions]="genreSuggestions"
             (completeMethod)="loadGenreSuggestions($event.query)" field="name" dataKey="_id" [multiple]="true"
-            [unique]="true" [completeOnFocus]="true" scrollHeight="300px" appendTo="body"
-            styleClass="p-autocomplete-multiple-nowrap tw-w-full" panelStyleClass="p-autocomplete-xs" inputId="genres"
-            aria-describedby="genres-error" [disabledControl]="isCreatingMedia">
+            [unique]="true" [completeOnFocus]="true" scrollHeight="300px" appendTo="body" styleClass="tw-w-full"
+            panelStyleClass="p-autocomplete-xs" inputId="genres" aria-describedby="genres-error"
+            [disabledControl]="isCreatingMedia">
           </p-autoComplete>
           <small id="genres-error"
             class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
@@ -103,9 +103,9 @@
           </label>
           <p-autoComplete formControlName="producers" [suggestions]="producerSuggestions"
             (completeMethod)="loadProducerSuggestions($event.query)" field="name" dataKey="_id" [multiple]="true"
-            [unique]="true" [completeOnFocus]="true" scrollHeight="300px" appendTo="body"
-            styleClass="p-autocomplete-multiple-nowrap tw-w-full" panelStyleClass="p-autocomplete-xs"
-            inputId="producers" aria-describedby="producers-error" [disabledControl]="isCreatingMedia">
+            [unique]="true" [completeOnFocus]="true" scrollHeight="300px" appendTo="body" styleClass="tw-w-full"
+            panelStyleClass="p-autocomplete-xs" inputId="producers" aria-describedby="producers-error"
+            [disabledControl]="isCreatingMedia">
           </p-autoComplete>
           <small id="producers-error"
             class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
@@ -209,8 +209,8 @@
               <p-radioButton name="status" value="airing" label="Airing" formControlName="status"
                 class="tw-block tw-mb-2" [disabledControl]="isCreatingMedia">
               </p-radioButton>
-              <p-radioButton name="status" value="aired" label="Aired" formControlName="status" class="tw-block tw-mb-2"
-                [disabledControl]="isCreatingMedia">
+              <p-radioButton name="status" value="aired" label="Aired" formControlName="status"
+                class="tw-block tw-mb-2" [disabledControl]="isCreatingMedia">
               </p-radioButton>
             </ng-container>
             <ng-template #isMovie>

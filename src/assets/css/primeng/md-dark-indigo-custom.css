@@ -7601,6 +7601,16 @@ p-multiselect.ng-dirty.ng-invalid .p-multiselect:not(.p-disabled).p-focus {
   overflow-x: overlay;
 }
 
+.p-autocomplete-multiple-long > .p-autocomplete-multiple-container {
+  min-height: 8rem;
+  align-items: start;
+}
+
+.p-autocomplete-multiple-container > .p-autocomplete-token {
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+}
+
 .p-error {
   font-weight: 500;
 }

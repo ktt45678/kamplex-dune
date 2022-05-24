@@ -7,7 +7,7 @@
       {{ t('admin.createProducer.name') }}
     </label>
     <input formControlName="name" class="tw-w-full" id="name" type="text" aria-describedby="name-error" pInputText
-      [disabledControl]="isCreatingProducer" controlAutofocus>
+      [disabledControl]="isCreatingProducer" autofocus>
     <small id="name-error"
       class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
       [ngClass]="(createProducerForm.controls['name'].dirty || createProducerForm.controls['name'].touched)

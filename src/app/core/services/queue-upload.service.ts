@@ -40,12 +40,27 @@ export class QueueUploadService {
     this.showQueue();
   }
 
+  public removeFromQueue(queuedUploadFile: FileUpload) {
+    for (let i = 0; i < this._files.length; i++) {
+      if (this._files[i].id === queuedUploadFile.id) {
+        this._files.splice(i, 1);
+        this._uploadQueue.next(this._files);
+        break;
+      }
+    }
+  }
+
   public showQueue(): void {
     this._displayQueue.next(true);
   }
 
   public hideQueue(): void {
     this._displayQueue.next(false);
+  }
+
+  public isMediaInQueue(id: string): boolean {
+    const index = this._files.findIndex(f => f.id === id);
+    return index > -1;
   }
 
   private upload(queuedUploadFile: FileUpload) {
@@ -57,7 +72,7 @@ export class QueueUploadService {
       mimeType: queuedUploadFile.file.type,
       size: queuedUploadFile.file.size
     }).pipe(switchMap((session: UploadSession) => {
-      return new Observable<{ sessionId: string, fileId: string }>(subscriber => {
+      return new Observable<{ sessionId: string, fileId: string }>(observer => {
         let lastUploadedBytes = 0;
         const upload = UpChunk.createUpload({
           endpoint: session.url,
@@ -66,36 +81,38 @@ export class QueueUploadService {
           delayBeforeAttempt: 3
         });
         upload.on('progress', (event) => {
+          if (queuedUploadFile.status !== QueueUploadStatus.UPLOADING) return;
           queuedUploadFile.updateProgress(Math.round(event.detail));
           this._uploadQueue.next(this._files);
           const uploadedBytes = queuedUploadFile.file.size * (event.detail / 100);
           this._uploadedBytes += uploadedBytes - lastUploadedBytes;
           lastUploadedBytes = uploadedBytes;
           const timeElapsed = Date.now() - this._timeStarted;
-          const uploadSpeed = this._uploadedBytes / (timeElapsed / 1000);
+          const uploadSpeed = this._uploadedBytes / timeElapsed;
           this._timeRemaining.next((this._totalBytes - this._uploadedBytes) / uploadSpeed);
-          console.log(`total: ${this._totalBytes}, uploaded: ${this._uploadedBytes}, percent: ${event.detail}, time started: ${this._timeStarted}, time elapsed: ${timeElapsed}, upload speed: ${uploadSpeed}, time remaining: ${this._timeRemaining.value}`);
+          //console.log(`total: ${this._totalBytes}, uploaded: ${this._uploadedBytes}, percent: ${event.detail}, time started: ${this._timeStarted}, time elapsed: ${timeElapsed}, upload speed: ${uploadSpeed}, time remaining: ${this._timeRemaining.value}`);
         });
         upload.on('chunkSuccess', (event) => {
           const response = event.detail.response;
           if (response.statusCode === 201 || response.statusCode === 200) {
-            this._uploadQueue.next(this._files);
-            console.log(typeof response.body);
             const body = JSON.parse(response.body);
             queuedUploadFile.completed();
             this._uploadQueue.next(this._files);
-            subscriber.next({ sessionId: session._id, fileId: body.id });
-            subscriber.complete();
+            observer.next({ sessionId: session._id, fileId: body.id });
+            observer.complete();
           }
         });
         upload.on('error', (event) => {
-          subscriber.error(event.detail);
-          subscriber.complete();
+          observer.error(event.detail);
+          observer.complete();
         });
         return () => {
+          if (queuedUploadFile.status !== QueueUploadStatus.UPLOADING) return;
+          queuedUploadFile.cancel();
+          this._uploadQueue.next(this._files);
           upload.abort();
-          subscriber.complete();
-        }
+          observer.complete();
+        };
       });
     }), switchMap(data => {
       const completeUrl = queuedUploadFile.completeUrl.replace(':id', data.sessionId);

@@ -14,9 +14,9 @@ export class ShortDatePipe implements PipeTransform {
     if (!value)
       return null;
     const date = DateTime.fromObject({ year: value.year, month: value.month, day: value.day });
-    if (format)
-      return date.toFormat(format);
     const lang = this.translocoService.getActiveLang();
+    if (format)
+      return date.toFormat(format, { locale: lang });
     return date.toLocaleString(DateTime.DATE_FULL, { locale: lang });
   }
 

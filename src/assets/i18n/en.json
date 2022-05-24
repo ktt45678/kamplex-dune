@@ -150,6 +150,16 @@
         "maxFileSize": "Maximum file size is 500KB",
         "fileExtension": "Invalid subtitle file"
       }
+    },
+    "addMediaSource": {
+      "file": {
+        "required": "File is required",
+        "maxFileSize": "Maximum file size is 40GB",
+        "fileExtension": "File must be in .mp4, .mkv, .webm or .m2ts format"
+      }
     }
+  },
+  "window": {
+    "leaveSite": "Leave site? Changes you made may not be saved."
   }
 }

@@ -1,19 +1,23 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, Renderer2, Inject } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { TranslocoService, TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { ConfirmationService, MenuItem } from 'primeng/api';
 import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { SwiperOptions } from 'swiper';
-import { first, of, switchMap, zipWith } from 'rxjs';
-import { escape } from 'lodash';
+import { finalize, first, of, switchMap, takeWhile, zipWith } from 'rxjs';
+import { escape, isEqual } from 'lodash';
 
-import { MediaSourceStatus, MediaStatus, MediaType } from '../../../../core/enums';
-import { MediaDetails, MediaVideo, MediaSubtitle } from '../../../../core/models';
-import { MediaService, QueueUploadService } from '../../../../core/services';
+import { MediaPStatus, MediaSourceStatus, MediaStatus, MediaType, QueueUploadStatus } from '../../../../core/enums';
+import { MediaDetails, MediaVideo, MediaSubtitle, TVEpisode, Genre, Producer } from '../../../../core/models';
+import { GenresService, ItemDataService, MediaService, ProducersService, QueueUploadService } from '../../../../core/services';
+import { DropdownOptionDto } from '../../../../core/dto/media';
 import { AddVideoComponent } from '../add-video';
-import { AddSubtitleComponent } from '../add-subtitle';
 import { UpdateVideoComponent } from '../update-video';
+import { CreateEpisodeComponent } from '../create-episode';
+import { ConfigureEpisodeComponent } from '../configure-episode';
 import { AddSourceComponent } from '../add-source';
+import { fileExtension, maxFileSize, shortDate } from '../../../../core/validators';
+import { SUBTITLE_UPLOAD_EXT, SUBTITLE_UPLOAD_SIZE } from '../../../../../environments/config';
 
 @Component({
   selector: 'app-configure-media',
@@ -21,6 +25,7 @@ import { AddSourceComponent } from '../add-source';
   styleUrls: ['./configure-media.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
+    ItemDataService,
     {
       provide: TRANSLOCO_SCOPE,
       useValue: 'media',
@@ -36,82 +41,94 @@ import { AddSourceComponent } from '../add-source';
 export class ConfigureMediaComponent implements OnInit {
   MediaType = MediaType;
   MediaStatus = MediaStatus;
+  MediaPStatus = MediaPStatus;
   MediaSourceStatus = MediaSourceStatus;
   loadingMedia: boolean = false;
   loadingVideo: boolean = false;
   displayVideo: boolean = false;
-  deletingVideo: boolean = false;
+  isDeletingVideo: boolean = false;
+  isUpdatingMedia: boolean = false;
+  isUpdated: boolean = false;
+  isUploadingSource: boolean = false;
+  isAddingSubtitle: boolean = false;
+  updateMediaFormChanged: boolean = false;
   activeVideoIndex: number = 0;
   youtubeUrl = 'https://www.youtube.com/embed/';
   youtubeThumbnailUrl = 'https://img.youtube.com/vi/';
-  uploadingSource: boolean = false;
   media?: MediaDetails;
+  addSubtitleLanguages?: DropdownOptionDto[];
+  addSubtitleForm: FormGroup;
+  updateMediaForm?: FormGroup;
+  updateMediaInitValue: any = {};
+  days: DropdownOptionDto[] = [];
+  months: DropdownOptionDto[] = [];
+  years: DropdownOptionDto[] = [];
+  languages: DropdownOptionDto[] = [];
+  genreSuggestions: Genre[] = [];
+  producerSuggestions: Producer[] = [];
 
   sideBarItems: MenuItem[] = [];
-  swiperConfig: SwiperOptions;
 
   constructor(@Inject(DOCUMENT) private document: Document, private ref: ChangeDetectorRef, private renderer: Renderer2,
     private dialogRef: DynamicDialogRef, private config: DynamicDialogConfig, public dialogService: DialogService,
-    private confirmationService: ConfirmationService, private mediaService: MediaService,
-    private queueUploadService: QueueUploadService, private translocoService: TranslocoService) {
-    this.swiperConfig = {
-      autoplay: false,
-      navigation: {
-        prevEl: '#swiper-prev-video',
-        nextEl: '#swiper-next-video'
-      },
-      loop: false,
-      pagination: false,
-      allowTouchMove: true,
-      slidesPerView: 1,
-      spaceBetween: 6,
-      breakpoints: {
-        640: {
-          slidesPerView: 2
-        },
-        768: {
-          slidesPerView: 3
-        },
-        1024: {
-          slidesPerView: 5
-        }
-      }
-    };
+    private confirmationService: ConfirmationService, private mediaService: MediaService, private itemDataService: ItemDataService,
+    private genresService: GenresService, private producersService: ProducersService, private queueUploadService: QueueUploadService,
+    private translocoService: TranslocoService) {
+    this.addSubtitleForm = new FormGroup({
+      language: new FormControl(null, [Validators.required]),
+      file: new FormControl(null, [Validators.required, maxFileSize(SUBTITLE_UPLOAD_SIZE), fileExtension(SUBTITLE_UPLOAD_EXT)])
+    });
   }
 
   ngOnInit(): void {
     this.loadMedia();
     this.checkUploadInQueue();
-    this.translocoService.selectTranslation('media').pipe(switchMap(t2 => {
-      return this.translocoService.selectTranslation('admin').pipe(zipWith(of(t2)));
-    }), first()).subscribe(([t1, t2]) => {
-      this.sideBarItems = [
-        {
-          label: t1['configureMedia.general']
-        },
-        {
-          label: t1['configureMedia.images']
-        },
-        {
-          label: t2['details.videos']
-        },
-        {
-          label: t1['configureMedia.subtitles']
-        },
-        {
-          label: t1['configureMedia.source']
-        }
-      ];
+    this.loadTranslations();
+    this.days = this.itemDataService.createDateList();
+    this.months = this.itemDataService.createMonthList();
+    this.years = this.itemDataService.createYearList();
+    this.loadGenreSuggestions();
+    this.loadProducerSuggestions();
+    this.itemDataService.createLanguageList().pipe(first()).subscribe(languages => {
+      this.languages = languages
     });
   }
 
   loadMedia(): void {
+    if (!this.config.data) return;
     const mediaId = this.config.data['_id'];
     this.loadingMedia = true;
-    this.mediaService.findOne(mediaId).subscribe(media => this.media = media).add(() => {
+    this.mediaService.findOne(mediaId).subscribe(media => {
+      this.media = media;
+      this.createUpdateMediaForm(media);
+      if (media.type === MediaType.MOVIE)
+        this.loadSubtitleFormData(media);
+    }).add(() => {
       this.loadingMedia = false;
       this.ref.markForCheck();
     });
+  }
+
+  loadGenreSuggestions(search?: string): void {
+    this.genresService.findGenreSuggestions(search).subscribe({
+      next: genres => this.genreSuggestions = genres
+    }).add(() => this.ref.markForCheck());
+  }
+
+  loadProducerSuggestions(search?: string): void {
+    this.producersService.findProducerSuggestions(search).subscribe({
+      next: producers => this.producerSuggestions = producers
+    }).add(() => this.ref.markForCheck());
+  }
+
+  onUpdateMediaFormSubmit(value: any): void {
+
+  }
+
+  onUpdateMediaFormReset(): void {
+    if (!this.updateMediaForm) return;
+    this.updateMediaForm.reset(this.updateMediaInitValue);
+    this.detectFormChange(this.updateMediaForm);
   }
 
   loadVideos(): void {
@@ -122,7 +139,7 @@ export class ConfigureMediaComponent implements OnInit {
       this.media = { ...this.media, videos };
     }).add(() => {
       this.loadingVideo = false;
-      this.ref.detectChanges();
+      this.ref.markForCheck();
     });
   }
 
@@ -142,13 +159,19 @@ export class ConfigureMediaComponent implements OnInit {
       styleClass: 'p-dialog-header-sm',
       contentStyle: { 'margin-top': '-1.5rem' }
     });
+    const dialogComponent = this.dialogService.dialogComponentRefMap.get(this.dialogRef)?.instance;
+    if (dialogComponent) dialogComponent.unbindGlobalListeners();
     dialogRef.onClose.pipe(first()).subscribe((videos: MediaVideo[]) => {
       if (!videos || !this.media) return;
-      this.media = { ...this.media, videos };
+      this.media = { ...this.media, videos: [...videos] };
       this.ref.markForCheck();
     });
     dialogRef.onDestroy.pipe(first()).subscribe(() => {
       this.blockScroll();
+      if (!dialogComponent) return;
+      dialogComponent.moveOnTop();
+      dialogComponent.bindGlobalListeners();
+      dialogComponent.focus();
     });
   }
 
@@ -162,6 +185,8 @@ export class ConfigureMediaComponent implements OnInit {
       styleClass: 'p-dialog-header-sm',
       contentStyle: { 'margin-top': '-1.5rem' }
     });
+    const dialogComponent = this.dialogService.dialogComponentRefMap.get(this.dialogRef)?.instance;
+    if (dialogComponent) dialogComponent.unbindGlobalListeners();
     dialogRef.onClose.pipe(first()).subscribe((videos: MediaVideo[]) => {
       if (!videos || !this.media) return;
       this.media = { ...this.media, videos };
@@ -169,6 +194,10 @@ export class ConfigureMediaComponent implements OnInit {
     });
     dialogRef.onDestroy.pipe(first()).subscribe(() => {
       this.blockScroll();
+      if (!dialogComponent) return;
+      dialogComponent.moveOnTop();
+      dialogComponent.bindGlobalListeners();
+      dialogComponent.focus();
     });
   }
 
@@ -188,7 +217,7 @@ export class ConfigureMediaComponent implements OnInit {
           next: () => {
             if (!this.media) return;
             const videos = this.media.videos.filter(v => v._id !== video._id);
-            this.media = { ...this.media, videos };
+            this.media = { ...this.media, videos: [...videos] };
           },
           error: () => {
             this.renderer.setProperty(element, 'disabled', false);
@@ -198,6 +227,7 @@ export class ConfigureMediaComponent implements OnInit {
     });
   }
 
+  /*
   showAddSubtitleDialog(): void {
     if (!this.media) return;
     const dialogRef = this.dialogService.open(AddSubtitleComponent, {
@@ -217,6 +247,40 @@ export class ConfigureMediaComponent implements OnInit {
       this.blockScroll();
     });
   }
+  */
+
+  onAddSubtitleFormSubmit(): void {
+    if (this.addSubtitleForm.invalid) return;
+    this.isAddingSubtitle = true;
+    const mediaId = this.config.data._id;
+    const language = this.addSubtitleForm.value['language'];
+    this.mediaService.addMovieSubtitle(mediaId, {
+      language: language,
+      file: this.addSubtitleForm.value['file']
+    }).subscribe({
+      next: subtitles => {
+        if (!subtitles || !this.media) return;
+        this.media = { ...this.media, movie: { ...this.media.movie, subtitles } };
+        this.disableSubtitleLanguage(language, true);
+        this.addSubtitleForm.reset();
+      }
+    }).add(() => {
+      this.isAddingSubtitle = false;
+      this.ref.markForCheck();
+    });
+  }
+
+  addSubtitleToForm(file: File): void {
+    const fileControl = this.addSubtitleForm.get('file');
+    if (!fileControl) return;
+    fileControl.setValue(file);
+    if (!fileControl.touched)
+      fileControl.markAsTouched();
+  }
+
+  onAddSubtitleFormCancel(): void {
+    this.addSubtitleForm.reset();
+  }
 
   deleteSubtitle(subtitle: MediaSubtitle, event: Event): void {
     const mediaId = this.config.data['_id'];
@@ -235,6 +299,7 @@ export class ConfigureMediaComponent implements OnInit {
             if (!this.media) return;
             const subtitles = this.media.movie.subtitles.filter(v => v._id !== subtitle._id);
             this.media = { ...this.media, movie: { ...this.media.movie, subtitles } };
+            this.disableSubtitleLanguage(subtitle.language, false);
           },
           error: () => {
             this.renderer.setProperty(element, 'disabled', false);
@@ -263,12 +328,8 @@ export class ConfigureMediaComponent implements OnInit {
 
   checkUploadInQueue(): void {
     const mediaId = this.config.data._id;
-    this.queueUploadService.uploadQueue.pipe(first()).subscribe({
-      next: (files) => {
-        this.uploadingSource = !!files.find(f => f.id === mediaId);
-        this.ref.markForCheck();
-      }
-    });
+    this.isUploadingSource = this.queueUploadService.isMediaInQueue(mediaId);
+    this.ref.markForCheck();
   }
 
   uploadSource(file: File): void {
@@ -293,7 +354,8 @@ export class ConfigureMediaComponent implements OnInit {
         this.mediaService.deleteMovieSource(mediaId).subscribe({
           next: () => {
             if (!this.media) return;
-            this.media = { ...this.media, movie: { ...this.media.movie, status: MediaSourceStatus.PENDING } };
+            this.media = { ...this.media, movie: { ...this.media.movie, status: MediaSourceStatus.PENDING }, pStatus: MediaPStatus.PENDING };
+            this.isUpdated = true;
           }
         }).add(() => {
           this.renderer.setProperty(element, 'disabled', false);
@@ -303,12 +365,168 @@ export class ConfigureMediaComponent implements OnInit {
     });
   }
 
+  showCreateEpisodeDialog(): void {
+    if (!this.media) return;
+    const dialogRef = this.dialogService.open(CreateEpisodeComponent, {
+      data: this.media,
+      width: '768px',
+      modal: true,
+      dismissableMask: false,
+      styleClass: 'p-dialog-header-sm',
+      contentStyle: { 'margin-top': '-1.5rem', 'overflow-y': 'hidden', 'padding': '0px' }
+    });
+    // Fix nested dialog focus
+    const dialogComponent = this.dialogService.dialogComponentRefMap.get(this.dialogRef)?.instance;
+    if (dialogComponent) dialogComponent.unbindGlobalListeners();
+    dialogRef.onClose.pipe(first()).subscribe((episode) => {
+      if (!episode || !this.media) return;
+      this.media = {
+        ...this.media,
+        tv: {
+          lastAirDate: this.media.tv.lastAirDate,
+          episodeCount: this.media.tv.episodeCount + 1,
+          episodes: [...this.media.tv.episodes, { ...episode }]
+        }
+      };
+      this.isUpdated = true;
+      this.ref.markForCheck();
+    });
+    dialogRef.onDestroy.pipe(first()).subscribe(() => {
+      this.blockScroll();
+      // Fix nested dialog focus
+      if (!dialogComponent) return;
+      dialogComponent.moveOnTop();
+      dialogComponent.bindGlobalListeners();
+      dialogComponent.focus();
+    });
+  }
+
+  showConfigureEpisodeDialog(episode: TVEpisode): void {
+    if (!this.media) return;
+    const dialogRef = this.dialogService.open(ConfigureEpisodeComponent, {
+      data: { media: this.media, episode },
+      width: '1280px',
+      modal: true,
+      dismissableMask: false,
+      styleClass: 'p-dialog-header-sm',
+      contentStyle: { 'margin-top': '-1.5rem' }
+    });
+    // Fix nested dialog focus
+    const dialogComponent = this.dialogService.dialogComponentRefMap.get(this.dialogRef)?.instance;
+    if (dialogComponent) dialogComponent.unbindGlobalListeners();
+    dialogRef.onClose.pipe(first()).subscribe((episode) => {
+      if (!episode || !this.media) return;
+      this.media = {
+        ...this.media,
+        tv: {
+          lastAirDate: this.media.tv.lastAirDate,
+          episodeCount: this.media.tv.episodeCount,
+          episodes: [...this.media.tv.episodes]
+        }
+      };
+      this.ref.markForCheck();
+    });
+    dialogRef.onDestroy.pipe(first()).subscribe(() => {
+      this.blockScroll();
+      // Fix nested dialog focus
+      if (!dialogComponent) return;
+      dialogComponent.moveOnTop();
+      dialogComponent.bindGlobalListeners();
+      dialogComponent.focus();
+    });
+  }
+
+  loadTranslations(): void {
+    this.translocoService.selectTranslation('media').pipe(switchMap(t2 => {
+      return this.translocoService.selectTranslation('admin').pipe(zipWith(of(t2)));
+    }), first()).subscribe(([t1, t2]) => {
+      this.sideBarItems = [
+        {
+          label: t1['configureMedia.general']
+        },
+        {
+          label: t1['configureMedia.images']
+        },
+        {
+          label: t2['details.videos']
+        },
+        {
+          label: t1['configureMedia.subtitles']
+        },
+        {
+          label: t1['configureMedia.source']
+        }
+      ];
+    });
+  }
+
+  loadSubtitleFormData(media: MediaDetails): void {
+    const disabledLanguages = media.movie.subtitles.map((s: MediaSubtitle) => s.language);
+    this.itemDataService.createLanguageList(disabledLanguages).pipe(first()).subscribe({
+      next: languages => this.addSubtitleLanguages = languages
+    });
+  }
+
+  disableSubtitleLanguage(language: string, disabled: boolean): void {
+    if (!this.addSubtitleLanguages) return;
+    const index = this.addSubtitleLanguages.findIndex(s => s.value === language);
+    if (index < 0) return;
+    this.addSubtitleLanguages[index].disabled = disabled;
+  }
+
+  createUpdateMediaForm(media: MediaDetails): void {
+    this.updateMediaForm = new FormGroup({
+      title: new FormControl(media.title, Validators.maxLength(500)),
+      originalTitle: new FormControl(media.originalTitle, Validators.maxLength(500)),
+      overview: new FormControl(media.overview, [Validators.minLength(10), Validators.maxLength(2000)]),
+      originalLanguage: new FormControl(media.originalLanguage),
+      genres: new FormControl(media.genres),
+      producers: new FormControl(media.producers),
+      runtime: new FormControl(media.runtime),
+      adult: new FormControl(media.adult),
+      releaseDateDay: new FormControl(media.releaseDate.day),
+      releaseDateMonth: new FormControl(media.releaseDate.month),
+      releaseDateYear: new FormControl(media.releaseDate.year),
+      lastAirDateDay: new FormControl(null),
+      lastAirDateMonth: new FormControl(null),
+      lastAirDateYear: new FormControl(null),
+      visibility: new FormControl(media.visibility),
+      status: new FormControl(media.status)
+    }, {
+      validators: shortDate('releaseDateDay', 'releaseDateMonth', 'releaseDateYear', true)
+    });
+    if (media.type === MediaType.TV) {
+      this.updateMediaForm.addControl('lastAirDateDay', new FormControl());
+      this.updateMediaForm.addControl('lastAirDateMonth', new FormControl());
+      this.updateMediaForm.addControl('lastAirDateYear', new FormControl());
+      this.updateMediaForm.addValidators(shortDate('lastAirDateDay', 'lastAirDateMonth', 'lastAirDateYear', false));
+      this.updateMediaForm.patchValue({
+        lastAirDateDay: media.tv.lastAirDate.day,
+        lastAirDateMonth: media.tv.lastAirDate.month,
+        lastAirDateYear: media.tv.lastAirDate.year
+      });
+    }
+    this.updateMediaInitValue = this.updateMediaForm.value;
+    this.detectFormChange(this.updateMediaForm);
+  }
+
+  detectFormChange(updateMediaForm: FormGroup): void {
+    this.updateMediaFormChanged = false;
+    updateMediaForm.valueChanges.pipe(
+      takeWhile((value) => isEqual(value, this.updateMediaInitValue)),
+      finalize(() => {
+        this.updateMediaFormChanged = true;
+        this.ref.markForCheck();
+      })
+    ).subscribe();
+  }
+
   blockScroll(): void {
     this.renderer.addClass(this.document.body, 'p-overflow-hidden');
   }
 
   closeDialog(): void {
-    this.dialogRef.close();
+    this.dialogRef.close(this.isUpdated);
   }
 
   trackId(index: number, item: any): any {

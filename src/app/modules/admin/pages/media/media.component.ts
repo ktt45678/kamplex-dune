@@ -6,10 +6,10 @@ import { ConfirmationService } from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
 import { Table } from 'primeng/table';
 import { Menu } from 'primeng/menu';
-import { first, of, tap } from 'rxjs';
+import { first, map, Observable, of, tap } from 'rxjs';
 import { escape } from 'lodash';
 
-import { MediaService } from '../../../../core/services';
+import { MediaService, QueueUploadService } from '../../../../core/services';
 import { Media, MediaDetails, Paginated } from '../../../../core/models';
 import { PaginateMediaDto } from '../../../../core/dto/media';
 import { DataMenuItem } from '../../../../core/interfaces/primeng';
@@ -17,7 +17,7 @@ import { CreateMediaComponent } from '../../dialogs/create-media';
 import { ViewMediaComponent } from '../../dialogs/view-media';
 import { ConfigureMediaComponent } from '../../dialogs/configure-media';
 import { UpdateMediaComponent } from '../../dialogs/update-media';
-import { MediaStatus, MediaType } from '../../../../core/enums';
+import { MediaPStatus, MediaType } from '../../../../core/enums';
 import { AddVideoComponent } from '../../dialogs/add-video';
 import { AddSubtitleComponent } from '../../dialogs/add-subtitle';
 import { AddSourceComponent } from '../../dialogs/add-source';
@@ -30,23 +30,21 @@ import { AddSourceComponent } from '../../dialogs/add-source';
 })
 export class MediaComponent implements OnInit {
   MediaType = MediaType;
-  MediaStatus = MediaStatus;
+  MediaPStatus = MediaPStatus;
 
   @ViewChild('mediaTable') mediaTable?: Table;
   loadingMediaList: boolean = false;
   rowsPerPage: number = 10;
   mediaList?: Paginated<Media>;
   cachedMediaDetails?: MediaDetails;
-  movieMenuItems: DataMenuItem<Media>[] = [];
-  tvMenuItems: DataMenuItem<Media>[] = [];
+  mediaMenuItems: DataMenuItem<Media>[] = [];
 
   constructor(@Inject(DOCUMENT) private document: Document, private ref: ChangeDetectorRef, private renderer: Renderer2,
     private route: ActivatedRoute, private router: Router, public dialogService: DialogService,
     private confirmationService: ConfirmationService, private mediaService: MediaService,
-    private translocoService: TranslocoService) { }
+    private queueUploadService: QueueUploadService, private translocoService: TranslocoService) { }
 
   ngOnInit(): void {
-    this.createMediaMenuItem();
   }
 
   loadMedia(): void {
@@ -109,13 +107,17 @@ export class MediaComponent implements OnInit {
   }
 
   showConfigureMediaDialog(media: Media): void {
-    this.dialogService.open(ConfigureMediaComponent, {
+    const dialogRef = this.dialogService.open(ConfigureMediaComponent, {
       data: media,
       width: '100%',
       height: '100%',
       modal: true,
       showHeader: false,
       styleClass: 'p-dialog-header-sm !tw-max-h-full'
+    });
+    dialogRef.onClose.pipe(first()).subscribe((isUpdated: boolean) => {
+      if (!isUpdated) return;
+      this.loadMedia();
     });
   }
 
@@ -261,47 +263,62 @@ export class MediaComponent implements OnInit {
 
   toggleMediaMenu(menu: Menu, event: Event, media: Media): void {
     if (!menu.visible) {
-      const menuItems = media.type === MediaType.MOVIE ? this.movieMenuItems : this.tvMenuItems;
-      menuItems.forEach(item => {
-        item.data = media;
-        if (item.id === 'addSource' && media.pStatus !== MediaStatus.PENDING)
-          item.disabled = true;
-        else if (item.id === 'delete' && media.pStatus === MediaStatus.PROCESSING)
-          item.disabled = true;
+      this.createMediaMenuItem(media).subscribe({
+        next: (menuItems) => {
+          this.mediaMenuItems = menuItems;
+          menu.toggle(event);
+        }
       });
+      return;
     }
     menu.toggle(event);
   }
 
-  createMediaMenuItem(): void {
-    this.translocoService.selectTranslation('admin').pipe(first()).subscribe(t => {
-      const addVideo: DataMenuItem<Media> = {
+  createMediaMenuItem(media: Media): Observable<DataMenuItem<Media>[]> {
+    return this.translocoService.selectTranslation('admin').pipe(map(t => {
+      const menuItems: DataMenuItem<Media>[] = [];
+      menuItems.push({
         label: t['configureMedia.addVideo'],
+        data: media,
         command: (event) => this.showAddMediaVideoDialog(event.item.data)
-      };
-      const addSubtitle: DataMenuItem<Media> = {
-        label: t['configureMedia.addSubtitle'],
-        command: (event) => this.showAddSubtitleDialog(event.item.data)
-      };
-      const addSource: DataMenuItem<Media> = {
-        id: 'addSource',
-        label: t['configureMedia.addSource'],
-        command: (event) => this.showAddSourceDialog(event.item.data)
-      };
-      const addEpisode: DataMenuItem<Media> = {
-        label: t['configureMedia.addEpisode'],
-        command: (event) => this.showDeleteMediaDialog(event.item.data)
-      };
-      const deleteMedia: DataMenuItem<Media> = {
-        id: 'delete',
-        label: t['configureMedia.deleteMedia'],
-        icon: 'pi pi-trash',
-        command: (event) => this.showDeleteMediaDialog(event.item.data)
-      };
-      const separator: DataMenuItem<Media> = { separator: true };
-      this.movieMenuItems = [addVideo, addSubtitle, addSource, separator, deleteMedia];
-      this.tvMenuItems = [addVideo, addEpisode, separator, deleteMedia];
-    });
+      });
+      if (media.type === MediaType.MOVIE) {
+        // Movie menu
+        menuItems.push(
+          {
+            label: t['configureMedia.addSubtitle'],
+            data: media,
+            command: (event) => this.showAddSubtitleDialog(event.item.data)
+          },
+          {
+            label: t['configureMedia.addSource'],
+            data: media,
+            disabled: media.pStatus !== MediaPStatus.PENDING || this.queueUploadService.isMediaInQueue(media._id),
+            command: (event) => this.showAddSourceDialog(event.item.data)
+          }
+        );
+      } else {
+        // TV Menu
+        menuItems.push(
+          {
+            label: t['configureMedia.addEpisode'],
+            data: media,
+            command: (event) => this.showDeleteMediaDialog(event.item.data)
+          }
+        );
+      }
+      menuItems.push(
+        { separator: true },
+        {
+          label: t['configureMedia.deleteMedia'],
+          icon: 'pi pi-trash',
+          data: media,
+          disabled: media.pStatus === MediaPStatus.PROCESSING,
+          command: (event) => this.showDeleteMediaDialog(event.item.data)
+        }
+      );
+      return menuItems;
+    }), first());
   }
 
   trackId(index: number, item: any): any {

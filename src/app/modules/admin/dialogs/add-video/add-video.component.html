@@ -22,7 +22,7 @@
           {{ t('admin.addMediaVideo.url') }}
         </label>
         <input formControlName="url" class="tw-w-full" id="url" type="text" aria-describedby="url-error" pInputText
-          [disabledControl]="addingVideo" controlAutofocus>
+          [disabledControl]="addingVideo" autofocus>
         <small id="url-error"
           class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
           [ngClass]="(addVideoForm.controls['url'].dirty || addVideoForm.controls['url'].touched)

@@ -6,5 +6,6 @@ export class MediaDetails extends Media {
   override tv!: TVShow;
   videos!: MediaVideo[];
   visibility!: number;
+  status!: string;
   addedBy?: User;
 }

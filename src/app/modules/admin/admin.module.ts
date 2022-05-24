@@ -3,17 +3,14 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { LazyLoadImageModule } from 'ng-lazyload-image';
-import { SwiperModule } from 'swiper/angular';
 import { ConfirmationService } from 'primeng/api';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { ButtonModule } from 'primeng/button';
-import { ChipModule } from 'primeng/chip';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { MenuModule } from 'primeng/menu';
 import { TooltipModule } from 'primeng/tooltip';
 import { TableModule } from 'primeng/table';
-import { ProgressBarModule } from 'primeng/progressbar';
 import { DialogModule } from 'primeng/dialog';
 import { DialogService, DynamicDialogModule } from 'primeng/dynamicdialog';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
@@ -21,7 +18,7 @@ import { RadioButtonModule } from 'primeng/radiobutton';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { DropdownModule } from 'primeng/dropdown';
-import { TabViewModule } from 'primeng/tabview';
+import { MessageModule } from 'primeng/message';
 
 import { AdminRoutingModule } from './admin-routing.module';
 import { AdminLayoutModule } from '../../shared/layouts/admin-layout';
@@ -34,7 +31,7 @@ import { FileUploadModule } from '../../shared/components/file-upload';
 import { VerticalTabModule } from '../../shared/components/vertical-tab';
 import { FormDirectiveModule } from '../../shared/directives/form-directive';
 import { ValidationPipeModule } from '../../shared/pipes/validation-pipe';
-import { DatePipeModule } from '../../shared/pipes/date-pipe';
+import { DateTimePipeModule } from '../../shared/pipes/date-time-pipe';
 import { NumberPipeModule } from '../../shared/pipes/number-pipe';
 import { UrlPipeModule } from '../../shared/pipes/url-pipe/url-pipe.module';
 import { CreateProducerComponent } from './dialogs/create-producer/create-producer.component';
@@ -51,6 +48,7 @@ import { ConfigureMediaComponent } from './dialogs/configure-media/configure-med
 import { AddSourceComponent } from './dialogs/add-source/add-source.component';
 import { ConfirmDeactivateGuard } from '../../core/guards';
 import { GenresService, MediaService, ProducersService, QueueUploadService } from '../../core/services';
+import { ConfigureEpisodeComponent } from './dialogs/configure-episode/configure-episode.component';
 
 @NgModule({
   declarations: [
@@ -70,7 +68,8 @@ import { GenresService, MediaService, ProducersService, QueueUploadService } fro
     CreateEpisodeComponent,
     UpdateEpisodeComponent,
     AddSubtitleComponent,
-    AddSourceComponent
+    AddSourceComponent,
+    ConfigureEpisodeComponent
   ],
   imports: [
     CommonModule,
@@ -82,20 +81,17 @@ import { GenresService, MediaService, ProducersService, QueueUploadService } fro
     VerticalTabModule,
     FormDirectiveModule,
     ValidationPipeModule,
-    DatePipeModule,
+    DateTimePipeModule,
     NumberPipeModule,
     UrlPipeModule,
     AutoCompleteModule,
     LazyLoadImageModule,
-    SwiperModule,
     ButtonModule,
-    ChipModule,
     InputTextModule,
     InputTextareaModule,
     MenuModule,
     TooltipModule,
     TableModule,
-    ProgressBarModule,
     DialogModule,
     DynamicDialogModule,
     ConfirmDialogModule,
@@ -103,7 +99,7 @@ import { GenresService, MediaService, ProducersService, QueueUploadService } fro
     InputSwitchModule,
     InputNumberModule,
     DropdownModule,
-    TabViewModule
+    MessageModule
   ],
   providers: [
     DialogService,

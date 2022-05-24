@@ -1,6 +1,6 @@
-import { TVEpisode, TVShowEpisodeCount } from '.';
+import { ShortDate, TVEpisode, TVShowEpisodeCount } from '.';
 
 export class TVShow extends TVShowEpisodeCount {
-  lastAirDate!: string;
+  lastAirDate!: ShortDate;
   episodes!: TVEpisode[];
 }

@@ -11,6 +11,10 @@
     "episodeCountValue": "{{ episodeCount }} episodes",
     "originalTitle": "Original title"
   },
+  "video": {
+    "name": "Name",
+    "untitled": "Untitled"
+  },
   "filter": {
     "search": "Search (3 characters or more)",
     "genre": "Genres",
@@ -24,6 +28,14 @@
   "mediaTypes": {
     "movie": "Movie",
     "tvShow": "TV Show"
+  },
+  "episode": {
+    "episodeNumber": "Episode number",
+    "name": "Name",
+    "overview": "Overview",
+    "runtimeValue": "{{ runtime }} min",
+    "airDate": "Air date",
+    "status": "Status"
   },
   "sortOptions": {
     "nameAscending": "Name (A-Z)",

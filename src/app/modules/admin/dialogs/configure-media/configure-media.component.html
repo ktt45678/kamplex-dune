@@ -1,14 +1,252 @@
 <ng-container *transloco="let t">
-  <div class="tw-fixed tw-right-10 tw-top-10 tw-z-10">
+  <div class="tw-fixed tw-right-10 tw-top-10 tw-z-50">
     <button type="button" role="button" aria-label="Close dialog" pButton icon="pi pi-times"
       class="p-button-outlined p-button-rounded p-button-secondary p-button-text tw-ml-auto" (click)="closeDialog()">
     </button>
   </div>
-  <div *ngIf="media" class="tw-max-w-7xl tw-mx-auto tw-my-14">
+  <div *ngIf="media && updateMediaForm" class="tw-max-w-7xl tw-mx-auto tw-my-14">
     <app-vertical-tab>
       <!--General info-->
       <app-tab-panel [header]="t('admin.configureMedia.general')">
-        <div class="tw-flex tw-flex-wrap">
+        <p class="tw-text-white tw-font-semibold tw-text-xl sm:tw-text-xl">{{ t('admin.configureMedia.general') }}</p>
+        <form [formGroup]="updateMediaForm" formHandler (ngSubmit)="onUpdateMediaFormSubmit($event)">
+          <div class="tw-px-6">
+            <div class="tw-flex tw-flex-wrap">
+              <div class="tw-w-full md:tw-w-1/2">
+                <label for="title" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
+                  {{ t('admin.createMedia.title') }}
+                </label>
+                <input formControlName="title" class="tw-w-full" id="title" type="text" aria-describedby="title-error"
+                  [placeholder]="t('admin.createMedia.titlePlaceholder')" pInputText [disabledControl]="isUpdatingMedia"
+                  autofocus>
+                <small id="title-error"
+                  class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
+                  [ngClass]="(updateMediaForm.controls['title'].dirty || updateMediaForm.controls['title'].touched)
+                      && updateMediaForm.controls['title'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
+                  {{ updateMediaForm.controls['title'].errors | firstErrorKey:'createMedia':'title' }}
+                </small>
+              </div>
+              <div class="tw-w-full md:tw-w-1/2 md:tw-pl-2">
+                <label for="original-title" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
+                  {{ t('admin.createMedia.originalTitle') }}
+                </label>
+                <input formControlName="originalTitle" class="tw-w-full" id="original-title" type="text"
+                  aria-describedby="original-title-error"
+                  [placeholder]="t('admin.createMedia.originalTitlePlaceholder')" pInputText
+                  [disabledControl]="isUpdatingMedia">
+                <small id="original-title-error"
+                  class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
+                  [ngClass]="(updateMediaForm.controls['originalTitle'].dirty || updateMediaForm.controls['originalTitle'].touched)
+                      && updateMediaForm.controls['originalTitle'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
+                  {{ updateMediaForm.controls['originalTitle'].errors | firstErrorKey:'createMedia':'originalTitle' }}
+                </small>
+              </div>
+            </div>
+            <label for="overview" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
+              {{ t('admin.createMedia.overview') }}
+            </label>
+            <textarea formControlName="overview" class="tw-w-full" id="overview" aria-describedby="overview-error"
+              [placeholder]="t('admin.createMedia.overviewPlaceholder')" pInputTextarea [rows]="5"
+              [disabledControl]="isUpdatingMedia"></textarea>
+            <small id="overview-error"
+              class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
+              [ngClass]="(updateMediaForm.controls['overview'].dirty || updateMediaForm.controls['overview'].touched)
+                  && updateMediaForm.controls['overview'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
+              {{ updateMediaForm.controls['overview'].errors | firstErrorKey:'createMedia':'overview' }}
+            </small>
+            <div class="tw-flex tw-flex-wrap">
+              <div class="tw-w-full sm:tw-w-1/2">
+                <label for="runtime" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
+                  {{ t('admin.createMedia.runtime') }}
+                </label>
+                <p-inputNumber formControlName="runtime" class="tw-w-full" styleClass="tw-w-full" id="runtime"
+                  suffix=" min" aria-describedby="runtime-error" [useGrouping]="false" [min]="0" [max]="10000"
+                  [placeholder]="t('admin.createMedia.runtimePlaceholder')" [disabledControl]="isUpdatingMedia">
+                </p-inputNumber>
+                <small id="runtime-error"
+                  class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
+                  [ngClass]="(updateMediaForm.controls['runtime'].dirty || updateMediaForm.controls['runtime'].touched)
+                      && updateMediaForm.controls['runtime'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
+                  {{ updateMediaForm.controls['runtime'].errors | firstErrorKey:'createMedia':'runtime' }}
+                </small>
+              </div>
+              <div class="tw-w-full sm:tw-w-1/2 sm:tw-pl-2">
+                <label for="original-language" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
+                  {{ t('admin.createMedia.originalLanguage') }}
+                </label>
+                <p-dropdown id="original-language" class="tw-w-full" styleClass="tw-w-full"
+                  panelStyleClass="p-dropdown-sm" aria-describedby="original-language-error" [options]="languages"
+                  formControlName="originalLanguage" appendTo="body"
+                  [placeholder]="t('admin.createMedia.originalLanguagePlaceholder')" [showClear]="true"
+                  scrollHeight="300px" [disabledControl]="isUpdatingMedia">
+                </p-dropdown>
+                <small id="original-language-error"
+                  class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
+                  [ngClass]="(updateMediaForm.controls['originalLanguage'].dirty || updateMediaForm.controls['originalLanguage'].touched)
+                      && updateMediaForm.controls['originalLanguage'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
+                  {{ updateMediaForm.controls['originalLanguage'].errors |
+                  firstErrorKey:'createMedia':'originalLanguage' }}
+                </small>
+              </div>
+            </div>
+            <div class="tw-flex tw-flex-wrap">
+              <div class="tw-w-full md:tw-w-1/2">
+                <label for="genres" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
+                  {{ t('admin.createMedia.genres') }}
+                </label>
+                <p-autoComplete formControlName="genres" [suggestions]="genreSuggestions"
+                  (completeMethod)="loadGenreSuggestions($event.query)" field="name" dataKey="_id" [multiple]="true"
+                  [unique]="true" [completeOnFocus]="true" scrollHeight="300px" appendTo="body" styleClass="tw-w-full"
+                  panelStyleClass="p-autocomplete-xs" inputId="genres" aria-describedby="genres-error"
+                  [disabledControl]="isUpdatingMedia">
+                </p-autoComplete>
+                <small id="genres-error"
+                  class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
+                  [ngClass]="(updateMediaForm.controls['genres'].dirty || updateMediaForm.controls['genres'].touched)
+                  && updateMediaForm.controls['genres'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
+                  {{ updateMediaForm.controls['genres'].errors | firstErrorKey:'createMedia':'genres' }}
+                </small>
+              </div>
+              <div class="tw-w-full md:tw-w-1/2 md:tw-pl-2">
+                <label for="producers" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
+                  {{ t('admin.createMedia.producers') }}
+                </label>
+                <p-autoComplete formControlName="producers" [suggestions]="producerSuggestions"
+                  (completeMethod)="loadProducerSuggestions($event.query)" field="name" dataKey="_id" [multiple]="true"
+                  [unique]="true" [completeOnFocus]="true" scrollHeight="300px" appendTo="body" styleClass="tw-w-full"
+                  panelStyleClass="p-autocomplete-xs" inputId="producers" aria-describedby="producers-error"
+                  [disabledControl]="isUpdatingMedia">
+                </p-autoComplete>
+                <small id="producers-error"
+                  class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
+                  [ngClass]="(updateMediaForm.controls['producers'].dirty || updateMediaForm.controls['producers'].touched)
+                  && updateMediaForm.controls['producers'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
+                  {{ updateMediaForm.controls['producers'].errors | firstErrorKey:'createMedia':'producers' }}
+                </small>
+              </div>
+            </div>
+            <label for="release-date" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
+              {{ t('admin.createMedia.releaseDate') }}
+            </label>
+            <div id="release-date" class="tw-flex tw-flex-wrap tw-w-full" aria-describedby="release-date-error">
+              <p-dropdown class="tw-w-full sm:tw-w-3/12" styleClass="tw-w-full" panelStyleClass="p-dropdown-sm"
+                [options]="days" formControlName="releaseDateDay" appendTo="body"
+                [placeholder]="t('admin.createMedia.day')" scrollHeight="300px" [disabledControl]="isUpdatingMedia">
+              </p-dropdown>
+              <p-dropdown class="tw-w-full sm:tw-w-5/12 tw-pt-2 sm:tw-pt-0 sm:tw-pl-2" styleClass="tw-w-full"
+                panelStyleClass="p-dropdown-sm" [options]="months" formControlName="releaseDateMonth" appendTo="body"
+                [placeholder]="t('admin.createMedia.month')" scrollHeight="300px" [disabledControl]="isUpdatingMedia">
+              </p-dropdown>
+              <p-dropdown class="tw-w-full sm:tw-w-4/12 tw-pt-2 sm:tw-pt-0 sm:tw-pl-2" styleClass="tw-w-full"
+                panelStyleClass="p-dropdown-sm" [options]="years" formControlName="releaseDateYear" appendTo="body"
+                [placeholder]="t('admin.createMedia.year')" scrollHeight="300px" [disabledControl]="isUpdatingMedia">
+              </p-dropdown>
+            </div>
+            <small id="release-date-error"
+              class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
+              [ngClass]="(updateMediaForm.controls['releaseDateDay'].dirty || updateMediaForm.controls['releaseDateDay'].touched
+                  || updateMediaForm.controls['releaseDateMonth'].dirty || updateMediaForm.controls['releaseDateMonth'].touched
+                  || updateMediaForm.controls['releaseDateYear'].dirty || updateMediaForm.controls['releaseDateYear'].touched)
+                  && updateMediaForm.controls['releaseDateDay'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
+              {{ updateMediaForm.controls['releaseDateDay'].errors | firstErrorKey:'createMedia':'releaseDate' }}
+            </small>
+            <ng-container *ngIf="media.type === MediaType.TV">
+              <label for="lastAirDate" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
+                {{ t('admin.createMedia.lastAirDate') }}
+              </label>
+              <div id="last-air-date" class="tw-flex tw-flex-wrap tw-w-full" aria-describedby="last-air-date-error">
+                <p-dropdown class="tw-w-full sm:tw-w-3/12" styleClass="tw-w-full" panelStyleClass="p-dropdown-sm"
+                  [options]="days" formControlName="lastAirDateDay" appendTo="body"
+                  [placeholder]="t('admin.createMedia.day')" scrollHeight="300px" [disabledControl]="isUpdatingMedia">
+                </p-dropdown>
+                <p-dropdown class="tw-w-full sm:tw-w-5/12 tw-pt-2 sm:tw-pt-0 sm:tw-pl-2" styleClass="tw-w-full"
+                  panelStyleClass="p-dropdown-sm" [options]="months" formControlName="lastAirDateMonth" appendTo="body"
+                  [placeholder]="t('admin.createMedia.month')" scrollHeight="300px" [disabledControl]="isUpdatingMedia">
+                </p-dropdown>
+                <p-dropdown class="tw-w-full sm:tw-w-4/12 tw-pt-2 sm:tw-pt-0 sm:tw-pl-2" styleClass="tw-w-full"
+                  panelStyleClass="p-dropdown-sm" [options]="years" formControlName="lastAirDateYear" appendTo="body"
+                  [placeholder]="t('admin.createMedia.year')" scrollHeight="300px" [disabledControl]="isUpdatingMedia">
+                </p-dropdown>
+              </div>
+              <small id="last-air-date-error"
+                class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
+                [ngClass]="(updateMediaForm.controls['lastAirDateDay'].dirty || updateMediaForm.controls['lastAirDateDay'].touched
+                    || updateMediaForm.controls['lastAirDateMonth'].dirty || updateMediaForm.controls['lastAirDateMonth'].touched
+                    || updateMediaForm.controls['lastAirDateYear'].dirty || updateMediaForm.controls['lastAirDateYear'].touched)
+                    && updateMediaForm.controls['lastAirDateDay'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
+                {{ updateMediaForm.controls['lastAirDateDay'].errors | firstErrorKey:'createMedia':'lastAirDate' }}
+              </small>
+            </ng-container>
+            <div class="tw-flex tw-flex-wrap">
+              <div class="tw-w-full sm:tw-w-1/3">
+                <label for="visibility" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
+                  {{ t('admin.createMedia.visibility') }}
+                </label>
+                <div id="visibility">
+                  <p-radioButton name="visibility" [value]="1" label="Public" formControlName="visibility"
+                    class="tw-block tw-mb-2" [disabledControl]="isUpdatingMedia">
+                  </p-radioButton>
+                  <p-radioButton name="visibility" [value]="2" label="Unlisted" formControlName="visibility"
+                    class="tw-block tw-mb-2" [disabledControl]="isUpdatingMedia">
+                  </p-radioButton>
+                  <p-radioButton name="visibility" [value]="3" label="Private" formControlName="visibility"
+                    class="tw-block" [disabledControl]="isUpdatingMedia">
+                  </p-radioButton>
+                </div>
+              </div>
+              <div class="tw-w-full sm:tw-w-1/3 sm:tw-pl-2">
+                <label for="adult" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
+                  {{ t('admin.createMedia.adult') }}
+                </label>
+                <div id="adult">
+                  <p-radioButton name="adult" [value]="true" label="Yes, this show is only for adult"
+                    formControlName="adult" class="tw-block tw-mb-2" [disabledControl]="isUpdatingMedia">
+                  </p-radioButton>
+                  <p-radioButton name="adult" [value]="false" label="No, this show is for everyone"
+                    formControlName="adult" class="tw-block" [disabledControl]="isUpdatingMedia">
+                  </p-radioButton>
+                </div>
+              </div>
+              <div class="tw-w-full sm:tw-w-1/3 sm:tw-pl-2">
+                <label for="status" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
+                  {{ t('admin.createMedia.status') }}
+                </label>
+                <div id="status">
+                  <ng-container *ngIf="media.type === MediaType.TV; else isMovie">
+                    <p-radioButton name="status" value="upcoming" label="Upcoming" formControlName="status"
+                      class="tw-block tw-mb-2" [disabledControl]="isUpdatingMedia">
+                    </p-radioButton>
+                    <p-radioButton name="status" value="airing" label="Airing" formControlName="status"
+                      class="tw-block tw-mb-2" [disabledControl]="isUpdatingMedia">
+                    </p-radioButton>
+                    <p-radioButton name="status" value="aired" label="Aired" formControlName="status"
+                      class="tw-block tw-mb-2" [disabledControl]="isUpdatingMedia">
+                    </p-radioButton>
+                  </ng-container>
+                  <ng-template #isMovie>
+                    <p-radioButton name="status" value="upcoming" label="Upcoming" formControlName="status"
+                      class="tw-block tw-mb-2" [disabledControl]="isUpdatingMedia">
+                    </p-radioButton>
+                    <p-radioButton name="status" value="released" label="Released" formControlName="status"
+                      class="tw-block" [disabledControl]="isUpdatingMedia">
+                    </p-radioButton>
+                  </ng-template>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="tw-flex tw-my-4 tw-px-7">
+            <div class="tw-ml-auto">
+              <button pButton type="button" [label]="t('admin.createMedia.cancel')" (click)="onUpdateMediaFormReset()"
+                class="p-button-text p-button-secondary p-button-sm" [disabled]="!updateMediaFormChanged">
+              </button>
+              <button pButton type="submit" [label]="t('admin.createMedia.submit')" class="p-button p-button-sm tw-ml-1"
+                [disabled]="isUpdatingMedia || !updateMediaFormChanged">
+              </button>
+            </div>
+          </div>
+        </form>
+        <!-- <div class="tw-flex tw-flex-wrap">
           <div class="tw-w-2/5 sm:tw-w-1/5 tw-mx-auto sm:tw-mx-0">
             <div class="tw-aspect-w-2 tw-aspect-h-3 tw-rounded-xl tw-overflow-hidden">
               <img *ngIf="media.thumbnailPosterUrl; else noPoster" class="tw-object-cover"
@@ -90,81 +328,96 @@
               {{ media.releaseDate | shortDate }}
             </p>
           </div>
-        </div>
+        </div> -->
       </app-tab-panel>
       <!--Videos-->
       <app-tab-panel [header]="t('admin.configureMedia.videos')">
-        <div>
-          <p class="tw-text-white tw-font-semibold tw-text-xl sm:tw-text-xl">{{ t('admin.configureMedia.videos') }}</p>
-          <div class="tw-text-right tw-my-3">
-            <button pButton type="button" role="dialog" [label]="t('admin.configureMedia.addVideo')"
-              (click)="showAddVideoDialog()">
-            </button>
-          </div>
-          <ng-container *ngIf="media.videos.length; else noVideos">
-            <div class="tw-flex">
-              <button role="navigation" pButton type="button" icon="pi pi-angle-left tw-text-3xl" id="swiper-prev-video"
-                class="p-button-rounded p-button-text -tw-ml-12 tw-self-center" ariaLabel="Previous video">
-              </button>
-              <swiper #swiperVideos [config]="swiperConfig" class="tw-flex-1">
-                <ng-template swiperSlide *ngFor="let video of media.videos; let index = index; trackBy: trackId">
+        <p class="tw-text-white tw-font-semibold tw-text-xl sm:tw-text-xl">{{ t('admin.configureMedia.videos') }}</p>
+        <div class="tw-text-right tw-my-3">
+          <button pButton type="button" role="dialog" [label]="t('admin.configureMedia.addVideo')"
+            (click)="showAddVideoDialog()">
+          </button>
+        </div>
+        <ng-container *ngIf="media.videos.length; else noVideos">
+          <p-table styleClass="p-datatable-sm tw-bg-neutral-875 tw-p-4 tw-rounded-md" [value]="media.videos"
+            responsiveLayout="scroll" [rowTrackBy]="trackId" [rowHover]="true">
+            <ng-template pTemplate="header">
+              <tr>
+                <th class="tw-w-64"></th>
+                <th pSortableColumn="name">
+                  {{ t('media.video.name') }} <p-sortIcon field="name"></p-sortIcon>
+                </th>
+                <th class="tw-w-32"></th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-video let-rowIndex="rowIndex">
+              <tr>
+                <td class="tw-w-64">
                   <div
-                    class="tw-aspect-w-16 tw-aspect-h-9 tw-rounded-t-md tw-overflow-hidden tw-cursor-pointer hover:tw-brightness-75 tw-transition-all tw-duration-200"
-                    (click)="viewVideo(index)">
+                    class="tw-aspect-w-16 tw-aspect-h-9 tw-overflow-hidden tw-rounded-md tw-cursor-pointer hover:tw-brightness-75 tw-transition-all tw-duration-200"
+                    (click)="viewVideo(rowIndex)">
                     <img [src]="youtubeThumbnailUrl + video.key + '/hqdefault.jpg'" [alt]="video.key || ''"
                       class="tw-object-cover" />
                     <div class="tw-flex tw-justify-center tw-items-center">
-                      <i class="mi mi-play-circle-outline tw-text-5xl md:tw-text-6xl"></i>
+                      <i class="ms ms-play-circle tw-text-5xl"></i>
                     </div>
                   </div>
-                  <div class="tw-border-neutral-675 tw-border-x tw-border-b tw-rounded-b-md tw-flex">
-                    <button pButton type="button" [label]="t('admin.configureMedia.updateVideo')"
-                      class="p-button-secondary p-button-text p-button-sm tw-w-1/2"
-                      (click)="showUpdateVideoDialog(video)">
-                    </button>
-                    <button pButton type="button" [label]="t('admin.configureMedia.deleteVideo')"
-                      class="p-button-secondary p-button-text p-button-sm tw-w-1/2"
-                      (click)="deleteVideo(video, $event)">
-                    </button>
-                  </div>
-                </ng-template>
-              </swiper>
-              <button role="navigation" pButton type="button" icon="pi pi-angle-right tw-text-3xl"
-                id="swiper-next-video" class="p-button-rounded p-button-text -tw-mr-12 tw-self-center"
-                ariaLabel="Next video">
-              </button>
+                </td>
+                <td>
+                  <p *ngIf="video.name; else untitledVideo" class="tw-text-lg tw-font-semibold">{{ video.name }}</p>
+                  <ng-template #untitledVideo>
+                    <p class="tw-text-gray-400 tw-text-lg tw-font-semibold tw-italic">{{ t('media.video.untitled')
+                      }}</p>
+                  </ng-template>
+                </td>
+                <td class="tw-w-32">
+                  <button pButton icon="pi pi-pencil"
+                    class="p-button-outlined p-button-rounded p-button-success p-button-sm tw-mr-2"
+                    (click)="showUpdateVideoDialog(video)">
+                  </button>
+                  <button pButton icon="pi pi-trash"
+                    class="p-button-outlined p-button-rounded p-button-danger p-button-sm"
+                    (click)="deleteVideo(video, $event)">
+                  </button>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+          <p-dialog *ngIf="media.videos[activeVideoIndex]" [header]="media.videos[activeVideoIndex].name || ''"
+            [(visible)]="displayVideo" (onHide)="blockScroll()" [modal]="true"
+            styleClass="p-dialog-header-sm tw-w-2/3 tw-h-auto !tw-max-h-full" [draggable]="false" [resizable]="false"
+            [dismissableMask]="true" transitionOptions="0ms linear" contentStyleClass="!tw-p-0">
+            <div class="tw-aspect-w-16 tw-aspect-h-9">
+              <iframe [src]="youtubeUrl + media.videos[activeVideoIndex].key + '?autoplay=1' | safeUrl: 'resourceUrl'"
+                allowfullscreen width="100%" height="auto">
+              </iframe>
             </div>
-            <p-dialog [header]="media.videos[activeVideoIndex]?.name || ''" [(visible)]="displayVideo"
-              (onHide)="blockScroll()" [modal]="true" styleClass="p-dialog-header-sm tw-w-2/3 tw-h-auto !tw-max-h-full"
-              [draggable]="false" [resizable]="false" [dismissableMask]="true" transitionOptions="0ms linear"
-              contentStyleClass="!tw-p-0">
-              <div class="tw-aspect-w-16 tw-aspect-h-9">
-                <iframe
-                  [src]="youtubeUrl + media.videos[activeVideoIndex]?.key + '?autoplay=1' | safeUrl: 'resourceUrl'"
-                  allowfullscreen width="100%" height="auto"></iframe>
-              </div>
-            </p-dialog>
-          </ng-container>
-          <ng-template #noVideos>
-            <p class="tw-text-gray-400 tw-text-base tw-italic">
-              {{ t('media.details.noVideos') }}
-            </p>
-          </ng-template>
-        </div>
-      </app-tab-panel>
-      <!--Subtitles-->
-      <app-tab-panel [header]="t('admin.configureMedia.subtitles')" *ngIf="media.type === MediaType.MOVIE">
-        <div>
-          <p class="tw-text-white tw-font-semibold tw-text-xl sm:tw-text-xl">{{ t('admin.configureMedia.subtitles') }}
+          </p-dialog>
+        </ng-container>
+        <ng-template #noVideos>
+          <p class="tw-text-gray-400 tw-text-base tw-italic">
+            {{ t('media.details.noVideos') }}
           </p>
-          <div class="tw-text-right tw-my-3">
-            <button pButton role="dialog" type="button" [label]="t('admin.configureMedia.addSubtitle')"
-              (click)="showAddSubtitleDialog()">
-            </button>
+        </ng-template>
+      </app-tab-panel>
+      <!--Separator-->
+      <app-tab-panel [separator]="true"></app-tab-panel>
+      <!--Subtitles-->
+      <ng-container *ngIf="media.type === MediaType.MOVIE">
+        <app-tab-panel [header]="t('admin.configureMedia.subtitles')">
+          <p class="tw-text-white tw-font-semibold tw-text-xl sm:tw-text-xl">{{ t('admin.configureMedia.subtitles')
+            }}</p>
+          <!-- <div class="tw-text-right tw-my-3">
+              <button pButton role="dialog" type="button" [label]="t('admin.configureMedia.addSubtitle')"
+                (click)="showAddSubtitleDialog()">
+              </button>
+            </div> -->
+          <div class="tw-my-3 tw-p-4 tw-rounded-md tw-bg-neutral-875">
+            <ng-template *ngTemplateOutlet="addSubtitleFormTemplate; context: { addSubtitleForm }"></ng-template>
           </div>
           <ng-container *ngIf="media.movie.subtitles.length; else noSubtitles">
-            <p-table #subtitleTable styleClass="p-datatable-sm tw-bg-neutral-875 tw-p-4 tw-rounded-md"
-              [value]="media.movie.subtitles" responsiveLayout="scroll" [rowTrackBy]="trackId" [rowHover]="true">
+            <p-table styleClass="p-datatable-sm tw-bg-neutral-875 tw-p-4 tw-rounded-md" [value]="media.movie.subtitles"
+              responsiveLayout="scroll" [rowTrackBy]="trackId" [rowHover]="true">
               <ng-template pTemplate="header">
                 <tr>
                   <th pSortableColumn="language">
@@ -193,35 +446,114 @@
               {{ t('admin.configureMedia.noSubtitles') }}
             </p>
           </ng-template>
-        </div>
-      </app-tab-panel>
-      <!--Source-->
-      <app-tab-panel [header]="t('admin.configureMedia.source')" *ngIf="media.type === MediaType.MOVIE">
-        <div>
+        </app-tab-panel>
+        <!--Source-->
+        <app-tab-panel [header]="t('admin.configureMedia.source')">
           <p class="tw-text-white tw-font-semibold tw-text-xl sm:tw-text-xl">{{ t('admin.configureMedia.source')
             }}</p>
-          <div class="tw-text-right tw-my-3">
-            <button pButton role=" dialog" type="button" class="p-button-danger p-button-outlined tw-ml-2"
-              [label]="t('admin.configureMedia.deleteSource')" (click)="deleteSource($event)" [disabled]="false">
-            </button>
-          </div>
-          <ng-container [ngSwitch]="media.movie.status">
+          <div [ngSwitch]="media.movie.status" class="tw-mt-3">
             <div *ngSwitchCase="MediaSourceStatus.PENDING">
-              <app-file-upload accept=".mp4, .mkv, .webm, .m2ts" [label]="t('admin.addMediaSource.chooseFile')"
-                [disabled]="uploadingSource" (onFileChange)="uploadSource($event)">
+              <app-file-upload accept=".mp4, .mkv, .webm, .m2ts" [label]="t('admin.addMediaSource.chooseFile')">
+                <!--[disabled]="isUploadingSource"-->
               </app-file-upload>
             </div>
-            <div *ngSwitchCase="MediaSourceStatus.PROCESSING">
-              {{ t('admin.media.statusProcessing') }}
+            <div *ngSwitchCase="MediaSourceStatus.PROCESSING" class="tw-text-center">
+              <i class="ms ms-hourglass-empty tw-text-5xl"></i>
+              <p class="tw-text-lg tw-mt-2">{{ t('admin.media.statusProcessingDescription') }}</p>
             </div>
             <div *ngSwitchCase="MediaSourceStatus.READY">
-              {{ t('admin.media.statusReady') }}
+              <p-message styleClass="tw-w-full" severity="warn" [text]="t('admin.media.statusReadyDescription')">
+              </p-message>
             </div>
             <div *ngSwitchCase="MediaSourceStatus.DONE">
-              {{ t('admin.media.statusDone') }}
+              <div class="tw-text-right tw-mb-3">
+                <button pButton role=" dialog" type="button" class="p-button-danger p-button-outlined tw-ml-2"
+                  [label]="t('admin.configureMedia.deleteSource')" (click)="deleteSource($event)">
+                </button>
+              </div>
             </div>
-          </ng-container>
+          </div>
+        </app-tab-panel>
+      </ng-container>
+      <!--Episodes-->
+      <app-tab-panel [header]="t('admin.configureMedia.episodes')" *ngIf="media.type === MediaType.TV">
+        <p class="tw-text-white tw-font-semibold tw-text-xl sm:tw-text-xl">{{ t('admin.configureMedia.episodes')
+          }}</p>
+        <div class="tw-text-right tw-my-3">
+          <button pButton type="button" role="dialog" [label]="t('admin.configureMedia.addEpisode')"
+            (click)="showCreateEpisodeDialog()">
+          </button>
         </div>
+        <ng-container *ngIf="media.tv.episodes.length; else noEpisodes">
+          <p-table styleClass="p-datatable-sm tw-bg-neutral-875 tw-p-4 tw-rounded-md" [value]="media.tv.episodes"
+            responsiveLayout="scroll" [rowTrackBy]="trackId" [rowHover]="true">
+            <ng-template pTemplate="header">
+              <tr>
+                <th class="tw-w-20" pSortableColumn="episodeNumber">
+                  {{ t('admin.episode.episodeNumber') }} <p-sortIcon field="episodeNumber"></p-sortIcon>
+                </th>
+                <th class="tw-w-80" pSortableColumn="name">
+                  {{ t('admin.episode.name') }} <p-sortIcon field="name"></p-sortIcon>
+                </th>
+                <th class="tw-w-32"></th>
+                <th class="tw-w-32" pSortableColumn="runtime">
+                  {{ t('admin.episode.runtime') }} <p-sortIcon field="runtime"></p-sortIcon>
+                </th>
+                <th class="tw-w-40" pSortableColumn="airDate">
+                  {{ t('admin.episode.airDate') }} <p-sortIcon field="airDate"></p-sortIcon>
+                </th>
+                <th class="tw-w-24" pSortableColumn="status">
+                  {{ t('admin.episode.status') }} <p-sortIcon field="status"></p-sortIcon>
+                </th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-episode>
+              <tr>
+                <td class="tw-w-20">{{ episode.episodeNumber }}</td>
+                <td class="tw-w-80">
+                  <div class="tw-flex">
+                    <div class="tw-w-24 tw-flex-shrink-0">
+                      <div class="tw-aspect-w-16 tw-aspect-h-9">
+                        <img *ngIf="episode.thumbnailStillUrl; else noStill" class="tw-rounded-md"
+                          [src]="episode.thumbnailStillUrl" [alt]="episode.name">
+                        <ng-template #noStill>
+                          <img class="tw-rounded-md" src="assets/images/episode-image-md.png" [alt]="episode.name">
+                        </ng-template>
+                      </div>
+                    </div>
+                    <p class="tw-ml-2 tw-text-base tw-font-medium tw-line-clamp-4">{{ episode.name }}</p>
+                  </div>
+                </td>
+                <td>
+                  <button pButton icon="pi pi-cog"
+                    class="p-button-outlined p-button-rounded p-button-info p-button-sm tw-mr-2"
+                    (click)="showConfigureEpisodeDialog(episode)">
+                  </button>
+                  <button pButton icon="pi pi-ellipsis-h"
+                    class="p-button-outlined p-button-rounded p-button-secondary p-button-sm">
+                  </button>
+                </td>
+                <td class="tw-w-32 tw-text-sm">{{
+                  t('admin.episode.runtimeValue', { runtime: episode.runtime })
+                  }}</td>
+                <td class="tw-w-40 tw-text-sm">{{ episode.airDate | shortDate }}</td>
+                <td class="tw-w-24 tw-text-sm" [ngSwitch]="episode.status">
+                  <ng-container *ngSwitchCase="MediaPStatus.PENDING">{{ t('admin.media.statusPending') }}</ng-container>
+                  <ng-container *ngSwitchCase="MediaPStatus.REVIEW">{{ t('admin.media.statusReview') }}</ng-container>
+                  <ng-container *ngSwitchCase="MediaPStatus.PROCESSING">{{ t('admin.media.statusProcessing') }}
+                  </ng-container>
+                  <ng-container *ngSwitchCase="MediaPStatus.DONE">{{ t('admin.media.statusDone') }}</ng-container>
+                  <ng-container *ngSwitchDefault>{{ t('admin.media.statusUnknown') }}</ng-container>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </ng-container>
+        <ng-template #noEpisodes>
+          <p class="tw-text-gray-400 tw-text-base tw-italic">
+            {{ t('admin.configureMedia.noEpisodes') }}
+          </p>
+        </ng-template>
       </app-tab-panel>
     </app-vertical-tab>
     <p-confirmDialog [blockScroll]="false" key="inModal" [style]="{width: '500px'}" [baseZIndex]="1000"
@@ -230,4 +562,45 @@
       [dismissableMask]="true">
     </p-confirmDialog>
   </div>
+  <!--Templates-->
+  <ng-template #addSubtitleFormTemplate let-addSubtitleForm="addSubtitleForm">
+    <form [formGroup]="addSubtitleForm" formHandler (ngSubmit)="onAddSubtitleFormSubmit()">
+      <div class="tw-max-w-xl tw-mx-auto">
+        <h3 class="tw-text-white tw-text-2xl tw-font-bold tw-text-center tw-my-4">{{
+          t('admin.addMediaSubtitle.formHeader')
+          }}</h3>
+        <p-dropdown formControlName="language" [placeholder]="t('admin.addMediaSubtitle.languagePlaceholder')"
+          [options]="addSubtitleLanguages || []" [baseZIndex]="10" scrollHeight="400px" [showClear]="true"
+          appendTo="body" [disabledControl]="isAddingSubtitle" styleClass="tw-w-full" id="language"
+          panelStyleClass="md:tw-dropdown-cols-4 md:tw-max-w-2xl p-dropdown-xs">
+        </p-dropdown>
+        <small id="language-error"
+          class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
+          [ngClass]="(addSubtitleForm.controls['language'].dirty || addSubtitleForm.controls['language'].touched)
+                && addSubtitleForm.controls['language'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
+          {{ addSubtitleForm.controls['language'].errors | firstErrorKey:'addMediaSubtitle':'language' }}
+        </small>
+        <app-file-upload formControlName="file" accept=".vtt" [label]="t('admin.addMediaSubtitle.chooseFile')"
+          [disabledControl]="isAddingSubtitle" styleClass="tw-w-full tw-h-36" ariaDescribedby="file-error">
+        </app-file-upload>
+        <small id="file-error"
+          class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
+          [ngClass]="(addSubtitleForm.controls['file'].dirty || addSubtitleForm.controls['file'].touched)
+                  && addSubtitleForm.controls['file'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
+          {{ addSubtitleForm.controls['file'].errors | firstErrorKey:'addMediaSubtitle':'file' }}
+        </small>
+        <div class="tw-flex tw-mt-4">
+          <div class="tw-ml-auto">
+            <button pButton type="button" [label]="t('admin.addMediaSubtitle.cancel')"
+              (click)="onAddSubtitleFormCancel()" class="p-button-text p-button-secondary p-button-sm"
+              [disabled]="isAddingSubtitle || !addSubtitleForm.touched">
+            </button>
+            <button pButton type="submit" class="p-button p-button-sm tw-ml-1"
+              [label]="t('admin.addMediaSubtitle.submit')" [disabled]="isAddingSubtitle">
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </ng-template>
 </ng-container>

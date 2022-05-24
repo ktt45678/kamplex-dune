@@ -10,12 +10,16 @@ import { ButtonModule } from 'primeng/button';
 
 import { AdminLayoutComponent } from './admin-layout.component';
 import { CircularProgressModule } from '../../components/circular-progress';
+import { DateTimePipeModule } from '../../pipes/date-time-pipe';
+import { CommonDirectiveModule } from '../../directives/common-directive';
 
 @NgModule({
   declarations: [AdminLayoutComponent],
   imports: [
     CommonModule,
     RouterModule,
+    DateTimePipeModule,
+    CommonDirectiveModule,
     TabMenuModule,
     MenuModule,
     OverlayPanelModule,

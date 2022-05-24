@@ -7,6 +7,7 @@ import { DropdownOptionDto } from '../../../../core/dto/media';
 import { MediaSubtitle } from '../../../../core/models';
 import { DestroyService, ItemDataService, MediaService } from '../../../../core/services';
 import { fileExtension, maxFileSize } from '../../../../core/validators';
+import { SUBTITLE_UPLOAD_EXT, SUBTITLE_UPLOAD_SIZE } from '../../../../../environments/config';
 
 @Component({
   selector: 'app-add-subtitle',
@@ -24,7 +25,7 @@ export class AddSubtitleComponent implements OnInit {
     private itemDataService: ItemDataService, private mediaService: MediaService, private destroyService: DestroyService) {
     this.addSubtitleForm = new FormGroup({
       language: new FormControl(null, [Validators.required]),
-      file: new FormControl(null, [Validators.required, maxFileSize(512000), fileExtension('.vtt')])
+      file: new FormControl(null, [Validators.required, maxFileSize(SUBTITLE_UPLOAD_SIZE), fileExtension(SUBTITLE_UPLOAD_EXT)])
     });
   }
 

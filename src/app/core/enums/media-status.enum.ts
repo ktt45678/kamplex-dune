@@ -1,6 +1,6 @@
 export enum MediaStatus {
-  PENDING = 1,
-  REVIEW = 2,
-  PROCESSING = 3,
-  DONE = 4
+  UPCOMING = 'upcoming',
+  RELEASED = 'released',
+  AIRING = 'airing',
+  AIRED = 'aired',
 }

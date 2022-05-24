@@ -2,14 +2,22 @@
   <h3 class="tw-text-white tw-text-2xl tw-font-bold tw-text-center tw-mb-4">
     {{ t('admin.addMediaSource.formHeader') }}
   </h3>
-  <app-file-upload accept=".mp4, .mkv, .webm, .m2ts" [label]="t('admin.addMediaSource.chooseFile')" [disabled]="addingSource"
-    (onFileChange)="uploadFile($event)">
-  </app-file-upload>
-  <div class="tw-flex tw-mt-4">
-    <div class="tw-ml-auto">
-      <button pButton type="button" [label]="t('admin.addMediaSubtitle.cancel')" (click)="onAddSourceFormCancel()"
-        class="p-button-text p-button-secondary p-button-sm">
-      </button>
+  <form #addSourceFormElement="ngForm" [formGroup]="addSourceForm" formHandler (ngSubmit)="onAddSourceFormSubmit()">
+    <app-file-upload formControlName="file" accept=".mp4, .mkv, .webm, .m2ts" ariaDescribedby="file-error"
+      [label]="t('admin.addMediaSource.chooseFile')" [disabledControl]="isAddingSource">
+    </app-file-upload>
+    <small id="file-error"
+      class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
+      [ngClass]="(addSourceForm.controls['file'].dirty || addSourceForm.controls['file'].touched)
+            && addSourceForm.controls['file'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
+      {{ addSourceForm.controls['file'].errors | firstErrorKey:'addMediaSource':'file' }}
+    </small>
+    <div class="tw-flex tw-mt-4">
+      <div class="tw-ml-auto">
+        <button pButton type="button" [label]="t('admin.addMediaSubtitle.cancel')" (click)="onAddSourceFormCancel()"
+          class="p-button-text p-button-secondary p-button-sm">
+        </button>
+      </div>
     </div>
-  </div>
+  </form>
 </ng-container>

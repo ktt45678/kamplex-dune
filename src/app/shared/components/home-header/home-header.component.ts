@@ -47,16 +47,16 @@ export class HomeHeaderComponent implements OnInit {
           this.userMenuItems = [
             {
               label: 'Manage media',
-              icon: 'mi mi-movie',
+              icon: 'ms ms-movie',
               routerLink: '/admin/media'
             },
             {
               label: 'Settings',
-              icon: PrimeIcons.COG
+              icon: 'ms ms-settings'
             },
             {
               label: 'Sign out',
-              icon: PrimeIcons.SIGN_OUT,
+              icon: 'ms ms-logout',
               command: () => this.onSignOut()
             }
           ];

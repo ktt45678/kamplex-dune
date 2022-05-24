@@ -1,5 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { TranslocoService } from '@ngneat/transloco';
+import { map } from 'rxjs';
 
 import { CreateProducerDto, PaginateProducersDto, UpdateProducerDto } from '../dto/producers';
 import { Paginated, Producer, ProducerDetails } from '../models';
@@ -7,7 +9,7 @@ import { Paginated, Producer, ProducerDetails } from '../models';
 @Injectable()
 export class ProducersService {
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private translocoService: TranslocoService) { }
 
   create(createProducerDto: CreateProducerDto) {
     return this.http.post<ProducerDetails>('producers', createProducerDto);
@@ -33,5 +35,19 @@ export class ProducersService {
 
   remove(id: string) {
     return this.http.delete(`producers/${id}`);
+  }
+
+  findProducerSuggestions(search?: string, limit = 10) {
+    return this.findPage({ limit, search }).pipe(map(producers => {
+      const producerSuggestions = producers.results;
+      const hasMatch = producers.results.find(p => p.name === search);
+      if (search && search.length <= 150 && !hasMatch) {
+        producerSuggestions.push({
+          _id: `create:${search}`,
+          name: this.translocoService.translate('admin.createMedia.createProducerByName', { name: search })
+        });
+      }
+      return producerSuggestions;
+    }));
   }
 }

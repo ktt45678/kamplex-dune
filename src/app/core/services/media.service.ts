@@ -1,10 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, switchMap } from 'rxjs';
-import * as UpChunk from '@mux/upchunk';
 
-import { AddMediaSubtitleDto, AddMediaVideoDto, CreateMediaDto, PaginateMediaDto, UpdateMediaVideoDto } from '../dto/media';
-import { Media, MediaDetails, MediaStream, MediaSubtitle, MediaVideo, Paginated } from '../models';
+import { AddMediaSubtitleDto, AddMediaVideoDto, AddTVEpisodeDto, CreateMediaDto, PaginateMediaDto, UpdateMediaVideoDto } from '../dto/media';
+import { Media, MediaDetails, MediaStream, MediaSubtitle, MediaVideo, Paginated, TVEpisode, TVEpisodeDetails } from '../models';
 
 @Injectable()
 export class MediaService {
@@ -12,7 +10,7 @@ export class MediaService {
   constructor(private http: HttpClient) { }
 
   create(createMediaDto: CreateMediaDto) {
-    return this.http.post('media', createMediaDto);
+    return this.http.post<MediaDetails>('media', createMediaDto);
   }
 
   findPage(paginateMediaDto?: PaginateMediaDto) {
@@ -99,20 +97,34 @@ export class MediaService {
     return this.http.delete(`media/${id}/movie/subtitles/${subtitleId}`);
   }
 
-  checkMediaStream(url: string) {
-    return this.http.get(url, {
-      headers: {
-        'Range': 'bytes=0-500',
-        'x-ng-intercept': 'ignore'
-      }
-    });
-  }
-
-  addMovieSource(id: string, file: File) {
-
-  }
-
   deleteMovieSource(id: string) {
     return this.http.delete(`media/${id}/movie/source`);
+  }
+
+  addTVEpisode(id: string, addTVEpisodeDto: AddTVEpisodeDto) {
+    return this.http.post<TVEpisode>(`media/${id}/tv/episodes`, addTVEpisodeDto);
+  }
+
+  findOneTVEpisode(id: string, episodeId: string) {
+    return this.http.get<TVEpisodeDetails>(`media/${id}/tv/episodes/${episodeId}`);
+  }
+
+  findAllTVSubtitles(id: string, episodeId: string) {
+    return this.http.get<MediaSubtitle[]>(`media/${id}/tv/episodes/${episodeId}/subtitles`);
+  }
+
+  addTVSubtitle(id: string, episodeId: string, addMediaSubtitleDto: AddMediaSubtitleDto) {
+    const data = new FormData();
+    data.set('language', addMediaSubtitleDto.language);
+    data.set('file', addMediaSubtitleDto.file);
+    return this.http.post<MediaSubtitle[]>(`media/${id}/tv/episodes/${episodeId}/subtitles`, data);
+  }
+
+  deleteTVSubtitle(id: string, episodeId: string, subtitleId: string) {
+    return this.http.delete(`media/${id}/tv/episodes/${episodeId}/subtitles/${subtitleId}`);
+  }
+
+  deleteTVSource(id: string, episodeId: string) {
+    return this.http.delete(`media/${id}/tv/episodes/${episodeId}/source`);
   }
 }

@@ -23,13 +23,19 @@ export class VerticalTabComponent implements AfterContentInit {
 
   initTabs(): void {
     this.tabs.forEach(tab => {
-      this.menuItems.push({
-        label: tab.header,
-        command: (event) => {
-          this.activeMenuItem(event.originalEvent);
-          this.selectTab(tab);
-        }
-      });
+      if (tab.separator) {
+        this.menuItems.push({
+          separator: true
+        });
+      } else {
+        this.menuItems.push({
+          label: tab.header,
+          command: (event) => {
+            this.activeMenuItem(event.originalEvent);
+            this.selectTab(tab);
+          }
+        });
+      }
     });
 
     const activeTabs = this.tabs.filter((tab) => tab.active);

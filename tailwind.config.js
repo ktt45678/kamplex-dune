@@ -61,7 +61,7 @@ module.exports = {
         '30px': '30px'
       },
       zIndex: {
-        '-1': '-1'
+        '1': '1'
       }
     },
   },
@@ -69,6 +69,7 @@ module.exports = {
     require('@tailwindcss/aspect-ratio'),
     require('@tailwindcss/line-clamp'),
     require('@tailwindcss/typography'),
+    require('@vidstack/player/tailwind.cjs'),
     plugin(function ({ addUtilities, addVariant, config, e }) {
       addUtilities(_.map(config('theme.dropdownColumns'), (value, key) => {
         return {

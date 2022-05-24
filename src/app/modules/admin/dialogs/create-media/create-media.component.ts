@@ -5,7 +5,7 @@ import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { first, takeUntil } from 'rxjs';
 
 import { CreateMediaDto, DropdownOptionDto } from '../../../../core/dto/media';
-import { MediaType } from '../../../../core/enums';
+import { MediaStatus, MediaType } from '../../../../core/enums';
 import { Genre, Producer } from '../../../../core/models';
 import { DestroyService, GenresService, ItemDataService, MediaService, ProducersService } from '../../../../core/services';
 import { shortDate } from '../../../../core/validators';
@@ -21,9 +21,9 @@ export class CreateMediaComponent implements OnInit {
   MediaType = MediaType;
   isCreatingMedia: boolean = false;
   createMediaForm: FormGroup;
-  days: DropdownOptionDto[];
-  months: DropdownOptionDto[];
-  years: DropdownOptionDto[];
+  days: DropdownOptionDto[] = [];
+  months: DropdownOptionDto[] = [];
+  years: DropdownOptionDto[] = [];
   languages: DropdownOptionDto[] = [];
   genreSuggestions: Genre[] = [];
   producerSuggestions: Producer[] = [];
@@ -36,8 +36,8 @@ export class CreateMediaComponent implements OnInit {
     this.createMediaForm = new FormGroup({
       type: new FormControl(type),
       title: new FormControl('', [Validators.required, Validators.maxLength(500)]),
-      originalTitle: new FormControl(null, [Validators.maxLength(500)]),
-      overview: new FormControl(null, [Validators.required, Validators.minLength(10), Validators.maxLength(2000)]),
+      originalTitle: new FormControl('', [Validators.maxLength(500)]),
+      overview: new FormControl('', [Validators.required, Validators.minLength(10), Validators.maxLength(2000)]),
       originalLanguage: new FormControl(null),
       genres: new FormControl(null),
       producers: new FormControl(null),
@@ -46,23 +46,24 @@ export class CreateMediaComponent implements OnInit {
       releaseDateDay: new FormControl(null),
       releaseDateMonth: new FormControl(null),
       releaseDateYear: new FormControl(null),
-      lastAirDateDay: new FormControl(null),
-      lastAirDateMonth: new FormControl(null),
-      lastAirDateYear: new FormControl(null),
       visibility: new FormControl(1, [Validators.required]),
-      status: new FormControl(type === MediaType.MOVIE ? 'released' : 'aired', [Validators.required])
+      status: new FormControl(MediaStatus.RELEASED, [Validators.required])
     }, {
-      validators: [
-        shortDate('releaseDateDay', 'releaseDateMonth', 'releaseDateYear', true),
-        shortDate('lastAirDateDay', 'lastAirDateMonth', 'lastAirDateYear', false)
-      ]
+      validators: shortDate('releaseDateDay', 'releaseDateMonth', 'releaseDateYear', true)
     });
-    this.days = this.itemDataService.createDateList();
-    this.months = this.itemDataService.createMonthList();
-    this.years = this.itemDataService.createYearList();
+    if (type === MediaType.TV) {
+      this.createMediaForm.addControl('lastAirDateDay', new FormControl(null));
+      this.createMediaForm.addControl('lastAirDateMonth', new FormControl(null));
+      this.createMediaForm.addControl('lastAirDateYear', new FormControl(null));
+      this.createMediaForm.get('status')?.setValue(MediaStatus.AIRED);
+      this.createMediaForm.addValidators(shortDate('lastAirDateDay', 'lastAirDateMonth', 'lastAirDateYear', false));
+    }
   }
 
   ngOnInit(): void {
+    this.days = this.itemDataService.createDateList();
+    this.months = this.itemDataService.createMonthList();
+    this.years = this.itemDataService.createYearList();
     this.loadGenreSuggestions();
     this.loadProducerSuggestions();
     this.itemDataService.createLanguageList().pipe(first()).subscribe(languages => {
@@ -71,34 +72,14 @@ export class CreateMediaComponent implements OnInit {
   }
 
   loadGenreSuggestions(search?: string): void {
-    this.genresService.findPage({ limit: 10, search }).subscribe({
-      next: genres => {
-        const genreSuggestions = genres.results;
-        const hasMatch = genres.results.find(g => g.name === search);
-        if (search && !hasMatch) {
-          genreSuggestions.push({
-            _id: `create:${search}`,
-            name: this.translocoService.translate('admin.createMedia.createGenreByName', { name: search })
-          });
-        }
-        this.genreSuggestions = genreSuggestions;
-      }
+    this.genresService.findGenreSuggestions(search).subscribe({
+      next: genres => this.genreSuggestions = genres
     }).add(() => this.ref.markForCheck());
   }
 
   loadProducerSuggestions(search?: string): void {
-    this.producersService.findPage({ limit: 10, search }).subscribe({
-      next: producers => {
-        const producerSuggestions = producers.results;
-        const hasMatch = producers.results.find(p => p.name === search);
-        if (search && !hasMatch) {
-          producerSuggestions.push({
-            _id: `create:${search}`,
-            name: this.translocoService.translate('admin.createMedia.createProducerByName', { name: search })
-          });
-        }
-        this.producerSuggestions = producerSuggestions;
-      },
+    this.producersService.findProducerSuggestions(search).subscribe({
+      next: producers => this.producerSuggestions = producers
     }).add(() => this.ref.markForCheck());
   }
 

@@ -1,1 +1,115 @@
-<p>create-episode works!</p>
+<ng-container *transloco="let t">
+  <h3 class="tw-text-white tw-text-2xl tw-font-bold tw-text-center tw-mb-4">{{ t('admin.createEpisode.formHeader')
+    }}</h3>
+  <form [formGroup]="createEpisodeForm" formHandler (ngSubmit)="onCreateEpisodeFormSubmit()">
+    <div class="p-scrollbar tw-overflow-y-auto tw-h-[calc(80vh-6rem)] tw-px-6">
+      <div class="tw-flex tw-flex-wrap">
+        <div class="tw-w-full md:tw-w-1/2">
+          <label for="episode-number" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
+            {{ t('admin.createEpisode.episodeNumber') }}
+          </label>
+          <input formControlName="episodeNumber" class="tw-w-full" id="episode-number" type="text"
+            aria-describedby="episode-number-error" [placeholder]="t('admin.createEpisode.episodeNumberPlaceholder')"
+            pInputText [disabledControl]="isCreatingEpisode" autofocus>
+          <small id="episode-number-error"
+            class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
+            [ngClass]="(createEpisodeForm.controls['episodeNumber'].dirty || createEpisodeForm.controls['episodeNumber'].touched)
+                && createEpisodeForm.controls['episodeNumber'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
+            {{ createEpisodeForm.controls['episodeNumber'].errors | firstErrorKey:'createEpisode':'episodeNumber' }}
+          </small>
+        </div>
+        <div class="tw-w-full md:tw-w-1/2 md:tw-pl-2">
+          <label for="runtime" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
+            {{ t('admin.createEpisode.runtime') }}
+          </label>
+          <p-inputNumber formControlName="runtime" class="tw-w-full" styleClass="tw-w-full" id="runtime" suffix=" min"
+            aria-describedby="runtime-error" [useGrouping]="false" [min]="0" [max]="10000"
+            [placeholder]="t('admin.createEpisode.runtimePlaceholder')" [disabledControl]="isCreatingEpisode">
+          </p-inputNumber>
+          <small id="runtime-error"
+            class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
+            [ngClass]="(createEpisodeForm.controls['runtime'].dirty || createEpisodeForm.controls['runtime'].touched)
+                && createEpisodeForm.controls['runtime'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
+            {{ createEpisodeForm.controls['runtime'].errors | firstErrorKey:'createEpisode':'runtime' }}
+          </small>
+        </div>
+      </div>
+      <label for="name" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
+        {{ t('admin.createEpisode.name') }}
+      </label>
+      <input formControlName="name" class="tw-w-full" id="name" type="text" aria-describedby="name-error"
+        [placeholder]="t('admin.createEpisode.namePlaceholder')" pInputText [disabledControl]="isCreatingEpisode">
+      <small id="name-error"
+        class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
+        [ngClass]="(createEpisodeForm.controls['name'].dirty || createEpisodeForm.controls['name'].touched)
+            && createEpisodeForm.controls['name'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
+        {{ createEpisodeForm.controls['name'].errors | firstErrorKey:'createEpisode':'name' }}
+      </small>
+      <label for="overview" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
+        {{ t('admin.createEpisode.overview') }}
+      </label>
+      <textarea formControlName="overview" class="tw-w-full" id="overview" aria-describedby="overview-error"
+        [placeholder]="t('admin.createEpisode.overviewPlaceholder')" pInputTextarea [rows]="5"
+        [disabledControl]="isCreatingEpisode"></textarea>
+      <small id="overview-error"
+        class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
+        [ngClass]="(createEpisodeForm.controls['overview'].dirty || createEpisodeForm.controls['overview'].touched)
+            && createEpisodeForm.controls['overview'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
+        {{ createEpisodeForm.controls['overview'].errors | firstErrorKey:'createEpisode':'overview' }}
+      </small>
+      <label for="air-date" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
+        {{ t('admin.createEpisode.airDate') }}
+      </label>
+      <div id="air-date" class="tw-flex tw-flex-wrap tw-w-full" aria-describedby="air-date-error">
+        <p-dropdown class="tw-w-full sm:tw-w-3/12" styleClass="tw-w-full" panelStyleClass="p-dropdown-sm"
+          [options]="days" formControlName="airDateDay" appendTo="body" [placeholder]="t('admin.createEpisode.day')"
+          scrollHeight="300px" [disabledControl]="isCreatingEpisode">
+        </p-dropdown>
+        <p-dropdown class="tw-w-full sm:tw-w-5/12 tw-pt-2 sm:tw-pt-0 sm:tw-pl-2" styleClass="tw-w-full"
+          panelStyleClass="p-dropdown-sm" [options]="months" formControlName="airDateMonth" appendTo="body"
+          [placeholder]="t('admin.createEpisode.month')" scrollHeight="300px" [disabledControl]="isCreatingEpisode">
+        </p-dropdown>
+        <p-dropdown class="tw-w-full sm:tw-w-4/12 tw-pt-2 sm:tw-pt-0 sm:tw-pl-2" styleClass="tw-w-full"
+          panelStyleClass="p-dropdown-sm" [options]="years" formControlName="airDateYear" appendTo="body"
+          [placeholder]="t('admin.createEpisode.year')" scrollHeight="300px" [disabledControl]="isCreatingEpisode">
+        </p-dropdown>
+      </div>
+      <small id="air-date-error"
+        class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
+        [ngClass]="(createEpisodeForm.controls['airDateDay'].dirty || createEpisodeForm.controls['airDateDay'].touched
+            || createEpisodeForm.controls['airDateMonth'].dirty || createEpisodeForm.controls['airDateMonth'].touched
+            || createEpisodeForm.controls['airDateYear'].dirty || createEpisodeForm.controls['airDateYear'].touched)
+            && createEpisodeForm.controls['airDateDay'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
+        {{ createEpisodeForm.controls['airDateDay'].errors | firstErrorKey:'createEpisode':'airDate' }}
+      </small>
+      <div class="tw-flex tw-flex-wrap">
+        <div class="tw-w-full sm:tw-w-1/3">
+          <label for="visibility" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
+            {{ t('admin.createEpisode.visibility') }}
+          </label>
+          <div id="visibility">
+            <p-radioButton name="visibility" [value]="1" label="Public" formControlName="visibility"
+              class="tw-block tw-mb-2" [disabledControl]="isCreatingEpisode">
+            </p-radioButton>
+            <p-radioButton name="visibility" [value]="2" label="Unlisted" formControlName="visibility"
+              class="tw-block tw-mb-2" [disabledControl]="isCreatingEpisode">
+            </p-radioButton>
+            <p-radioButton name="visibility" [value]="3" label="Private" formControlName="visibility" class="tw-block"
+              [disabledControl]="isCreatingEpisode">
+            </p-radioButton>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="tw-flex tw-my-4 tw-px-7">
+      <div class="tw-ml-auto">
+        <button pButton type="button" [label]="t('admin.createEpisode.cancel')" (click)="onCreateEpisodeFormCancel()"
+          class="p-button-text p-button-secondary p-button-sm">
+        </button>
+        <button pButton type="submit" [label]="t('admin.createEpisode.submit')" class="p-button p-button-sm tw-ml-1"
+          [disabled]="isCreatingEpisode">
+        </button>
+      </div>
+    </div>
+  </form>
+</ng-container>

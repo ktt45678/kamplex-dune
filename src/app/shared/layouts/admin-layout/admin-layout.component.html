@@ -19,9 +19,13 @@
         <button pButton class="p-panel-header-icon p-link tw-ml-2" icon="pi pi-times" (click)="hideUploadQueue()">
         </button>
       </ng-template>
-      <p class="tw-px-4 tw-py-2 tw-text-base tw-text-right">Remaining: {{ timeRemaining | async }} seconds</p>
+      <p *ngLet="(timeRemaining | async) as _timeRemaining" class="tw-px-4 tw-py-2 tw-text-base tw-text-right">{{
+        _timeRemaining ?
+        t('admin.uploadQueue.remaining', { time: _timeRemaining | time }) :
+        t('admin.uploadQueue.allFilesUploaded')
+        }}</p>
       <div class="p-scrollbar tw-max-h-64 tw-overflow-y-auto">
-        <div *ngFor="let upload of uploadQueue; trackBy: trackCreateUrl"
+        <div *ngFor="let upload of uploadQueue; trackBy: trackId"
           class="tw-flex tw-items-center tw-px-4 tw-py-2 hover:tw-bg-neutral-700 tw-transition-colors tw-duration-200 tw-delay-75 hover:tw-transition-none">
           <p class="tw-truncate tw-flex-1 tw-text-base tw-mr-2">{{ upload.file.name }}</p>
           <div class="tw-relative tw-ml-auto tw-w-30px tw-h-30px">

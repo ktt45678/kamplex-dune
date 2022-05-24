@@ -1,5 +1,5 @@
 <!-- Building a Progress Ring: https://css-tricks.com/building-progress-ring-quickly/ -->
-<svg class="tw-transform -tw-rotate-90" [attr.width]="_radius * 2" [attr.height]="_radius * 2"
+<svg class="-tw-rotate-90" [attr.width]="_radius * 2" [attr.height]="_radius * 2"
   [ngClass]="styleClass || ''">
   <circle class="tw-text-gray-300" [attr.stroke-width]="_strokeWidth" stroke="currentColor" fill="transparent"
     [attr.r]="normalizedRadius" [attr.cx]="_radius" [attr.cy]="_radius" />

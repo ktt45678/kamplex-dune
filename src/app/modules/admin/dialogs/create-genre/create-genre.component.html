@@ -7,7 +7,7 @@
       {{ t('admin.createGenre.name') }}
     </label>
     <input formControlName="name" class="tw-w-full" id="name" type="text" aria-describedby="name-error" pInputText
-      [disabledControl]="creatingGenre" controlAutofocus>
+      [disabledControl]="creatingGenre" autofocus>
     <small id="name-error"
       class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
       [ngClass]="(createGenreForm.controls['name'].dirty || createGenreForm.controls['name'].touched)

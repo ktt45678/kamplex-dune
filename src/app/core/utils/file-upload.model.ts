@@ -42,6 +42,10 @@ export class FileUpload {
     }
   }
 
+  public abort() {
+    this.status = QueueUploadStatus.ABORT;
+  }
+
   get isWaitingForUpload() {
     return this.status === QueueUploadStatus.PENDING;
   }

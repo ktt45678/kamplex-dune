@@ -9,7 +9,9 @@
     "settings": "Settings"
   },
   "uploadQueue": {
-    "uploading": "{ fileCount, plural, =0 {Not uploading} one {Uploading 1 file} other {Uploading # files} }"
+    "uploading": "{ fileCount, plural, =0 {Not uploading} one {Uploading 1 file} other {Uploading # files} }",
+    "remaining": "Remaining: {{ time }}",
+    "allFilesUploaded": "All files uploaded"
   },
   "createGenre": {
     "formHeader": "Create Genre",
@@ -82,6 +84,8 @@
     "source": "Source",
     "noSource": "No source was found",
     "addSource": "Add Source",
+    "episodes": "Episodes",
+    "noEpisodes": "No episodes found",
     "addEpisode": "Add Episode",
     "deleteSource": "Delete Source",
     "deleteMovie": "Delete Movie",
@@ -122,6 +126,35 @@
     "submit": "{{ admin.addMediaVideo.submit }}",
     "cancel": "{{ admin.createGenre.cancel }}"
   },
+  "createEpisode": {
+    "formHeader": "Create Episode",
+    "episodeNumber": "Episode number",
+    "episodeNumberPlaceholder": "Episode number",
+    "name": "Name (Optional)",
+    "namePlaceholder": "Episode name",
+    "overview": "Overview (Optional)",
+    "overviewPlaceholder": "Short description of this episode",
+    "runtime": "{{ admin.createMedia.runtime }}",
+    "runtimePlaceholder": "Episode's duration",
+    "airDate": "Air date",
+    "day": "{{ admin.createMedia.day }}",
+    "month": "{{ admin.createMedia.month }}",
+    "year": "{{ admin.createMedia.year }}",
+    "visibility": "Visibility",
+    "cancel": "{{ admin.createGenre.cancel }}",
+    "submit": "{{ admin.createMedia.submit }}"
+  },
+  "configureEpisode": {
+    "general": "{{ admin.configureMedia.general }}",
+    "subtitles": "{{ admin.configureMedia.subtitles }}",
+    "language": "{{ admin.configureMedia.language }}",
+    "noSubtitles": "{{ admin.configureMedia.noSubtitles }}",
+    "addSubtitle": "{{ admin.configureMedia.addSubtitle }}",
+    "source": "{{ admin.configureMedia.source }}",
+    "noSource": "{{ admin.configureMedia.noSource }}",
+    "addSource": "{{ admin.configureMedia.addSource }}",
+    "deleteSource": "{{ admin.configureMedia.deleteSource }}"
+  },
   "genres": {
     "searchPlaceholder": "Search...",
     "create": "New",
@@ -160,7 +193,9 @@
     "statusPending": "Pending",
     "statusReview": "In review",
     "statusProcessing": "Processing",
+    "statusProcessingDescription": "Your source is being processed. We'll let you know when it's done.",
     "statusReady": "Ready",
+    "statusReadyDescription": "This movie/episode is now ready to watch. But all resolutions may not be available yet.",
     "statusDone": "Done",
     "statusUnknown": "Unknown",
     "releaseDate": "Release date",
@@ -177,5 +212,14 @@
     "deleteSubtitleConfirmation": "Are you sure you want to delete this subtitle? This action cannot be undone.",
     "deleteSourceConfirmationHeader": "Delete Source",
     "deleteSourceConfirmation": "Are you sure you want to delete <strong>{{ name }}'s source</strong>? This action cannot be undone."
+  },
+  "episode": {
+    "episodeNumber": "Ep.",
+    "name": "Name",
+    "overview": "Overview",
+    "runtime": "Duration",
+    "runtimeValue": "{{ runtime }} min",
+    "airDate": "Air date",
+    "status": "Status"
   }
 }

@@ -16,6 +16,7 @@ export * from './producer.model';
 export * from './role-details.model';
 export * from './role.model';
 export * from './short-date.model';
+export * from './tv-episode-details.model';
 export * from './tv-episode.model';
 export * from './tv-show-episode-count.model';
 export * from './tv-show.model';

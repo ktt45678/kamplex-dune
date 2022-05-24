@@ -1,0 +1,50 @@
+<vds-media class="tw-w-full">
+  <vds-aspect-ratio ratio="16/9">
+    <vds-video class="tw-w-full">
+      <video [src]="src" controls preload="none">
+      </video>
+    </vds-video>
+  </vds-aspect-ratio>
+  <div
+    class="tw-absolute tw-flex tw-flex-col tw-justify-between tw-left-0 tw-top-0 tw-w-full tw-h-full tw-pointer-events-none tw-z-1">
+    <div></div>
+    <div></div>
+    <div
+      class="tw-flex tw-w-full tw-min-h-[48px] tw-opacity-100 tw-transition-opacity tw-duration-200 tw-pointer-events-auto">
+      <div class="tw-w-full tw-px-3 tw-pt-24 tw-opacity-100 media-user-idle:tw-opacity-0
+        tw-transition-opacity tw-duration-200 tw-bg-gradient-to-t tw-from-black tw-to-transparent">
+        <vds-time-slider class="tw-relative tw-flex tw-h-1 tw-w-full tw-bg-gray-200 tw-cursor-pointer">
+          <div
+            class="tw-absolute tw-top-0 tw-left-0 tw-h-1 tw-bg-gray-400 interactive:tw-w-[var(--vds-pointer-percent)]">
+          </div>
+          <div class="tw-absolute tw-top-0 tw-left-0 tw-h-1 tw-w-[var(--vds-fill-percent)] tw-bg-blue-500
+            media-playing:tw-transition-[width] media-playing:tw-duration-200 media-seeking:tw-transition-none">
+          </div>
+          <div class="tw-absolute tw-inset-y-0 tw-my-auto tw-left-[var(--vds-fill-percent)]
+            tw-rounded-full tw-h-2 tw-w-2 -tw-translate-x-1/2 tw-bg-blue-500 media-playing:tw-transition-[left]
+            media-playing:tw-duration-200 media-seeking:tw-transition-none tw-will-change-[left]">
+          </div>
+        </vds-time-slider>
+        <div class="tw-flex tw-mt-2 tw-items-center">
+          <vds-play-button class="tw-relative !tw-w-12 !tw-h-12">
+            <svg aria-hidden="true" viewBox="0 0 48 48" class="tw-absolute tw-opacity-0 media-paused:tw-opacity-100">
+              <path fill="white"
+                d="M18.3 36.4Q17.55 36.9 16.775 36.45Q16 36 16 35.1V12.6Q16 11.7 16.775 11.25Q17.55 10.8 18.3 11.3L36 22.6Q36.7 23.05 36.7 23.85Q36.7 24.65 36 25.1Z" />
+            </svg>
+            <svg aria-hidden="true" viewBox="0 0 48 48" class="tw-absolute tw-opacity-100 media-paused:tw-opacity-0">
+              <path fill="white"
+                d="M29.25 38Q28 38 27.125 37.125Q26.25 36.25 26.25 35V13Q26.25 11.75 27.125 10.875Q28 10 29.25 10H35Q36.25 10 37.125 10.875Q38 11.75 38 13V35Q38 36.25 37.125 37.125Q36.25 38 35 38ZM13 38Q11.75 38 10.875 37.125Q10 36.25 10 35V13Q10 11.75 10.875 10.875Q11.75 10 13 10H18.75Q20 10 20.875 10.875Q21.75 11.75 21.75 13V35Q21.75 36.25 20.875 37.125Q20 38 18.75 38Z" />
+            </svg>
+          </vds-play-button>
+          <vds-volume-slider class="tw-relative tw-ml-2 tw-h-1 tw-w-24 tw-bg-gray-600">
+            <div class="tw-absolute tw-top-0 tw-left-0 tw-h-1 tw-w-[var(--vds-fill-percent)] tw-bg-white">
+            </div>
+            <div class="tw-absolute tw-inset-y-0 tw-my-auto tw-left-[var(--vds-fill-percent)]
+              tw-rounded-full tw-h-2 tw-w-2 -tw-translate-x-1/2 tw-bg-white tw-will-change-[left]">
+            </div>
+          </vds-volume-slider>
+        </div>
+      </div>
+    </div>
+  </div>
+</vds-media>

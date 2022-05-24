@@ -32,6 +32,7 @@
           <th class="tw-w-96" pSortableColumn="title">
             {{ t('admin.media.title') }} <p-sortIcon field="title"></p-sortIcon>
           </th>
+          <th class="tw-w-32"></th>
           <th class="tw-w-28">
             {{ t('admin.media.type') }}
           </th>
@@ -47,44 +48,56 @@
           <th class="tw-w-20">
             {{ t('admin.media.status') }}
           </th>
-          <th class="tw-w-32"></th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-media>
         <tr>
-          <td class="tw-flex tw-w-96">
-            <input #inputPoster hidden="true" type="file" onclick="this.value = null"
-              (change)="uploadPoster(media, $event)" accept=".jpg, .jpeg, .png" />
-            <div *ngIf="media.thumbnailPosterUrl; else noPoster" class="tw-w-24">
-              <div class="tw-aspect-w-2 tw-aspect-h-3">
-                <img class="tw-rounded-md" [src]="media.thumbnailPosterUrl" [alt]="media.title">
-                <div class="row-image-actions tw-flex tw-justify-center tw-items-center">
-                  <button pButton type="button" icon="pi pi-images" pTooltip="Change this poster" [showDelay]="1000"
-                    (click)="inputPoster.click()" [disabled]="inputPoster.disabled"
-                    class="p-button-rounded p-button-success p-button-sm">
-                  </button>
-                  <button pButton type="button" icon="pi pi-times" pTooltip="Delete this poster" [showDelay]="1000"
-                    (click)="deletePoster(media, $event)" class="p-button-rounded p-button-danger p-button-sm tw-ml-1">
-                  </button>
-                </div>
-              </div>
-            </div>
-            <ng-template #noPoster>
-              <button
-                class="tw-bg-transparent tw-text-white tw-w-24 tw-rounded-md tw-border-2 tw-border-dashed disabled:tw-border-gray-500 disabled:tw-text-gray-500"
-                (click)="inputPoster.click()" pTooltip="Add a poster" [showDelay]="1000"
-                [disabled]="inputPoster.disabled">
+          <td class="tw-w-96">
+            <div class="tw-flex">
+              <input #inputPoster hidden="true" type="file" onclick="this.value = null"
+                (change)="uploadPoster(media, $event)" accept=".jpg, .jpeg, .png" />
+              <div *ngIf="media.thumbnailPosterUrl; else noPoster" class="tw-w-16 tw-flex-shrink-0">
                 <div class="tw-aspect-w-2 tw-aspect-h-3">
-                  <div class="tw-flex tw-justify-center tw-items-center">
-                    <i class="pi pi-plus"></i>
+                  <img class="tw-rounded-md" [src]="media.thumbnailPosterUrl" [alt]="media.title">
+                  <div class="row-image-actions tw-flex tw-flex-col tw-justify-center tw-items-center">
+                    <button pButton type="button" icon="pi pi-images" pTooltip="Change this poster" [showDelay]="1000"
+                      (click)="inputPoster.click()" [disabled]="inputPoster.disabled"
+                      class="p-button-rounded p-button-success p-button-sm">
+                    </button>
+                    <button pButton type="button" icon="pi pi-times" pTooltip="Delete this poster" [showDelay]="1000"
+                      (click)="deletePoster(media, $event)"
+                      class="p-button-rounded p-button-danger p-button-sm tw-mt-1">
+                    </button>
                   </div>
                 </div>
-              </button>
-            </ng-template>
-            <div class="tw-ml-2">
-              <p class="tw-text-base tw-font-semibold tw-line-clamp-2">{{ media.title }}</p>
-              <p class="tw-text-sm tw-text-slate-400 tw-line-clamp-2">{{ media.originalTitle }}</p>
+              </div>
+              <ng-template #noPoster>
+                <button
+                  class="tw-bg-transparent tw-text-white tw-w-16 tw-flex-shrink-0 tw-rounded-md tw-border-2 tw-border-dashed disabled:tw-border-gray-500 disabled:tw-text-gray-500"
+                  (click)="inputPoster.click()" pTooltip="Add a poster" [showDelay]="1000"
+                  [disabled]="inputPoster.disabled">
+                  <div class="tw-aspect-w-2 tw-aspect-h-3">
+                    <div class="tw-flex tw-justify-center tw-items-center">
+                      <i class="pi pi-plus"></i>
+                    </div>
+                  </div>
+                </button>
+              </ng-template>
+              <div class="tw-ml-2">
+                <p class="tw-text-base tw-font-medium tw-line-clamp-2">{{ media.title }}</p>
+                <p class="tw-text-sm tw-text-slate-400 tw-line-clamp-1">{{ media.originalTitle }}</p>
+              </div>
             </div>
+          </td>
+          <td>
+            <button pButton icon="pi pi-cog"
+              class="p-button-outlined p-button-rounded p-button-info p-button-sm tw-mr-2"
+              (click)="showConfigureMediaDialog(media)">
+            </button>
+            <button pButton icon="pi pi-ellipsis-h"
+              class="p-button-outlined p-button-rounded p-button-secondary p-button-sm"
+              (click)="toggleMediaMenu(mediaMenu, $event, media)">
+            </button>
           </td>
           <ng-container *ngIf="media.type === MediaType.MOVIE; else isTV">
             <td class="tw-w-24 tw-text-sm">{{ t('admin.media.movie') }}</td>
@@ -104,22 +117,11 @@
             <i class="pi pi-star-fill tw-text-yellow-500"></i> {{ media.ratingAverage }}
           </td>
           <td class="tw-w-20 tw-text-sm" [ngSwitch]="media.pStatus">
-            <ng-container *ngSwitchCase="MediaStatus.PENDING">{{ t('admin.media.statusPending') }}</ng-container>
-            <ng-container *ngSwitchCase="MediaStatus.REVIEW">{{ t('admin.media.statusReview') }}</ng-container>
-            <ng-container *ngSwitchCase="MediaStatus.PROCESSING">{{ t('admin.media.statusProcessing') }}</ng-container>
-            <ng-container *ngSwitchCase="MediaStatus.DONE">{{ t('admin.media.statusDone') }}</ng-container>
+            <ng-container *ngSwitchCase="MediaPStatus.PENDING">{{ t('admin.media.statusPending') }}</ng-container>
+            <ng-container *ngSwitchCase="MediaPStatus.REVIEW">{{ t('admin.media.statusReview') }}</ng-container>
+            <ng-container *ngSwitchCase="MediaPStatus.PROCESSING">{{ t('admin.media.statusProcessing') }}</ng-container>
+            <ng-container *ngSwitchCase="MediaPStatus.DONE">{{ t('admin.media.statusDone') }}</ng-container>
             <ng-container *ngSwitchDefault>{{ t('admin.media.statusUnknown') }}</ng-container>
-          </td>
-          <td>
-            <button pButton icon="pi pi-cog"
-              class="p-button-outlined p-button-rounded p-button-info p-button-sm tw-mr-2"
-              (click)="showConfigureMediaDialog(media)">
-            </button>
-            <button pButton icon="pi pi-ellipsis-h"
-              class="p-button-outlined p-button-rounded p-button-secondary p-button-sm" (click)="media.type === MediaType.MOVIE ?
-              toggleMediaMenu(movieMenu, $event, media) :
-              toggleMediaMenu(tvMenu, $event, media)">
-            </button>
           </td>
         </tr>
       </ng-template>
@@ -130,7 +132,6 @@
       [dismissableMask]="true">
     </p-confirmDialog>
   </div>
-  <p-menu #movieMenu [popup]="true" [appendTo]="mediaMenuZone" [model]="movieMenuItems"></p-menu>
-  <p-menu #tvMenu [popup]="true" [appendTo]="mediaMenuZone" [model]="tvMenuItems"></p-menu>
+  <p-menu #mediaMenu [popup]="true" [appendTo]="mediaMenuZone" [model]="mediaMenuItems"></p-menu>
   <div #mediaMenuZone></div>
 </ng-container>

@@ -4,7 +4,7 @@ import { MenuItem } from 'primeng/api';
 import { first, Observable, takeUntil } from 'rxjs';
 
 import { CanComponentDeactivate } from '../../../core/guards';
-import { DestroyService, QueueUploadService } from '../../../core/services';
+import { DestroyService, QueueUploadService, WsService } from '../../../core/services';
 import { QueueUploadStatus } from '../../../core/enums';
 import { FileUpload } from '../../../core/utils';
 
@@ -13,7 +13,18 @@ import { FileUpload } from '../../../core/utils';
   templateUrl: './admin-layout.component.html',
   styleUrls: ['./admin-layout.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [DestroyService]
+  providers: [
+    DestroyService,
+    WsService,
+    {
+      provide: 'wsNamespace',
+      useValue: 'admin'
+    },
+    {
+      provide: 'wsAuth',
+      useValue: true
+    }
+  ]
 })
 export class AdminLayoutComponent implements OnInit, OnDestroy, CanComponentDeactivate {
   sideBarItems: MenuItem[] = [];
@@ -24,7 +35,7 @@ export class AdminLayoutComponent implements OnInit, OnDestroy, CanComponentDeac
   totalUploading: number = 0;
   percent: number = 10;
 
-  constructor(private ref: ChangeDetectorRef, private queueUploadService: QueueUploadService,
+  constructor(private ref: ChangeDetectorRef, private queueUploadService: QueueUploadService, private wsService: WsService,
     private translocoService: TranslocoService, private destroyService: DestroyService) {
     this.displayQueue = this.queueUploadService.displayQueue;
     this.timeRemaining = this.queueUploadService.timeRemaining;
@@ -33,70 +44,24 @@ export class AdminLayoutComponent implements OnInit, OnDestroy, CanComponentDeac
   ngOnInit(): void {
     this.translocoService.selectTranslation('admin').pipe(first()).subscribe(t => {
       this.sideBarItems = [
-        {
-          label: t['menu.media'],
-          routerLink: '/admin/media'
-        },
-        {
-          label: t['menu.genres'],
-          routerLink: '/admin/genres'
-        },
-        {
-          label: t['menu.producers'],
-          routerLink: '/admin/producers'
-        },
-        {
-          separator: true,
-        },
-        {
-          label: t['menu.users'],
-          routerLink: '/admin/users'
-        },
-        {
-          label: t['menu.roles'],
-          routerLink: '/admin/roles'
-        },
-        {
-          separator: true,
-        },
-        {
-          label: t['menu.auditLog'],
-          routerLink: '/admin/audit-log'
-        },
-        {
-          label: t['menu.settings'],
-          routerLink: '/admin/settings'
-        }
+        { label: t['menu.media'], routerLink: '/admin/media' },
+        { label: t['menu.genres'], routerLink: '/admin/genres' },
+        { label: t['menu.producers'], routerLink: '/admin/producers' },
+        { separator: true, },
+        { label: t['menu.users'], routerLink: '/admin/users' },
+        { label: t['menu.roles'], routerLink: '/admin/roles' },
+        { separator: true, },
+        { label: t['menu.auditLog'], routerLink: '/admin/audit-log' },
+        { label: t['menu.settings'], routerLink: '/admin/settings' }
       ];
       this.tabMenuItems = [
-        {
-          label: t['menu.media'],
-          routerLink: '/admin/media'
-        },
-        {
-          label: t['menu.genres'],
-          routerLink: '/admin/genres'
-        },
-        {
-          label: t['menu.producers'],
-          routerLink: '/admin/producers'
-        },
-        {
-          label: t['menu.users'],
-          routerLink: '/admin/users'
-        },
-        {
-          label: t['menu.roles'],
-          routerLink: '/admin/roles'
-        },
-        {
-          label: t['menu.auditLog'],
-          routerLink: '/admin/audit-log'
-        },
-        {
-          label: t['menu.settings'],
-          routerLink: '/admin/settings'
-        }
+        { label: t['menu.media'], routerLink: '/admin/media' },
+        { label: t['menu.genres'], routerLink: '/admin/genres' },
+        { label: t['menu.producers'], routerLink: '/admin/producers' },
+        { label: t['menu.users'], routerLink: '/admin/users' },
+        { label: t['menu.roles'], routerLink: '/admin/roles' },
+        { label: t['menu.auditLog'], routerLink: '/admin/audit-log' },
+        { label: t['menu.settings'], routerLink: '/admin/settings' }
       ];
     });
     this.queueUploadService.uploadQueue.pipe(takeUntil(this.destroyService)).subscribe({
@@ -106,6 +71,21 @@ export class AdminLayoutComponent implements OnInit, OnDestroy, CanComponentDeac
         this.ref.markForCheck();
       }
     });
+    this.initSocket();
+  }
+
+  initSocket(): void {
+    this.wsService.fromEvent('connect').pipe(takeUntil(this.destroyService)).subscribe({
+      next: () => {
+        console.log('connected');
+      }
+    });
+    this.wsService.fromEvent('disconnect').pipe(takeUntil(this.destroyService)).subscribe({
+      next: () => {
+        console.log('disconnected');
+      }
+    });
+    this.wsService.socket.emit('room:join', 'testssaas');
   }
 
   hideUploadQueue(): void {
@@ -114,6 +94,11 @@ export class AdminLayoutComponent implements OnInit, OnDestroy, CanComponentDeac
 
   cancelUpload(upload: FileUpload): void {
     upload.cancel();
+    this.queueUploadService.removeFromQueue(upload);
+  }
+
+  trackId(index: number, item: any): any {
+    return item?.id;
   }
 
   trackCreateUrl(index: number, item: any): any {
@@ -121,6 +106,7 @@ export class AdminLayoutComponent implements OnInit, OnDestroy, CanComponentDeac
   }
 
   ngOnDestroy(): void {
+    console.log('destroy component');
     this.uploadQueue.forEach(upload => {
       upload.cancel();
     });
@@ -128,7 +114,7 @@ export class AdminLayoutComponent implements OnInit, OnDestroy, CanComponentDeac
 
   canDeactivate(): boolean {
     if (this.totalUploading > 0)
-      return window.confirm('Leave site? Changes you made may not be saved.');
+      return window.confirm(this.translocoService.translate('window.leaveSite'));
     return true
   }
 
