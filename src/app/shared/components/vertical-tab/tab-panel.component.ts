@@ -9,6 +9,7 @@ import { Component, OnInit, ChangeDetectionStrategy, Input, ChangeDetectorRef } 
 export class TabPanelComponent implements OnInit {
   @Input() header: string = '';
   @Input() separator: boolean = false;
+  @Input() styleClass: string = '';
 
   active: boolean = false;
 

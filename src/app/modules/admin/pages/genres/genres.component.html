@@ -1,16 +1,16 @@
 <ng-container *transloco="let t">
-  <div class="tw-bg-neutral-850 tw-rounded-md tw-mx-4 tw-p-4">
+  <div class="tw-bg-neutral-850 tw-rounded-md tw-ml-4 tw-p-4">
     <div class="tw-flex tw-flex-wrap tw-mb-4">
       <div class="tw-w-full md:tw-w-auto tw-mr-auto tw-mt-2 md:tw-mt-0">
         <span class="p-input-icon-left tw-w-full">
-          <i class="pi pi-search"></i>
+          <i class="ms ms-search"></i>
           <input pInputText class="p-inputtext-sm tw-w-full" type="text"
             (input)="genreTable.filter($any($event).target.value, 'name', 'contains')"
             [placeholder]="t('admin.genres.searchPlaceholder')" />
         </span>
       </div>
       <div class="tw-w-full tw-ml-auto tw-mt-2 md:tw-mt-0 md:tw-w-auto">
-        <button pButton [label]="t('admin.genres.create')" icon="pi pi-plus" class="p-button tw-w-full sm:tw-w-auto"
+        <button pButton [label]="t('admin.genres.create')" icon="ms ms-add" class="p-button tw-w-full sm:tw-w-auto"
           (click)="showCreateGenreDialog()">
         </button>
       </div>
@@ -42,11 +42,10 @@
           </td>
           <td class="tw-text-sm">{{ genre.name }}</td>
           <td>
-            <button pButton icon="pi pi-pencil"
-              class="p-button-outlined p-button-rounded p-button-success p-button-sm tw-mr-2"
+            <button pButton icon="ms ms-edit" class="p-button-rounded p-button-success p-button-sm tw-mr-2"
               (click)="showUpdateGenreDialog(genre)">
             </button>
-            <button pButton icon="pi pi-trash" class="p-button-outlined p-button-rounded p-button-danger p-button-sm"
+            <button pButton icon="ms ms-delete" class="p-button-rounded p-button-danger p-button-sm"
               (click)="showDeleteGenreDialog(genre)">
             </button>
           </td>

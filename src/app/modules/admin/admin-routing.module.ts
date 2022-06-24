@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import { ConfirmDeactivateGuard } from '../../core/guards';
+import { ConfirmDeactivateGuard, WsActivatorGuard } from '../../core/guards';
 import { AdminLayoutComponent } from '../../shared/layouts/admin-layout';
 import { GenresComponent } from './pages/genres/genres.component';
 import { MediaComponent } from './pages/media/media.component';
@@ -11,7 +11,8 @@ const routes: Routes = [
   {
     path: '',
     component: AdminLayoutComponent,
-    canDeactivate: [ConfirmDeactivateGuard],
+    canActivate: [WsActivatorGuard],
+    canDeactivate: [ConfirmDeactivateGuard, WsActivatorGuard],
     children: [
       {
         path: 'genres',

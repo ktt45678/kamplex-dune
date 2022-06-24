@@ -4,7 +4,8 @@ import { MenuItem } from 'primeng/api';
 import { first, Observable, takeUntil } from 'rxjs';
 
 import { CanComponentDeactivate } from '../../../core/guards';
-import { DestroyService, QueueUploadService, WsService } from '../../../core/services';
+import { DestroyService, QueueUploadService } from '../../../core/services';
+import { WsService } from '../../modules/ws';
 import { QueueUploadStatus } from '../../../core/enums';
 import { FileUpload } from '../../../core/utils';
 
@@ -13,18 +14,7 @@ import { FileUpload } from '../../../core/utils';
   templateUrl: './admin-layout.component.html',
   styleUrls: ['./admin-layout.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [
-    DestroyService,
-    WsService,
-    {
-      provide: 'wsNamespace',
-      useValue: 'admin'
-    },
-    {
-      provide: 'wsAuth',
-      useValue: true
-    }
-  ]
+  providers: [DestroyService]
 })
 export class AdminLayoutComponent implements OnInit, OnDestroy, CanComponentDeactivate {
   sideBarItems: MenuItem[] = [];
@@ -85,7 +75,6 @@ export class AdminLayoutComponent implements OnInit, OnDestroy, CanComponentDeac
         console.log('disconnected');
       }
     });
-    this.wsService.socket.emit('room:join', 'testssaas');
   }
 
   hideUploadQueue(): void {
@@ -106,7 +95,6 @@ export class AdminLayoutComponent implements OnInit, OnDestroy, CanComponentDeac
   }
 
   ngOnDestroy(): void {
-    console.log('destroy component');
     this.uploadQueue.forEach(upload => {
       upload.cancel();
     });

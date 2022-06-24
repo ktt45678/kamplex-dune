@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { UnloadGuard } from './unload.guard';
+import { WsActivatorGuard } from './ws-activator.guard';
 
-describe('UnloadGuard', () => {
-  let guard: UnloadGuard;
+describe('WsActivatorGuard', () => {
+  let guard: WsActivatorGuard;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    guard = TestBed.inject(UnloadGuard);
+    guard = TestBed.inject(WsActivatorGuard);
   });
 
   it('should be created', () => {

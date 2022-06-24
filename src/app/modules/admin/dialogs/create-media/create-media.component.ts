@@ -35,9 +35,9 @@ export class CreateMediaComponent implements OnInit {
     const type = this.config.data['type'] || MediaType.MOVIE;
     this.createMediaForm = new FormGroup({
       type: new FormControl(type),
-      title: new FormControl('', [Validators.required, Validators.maxLength(500)]),
-      originalTitle: new FormControl('', [Validators.maxLength(500)]),
-      overview: new FormControl('', [Validators.required, Validators.minLength(10), Validators.maxLength(2000)]),
+      title: new FormControl(null, [Validators.required, Validators.maxLength(500)]),
+      originalTitle: new FormControl(null, [Validators.maxLength(500)]),
+      overview: new FormControl(null, [Validators.required, Validators.minLength(10), Validators.maxLength(2000)]),
       originalLanguage: new FormControl(null),
       genres: new FormControl(null),
       producers: new FormControl(null),
@@ -91,7 +91,7 @@ export class CreateMediaComponent implements OnInit {
     const createMediaDto: CreateMediaDto = ({
       type: this.createMediaForm.value['type'],
       title: this.createMediaForm.value['title'],
-      originalTitle: this.createMediaForm.value['originalTitle'],
+      originalTitle: this.createMediaForm.value['originalTitle'] || null,
       overview: this.createMediaForm.value['overview'],
       genres: genreIds,
       originalLanguage: this.createMediaForm.value['originalLanguage'],

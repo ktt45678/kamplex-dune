@@ -1,9 +1,14 @@
+:root {
+  --FILL: 0;
+  --opsz: 24;
+}
+
 .ms {
   font-family: 'Material Symbols Rounded';
   font-weight: normal;
   font-style: normal;
   line-height: 1;
-  font-size: 18px;
+  font-size: 24px;
   letter-spacing: normal;
   text-transform: none;
   display: inline-block;
@@ -13,7132 +18,9509 @@
   font-feature-settings: 'liga';
   -webkit-font-feature-settings: 'liga';
   -webkit-font-smoothing: antialiased;
+  font-variation-settings: 'FILL' var(--FILL), 'opsz' var(--opsz);
 }
 
 .ms-fill {
-  font-variation-settings: 'FILL' 1;
+  --FILL: 1;
 }
 
-.ms-fill-opsz-48 {
-  font-variation-settings: 'FILL' 1, 'opsz' 48;
+.ms-opsz-lg {
+  --opsz: 40;
+}
+
+.ms-opsz-xl {
+  --opsz: 48;
 }
 
 .ms-10k:before {
   content: "\e951";
 }
+
 .ms-10mp:before {
   content: "\e952";
 }
+
 .ms-11mp:before {
   content: "\e953";
 }
+
 .ms-123:before {
   content: "\eb8d";
 }
+
 .ms-12mp:before {
   content: "\e954";
 }
+
 .ms-13mp:before {
   content: "\e955";
 }
+
 .ms-14mp:before {
   content: "\e956";
 }
+
 .ms-15mp:before {
   content: "\e957";
 }
+
 .ms-16mp:before {
   content: "\e958";
 }
+
 .ms-17mp:before {
   content: "\e959";
 }
+
 .ms-18-up-rating:before {
   content: "\f8fd";
 }
+
 .ms-18mp:before {
   content: "\e95a";
 }
+
 .ms-19mp:before {
   content: "\e95b";
 }
+
 .ms-1k:before {
   content: "\e95c";
 }
+
 .ms-1k-plus:before {
   content: "\e95d";
 }
+
 .ms-1x-mobiledata:before {
   content: "\efcd";
 }
+
 .ms-20mp:before {
   content: "\e95e";
 }
+
 .ms-21mp:before {
   content: "\e95f";
 }
+
 .ms-22mp:before {
   content: "\e960";
 }
+
 .ms-23mp:before {
   content: "\e961";
 }
+
 .ms-24mp:before {
   content: "\e962";
 }
+
 .ms-2k:before {
   content: "\e963";
 }
+
 .ms-2k-plus:before {
   content: "\e964";
 }
+
 .ms-2mp:before {
   content: "\e965";
 }
+
 .ms-30fps:before {
   content: "\efce";
 }
+
 .ms-30fps-select:before {
   content: "\efcf";
 }
+
 .ms-360:before {
   content: "\e577";
 }
+
 .ms-3d-rotation:before {
   content: "\e84d";
 }
+
 .ms-3g-mobiledata:before {
   content: "\efd0";
 }
+
 .ms-3k:before {
   content: "\e966";
 }
+
 .ms-3k-plus:before {
   content: "\e967";
 }
+
 .ms-3mp:before {
   content: "\e968";
 }
+
 .ms-3p:before {
   content: "\efd1";
 }
+
 .ms-4g-mobiledata:before {
   content: "\efd2";
 }
+
 .ms-4g-plus-mobiledata:before {
   content: "\efd3";
 }
+
 .ms-4k:before {
   content: "\e072";
 }
+
 .ms-4k-plus:before {
   content: "\e969";
 }
+
 .ms-4mp:before {
   content: "\e96a";
 }
+
 .ms-5g:before {
   content: "\ef38";
 }
+
 .ms-5k:before {
   content: "\e96b";
 }
+
 .ms-5k-plus:before {
   content: "\e96c";
 }
+
 .ms-5mp:before {
   content: "\e96d";
 }
+
 .ms-60fps:before {
   content: "\efd4";
 }
+
 .ms-60fps-select:before {
   content: "\efd5";
 }
+
 .ms-6-ft-apart:before {
   content: "\f21e";
 }
+
 .ms-6k:before {
   content: "\e96e";
 }
+
 .ms-6k-plus:before {
   content: "\e96f";
 }
+
 .ms-6mp:before {
   content: "\e970";
 }
+
 .ms-7k:before {
   content: "\e971";
 }
+
 .ms-7k-plus:before {
   content: "\e972";
 }
+
 .ms-7mp:before {
   content: "\e973";
 }
+
 .ms-8k:before {
   content: "\e974";
 }
+
 .ms-8k-plus:before {
   content: "\e975";
 }
+
 .ms-8mp:before {
   content: "\e976";
 }
+
 .ms-9k:before {
   content: "\e977";
 }
+
 .ms-9k-plus:before {
   content: "\e978";
 }
+
 .ms-9mp:before {
   content: "\e979";
 }
+
 .ms-abc:before {
   content: "\eb94";
 }
+
 .ms-ac-unit:before {
   content: "\eb3b";
 }
+
 .ms-access-alarm:before {
   content: "\e855";
 }
+
 .ms-access-alarms:before {
   content: "\e855";
 }
+
 .ms-access-time:before {
   content: "\efd6";
 }
+
 .ms-access-time-filled:before {
   content: "\efd6";
 }
+
 .ms-accessibility:before {
   content: "\e84e";
 }
+
 .ms-accessibility-new:before {
   content: "\e92c";
 }
+
 .ms-accessible:before {
   content: "\e914";
 }
+
 .ms-accessible-forward:before {
   content: "\e934";
 }
+
 .ms-account-balance:before {
   content: "\e84f";
 }
+
 .ms-account-balance-wallet:before {
   content: "\e850";
 }
+
 .ms-account-box:before {
   content: "\e851";
 }
+
 .ms-account-circle:before {
   content: "\efd7";
 }
+
 .ms-account-circle-filled:before {
   content: "\efd7";
 }
+
 .ms-account-circle-full:before {
   content: "\f20b";
 }
+
 .ms-account-tree:before {
   content: "\e97a";
 }
+
 .ms-ad-units:before {
   content: "\ef39";
 }
+
 .ms-adb:before {
   content: "\e60e";
 }
+
 .ms-add:before {
   content: "\e145";
 }
+
 .ms-add-a-photo:before {
   content: "\e439";
 }
+
 .ms-add-alarm:before {
   content: "\e856";
 }
+
 .ms-add-alert:before {
   content: "\e003";
 }
+
 .ms-add-box:before {
   content: "\e146";
 }
+
 .ms-add-business:before {
   content: "\e729";
 }
+
 .ms-add-call:before {
   content: "\f0b7";
 }
+
 .ms-add-card:before {
   content: "\eb86";
 }
+
 .ms-add-chart:before {
   content: "\ef3c";
 }
+
 .ms-add-circle:before {
   content: "\e3ba";
 }
+
 .ms-add-circle-outline:before {
   content: "\e3ba";
 }
+
 .ms-add-comment:before {
   content: "\e266";
 }
+
 .ms-add-ic-call:before {
   content: "\f0b7";
 }
+
 .ms-add-link:before {
   content: "\e178";
 }
+
 .ms-add-location:before {
   content: "\e567";
 }
+
 .ms-add-location-alt:before {
   content: "\ef3a";
 }
+
 .ms-add-moderator:before {
   content: "\e97d";
 }
+
 .ms-add-photo-alternate:before {
   content: "\e43e";
 }
+
 .ms-add-reaction:before {
   content: "\e1d3";
 }
+
 .ms-add-road:before {
   content: "\ef3b";
 }
+
 .ms-add-shopping-cart:before {
   content: "\e854";
 }
+
 .ms-add-shortcut-to-drive:before {
   content: "\f0b8";
 }
+
 .ms-add-task:before {
   content: "\f23a";
 }
+
 .ms-add-to-drive:before {
   content: "\e65c";
 }
+
 .ms-add-to-home-screen:before {
   content: "\e1fe";
 }
+
 .ms-add-to-photos:before {
   content: "\e39d";
 }
+
 .ms-add-to-queue:before {
   content: "\e05c";
 }
+
 .ms-addchart:before {
   content: "\ef3c";
 }
+
 .ms-adf-scanner:before {
   content: "\eada";
 }
+
 .ms-adjust:before {
   content: "\e39e";
 }
+
 .ms-admin-panel-settings:before {
   content: "\ef3d";
 }
+
 .ms-ads-click:before {
   content: "\e762";
 }
+
 .ms-agriculture:before {
   content: "\ea79";
 }
+
 .ms-air:before {
   content: "\efd8";
 }
+
 .ms-air-freshener:before {
   content: "\e2ca";
 }
+
 .ms-air-purifier-gen:before {
   content: "\e829";
 }
+
 .ms-airline-seat-flat:before {
   content: "\e630";
 }
+
 .ms-airline-seat-flat-angled:before {
   content: "\e631";
 }
+
 .ms-airline-seat-individual-suite:before {
   content: "\e632";
 }
+
 .ms-airline-seat-legroom-extra:before {
   content: "\e633";
 }
+
 .ms-airline-seat-legroom-normal:before {
   content: "\e634";
 }
+
 .ms-airline-seat-legroom-reduced:before {
   content: "\e635";
 }
+
 .ms-airline-seat-recline-extra:before {
   content: "\e636";
 }
+
 .ms-airline-seat-recline-normal:before {
   content: "\e637";
 }
+
 .ms-airline-stops:before {
   content: "\e7d0";
 }
+
 .ms-airlines:before {
   content: "\e7ca";
 }
+
 .ms-airplane-ticket:before {
   content: "\efd9";
 }
+
 .ms-airplanemode-active:before {
   content: "\e53d";
 }
+
 .ms-airplanemode-inactive:before {
   content: "\e194";
 }
+
 .ms-airplay:before {
   content: "\e055";
 }
+
 .ms-airport-shuttle:before {
   content: "\eb3c";
 }
+
 .ms-airware:before {
   content: "\f154";
 }
+
 .ms-alarm:before {
   content: "\e855";
 }
+
 .ms-alarm-add:before {
   content: "\e856";
 }
+
 .ms-alarm-off:before {
   content: "\e857";
 }
+
 .ms-alarm-on:before {
   content: "\e858";
 }
+
 .ms-album:before {
   content: "\e019";
 }
+
 .ms-align-horizontal-center:before {
   content: "\e00f";
 }
+
 .ms-align-horizontal-left:before {
   content: "\e00d";
 }
+
 .ms-align-horizontal-right:before {
   content: "\e010";
 }
+
 .ms-align-vertical-bottom:before {
   content: "\e015";
 }
+
 .ms-align-vertical-center:before {
   content: "\e011";
 }
+
 .ms-align-vertical-top:before {
   content: "\e00c";
 }
+
 .ms-all-inbox:before {
   content: "\e97f";
 }
+
 .ms-all-inclusive:before {
   content: "\eb3d";
 }
+
 .ms-all-out:before {
   content: "\e90b";
 }
+
 .ms-alt-route:before {
   content: "\f184";
 }
+
 .ms-alternate-email:before {
   content: "\e0e6";
 }
+
 .ms-amp-error:before {
   content: "\f0b9";
 }
+
 .ms-amp-stories:before {
   content: "\ea13";
 }
+
 .ms-analytics:before {
   content: "\ef3e";
 }
+
 .ms-anchor:before {
   content: "\f1cd";
 }
+
 .ms-android:before {
   content: "\e859";
 }
+
 .ms-android-calculator:before {
   content: "\ea82";
 }
+
 .ms-android-camera:before {
   content: "\ea8c";
 }
+
 .ms-android-chat:before {
   content: "\ea97";
 }
+
 .ms-android-contacts:before {
   content: "\ea8f";
 }
+
 .ms-android-dialer:before {
   content: "\ea7f";
 }
+
 .ms-android-emergency-location-service:before {
   content: "\eb89";
 }
+
 .ms-android-family-link:before {
   content: "\eaa1";
 }
+
 .ms-android-find-my-device:before {
   content: "\ea8b";
 }
+
 .ms-android-google-home:before {
   content: "\ea92";
 }
+
 .ms-android-messages:before {
   content: "\ea9e";
 }
+
 .ms-android-now-playing:before {
   content: "\ea8a";
 }
+
 .ms-android-recorder:before {
   content: "\ea95";
 }
+
 .ms-android-safety:before {
   content: "\ea6a";
 }
+
 .ms-animation:before {
   content: "\e71c";
 }
+
 .ms-announcement:before {
   content: "\e87f";
 }
+
 .ms-aod:before {
   content: "\efda";
 }
+
 .ms-apartment:before {
   content: "\ea40";
 }
+
 .ms-api:before {
   content: "\f1b7";
 }
+
 .ms-app-blocking:before {
   content: "\ef3f";
 }
+
 .ms-app-registration:before {
   content: "\ef40";
 }
+
 .ms-app-settings-alt:before {
   content: "\ef41";
 }
+
 .ms-app-shortcut:before {
   content: "\eae4";
 }
+
 .ms-approval:before {
   content: "\e982";
 }
+
 .ms-apps:before {
   content: "\e5c3";
 }
+
 .ms-apps-outage:before {
   content: "\e7cc";
 }
+
 .ms-architecture:before {
   content: "\ea3b";
 }
+
 .ms-archive:before {
   content: "\e149";
 }
+
 .ms-area-chart:before {
   content: "\e770";
 }
+
 .ms-arrow-back:before {
   content: "\e5c4";
 }
+
 .ms-arrow-back-ios:before {
   content: "\e5e0";
 }
+
 .ms-arrow-back-ios-new:before {
   content: "\e2ea";
 }
+
 .ms-arrow-circle-down:before {
   content: "\f181";
 }
+
 .ms-arrow-circle-left:before {
   content: "\eaa7";
 }
+
 .ms-arrow-circle-right:before {
   content: "\eaaa";
 }
+
 .ms-arrow-circle-up:before {
   content: "\f182";
 }
+
 .ms-arrow-downward:before {
   content: "\e5db";
 }
+
 .ms-arrow-drop-down:before {
   content: "\e5c5";
 }
+
 .ms-arrow-drop-down-circle:before {
   content: "\e5c6";
 }
+
 .ms-arrow-drop-up:before {
   content: "\e5c7";
 }
+
 .ms-arrow-forward:before {
   content: "\e5c8";
 }
+
 .ms-arrow-forward-ios:before {
   content: "\e5e1";
 }
+
 .ms-arrow-left:before {
   content: "\e5de";
 }
+
 .ms-arrow-right:before {
   content: "\e5df";
 }
+
 .ms-arrow-right-alt:before {
   content: "\e941";
 }
+
 .ms-arrow-upward:before {
   content: "\e5d8";
 }
+
 .ms-art-track:before {
   content: "\e060";
 }
+
 .ms-article:before {
   content: "\ef42";
 }
+
 .ms-aspect-ratio:before {
   content: "\e85b";
 }
+
 .ms-assessment:before {
   content: "\e85c";
 }
+
 .ms-assignment:before {
   content: "\e85d";
 }
+
 .ms-assignment-ind:before {
   content: "\e85e";
 }
+
 .ms-assignment-late:before {
   content: "\e85f";
 }
+
 .ms-assignment-return:before {
   content: "\e860";
 }
+
 .ms-assignment-returned:before {
   content: "\e861";
 }
+
 .ms-assignment-turned-in:before {
   content: "\e862";
 }
+
 .ms-assistant:before {
   content: "\e39f";
 }
+
 .ms-assistant-direction:before {
   content: "\e988";
 }
+
 .ms-assistant-navigation:before {
   content: "\e989";
 }
+
 .ms-assistant-photo:before {
   content: "\ea1a";
 }
+
 .ms-assured-workload:before {
   content: "\eb6f";
 }
+
 .ms-astrophotography-auto:before {
   content: "\f1d9";
 }
+
 .ms-astrophotography-off:before {
   content: "\f1da";
 }
+
 .ms-atm:before {
   content: "\e573";
 }
+
 .ms-atr:before {
   content: "\ebc7";
 }
+
 .ms-attach-email:before {
   content: "\ea5e";
 }
+
 .ms-attach-file:before {
   content: "\e226";
 }
+
 .ms-attach-money:before {
   content: "\e227";
 }
+
 .ms-attachment:before {
   content: "\e2bc";
 }
+
 .ms-attractions:before {
   content: "\ea52";
 }
+
 .ms-attribution:before {
   content: "\efdb";
 }
+
 .ms-audio-file:before {
   content: "\eb82";
 }
+
 .ms-audiotrack:before {
   content: "\e405";
 }
+
 .ms-authenticator:before {
   content: "\ea7c";
 }
+
 .ms-auto-awesome:before {
   content: "\e65f";
 }
+
 .ms-auto-awesome-mosaic:before {
   content: "\e660";
 }
+
 .ms-auto-awesome-motion:before {
   content: "\e661";
 }
+
 .ms-auto-delete:before {
   content: "\ea4c";
 }
+
 .ms-auto-graph:before {
   content: "\e4fb";
 }
+
 .ms-auto-mode:before {
   content: "\ec20";
 }
+
 .ms-auto-read-pause:before {
   content: "\f219";
 }
+
 .ms-auto-read-play:before {
   content: "\f216";
 }
+
 .ms-auto-stories:before {
   content: "\e666";
 }
+
 .ms-autofps-select:before {
   content: "\efdc";
 }
+
 .ms-autorenew:before {
   content: "\e863";
 }
+
 .ms-av-timer:before {
   content: "\e01b";
 }
+
 .ms-baby-changing-station:before {
   content: "\f19b";
 }
+
 .ms-back-hand:before {
   content: "\e764";
 }
+
 .ms-background-replace:before {
   content: "\f20a";
 }
+
 .ms-backpack:before {
   content: "\f19c";
 }
+
 .ms-backspace:before {
   content: "\e14a";
 }
+
 .ms-backup:before {
   content: "\e864";
 }
+
 .ms-backup-table:before {
   content: "\ef43";
 }
+
 .ms-badge:before {
   content: "\ea67";
 }
+
 .ms-badge-critical-battery:before {
   content: "\f147";
 }
+
 .ms-bakery-dining:before {
   content: "\ea53";
 }
+
 .ms-balance:before {
   content: "\eaf6";
 }
+
 .ms-balcony:before {
   content: "\e58f";
 }
+
 .ms-ballot:before {
   content: "\e172";
 }
+
 .ms-bar-chart:before {
   content: "\e26b";
 }
+
 .ms-batch-prediction:before {
   content: "\f0f5";
 }
+
 .ms-bathroom:before {
   content: "\efdd";
 }
+
 .ms-bathtub:before {
   content: "\ea41";
 }
+
 .ms-battery-0-bar:before {
   content: "\ebdc";
 }
+
 .ms-battery-1-bar:before {
   content: "\ebd9";
 }
+
 .ms-battery-20:before {
   content: "\f0a1";
 }
+
 .ms-battery-2-bar:before {
   content: "\ebe0";
 }
+
 .ms-battery-30:before {
   content: "\f0a1";
 }
+
 .ms-battery-3-bar:before {
   content: "\ebdd";
 }
+
 .ms-battery-4-bar:before {
   content: "\ebe2";
 }
+
 .ms-battery-50:before {
   content: "\f0a1";
 }
+
 .ms-battery-5-bar:before {
   content: "\ebd4";
 }
+
 .ms-battery-60:before {
   content: "\f0a1";
 }
+
 .ms-battery-6-bar:before {
   content: "\ebd2";
 }
+
 .ms-battery-80:before {
   content: "\f0a1";
 }
+
 .ms-battery-90:before {
   content: "\f0a1";
 }
+
 .ms-battery-alert:before {
   content: "\e19c";
 }
+
 .ms-battery-charging-20:before {
   content: "\f0a7";
 }
+
 .ms-battery-charging-30:before {
   content: "\f0a7";
 }
+
 .ms-battery-charging-50:before {
   content: "\f0a7";
 }
+
 .ms-battery-charging-60:before {
   content: "\f0a7";
 }
+
 .ms-battery-charging-80:before {
   content: "\f0a7";
 }
+
 .ms-battery-charging-90:before {
   content: "\f0a7";
 }
+
 .ms-battery-charging-full:before {
   content: "\f0a7";
 }
+
 .ms-battery-full:before {
   content: "\f0a1";
 }
+
 .ms-battery-full-alt:before {
   content: "\f13b";
 }
+
 .ms-battery-low:before {
   content: "\f155";
 }
+
 .ms-battery-saver:before {
   content: "\efde";
 }
+
 .ms-battery-std:before {
   content: "\f0a1";
 }
+
 .ms-battery-unknown:before {
   content: "\e1a6";
 }
+
 .ms-battery-very-low:before {
   content: "\f156";
 }
+
 .ms-beach-access:before {
   content: "\eb3e";
 }
+
 .ms-bed:before {
   content: "\efdf";
 }
+
 .ms-bedroom-baby:before {
   content: "\efe0";
 }
+
 .ms-bedroom-child:before {
   content: "\efe1";
 }
+
 .ms-bedroom-parent:before {
   content: "\efe2";
 }
+
 .ms-bedtime:before {
   content: "\ef44";
 }
+
 .ms-bedtime-off:before {
   content: "\eb76";
 }
+
 .ms-beenhere:before {
   content: "\e52d";
 }
+
 .ms-bento:before {
   content: "\f1f4";
 }
+
 .ms-bike-scooter:before {
   content: "\ef45";
 }
+
 .ms-biotech:before {
   content: "\ea3a";
 }
+
 .ms-blanket:before {
   content: "\e828";
 }
+
 .ms-blender:before {
   content: "\efe3";
 }
+
 .ms-blinds:before {
   content: "\e286";
 }
+
 .ms-blinds-closed:before {
   content: "\ec1f";
 }
+
 .ms-block:before {
   content: "\f326";
 }
+
 .ms-bloodtype:before {
   content: "\efe4";
 }
+
 .ms-bluenote:before {
   content: "\e054";
 }
+
 .ms-bluetooth:before {
   content: "\e1a7";
 }
+
 .ms-bluetooth-audio:before {
   content: "\e1aa";
 }
+
 .ms-bluetooth-connected:before {
   content: "\e1a8";
 }
+
 .ms-bluetooth-disabled:before {
   content: "\e1a9";
 }
+
 .ms-bluetooth-drive:before {
   content: "\efe5";
 }
+
 .ms-bluetooth-searching:before {
   content: "\e1aa";
 }
+
 .ms-blur-circular:before {
   content: "\e3a2";
 }
+
 .ms-blur-linear:before {
   content: "\e3a3";
 }
+
 .ms-blur-medium:before {
   content: "\e84c";
 }
+
 .ms-blur-off:before {
   content: "\e3a4";
 }
+
 .ms-blur-on:before {
   content: "\e3a5";
 }
+
 .ms-blur-short:before {
   content: "\e8cf";
 }
+
 .ms-bnagent:before {
   content: "\e00e";
 }
+
 .ms-bolt:before {
   content: "\ea0b";
 }
+
 .ms-book:before {
   content: "\e865";
 }
+
 .ms-book-online:before {
   content: "\f217";
 }
+
 .ms-bookmark:before {
   content: "\e8e7";
 }
+
 .ms-bookmark-add:before {
   content: "\e598";
 }
+
 .ms-bookmark-added:before {
   content: "\e599";
 }
+
 .ms-bookmark-border:before {
   content: "\e8e7";
 }
+
 .ms-bookmark-remove:before {
   content: "\e59a";
 }
+
 .ms-bookmarks:before {
   content: "\e98b";
 }
+
 .ms-border-all:before {
   content: "\e228";
 }
+
 .ms-border-bottom:before {
   content: "\e229";
 }
+
 .ms-border-clear:before {
   content: "\e22a";
 }
+
 .ms-border-color:before {
   content: "\e22b";
 }
+
 .ms-border-horizontal:before {
   content: "\e22c";
 }
+
 .ms-border-inner:before {
   content: "\e22d";
 }
+
 .ms-border-left:before {
   content: "\e22e";
 }
+
 .ms-border-outer:before {
   content: "\e22f";
 }
+
 .ms-border-right:before {
   content: "\e230";
 }
+
 .ms-border-style:before {
   content: "\e231";
 }
+
 .ms-border-top:before {
   content: "\e232";
 }
+
 .ms-border-vertical:before {
   content: "\e233";
 }
+
 .ms-boy:before {
   content: "\eb67";
 }
+
 .ms-branding-watermark:before {
   content: "\e06b";
 }
+
 .ms-breakfast-dining:before {
   content: "\ea54";
 }
+
 .ms-breaking-news-alt-1:before {
   content: "\f0ba";
 }
+
 .ms-brightness-1:before {
   content: "\e3fa";
 }
+
 .ms-brightness-2:before {
   content: "\f036";
 }
+
 .ms-brightness-3:before {
   content: "\e3a8";
 }
+
 .ms-brightness-4:before {
   content: "\e3a9";
 }
+
 .ms-brightness-5:before {
   content: "\e3aa";
 }
+
 .ms-brightness-6:before {
   content: "\e3ab";
 }
+
 .ms-brightness-7:before {
   content: "\e3ac";
 }
+
 .ms-brightness-auto:before {
   content: "\e1ab";
 }
+
 .ms-brightness-high:before {
   content: "\e1ac";
 }
+
 .ms-brightness-low:before {
   content: "\e1ad";
 }
+
 .ms-brightness-medium:before {
   content: "\e1ae";
 }
+
 .ms-bring-your-own-ip:before {
   content: "\e016";
 }
+
 .ms-broadcast-on-home:before {
   content: "\f8f8";
 }
+
 .ms-broadcast-on-personal:before {
   content: "\f8f9";
 }
+
 .ms-broken-image:before {
   content: "\e3ad";
 }
+
 .ms-browse-gallery:before {
   content: "\ebd1";
 }
+
 .ms-browser-not-supported:before {
   content: "\ef47";
 }
+
 .ms-browser-updated:before {
   content: "\e7cf";
 }
+
 .ms-brunch-dining:before {
   content: "\ea73";
 }
+
 .ms-brush:before {
   content: "\e3ae";
 }
+
 .ms-bubble-chart:before {
   content: "\e6dd";
 }
+
 .ms-bug-report:before {
   content: "\e868";
 }
+
 .ms-build:before {
   content: "\e869";
 }
+
 .ms-build-circle:before {
   content: "\ef48";
 }
+
 .ms-bungalow:before {
   content: "\e591";
 }
+
 .ms-burst-mode:before {
   content: "\e43c";
 }
+
 .ms-bus-alert:before {
   content: "\e98f";
 }
+
 .ms-business:before {
   content: "\e7ee";
 }
+
 .ms-business-center:before {
   content: "\eb3f";
 }
+
 .ms-cabin:before {
   content: "\e589";
 }
+
 .ms-cable:before {
   content: "\efe6";
 }
+
 .ms-cached:before {
   content: "\e86a";
 }
+
 .ms-cake:before {
   content: "\e7e9";
 }
+
 .ms-calculate:before {
   content: "\ea5f";
 }
+
 .ms-calendar-add-on:before {
   content: "\ef85";
 }
+
 .ms-calendar-apps-script:before {
   content: "\f0bb";
 }
+
 .ms-calendar-month:before {
   content: "\ebcc";
 }
+
 .ms-calendar-today:before {
   content: "\e935";
 }
+
 .ms-calendar-view-day:before {
   content: "\e936";
 }
+
 .ms-calendar-view-month:before {
   content: "\efe7";
 }
+
 .ms-calendar-view-week:before {
   content: "\efe8";
 }
+
 .ms-call:before {
   content: "\f0d4";
 }
+
 .ms-call-end:before {
   content: "\f0bc";
 }
+
 .ms-call-end-alt:before {
   content: "\f0bc";
 }
+
 .ms-call-made:before {
   content: "\e0b2";
 }
+
 .ms-call-merge:before {
   content: "\e0b3";
 }
+
 .ms-call-missed:before {
   content: "\e0b4";
 }
+
 .ms-call-missed-outgoing:before {
   content: "\e0e4";
 }
+
 .ms-call-received:before {
   content: "\e0b5";
 }
+
 .ms-call-split:before {
   content: "\e0b6";
 }
+
 .ms-call-to-action:before {
   content: "\e06c";
 }
+
 .ms-camera:before {
   content: "\e3af";
 }
+
 .ms-camera-alt:before {
   content: "\e412";
 }
+
 .ms-camera-enhance:before {
   content: "\e8fc";
 }
+
 .ms-camera-front:before {
   content: "\e3b1";
 }
+
 .ms-camera-indoor:before {
   content: "\efe9";
 }
+
 .ms-camera-outdoor:before {
   content: "\efea";
 }
+
 .ms-camera-rear:before {
   content: "\e3b2";
 }
+
 .ms-camera-roll:before {
   content: "\e3b3";
 }
+
 .ms-cameraswitch:before {
   content: "\efeb";
 }
+
 .ms-campaign:before {
   content: "\ef49";
 }
+
 .ms-cancel:before {
   content: "\e888";
 }
+
 .ms-cancel-presentation:before {
   content: "\e0e9";
 }
+
 .ms-cancel-schedule-send:before {
   content: "\ea39";
 }
+
 .ms-candlestick-chart:before {
   content: "\ead4";
 }
+
 .ms-car-crash:before {
   content: "\ebf2";
 }
+
 .ms-car-rental:before {
   content: "\ea55";
 }
+
 .ms-car-repair:before {
   content: "\ea56";
 }
+
 .ms-card-giftcard:before {
   content: "\e8f6";
 }
+
 .ms-card-membership:before {
   content: "\e8f7";
 }
+
 .ms-card-travel:before {
   content: "\e8f8";
 }
+
 .ms-carpenter:before {
   content: "\f1f8";
 }
+
 .ms-cases:before {
   content: "\e992";
 }
+
 .ms-casino:before {
   content: "\eb40";
 }
+
 .ms-cast:before {
   content: "\e307";
 }
+
 .ms-cast-connected:before {
   content: "\e308";
 }
+
 .ms-cast-for-education:before {
   content: "\efec";
 }
+
 .ms-castle:before {
   content: "\eab1";
 }
+
 .ms-category:before {
   content: "\e574";
 }
+
 .ms-celebration:before {
   content: "\ea65";
 }
+
 .ms-cell-tower:before {
   content: "\ebba";
 }
+
 .ms-cell-wifi:before {
   content: "\e0ec";
 }
+
 .ms-center-focus-strong:before {
   content: "\e3b4";
 }
+
 .ms-center-focus-weak:before {
   content: "\e3b5";
 }
+
 .ms-chair:before {
   content: "\efed";
 }
+
 .ms-chair-alt:before {
   content: "\efee";
 }
+
 .ms-chalet:before {
   content: "\e585";
 }
+
 .ms-change-circle:before {
   content: "\e2e7";
 }
+
 .ms-change-history:before {
   content: "\e86b";
 }
+
 .ms-charger:before {
   content: "\e2ae";
 }
+
 .ms-charging-station:before {
   content: "\f19d";
 }
+
 .ms-chat:before {
   content: "\e0c9";
 }
+
 .ms-chat-add-on:before {
   content: "\f0f3";
 }
+
 .ms-chat-apps-script:before {
   content: "\f0bd";
 }
+
 .ms-chat-bubble:before {
   content: "\e0cb";
 }
+
 .ms-chat-bubble-outline:before {
   content: "\e0cb";
 }
+
 .ms-check:before {
   content: "\e5ca";
 }
+
 .ms-check-box:before {
   content: "\e834";
 }
+
 .ms-check-box-outline-blank:before {
   content: "\e835";
 }
+
 .ms-check-circle:before {
   content: "\e86c";
 }
+
 .ms-check-circle-filled:before {
   content: "\e86c";
 }
+
 .ms-check-circle-outline:before {
   content: "\e86c";
 }
+
 .ms-checklist:before {
   content: "\e6b1";
 }
+
 .ms-checklist-rtl:before {
   content: "\e6b3";
 }
+
 .ms-checkroom:before {
   content: "\f19e";
 }
+
 .ms-chevron-left:before {
   content: "\e5cb";
 }
+
 .ms-chevron-right:before {
   content: "\e5cc";
 }
+
 .ms-child-care:before {
   content: "\eb41";
 }
+
 .ms-child-friendly:before {
   content: "\eb42";
 }
+
 .ms-chrome-reader-mode:before {
   content: "\e86d";
 }
+
 .ms-chromecast-2:before {
   content: "\f17b";
 }
+
 .ms-chromecast-device:before {
   content: "\e83c";
 }
+
 .ms-church:before {
   content: "\eaae";
 }
+
 .ms-circle:before {
   content: "\ef4a";
 }
+
 .ms-circle-notifications:before {
   content: "\e994";
 }
+
 .ms-clarify:before {
   content: "\f0bf";
 }
+
 .ms-class:before {
   content: "\e865";
 }
+
 .ms-clean-hands:before {
   content: "\f21f";
 }
+
 .ms-cleaning-services:before {
   content: "\f0ff";
 }
+
 .ms-clear:before {
   content: "\e5cd";
 }
+
 .ms-clear-all:before {
   content: "\e0b8";
 }
+
 .ms-clear-day:before {
   content: "\f157";
 }
+
 .ms-clear-night:before {
   content: "\f159";
 }
+
 .ms-close:before {
   content: "\e5cd";
 }
+
 .ms-close-fullscreen:before {
   content: "\f1cf";
 }
+
 .ms-closed-caption:before {
   content: "\e996";
 }
+
 .ms-closed-caption-disabled:before {
   content: "\f1dc";
 }
+
 .ms-closed-caption-off:before {
   content: "\e996";
 }
+
 .ms-cloud:before {
   content: "\f15c";
 }
+
 .ms-cloud-circle:before {
   content: "\e2be";
 }
+
 .ms-cloud-domains:before {
   content: "\f214";
 }
+
 .ms-cloud-done:before {
   content: "\e2bf";
 }
+
 .ms-cloud-download:before {
   content: "\e2c0";
 }
+
 .ms-cloud-off:before {
   content: "\e2c1";
 }
+
 .ms-cloud-queue:before {
   content: "\f15c";
 }
+
 .ms-cloud-sync:before {
   content: "\eb5a";
 }
+
 .ms-cloud-upload:before {
   content: "\e2c3";
 }
+
 .ms-cloudbuild:before {
   content: "\f208";
 }
+
 .ms-cloudy:before {
   content: "\f15c";
 }
+
 .ms-cloudy-filled:before {
   content: "\f15c";
 }
+
 .ms-cloudy-snowing:before {
   content: "\e810";
 }
+
 .ms-co2:before {
   content: "\e7b0";
 }
+
 .ms-co-present:before {
   content: "\eaf0";
 }
+
 .ms-code:before {
   content: "\e86f";
 }
+
 .ms-code-off:before {
   content: "\e4f3";
 }
+
 .ms-coffee:before {
   content: "\efef";
 }
+
 .ms-coffee-maker:before {
   content: "\eff0";
 }
+
 .ms-collections:before {
   content: "\e3d3";
 }
+
 .ms-collections-bookmark:before {
   content: "\e431";
 }
+
 .ms-color-lens:before {
   content: "\e40a";
 }
+
 .ms-colorize:before {
   content: "\e3b8";
 }
+
 .ms-comment:before {
   content: "\e24c";
 }
+
 .ms-comment-bank:before {
   content: "\ea4e";
 }
+
 .ms-comments-disabled:before {
   content: "\e7a2";
 }
+
 .ms-commit:before {
   content: "\eaf5";
 }
+
 .ms-communication:before {
   content: "\e27c";
 }
+
 .ms-commute:before {
   content: "\e940";
 }
+
 .ms-compare:before {
   content: "\e3b9";
 }
+
 .ms-compare-arrows:before {
   content: "\e915";
 }
+
 .ms-compass-calibration:before {
   content: "\e57c";
 }
+
 .ms-component-exchange:before {
   content: "\f1e7";
 }
+
 .ms-compost:before {
   content: "\e761";
 }
+
 .ms-compress:before {
   content: "\e94d";
 }
+
 .ms-computer:before {
   content: "\e31e";
 }
+
 .ms-confirmation-number:before {
   content: "\e638";
 }
+
 .ms-connect-without-contact:before {
   content: "\f223";
 }
+
 .ms-connected-tv:before {
   content: "\e998";
 }
+
 .ms-connecting-airports:before {
   content: "\e7c9";
 }
+
 .ms-construction:before {
   content: "\ea3c";
 }
+
 .ms-contact-mail:before {
   content: "\e0d0";
 }
+
 .ms-contact-page:before {
   content: "\f22e";
 }
+
 .ms-contact-phone:before {
   content: "\f0c0";
 }
+
 .ms-contact-phone-filled:before {
   content: "\f0c0";
 }
+
 .ms-contact-support:before {
   content: "\e94c";
 }
+
 .ms-contactless:before {
   content: "\ea71";
 }
+
 .ms-contacts:before {
   content: "\e0ba";
 }
+
 .ms-content-copy:before {
   content: "\e14d";
 }
+
 .ms-content-cut:before {
   content: "\e14e";
 }
+
 .ms-content-paste:before {
   content: "\e14f";
 }
+
 .ms-content-paste-go:before {
   content: "\ea8e";
 }
+
 .ms-content-paste-off:before {
   content: "\e4f8";
 }
+
 .ms-content-paste-search:before {
   content: "\ea9b";
 }
+
 .ms-contrast:before {
   content: "\eb37";
 }
+
 .ms-control-camera:before {
   content: "\e074";
 }
+
 .ms-control-point:before {
   content: "\e3ba";
 }
+
 .ms-control-point-duplicate:before {
   content: "\e3bb";
 }
+
 .ms-controller-gen:before {
   content: "\e83d";
 }
+
 .ms-conversion-path:before {
   content: "\f0c1";
 }
+
 .ms-cookie:before {
   content: "\eaac";
 }
+
 .ms-cooking:before {
   content: "\e2b6";
 }
+
 .ms-copy-all:before {
   content: "\e2ec";
 }
+
 .ms-copyright:before {
   content: "\e90c";
 }
+
 .ms-coronavirus:before {
   content: "\f221";
 }
+
 .ms-corporate-fare:before {
   content: "\f1d0";
 }
+
 .ms-cottage:before {
   content: "\e587";
 }
+
 .ms-countertops:before {
   content: "\f1f7";
 }
+
 .ms-create:before {
   content: "\f345";
 }
+
 .ms-create-new-folder:before {
   content: "\e2cc";
 }
+
 .ms-credit-card:before {
   content: "\e8a1";
 }
+
 .ms-credit-card-off:before {
   content: "\e4f4";
 }
+
 .ms-credit-score:before {
   content: "\eff1";
 }
+
 .ms-crib:before {
   content: "\e588";
 }
+
 .ms-crisis-alert:before {
   content: "\ebe9";
 }
+
 .ms-crop:before {
   content: "\e3be";
 }
+
 .ms-crop-16-9:before {
   content: "\e3bc";
 }
+
 .ms-crop-3-2:before {
   content: "\e3bd";
 }
+
 .ms-crop-5-4:before {
   content: "\e3bf";
 }
+
 .ms-crop-7-5:before {
   content: "\e3c0";
 }
+
 .ms-crop-din:before {
   content: "\e3c6";
 }
+
 .ms-crop-free:before {
   content: "\e3c2";
 }
+
 .ms-crop-landscape:before {
   content: "\e3c3";
 }
+
 .ms-crop-original:before {
   content: "\e3f4";
 }
+
 .ms-crop-portrait:before {
   content: "\e3c5";
 }
+
 .ms-crop-rotate:before {
   content: "\e437";
 }
+
 .ms-crop-square:before {
   content: "\e3c6";
 }
+
 .ms-cruelty-free:before {
   content: "\e799";
 }
+
 .ms-css:before {
   content: "\eb93";
 }
+
 .ms-currency-bitcoin:before {
   content: "\ebc5";
 }
+
 .ms-currency-exchange:before {
   content: "\eb70";
 }
+
 .ms-currency-franc:before {
   content: "\eafa";
 }
+
 .ms-currency-lira:before {
   content: "\eaef";
 }
+
 .ms-currency-pound:before {
   content: "\eaf1";
 }
+
 .ms-currency-ruble:before {
   content: "\eaec";
 }
+
 .ms-currency-rupee:before {
   content: "\eaf7";
 }
+
 .ms-currency-yen:before {
   content: "\eafb";
 }
+
 .ms-currency-yuan:before {
   content: "\eaf9";
 }
+
 .ms-curtains:before {
   content: "\ec1e";
 }
+
 .ms-curtains-closed:before {
   content: "\ec1d";
 }
+
 .ms-cut:before {
   content: "\f08b";
 }
+
 .ms-cyclone:before {
   content: "\ebd5";
 }
+
 .ms-dangerous:before {
   content: "\e99a";
 }
+
 .ms-dark-mode:before {
   content: "\e51c";
 }
+
 .ms-dashboard:before {
   content: "\e871";
 }
+
 .ms-dashboard-customize:before {
   content: "\e99b";
 }
+
 .ms-data-array:before {
   content: "\ead1";
 }
+
 .ms-data-exploration:before {
   content: "\e76f";
 }
+
 .ms-data-object:before {
   content: "\ead3";
 }
+
 .ms-data-saver-off:before {
   content: "\eff2";
 }
+
 .ms-data-saver-on:before {
   content: "\eff3";
 }
+
 .ms-data-thresholding:before {
   content: "\eb9f";
 }
+
 .ms-data-usage:before {
   content: "\eff2";
 }
+
 .ms-database:before {
   content: "\f20e";
 }
+
 .ms-dataset:before {
   content: "\f8ee";
 }
+
 .ms-dataset-linked:before {
   content: "\f8ef";
 }
+
 .ms-date-range:before {
   content: "\e916";
 }
+
 .ms-deblur:before {
   content: "\eb77";
 }
+
 .ms-deck:before {
   content: "\ea42";
 }
+
 .ms-dehaze:before {
   content: "\e3c7";
 }
+
 .ms-delete:before {
   content: "\e872";
 }
+
 .ms-delete-forever:before {
   content: "\e92b";
 }
+
 .ms-delete-outline:before {
   content: "\e872";
 }
+
 .ms-delete-sweep:before {
   content: "\e16c";
 }
+
 .ms-density-large:before {
   content: "\eba9";
 }
+
 .ms-density-medium:before {
   content: "\eb9e";
 }
+
 .ms-density-small:before {
   content: "\eba8";
 }
+
 .ms-departure-board:before {
   content: "\e576";
 }
+
 .ms-description:before {
   content: "\e873";
 }
+
 .ms-deselect:before {
   content: "\ebb6";
 }
+
 .ms-design-services:before {
   content: "\f10a";
 }
+
 .ms-desk:before {
   content: "\f8f4";
 }
+
 .ms-desktop-access-disabled:before {
   content: "\e99d";
 }
+
 .ms-desktop-mac:before {
   content: "\e30b";
 }
+
 .ms-desktop-windows:before {
   content: "\e30c";
 }
+
 .ms-details:before {
   content: "\e3c8";
 }
+
 .ms-detector-smoke:before {
   content: "\e285";
 }
+
 .ms-developer-board:before {
   content: "\e30d";
 }
+
 .ms-developer-board-off:before {
   content: "\e4ff";
 }
+
 .ms-developer-mode:before {
   content: "\e1b0";
 }
+
 .ms-device-hub:before {
   content: "\e335";
 }
+
 .ms-device-thermostat:before {
   content: "\e1ff";
 }
+
 .ms-device-unknown:before {
   content: "\e339";
 }
+
 .ms-devices:before {
   content: "\e326";
 }
+
 .ms-devices-fold:before {
   content: "\ebde";
 }
+
 .ms-devices-other:before {
   content: "\e337";
 }
+
 .ms-dialer-sip:before {
   content: "\e0bb";
 }
+
 .ms-dialpad:before {
   content: "\e0bc";
 }
+
 .ms-diamond:before {
   content: "\ead5";
 }
+
 .ms-difference:before {
   content: "\eb7d";
 }
+
 .ms-digital-out-of-home:before {
   content: "\f1de";
 }
+
 .ms-dining:before {
   content: "\eff4";
 }
+
 .ms-dinner-dining:before {
   content: "\ea57";
 }
+
 .ms-directions:before {
   content: "\e52e";
 }
+
 .ms-directions-bike:before {
   content: "\e52f";
 }
+
 .ms-directions-boat:before {
   content: "\eff5";
 }
+
 .ms-directions-boat-filled:before {
   content: "\eff5";
 }
+
 .ms-directions-bus:before {
   content: "\eff6";
 }
+
 .ms-directions-bus-filled:before {
   content: "\eff6";
 }
+
 .ms-directions-car:before {
   content: "\eff7";
 }
+
 .ms-directions-car-filled:before {
   content: "\eff7";
 }
+
 .ms-directions-off:before {
   content: "\f10f";
 }
+
 .ms-directions-railway:before {
   content: "\eff8";
 }
+
 .ms-directions-railway-filled:before {
   content: "\eff8";
 }
+
 .ms-directions-run:before {
   content: "\e566";
 }
+
 .ms-directions-subway:before {
   content: "\effa";
 }
+
 .ms-directions-subway-filled:before {
   content: "\effa";
 }
+
 .ms-directions-transit:before {
   content: "\effa";
 }
+
 .ms-directions-transit-filled:before {
   content: "\effa";
 }
+
 .ms-directions-walk:before {
   content: "\e536";
 }
+
 .ms-dirty-lens:before {
   content: "\ef4b";
 }
+
 .ms-disabled-by-default:before {
   content: "\f230";
 }
+
 .ms-disabled-visible:before {
   content: "\e76e";
 }
+
 .ms-disc-full:before {
   content: "\e610";
 }
+
 .ms-discover-tune:before {
   content: "\e018";
 }
+
 .ms-dishwasher-gen:before {
   content: "\e832";
 }
+
 .ms-display-settings:before {
   content: "\eb97";
 }
+
 .ms-dns:before {
   content: "\e875";
 }
+
 .ms-do-disturb:before {
   content: "\f326";
 }
+
 .ms-do-disturb-alt:before {
   content: "\f08d";
 }
+
 .ms-do-disturb-off:before {
   content: "\f329";
 }
+
 .ms-do-disturb-on:before {
   content: "\f08f";
 }
+
 .ms-do-not-disturb:before {
   content: "\f08d";
 }
+
 .ms-do-not-disturb-alt:before {
   content: "\f326";
 }
+
 .ms-do-not-disturb-off:before {
   content: "\f329";
 }
+
 .ms-do-not-disturb-on:before {
   content: "\f08f";
 }
+
 .ms-do-not-disturb-on-total-silence:before {
   content: "\effb";
 }
+
 .ms-do-not-step:before {
   content: "\f19f";
 }
+
 .ms-do-not-touch:before {
   content: "\f1b0";
 }
+
 .ms-dock:before {
   content: "\e30e";
 }
+
 .ms-docs:before {
   content: "\ea7d";
 }
+
 .ms-docs-add-on:before {
   content: "\f0c2";
 }
+
 .ms-docs-apps-script:before {
   content: "\f0c3";
 }
+
 .ms-document-scanner:before {
   content: "\e5fa";
 }
+
 .ms-domain:before {
   content: "\e7ee";
 }
+
 .ms-domain-add:before {
   content: "\eb62";
 }
+
 .ms-domain-disabled:before {
   content: "\e0ef";
 }
+
 .ms-domain-verification:before {
   content: "\ef4c";
 }
+
 .ms-done:before {
   content: "\e876";
 }
+
 .ms-done-all:before {
   content: "\e877";
 }
+
 .ms-done-outline:before {
   content: "\e92f";
 }
+
 .ms-donut-large:before {
   content: "\e917";
 }
+
 .ms-donut-small:before {
   content: "\e918";
 }
+
 .ms-door-back:before {
   content: "\effc";
 }
+
 .ms-door-front:before {
   content: "\effd";
 }
+
 .ms-door-sliding:before {
   content: "\effe";
 }
+
 .ms-doorbell:before {
   content: "\efff";
 }
+
 .ms-doorbell-3p:before {
   content: "\e1e7";
 }
+
 .ms-double-arrow:before {
   content: "\ea50";
 }
+
 .ms-downhill-skiing:before {
   content: "\e509";
 }
+
 .ms-download:before {
   content: "\f090";
 }
+
 .ms-download-done:before {
   content: "\f091";
 }
+
 .ms-download-for-offline:before {
   content: "\f000";
 }
+
 .ms-downloading:before {
   content: "\f001";
 }
+
 .ms-draft:before {
   content: "\e66d";
 }
+
 .ms-drafts:before {
   content: "\e151";
 }
+
 .ms-drag-handle:before {
   content: "\e25d";
 }
+
 .ms-drag-indicator:before {
   content: "\e945";
 }
+
 .ms-draw:before {
   content: "\e746";
 }
+
 .ms-dresser:before {
   content: "\e210";
 }
+
 .ms-drive-eta:before {
   content: "\eff7";
 }
+
 .ms-drive-file-move:before {
   content: "\e9a1";
 }
+
 .ms-drive-file-move-outline:before {
   content: "\e9a1";
 }
+
 .ms-drive-file-move-rtl:before {
   content: "\e76d";
 }
+
 .ms-drive-file-rename-outline:before {
   content: "\e9a2";
 }
+
 .ms-drive-folder-upload:before {
   content: "\e9a3";
 }
+
 .ms-drive-shortcut:before {
   content: "\f105";
 }
+
 .ms-dry:before {
   content: "\f1b3";
 }
+
 .ms-dry-cleaning:before {
   content: "\ea58";
 }
+
 .ms-duo:before {
   content: "\e9a5";
 }
+
 .ms-dvr:before {
   content: "\e1b2";
 }
+
 .ms-dynamic-feed:before {
   content: "\ea14";
 }
+
 .ms-dynamic-form:before {
   content: "\f1bf";
 }
+
 .ms-e911-avatar:before {
   content: "\f11a";
 }
+
 .ms-e911-emergency:before {
   content: "\f119";
 }
+
 .ms-e-mobiledata:before {
   content: "\f002";
 }
+
 .ms-earbuds:before {
   content: "\f003";
 }
+
 .ms-earbuds-battery:before {
   content: "\f004";
 }
+
 .ms-east:before {
   content: "\f1df";
 }
+
 .ms-eco:before {
   content: "\ea35";
 }
+
 .ms-edgesensor-high:before {
   content: "\f005";
 }
+
 .ms-edgesensor-low:before {
   content: "\f006";
 }
+
 .ms-edit:before {
   content: "\f345";
 }
+
 .ms-edit-attributes:before {
   content: "\e578";
 }
+
 .ms-edit-calendar:before {
   content: "\e742";
 }
+
 .ms-edit-location:before {
   content: "\e568";
 }
+
 .ms-edit-location-alt:before {
   content: "\e1c5";
 }
+
 .ms-edit-note:before {
   content: "\e745";
 }
+
 .ms-edit-notifications:before {
   content: "\e525";
 }
+
 .ms-edit-off:before {
   content: "\e950";
 }
+
 .ms-edit-road:before {
   content: "\ef4d";
 }
+
 .ms-egg:before {
   content: "\eacc";
 }
+
 .ms-egg-alt:before {
   content: "\eac8";
 }
+
 .ms-eject:before {
   content: "\e8fb";
 }
+
 .ms-elderly:before {
   content: "\f21a";
 }
+
 .ms-elderly-woman:before {
   content: "\eb69";
 }
+
 .ms-electric-bike:before {
   content: "\eb1b";
 }
+
 .ms-electric-bolt:before {
   content: "\ec1c";
 }
+
 .ms-electric-car:before {
   content: "\eb1c";
 }
+
 .ms-electric-meter:before {
   content: "\ec1b";
 }
+
 .ms-electric-moped:before {
   content: "\eb1d";
 }
+
 .ms-electric-rickshaw:before {
   content: "\eb1e";
 }
+
 .ms-electric-scooter:before {
   content: "\eb1f";
 }
+
 .ms-electrical-services:before {
   content: "\f102";
 }
+
 .ms-elevator:before {
   content: "\f1a0";
 }
+
 .ms-email:before {
   content: "\e159";
 }
+
 .ms-emergency:before {
   content: "\e1eb";
 }
+
 .ms-emergency-heat:before {
   content: "\f15d";
 }
+
 .ms-emergency-home:before {
   content: "\e82a";
 }
+
 .ms-emergency-recording:before {
   content: "\ebf4";
 }
+
 .ms-emergency-share:before {
   content: "\ebf6";
 }
+
 .ms-emoji-emotions:before {
   content: "\ea22";
 }
+
 .ms-emoji-flags:before {
   content: "\ea1a";
 }
+
 .ms-emoji-food-beverage:before {
   content: "\ea1b";
 }
+
 .ms-emoji-nature:before {
   content: "\ea1c";
 }
+
 .ms-emoji-objects:before {
   content: "\ea24";
 }
+
 .ms-emoji-people:before {
   content: "\ea1d";
 }
+
 .ms-emoji-symbols:before {
   content: "\ea1e";
 }
+
 .ms-emoji-transportation:before {
   content: "\ea1f";
 }
+
 .ms-enable:before {
   content: "\f188";
 }
+
 .ms-energy-program-saving:before {
   content: "\f15f";
 }
+
 .ms-energy-program-time-used:before {
   content: "\f161";
 }
+
 .ms-energy-savings-leaf:before {
   content: "\ec1a";
 }
+
 .ms-engineering:before {
   content: "\ea3d";
 }
+
 .ms-enhanced-encryption:before {
   content: "\e63f";
 }
+
 .ms-equalizer:before {
   content: "\e01d";
 }
+
 .ms-error:before {
   content: "\e001";
 }
+
 .ms-error-outline:before {
   content: "\e001";
 }
+
 .ms-escalator:before {
   content: "\f1a1";
 }
+
 .ms-escalator-warning:before {
   content: "\f1ac";
 }
+
 .ms-euro:before {
   content: "\ea15";
 }
+
 .ms-euro-symbol:before {
   content: "\e926";
 }
+
 .ms-ev-shadow:before {
   content: "\ef8f";
 }
+
 .ms-ev-station:before {
   content: "\e56d";
 }
+
 .ms-event:before {
   content: "\e878";
 }
+
 .ms-event-available:before {
   content: "\e614";
 }
+
 .ms-event-busy:before {
   content: "\e615";
 }
+
 .ms-event-note:before {
   content: "\e616";
 }
+
 .ms-event-repeat:before {
   content: "\eb7b";
 }
+
 .ms-event-seat:before {
   content: "\e903";
 }
+
 .ms-event-upcoming:before {
   content: "\f238";
 }
+
 .ms-exclamation:before {
   content: "\f22f";
 }
+
 .ms-exit-to-app:before {
   content: "\e879";
 }
+
 .ms-expand:before {
   content: "\e94f";
 }
+
 .ms-expand-circle-down:before {
   content: "\e7cd";
 }
+
 .ms-expand-less:before {
   content: "\e5ce";
 }
+
 .ms-expand-more:before {
   content: "\e5cf";
 }
+
 .ms-explicit:before {
   content: "\e01e";
 }
+
 .ms-explore:before {
   content: "\e87a";
 }
+
 .ms-explore-off:before {
   content: "\e9a8";
 }
+
 .ms-exposure:before {
   content: "\e3f6";
 }
+
 .ms-exposure-neg-1:before {
   content: "\e3cb";
 }
+
 .ms-exposure-neg-2:before {
   content: "\e3cc";
 }
+
 .ms-exposure-plus-1:before {
   content: "\e800";
 }
+
 .ms-exposure-plus-2:before {
   content: "\e3ce";
 }
+
 .ms-exposure-zero:before {
   content: "\e3cf";
 }
+
 .ms-extension:before {
   content: "\e87b";
 }
+
 .ms-extension-off:before {
   content: "\e4f5";
 }
+
 .ms-face:before {
   content: "\f008";
 }
+
 .ms-face-retouching-natural:before {
   content: "\ef4e";
 }
+
 .ms-face-retouching-off:before {
   content: "\f007";
 }
+
 .ms-face-unlock:before {
   content: "\f008";
 }
+
 .ms-fact-check:before {
   content: "\f0c5";
 }
+
 .ms-factory:before {
   content: "\ebbc";
 }
+
 .ms-family-restroom:before {
   content: "\f1a2";
 }
+
 .ms-fast-forward:before {
   content: "\e01f";
 }
+
 .ms-fast-rewind:before {
   content: "\e020";
 }
+
 .ms-fastfood:before {
   content: "\e57a";
 }
+
 .ms-faucet:before {
   content: "\e278";
 }
+
 .ms-favorite:before {
   content: "\e87e";
 }
+
 .ms-favorite-border:before {
   content: "\e87e";
 }
+
 .ms-fax:before {
   content: "\ead8";
 }
+
 .ms-featured-play-list:before {
   content: "\e06d";
 }
+
 .ms-featured-video:before {
   content: "\e06e";
 }
+
 .ms-feed:before {
   content: "\f009";
 }
+
 .ms-feedback:before {
   content: "\e87f";
 }
+
 .ms-female:before {
   content: "\e590";
 }
+
 .ms-fence:before {
   content: "\f1f6";
 }
+
 .ms-festival:before {
   content: "\ea68";
 }
+
 .ms-fiber-dvr:before {
   content: "\e05d";
 }
+
 .ms-fiber-manual-record:before {
   content: "\e061";
 }
+
 .ms-fiber-new:before {
   content: "\e05e";
 }
+
 .ms-fiber-pin:before {
   content: "\e06a";
 }
+
 .ms-fiber-smart-record:before {
   content: "\e062";
 }
+
 .ms-file-copy:before {
   content: "\e173";
 }
+
 .ms-file-download:before {
   content: "\f090";
 }
+
 .ms-file-download-done:before {
   content: "\f091";
 }
+
 .ms-file-download-off:before {
   content: "\e4fe";
 }
+
 .ms-file-open:before {
   content: "\eaf3";
 }
+
 .ms-file-present:before {
   content: "\ea0e";
 }
+
 .ms-file-upload:before {
   content: "\f09b";
 }
+
 .ms-files:before {
   content: "\ea85";
 }
+
 .ms-filter:before {
   content: "\e3d3";
 }
+
 .ms-filter-1:before {
   content: "\e3d0";
 }
+
 .ms-filter-2:before {
   content: "\e3d1";
 }
+
 .ms-filter-3:before {
   content: "\e3d2";
 }
+
 .ms-filter-4:before {
   content: "\e3d4";
 }
+
 .ms-filter-5:before {
   content: "\e3d5";
 }
+
 .ms-filter-6:before {
   content: "\e3d6";
 }
+
 .ms-filter-7:before {
   content: "\e3d7";
 }
+
 .ms-filter-8:before {
   content: "\e3d8";
 }
+
 .ms-filter-9:before {
   content: "\e3d9";
 }
+
 .ms-filter-9-plus:before {
   content: "\e3da";
 }
+
 .ms-filter-alt:before {
   content: "\ef4f";
 }
+
 .ms-filter-alt-off:before {
   content: "\eb32";
 }
+
 .ms-filter-b-and-w:before {
   content: "\e3db";
 }
+
 .ms-filter-center-focus:before {
   content: "\e3dc";
 }
+
 .ms-filter-drama:before {
   content: "\e3dd";
 }
+
 .ms-filter-frames:before {
   content: "\e3de";
 }
+
 .ms-filter-hdr:before {
   content: "\e3df";
 }
+
 .ms-filter-list:before {
   content: "\e152";
 }
+
 .ms-filter-list-alt:before {
   content: "\e94e";
 }
+
 .ms-filter-list-off:before {
   content: "\eb57";
 }
+
 .ms-filter-none:before {
   content: "\e3e0";
 }
+
 .ms-filter-tilt-shift:before {
   content: "\e3e2";
 }
+
 .ms-filter-vintage:before {
   content: "\e3e3";
 }
+
 .ms-find-in-page:before {
   content: "\e880";
 }
+
 .ms-find-replace:before {
   content: "\e881";
 }
+
 .ms-fingerprint:before {
   content: "\e90d";
 }
+
 .ms-fire-extinguisher:before {
   content: "\f1d8";
 }
+
 .ms-fire-hydrant:before {
   content: "\f1a3";
 }
+
 .ms-fire-truck:before {
   content: "\f8f2";
 }
+
 .ms-fireplace:before {
   content: "\ea43";
 }
+
 .ms-first-page:before {
   content: "\e5dc";
 }
+
 .ms-fishfood:before {
   content: "\e6d9";
 }
+
 .ms-fit-screen:before {
   content: "\ea10";
 }
+
 .ms-fitness-center:before {
   content: "\eb43";
 }
+
 .ms-flag:before {
   content: "\ea1a";
 }
+
 .ms-flag-circle:before {
   content: "\eaf8";
 }
+
 .ms-flag-filled:before {
   content: "\ea1a";
 }
+
 .ms-flaky:before {
   content: "\ef50";
 }
+
 .ms-flare:before {
   content: "\e3e4";
 }
+
 .ms-flash-auto:before {
   content: "\e3e5";
 }
+
 .ms-flash-off:before {
   content: "\e3e6";
 }
+
 .ms-flash-on:before {
   content: "\e3e7";
 }
+
 .ms-flashlight-off:before {
   content: "\f00a";
 }
+
 .ms-flashlight-on:before {
   content: "\f00b";
 }
+
 .ms-flatware:before {
   content: "\f00c";
 }
+
 .ms-flight:before {
   content: "\e539";
 }
+
 .ms-flight-class:before {
   content: "\e7cb";
 }
+
 .ms-flight-land:before {
   content: "\e904";
 }
+
 .ms-flight-takeoff:before {
   content: "\e905";
 }
+
 .ms-flip:before {
   content: "\e3e8";
 }
+
 .ms-flip-camera-android:before {
   content: "\ea37";
 }
+
 .ms-flip-camera-ios:before {
   content: "\ea38";
 }
+
 .ms-flip-to-back:before {
   content: "\e882";
 }
+
 .ms-flip-to-front:before {
   content: "\e883";
 }
+
 .ms-flood:before {
   content: "\ebe6";
 }
+
 .ms-flourescent:before {
   content: "\f00d";
 }
+
 .ms-flutter:before {
   content: "\f1dd";
 }
+
 .ms-flutter-dash:before {
   content: "\e00b";
 }
+
 .ms-fmd-bad:before {
   content: "\f00e";
 }
+
 .ms-foggy:before {
   content: "\e818";
 }
+
 .ms-folder:before {
   content: "\e2c7";
 }
+
 .ms-folder-copy:before {
   content: "\ebbd";
 }
+
 .ms-folder-delete:before {
   content: "\eb34";
 }
+
 .ms-folder-off:before {
   content: "\eb83";
 }
+
 .ms-folder-open:before {
   content: "\e2c8";
 }
+
 .ms-folder-shared:before {
   content: "\e2c9";
 }
+
 .ms-folder-special:before {
   content: "\e617";
 }
+
 .ms-folder-zip:before {
   content: "\eb2c";
 }
+
 .ms-follow-the-signs:before {
   content: "\f222";
 }
+
 .ms-font-download:before {
   content: "\e167";
 }
+
 .ms-font-download-off:before {
   content: "\e4f9";
 }
+
 .ms-food-bank:before {
   content: "\f1f2";
 }
+
 .ms-forest:before {
   content: "\ea99";
 }
+
 .ms-fork-left:before {
   content: "\eba0";
 }
+
 .ms-fork-right:before {
   content: "\ebac";
 }
+
 .ms-format-align-center:before {
   content: "\e234";
 }
+
 .ms-format-align-justify:before {
   content: "\e235";
 }
+
 .ms-format-align-left:before {
   content: "\e236";
 }
+
 .ms-format-align-right:before {
   content: "\e237";
 }
+
 .ms-format-bold:before {
   content: "\e238";
 }
+
 .ms-format-clear:before {
   content: "\e239";
 }
+
 .ms-format-color-fill:before {
   content: "\e23a";
 }
+
 .ms-format-color-reset:before {
   content: "\e23b";
 }
+
 .ms-format-color-text:before {
   content: "\e23c";
 }
+
 .ms-format-indent-decrease:before {
   content: "\e23d";
 }
+
 .ms-format-indent-increase:before {
   content: "\e23e";
 }
+
 .ms-format-italic:before {
   content: "\e23f";
 }
+
 .ms-format-line-spacing:before {
   content: "\e240";
 }
+
 .ms-format-list-bulleted:before {
   content: "\e241";
 }
+
 .ms-format-list-numbered:before {
   content: "\e242";
 }
+
 .ms-format-list-numbered-rtl:before {
   content: "\e267";
 }
+
 .ms-format-overline:before {
   content: "\eb65";
 }
+
 .ms-format-paint:before {
   content: "\e243";
 }
+
 .ms-format-quote:before {
   content: "\e244";
 }
+
 .ms-format-shapes:before {
   content: "\e25e";
 }
+
 .ms-format-size:before {
   content: "\e245";
 }
+
 .ms-format-strikethrough:before {
   content: "\e246";
 }
+
 .ms-format-textdirection-l-to-r:before {
   content: "\e247";
 }
+
 .ms-format-textdirection-r-to-l:before {
   content: "\e248";
 }
+
 .ms-format-underlined:before {
   content: "\e249";
 }
+
 .ms-forms-add-on:before {
   content: "\f0c7";
 }
+
 .ms-forms-apps-script:before {
   content: "\f0c8";
 }
+
 .ms-fort:before {
   content: "\eaad";
 }
+
 .ms-forum:before {
   content: "\e8af";
 }
+
 .ms-forward:before {
   content: "\f060";
 }
+
 .ms-forward-10:before {
   content: "\e056";
 }
+
 .ms-forward-30:before {
   content: "\e057";
 }
+
 .ms-forward-5:before {
   content: "\e058";
 }
+
 .ms-forward-to-inbox:before {
   content: "\f187";
 }
+
 .ms-foundation:before {
   content: "\f200";
 }
+
 .ms-free-breakfast:before {
   content: "\eb44";
 }
+
 .ms-free-cancellation:before {
   content: "\e748";
 }
+
 .ms-front-hand:before {
   content: "\e769";
 }
+
 .ms-full-stacked-bar-chart:before {
   content: "\f212";
 }
+
 .ms-fullscreen:before {
   content: "\e5d0";
 }
+
 .ms-fullscreen-exit:before {
   content: "\e5d1";
 }
+
 .ms-functions:before {
   content: "\e24a";
 }
+
 .ms-g-mobiledata:before {
   content: "\f010";
 }
+
 .ms-g-translate:before {
   content: "\e927";
 }
+
 .ms-gamepad:before {
   content: "\e30f";
 }
+
 .ms-games:before {
   content: "\e30f";
 }
+
 .ms-garage:before {
   content: "\f011";
 }
+
 .ms-garage-home:before {
   content: "\e82d";
 }
+
 .ms-gas-meter:before {
   content: "\ec19";
 }
+
 .ms-gate:before {
   content: "\e277";
 }
+
 .ms-gavel:before {
   content: "\e90e";
 }
+
 .ms-gbadge:before {
   content: "\f1fd";
 }
+
 .ms-gboard:before {
   content: "\ea7b";
 }
+
 .ms-generating-tokens:before {
   content: "\e749";
 }
+
 .ms-gesture:before {
   content: "\e155";
 }
+
 .ms-get-app:before {
   content: "\f090";
 }
+
 .ms-gfit-health:before {
   content: "\ea7a";
 }
+
 .ms-gif:before {
   content: "\e908";
 }
+
 .ms-gif-box:before {
   content: "\e7a3";
 }
+
 .ms-girl:before {
   content: "\eb68";
 }
+
 .ms-gite:before {
   content: "\e58b";
 }
+
 .ms-gleaf:before {
   content: "\e6b4";
 }
+
 .ms-gmail-add-on:before {
   content: "\f0c9";
 }
+
 .ms-gmail-apps-script:before {
   content: "\f0ca";
 }
+
 .ms-gmail-rooms:before {
   content: "\f193";
 }
+
 .ms-golf-course:before {
   content: "\eb45";
 }
+
 .ms-google-fi:before {
   content: "\ea86";
 }
+
 .ms-google-guarantee:before {
   content: "\f231";
 }
+
 .ms-google-plus-reshare:before {
   content: "\f060";
 }
+
 .ms-google-travel:before {
   content: "\f110";
 }
+
 .ms-google-travel-outline:before {
   content: "\f113";
 }
+
 .ms-google-tv:before {
   content: "\ea6f";
 }
+
 .ms-google-wifi:before {
   content: "\e840";
 }
+
 .ms-googler-travel:before {
   content: "\ef96";
 }
+
 .ms-gpay:before {
   content: "\ea91";
 }
+
 .ms-gpp-bad:before {
   content: "\f012";
 }
+
 .ms-gpp-good:before {
   content: "\f013";
 }
+
 .ms-gpp-maybe:before {
   content: "\f014";
 }
+
 .ms-gps-fixed:before {
   content: "\e55c";
 }
+
 .ms-gps-not-fixed:before {
   content: "\e1b7";
 }
+
 .ms-gps-off:before {
   content: "\e1b6";
 }
+
 .ms-grade:before {
   content: "\f099";
 }
+
 .ms-gradient:before {
   content: "\e3e9";
 }
+
 .ms-grading:before {
   content: "\ea4f";
 }
+
 .ms-grain:before {
   content: "\e3ea";
 }
+
 .ms-graphic-eq:before {
   content: "\e1b8";
 }
+
 .ms-grass:before {
   content: "\f205";
 }
+
 .ms-grid-3x3:before {
   content: "\f015";
 }
+
 .ms-grid-4x4:before {
   content: "\f016";
 }
+
 .ms-grid-goldenratio:before {
   content: "\f017";
 }
+
 .ms-grid-off:before {
   content: "\e3eb";
 }
+
 .ms-grid-on:before {
   content: "\e3ec";
 }
+
 .ms-grid-view:before {
   content: "\e9b0";
 }
+
 .ms-group:before {
   content: "\ea21";
 }
+
 .ms-group-add:before {
   content: "\e7f0";
 }
+
 .ms-group-off:before {
   content: "\e747";
 }
+
 .ms-group-remove:before {
   content: "\e7ad";
 }
+
 .ms-group-work:before {
   content: "\e886";
 }
+
 .ms-grouped-bar-chart:before {
   content: "\f211";
 }
+
 .ms-h-mobiledata:before {
   content: "\f018";
 }
+
 .ms-h-plus-mobiledata:before {
   content: "\f019";
 }
+
 .ms-hail:before {
   content: "\e9b1";
 }
+
 .ms-hand-gesture:before {
   content: "\ef9c";
 }
+
 .ms-handshake:before {
   content: "\ebcb";
 }
+
 .ms-handyman:before {
   content: "\f10b";
 }
+
 .ms-hardware:before {
   content: "\ea59";
 }
+
 .ms-hd:before {
   content: "\e052";
 }
+
 .ms-hdr-auto:before {
   content: "\f01a";
 }
+
 .ms-hdr-auto-select:before {
   content: "\f01b";
 }
+
 .ms-hdr-enhanced-select:before {
   content: "\ef51";
 }
+
 .ms-hdr-off:before {
   content: "\e3ed";
 }
+
 .ms-hdr-off-select:before {
   content: "\f01c";
 }
+
 .ms-hdr-on:before {
   content: "\e3ee";
 }
+
 .ms-hdr-on-select:before {
   content: "\f01d";
 }
+
 .ms-hdr-plus:before {
   content: "\f01e";
 }
+
 .ms-hdr-strong:before {
   content: "\e3f1";
 }
+
 .ms-hdr-weak:before {
   content: "\e3f2";
 }
+
 .ms-headphones:before {
   content: "\f01f";
 }
+
 .ms-headphones-battery:before {
   content: "\f020";
 }
+
 .ms-headset:before {
   content: "\f01f";
 }
+
 .ms-headset-mic:before {
   content: "\e311";
 }
+
 .ms-headset-off:before {
   content: "\e33a";
 }
+
 .ms-healing:before {
   content: "\e3f3";
 }
+
 .ms-health-and-safety:before {
   content: "\e1d5";
 }
+
 .ms-hearing:before {
   content: "\e023";
 }
+
 .ms-hearing-disabled:before {
   content: "\f104";
 }
+
 .ms-heart-broken:before {
   content: "\eac2";
 }
+
 .ms-heat-pump:before {
   content: "\ec18";
 }
+
 .ms-height:before {
   content: "\ea16";
 }
+
 .ms-help:before {
   content: "\e8fd";
 }
+
 .ms-help-center:before {
   content: "\f1c0";
 }
+
 .ms-help-outline:before {
   content: "\e8fd";
 }
+
 .ms-hevc:before {
   content: "\f021";
 }
+
 .ms-hexagon:before {
   content: "\eb39";
 }
+
 .ms-hide:before {
   content: "\ef9e";
 }
+
 .ms-hide-image:before {
   content: "\f022";
 }
+
 .ms-hide-source:before {
   content: "\f023";
 }
+
 .ms-high-quality:before {
   content: "\e024";
 }
+
 .ms-highlight:before {
   content: "\e25f";
 }
+
 .ms-highlight-off:before {
   content: "\e888";
 }
+
 .ms-hiking:before {
   content: "\e50a";
 }
+
 .ms-history:before {
   content: "\e8b3";
 }
+
 .ms-history-edu:before {
   content: "\ea3e";
 }
+
 .ms-history-toggle-off:before {
   content: "\f17d";
 }
+
 .ms-hive:before {
   content: "\eaa6";
 }
+
 .ms-hls:before {
   content: "\eb8a";
 }
+
 .ms-hls-off:before {
   content: "\eb8c";
 }
+
 .ms-holiday-village:before {
   content: "\e58a";
 }
+
 .ms-home:before {
   content: "\e88a";
 }
+
 .ms-home-app-logo:before {
   content: "\e295";
 }
+
 .ms-home-filled:before {
   content: "\e88a";
 }
+
 .ms-home-iot-device:before {
   content: "\e283";
 }
+
 .ms-home-max:before {
   content: "\f024";
 }
+
 .ms-home-max-dots:before {
   content: "\e849";
 }
+
 .ms-home-mini:before {
   content: "\f025";
 }
+
 .ms-home-pin:before {
   content: "\f14d";
 }
+
 .ms-home-repair-service:before {
   content: "\f100";
 }
+
 .ms-home-speaker:before {
   content: "\f11c";
 }
+
 .ms-home-work:before {
   content: "\f030";
 }
+
 .ms-horizontal-distribute:before {
   content: "\e014";
 }
+
 .ms-horizontal-rule:before {
   content: "\f108";
 }
+
 .ms-horizontal-split:before {
   content: "\e947";
 }
+
 .ms-hot-tub:before {
   content: "\eb46";
 }
+
 .ms-hotel:before {
   content: "\e549";
 }
+
 .ms-hotel-class:before {
   content: "\e743";
 }
+
 .ms-hourglass-bottom:before {
   content: "\ea5c";
 }
+
 .ms-hourglass-disabled:before {
   content: "\ef53";
 }
+
 .ms-hourglass-empty:before {
   content: "\e88b";
 }
+
 .ms-hourglass-full:before {
   content: "\e88c";
 }
+
 .ms-hourglass-top:before {
   content: "\ea5b";
 }
+
 .ms-house:before {
   content: "\ea44";
 }
+
 .ms-house-siding:before {
   content: "\f202";
 }
+
 .ms-houseboat:before {
   content: "\e584";
 }
+
 .ms-how-to-reg:before {
   content: "\e174";
 }
+
 .ms-how-to-vote:before {
   content: "\e175";
 }
+
 .ms-html:before {
   content: "\eb7e";
 }
+
 .ms-http:before {
   content: "\e902";
 }
+
 .ms-https:before {
   content: "\e899";
 }
+
 .ms-hub:before {
   content: "\e9f4";
 }
+
 .ms-humidity-high:before {
   content: "\f163";
 }
+
 .ms-humidity-low:before {
   content: "\f164";
 }
+
 .ms-humidity-mid:before {
   content: "\f165";
 }
+
 .ms-hvac:before {
   content: "\f10e";
 }
+
 .ms-ice-skating:before {
   content: "\e50b";
 }
+
 .ms-icecream:before {
   content: "\ea69";
 }
+
 .ms-identity-platform:before {
   content: "\ebb7";
 }
+
 .ms-image:before {
   content: "\e3f4";
 }
+
 .ms-image-aspect-ratio:before {
   content: "\e3f5";
 }
+
 .ms-image-not-supported:before {
   content: "\f116";
 }
+
 .ms-image-search:before {
   content: "\e43f";
 }
+
 .ms-imagesearch-roller:before {
   content: "\e9b4";
 }
+
 .ms-imagesmode:before {
   content: "\efa2";
 }
+
 .ms-import-contacts:before {
   content: "\e0e0";
 }
+
 .ms-import-export:before {
   content: "\e8d5";
 }
+
 .ms-important-devices:before {
   content: "\e912";
 }
+
 .ms-in-home-mode:before {
   content: "\e833";
 }
+
 .ms-inbox:before {
   content: "\e156";
 }
+
 .ms-incomplete-circle:before {
   content: "\e79b";
 }
+
 .ms-indeterminate-check-box:before {
   content: "\e909";
 }
+
 .ms-info:before {
   content: "\e88e";
 }
+
 .ms-input:before {
   content: "\e890";
 }
+
 .ms-insert-chart:before {
   content: "\e85c";
 }
+
 .ms-insert-chart-filled:before {
   content: "\e85c";
 }
+
 .ms-insert-chart-outlined:before {
   content: "\e85c";
 }
+
 .ms-insert-comment:before {
   content: "\e24c";
 }
+
 .ms-insert-drive-file:before {
   content: "\e66d";
 }
+
 .ms-insert-emoticon:before {
   content: "\ea22";
 }
+
 .ms-insert-invitation:before {
   content: "\e878";
 }
+
 .ms-insert-link:before {
   content: "\e250";
 }
+
 .ms-insert-page-break:before {
   content: "\eaca";
 }
+
 .ms-insert-photo:before {
   content: "\e3f4";
 }
+
 .ms-insights:before {
   content: "\f092";
 }
+
 .ms-install-desktop:before {
   content: "\eb71";
 }
+
 .ms-install-mobile:before {
   content: "\eb72";
 }
+
 .ms-integration-instructions:before {
   content: "\ef54";
 }
+
 .ms-interests:before {
   content: "\e7c8";
 }
+
 .ms-interpreter-mode:before {
   content: "\e83b";
 }
+
 .ms-inventory:before {
   content: "\e179";
 }
+
 .ms-inventory-2:before {
   content: "\e1a1";
 }
+
 .ms-invert-colors:before {
   content: "\e891";
 }
+
 .ms-invert-colors-off:before {
   content: "\e0c4";
 }
+
 .ms-ios-share:before {
   content: "\e6b8";
 }
+
 .ms-iron:before {
   content: "\e583";
 }
+
 .ms-iso:before {
   content: "\e3f6";
 }
+
 .ms-javascript:before {
   content: "\eb7c";
 }
+
 .ms-join-full:before {
   content: "\eaeb";
 }
+
 .ms-join-inner:before {
   content: "\eaf4";
 }
+
 .ms-join-left:before {
   content: "\eaf2";
 }
+
 .ms-join-right:before {
   content: "\eaea";
 }
+
 .ms-kayaking:before {
   content: "\e50c";
 }
+
 .ms-kebab-dining:before {
   content: "\e842";
 }
+
 .ms-kettle:before {
   content: "\e2b9";
 }
+
 .ms-key:before {
   content: "\e73c";
 }
+
 .ms-key-off:before {
   content: "\eb84";
 }
+
 .ms-key-visualizer:before {
   content: "\f199";
 }
+
 .ms-keyboard:before {
   content: "\e312";
 }
+
 .ms-keyboard-alt:before {
   content: "\f028";
 }
+
 .ms-keyboard-arrow-down:before {
   content: "\e313";
 }
+
 .ms-keyboard-arrow-left:before {
   content: "\e314";
 }
+
 .ms-keyboard-arrow-right:before {
   content: "\e315";
 }
+
 .ms-keyboard-arrow-up:before {
   content: "\e316";
 }
+
 .ms-keyboard-backspace:before {
   content: "\e317";
 }
+
 .ms-keyboard-capslock:before {
   content: "\e318";
 }
+
 .ms-keyboard-command-key:before {
   content: "\eae7";
 }
+
 .ms-keyboard-control-key:before {
   content: "\eae6";
 }
+
 .ms-keyboard-double-arrow-down:before {
   content: "\ead0";
 }
+
 .ms-keyboard-double-arrow-left:before {
   content: "\eac3";
 }
+
 .ms-keyboard-double-arrow-right:before {
   content: "\eac9";
 }
+
 .ms-keyboard-double-arrow-up:before {
   content: "\eacf";
 }
+
 .ms-keyboard-hide:before {
   content: "\e31a";
 }
+
 .ms-keyboard-option-key:before {
   content: "\eae8";
 }
+
 .ms-keyboard-return:before {
   content: "\e31b";
 }
+
 .ms-keyboard-tab:before {
   content: "\e31c";
 }
+
 .ms-keyboard-voice:before {
   content: "\e31d";
 }
+
 .ms-king-bed:before {
   content: "\ea45";
 }
+
 .ms-kitchen:before {
   content: "\eb47";
 }
+
 .ms-kitesurfing:before {
   content: "\e50d";
 }
+
 .ms-kormo:before {
   content: "\e012";
 }
+
 .ms-label:before {
   content: "\e893";
 }
+
 .ms-label-important:before {
   content: "\e948";
 }
+
 .ms-label-important-outline:before {
   content: "\e948";
 }
+
 .ms-label-off:before {
   content: "\e9b6";
 }
+
 .ms-label-outline:before {
   content: "\e893";
 }
+
 .ms-lan:before {
   content: "\eb2f";
 }
+
 .ms-landscape:before {
   content: "\e564";
 }
+
 .ms-landslide:before {
   content: "\ebd7";
 }
+
 .ms-language:before {
   content: "\e894";
 }
+
 .ms-laptop:before {
   content: "\e31e";
 }
+
 .ms-laptop-chromebook:before {
   content: "\e31f";
 }
+
 .ms-laptop-mac:before {
   content: "\e320";
 }
+
 .ms-laptop-windows:before {
   content: "\e321";
 }
+
 .ms-last-page:before {
   content: "\e5dd";
 }
+
 .ms-launch:before {
   content: "\e89e";
 }
+
 .ms-layers:before {
   content: "\e53b";
 }
+
 .ms-layers-clear:before {
   content: "\e53c";
 }
+
 .ms-leaderboard:before {
   content: "\f20c";
 }
+
 .ms-leak-add:before {
   content: "\e3f8";
 }
+
 .ms-leak-remove:before {
   content: "\e3f9";
 }
+
 .ms-legend-toggle:before {
   content: "\f11b";
 }
+
 .ms-lens:before {
   content: "\e3fa";
 }
+
 .ms-lens-blur:before {
   content: "\f029";
 }
+
 .ms-library-add:before {
   content: "\e03c";
 }
+
 .ms-library-add-check:before {
   content: "\e9b7";
 }
+
 .ms-library-books:before {
   content: "\e02f";
 }
+
 .ms-library-music:before {
   content: "\e030";
 }
+
 .ms-lift-to-talk:before {
   content: "\efa3";
 }
+
 .ms-light:before {
   content: "\f02a";
 }
+
 .ms-light-mode:before {
   content: "\e518";
 }
+
 .ms-lightbulb:before {
   content: "\e90f";
 }
+
 .ms-lightbulb-circle:before {
   content: "\ebfe";
 }
+
 .ms-lightbulb-outline:before {
   content: "\e90f";
 }
+
 .ms-line-axis:before {
   content: "\ea9a";
 }
+
 .ms-line-style:before {
   content: "\e919";
 }
+
 .ms-line-weight:before {
   content: "\e91a";
 }
+
 .ms-linear-scale:before {
   content: "\e260";
 }
+
 .ms-link:before {
   content: "\e250";
 }
+
 .ms-link-off:before {
   content: "\e16f";
 }
+
 .ms-linked-camera:before {
   content: "\e438";
 }
+
 .ms-liquor:before {
   content: "\ea60";
 }
+
 .ms-list:before {
   content: "\e896";
 }
+
 .ms-list-alt:before {
   content: "\e0ee";
 }
+
 .ms-live-help:before {
   content: "\e0c6";
 }
+
 .ms-live-tv:before {
   content: "\e63b";
 }
+
 .ms-living:before {
   content: "\f02b";
 }
+
 .ms-local-activity:before {
   content: "\e553";
 }
+
 .ms-local-airport:before {
   content: "\e53d";
 }
+
 .ms-local-atm:before {
   content: "\e53e";
 }
+
 .ms-local-bar:before {
   content: "\e540";
 }
+
 .ms-local-cafe:before {
   content: "\eb44";
 }
+
 .ms-local-car-wash:before {
   content: "\e542";
 }
+
 .ms-local-convenience-store:before {
   content: "\e543";
 }
+
 .ms-local-dining:before {
   content: "\e561";
 }
+
 .ms-local-drink:before {
   content: "\e544";
 }
+
 .ms-local-fire-department:before {
   content: "\f33b";
 }
+
 .ms-local-florist:before {
   content: "\e545";
 }
+
 .ms-local-gas-station:before {
   content: "\e546";
 }
+
 .ms-local-grocery-store:before {
   content: "\e8cc";
 }
+
 .ms-local-hospital:before {
   content: "\e548";
 }
+
 .ms-local-hotel:before {
   content: "\e549";
 }
+
 .ms-local-laundry-service:before {
   content: "\e54a";
 }
+
 .ms-local-library:before {
   content: "\e54b";
 }
+
 .ms-local-mall:before {
   content: "\e54c";
 }
+
 .ms-local-movies:before {
   content: "\e8da";
 }
+
 .ms-local-offer:before {
   content: "\f05b";
 }
+
 .ms-local-parking:before {
   content: "\e54f";
 }
+
 .ms-local-pharmacy:before {
   content: "\e550";
 }
+
 .ms-local-phone:before {
   content: "\f0d4";
 }
+
 .ms-local-pizza:before {
   content: "\e552";
 }
+
 .ms-local-play:before {
   content: "\e553";
 }
+
 .ms-local-police:before {
   content: "\ef56";
 }
+
 .ms-local-post-office:before {
   content: "\e554";
 }
+
 .ms-local-printshop:before {
   content: "\e8ad";
 }
+
 .ms-local-see:before {
   content: "\e557";
 }
+
 .ms-local-shipping:before {
   content: "\e558";
 }
+
 .ms-local-taxi:before {
   content: "\e559";
 }
+
 .ms-location-automation:before {
   content: "\f14f";
 }
+
 .ms-location-away:before {
   content: "\f150";
 }
+
 .ms-location-city:before {
   content: "\e7f1";
 }
+
 .ms-location-disabled:before {
   content: "\e1b6";
 }
+
 .ms-location-home:before {
   content: "\f152";
 }
+
 .ms-location-off:before {
   content: "\e0c7";
 }
+
 .ms-location-searching:before {
   content: "\e1b7";
 }
+
 .ms-lock:before {
   content: "\e899";
 }
+
 .ms-lock-clock:before {
   content: "\ef57";
 }
+
 .ms-lock-open:before {
   content: "\e898";
 }
+
 .ms-lock-outline:before {
   content: "\e899";
 }
+
 .ms-lock-person:before {
   content: "\f8f3";
 }
+
 .ms-lock-reset:before {
   content: "\eade";
 }
+
 .ms-login:before {
   content: "\ea77";
 }
+
 .ms-logo-dev:before {
   content: "\ead6";
 }
+
 .ms-logout:before {
   content: "\e9ba";
 }
+
 .ms-looks:before {
   content: "\e3fc";
 }
+
 .ms-looks-3:before {
   content: "\e3fb";
 }
+
 .ms-looks-4:before {
   content: "\e3fd";
 }
+
 .ms-looks-5:before {
   content: "\e3fe";
 }
+
 .ms-looks-6:before {
   content: "\e3ff";
 }
+
 .ms-looks-one:before {
   content: "\e400";
 }
+
 .ms-looks-two:before {
   content: "\e401";
 }
+
 .ms-loop:before {
   content: "\e863";
 }
+
 .ms-loupe:before {
   content: "\e402";
 }
+
 .ms-low-priority:before {
   content: "\e16d";
 }
+
 .ms-loyalty:before {
   content: "\e89a";
 }
+
 .ms-lte-mobiledata:before {
   content: "\f02c";
 }
+
 .ms-lte-plus-mobiledata:before {
   content: "\f02d";
 }
+
 .ms-luggage:before {
   content: "\f235";
 }
+
 .ms-lunch-dining:before {
   content: "\ea61";
 }
+
 .ms-lyrics:before {
   content: "\ec0b";
 }
+
 .ms-machine-image:before {
   content: "\f180";
 }
+
 .ms-magic-button:before {
   content: "\f136";
 }
+
 .ms-mail:before {
   content: "\e159";
 }
+
 .ms-mail-lock:before {
   content: "\ec0a";
 }
+
 .ms-mail-outline:before {
   content: "\e159";
 }
+
 .ms-male:before {
   content: "\e58e";
 }
+
 .ms-man:before {
   content: "\e4eb";
 }
+
 .ms-manage-accounts:before {
   content: "\f02e";
 }
+
 .ms-manage-history:before {
   content: "\ebe7";
 }
+
 .ms-manage-search:before {
   content: "\f02f";
 }
+
 .ms-map:before {
   content: "\e55b";
 }
+
 .ms-maps-home-work:before {
   content: "\f030";
 }
+
 .ms-maps-ugc:before {
   content: "\ef58";
 }
+
 .ms-margin:before {
   content: "\e9bb";
 }
+
 .ms-mark-as-unread:before {
   content: "\e9bc";
 }
+
 .ms-mark-chat-read:before {
   content: "\f18b";
 }
+
 .ms-mark-chat-unread:before {
   content: "\f189";
 }
+
 .ms-mark-email-read:before {
   content: "\f18c";
 }
+
 .ms-mark-email-unread:before {
   content: "\f18a";
 }
+
 .ms-mark-unread-chat-alt:before {
   content: "\eb9d";
 }
+
 .ms-markunread:before {
   content: "\e159";
 }
+
 .ms-markunread-mailbox:before {
   content: "\e89b";
 }
+
 .ms-masks:before {
   content: "\f218";
 }
+
 .ms-matter:before {
   content: "\e907";
 }
+
 .ms-maximize:before {
   content: "\e930";
 }
+
 .ms-media-bluetooth-off:before {
   content: "\f031";
 }
+
 .ms-media-bluetooth-on:before {
   content: "\f032";
 }
+
 .ms-mediation:before {
   content: "\efa7";
 }
+
 .ms-medical-information:before {
   content: "\ebed";
 }
+
 .ms-medical-services:before {
   content: "\f109";
 }
+
 .ms-medication:before {
   content: "\f033";
 }
+
 .ms-medication-liquid:before {
   content: "\ea87";
 }
+
 .ms-meeting-room:before {
   content: "\eb4f";
 }
+
 .ms-memory:before {
   content: "\e322";
 }
+
 .ms-menu:before {
   content: "\e5d2";
 }
+
 .ms-menu-book:before {
   content: "\ea19";
 }
+
 .ms-menu-open:before {
   content: "\e9bd";
 }
+
 .ms-merge:before {
   content: "\eb98";
 }
+
 .ms-merge-type:before {
   content: "\e252";
 }
+
 .ms-message:before {
   content: "\e0c9";
 }
+
 .ms-mfg-nest-yale-lock:before {
   content: "\f11d";
 }
+
 .ms-mic:before {
   content: "\e31d";
 }
+
 .ms-mic-external-off:before {
   content: "\ef59";
 }
+
 .ms-mic-external-on:before {
   content: "\ef5a";
 }
+
 .ms-mic-none:before {
   content: "\e31d";
 }
+
 .ms-mic-off:before {
   content: "\e02b";
 }
+
 .ms-microwave:before {
   content: "\f204";
 }
+
 .ms-microwave-gen:before {
   content: "\e847";
 }
+
 .ms-military-tech:before {
   content: "\ea3f";
 }
+
 .ms-minimize:before {
   content: "\e931";
 }
+
 .ms-minor-crash:before {
   content: "\ebf1";
 }
+
 .ms-missed-video-call:before {
   content: "\f0ce";
 }
+
 .ms-missed-video-call-filled:before {
   content: "\f0ce";
 }
+
 .ms-mms:before {
   content: "\e618";
 }
+
 .ms-mobile-friendly:before {
   content: "\e200";
 }
+
 .ms-mobile-off:before {
   content: "\e201";
 }
+
 .ms-mobile-screen-share:before {
   content: "\e0e7";
 }
+
 .ms-mobiledata-off:before {
   content: "\f034";
 }
+
 .ms-mode:before {
   content: "\f345";
 }
+
 .ms-mode-comment:before {
   content: "\e253";
 }
+
 .ms-mode-cool:before {
   content: "\f166";
 }
+
 .ms-mode-cool-off:before {
   content: "\f167";
 }
+
 .ms-mode-edit:before {
   content: "\f345";
 }
+
 .ms-mode-edit-outline:before {
   content: "\f345";
 }
+
 .ms-mode-fan:before {
   content: "\f168";
 }
+
 .ms-mode-fan-off:before {
   content: "\ec17";
 }
+
 .ms-mode-heat:before {
   content: "\f16a";
 }
+
 .ms-mode-heat-cool:before {
   content: "\f16b";
 }
+
 .ms-mode-heat-off:before {
   content: "\f16d";
 }
+
 .ms-mode-night:before {
   content: "\f036";
 }
+
 .ms-mode-of-travel:before {
   content: "\e7ce";
 }
+
 .ms-mode-off-on:before {
   content: "\f16f";
 }
+
 .ms-mode-standby:before {
   content: "\f037";
 }
+
 .ms-model-training:before {
   content: "\f0cf";
 }
+
 .ms-monetization-on:before {
   content: "\e263";
 }
+
 .ms-money:before {
   content: "\e57d";
 }
+
 .ms-money-off:before {
   content: "\f038";
 }
+
 .ms-money-off-csred:before {
   content: "\f038";
 }
+
 .ms-monitor:before {
   content: "\ef5b";
 }
+
 .ms-monitor-heart:before {
   content: "\eaa2";
 }
+
 .ms-monitor-weight:before {
   content: "\f039";
 }
+
 .ms-monitoring:before {
   content: "\f190";
 }
+
 .ms-monochrome-photos:before {
   content: "\e403";
 }
+
 .ms-mood:before {
   content: "\ea22";
 }
+
 .ms-mood-bad:before {
   content: "\e7f3";
 }
+
 .ms-mop:before {
   content: "\e28d";
 }
+
 .ms-more:before {
   content: "\e619";
 }
+
 .ms-more-down:before {
   content: "\f196";
 }
+
 .ms-more-horiz:before {
   content: "\e5d3";
 }
+
 .ms-more-time:before {
   content: "\ea5d";
 }
+
 .ms-more-up:before {
   content: "\f197";
 }
+
 .ms-more-vert:before {
   content: "\e5d4";
 }
+
 .ms-mosque:before {
   content: "\eab2";
 }
+
 .ms-motion-blur:before {
   content: "\f0d0";
 }
+
 .ms-motion-photos-auto:before {
   content: "\f03a";
 }
+
 .ms-motion-photos-off:before {
   content: "\e9c0";
 }
+
 .ms-motion-photos-pause:before {
   content: "\f349";
 }
+
 .ms-motion-photos-paused:before {
   content: "\f349";
 }
+
 .ms-motion-sense:before {
   content: "\efaa";
 }
+
 .ms-motorcycle:before {
   content: "\e91b";
 }
+
 .ms-mouse:before {
   content: "\e323";
 }
+
 .ms-move-down:before {
   content: "\eb61";
 }
+
 .ms-move-to-inbox:before {
   content: "\e168";
 }
+
 .ms-move-up:before {
   content: "\eb64";
 }
+
 .ms-movie:before {
   content: "\e404";
 }
+
 .ms-movie-creation:before {
   content: "\e404";
 }
+
 .ms-movie-filter:before {
   content: "\e43a";
 }
+
 .ms-moving:before {
   content: "\e501";
 }
+
 .ms-mp:before {
   content: "\e9c3";
 }
+
 .ms-multicooker:before {
   content: "\e293";
 }
+
 .ms-multiline-chart:before {
   content: "\e6df";
 }
+
 .ms-multiple-stop:before {
   content: "\f1b9";
 }
+
 .ms-museum:before {
   content: "\ea36";
 }
+
 .ms-music-note:before {
   content: "\e405";
 }
+
 .ms-music-off:before {
   content: "\e440";
 }
+
 .ms-music-video:before {
   content: "\e063";
 }
+
 .ms-my-location:before {
   content: "\e55c";
 }
+
 .ms-nat:before {
   content: "\ef5c";
 }
+
 .ms-nature:before {
   content: "\e406";
 }
+
 .ms-nature-people:before {
   content: "\e407";
 }
+
 .ms-navigate-before:before {
   content: "\e408";
 }
+
 .ms-navigate-next:before {
   content: "\e409";
 }
+
 .ms-navigation:before {
   content: "\e55d";
 }
+
 .ms-near-me:before {
   content: "\e569";
 }
+
 .ms-near-me-disabled:before {
   content: "\f1ef";
 }
+
 .ms-nearby-error:before {
   content: "\f03b";
 }
+
 .ms-nearby-off:before {
   content: "\f03c";
 }
+
 .ms-nearby-share:before {
   content: "\f207";
 }
+
 .ms-nest-audio:before {
   content: "\ebbf";
 }
+
 .ms-nest-cam-indoor:before {
   content: "\f11e";
 }
+
 .ms-nest-cam-iq:before {
   content: "\f11f";
 }
+
 .ms-nest-cam-iq-outdoor:before {
   content: "\f120";
 }
+
 .ms-nest-cam-outdoor:before {
   content: "\f121";
 }
+
 .ms-nest-cam-wired-stand:before {
   content: "\ec16";
 }
+
 .ms-nest-connect:before {
   content: "\f122";
 }
+
 .ms-nest-detect:before {
   content: "\f123";
 }
+
 .ms-nest-display:before {
   content: "\f124";
 }
+
 .ms-nest-display-max:before {
   content: "\f125";
 }
+
 .ms-nest-eco:before {
   content: "\f140";
 }
+
 .ms-nest-heat-link-e:before {
   content: "\f126";
 }
+
 .ms-nest-heat-link-gen-3:before {
   content: "\f127";
 }
+
 .ms-nest-hello-doorbell:before {
   content: "\e82c";
 }
+
 .ms-nest-mini:before {
   content: "\e789";
 }
+
 .ms-nest-remote:before {
   content: "\f129";
 }
+
 .ms-nest-remote-comfort-sensor:before {
   content: "\f12a";
 }
+
 .ms-nest-secure-alarm:before {
   content: "\f12b";
 }
+
 .ms-nest-tag:before {
   content: "\f12c";
 }
+
 .ms-nest-thermostat-e-eu:before {
   content: "\f12d";
 }
+
 .ms-nest-thermostat-gen-3:before {
   content: "\f12e";
 }
+
 .ms-nest-thermostat-sensor:before {
   content: "\f12f";
 }
+
 .ms-nest-thermostat-sensor-eu:before {
   content: "\f130";
 }
+
 .ms-nest-thermostat-zirconium-eu:before {
   content: "\f131";
 }
+
 .ms-nest-wifi-gale:before {
   content: "\f132";
 }
+
 .ms-nest-wifi-mistral:before {
   content: "\f133";
 }
+
 .ms-nest-wifi-point:before {
   content: "\e83f";
 }
+
 .ms-nest-wifi-point-vento:before {
   content: "\f134";
 }
+
 .ms-nest-wifi-router:before {
   content: "\e841";
 }
+
 .ms-network-cell:before {
   content: "\e1b9";
 }
+
 .ms-network-check:before {
   content: "\e640";
 }
+
 .ms-network-intelligence:before {
   content: "\efac";
 }
+
 .ms-network-locked:before {
   content: "\e61a";
 }
+
 .ms-network-ping:before {
   content: "\ebca";
 }
+
 .ms-network-wifi:before {
   content: "\e1ba";
 }
+
 .ms-network-wifi-1-bar:before {
   content: "\ebe4";
 }
+
 .ms-network-wifi-2-bar:before {
   content: "\ebd6";
 }
+
 .ms-network-wifi-3-bar:before {
   content: "\ebe1";
 }
+
 .ms-new-label:before {
   content: "\e609";
 }
+
 .ms-new-releases:before {
   content: "\ef76";
 }
+
 .ms-newspaper:before {
   content: "\eb81";
 }
+
 .ms-next-plan:before {
   content: "\ef5d";
 }
+
 .ms-next-week:before {
   content: "\e16a";
 }
+
 .ms-nfc:before {
   content: "\e1bb";
 }
+
 .ms-night-shelter:before {
   content: "\f1f1";
 }
+
 .ms-night-sight-auto:before {
   content: "\f1d7";
 }
+
 .ms-night-sight-auto-off:before {
   content: "\f1f9";
 }
+
 .ms-nightlife:before {
   content: "\ea62";
 }
+
 .ms-nightlight:before {
   content: "\f03d";
 }
+
 .ms-nightlight-round:before {
   content: "\f03d";
 }
+
 .ms-nights-stay:before {
   content: "\ea46";
 }
+
 .ms-no-accounts:before {
   content: "\f03e";
 }
+
 .ms-no-adult-content:before {
   content: "\f8fe";
 }
+
 .ms-no-backpack:before {
   content: "\f237";
 }
+
 .ms-no-crash:before {
   content: "\ebf0";
 }
+
 .ms-no-drinks:before {
   content: "\f1a5";
 }
+
 .ms-no-encryption:before {
   content: "\f03f";
 }
+
 .ms-no-encryption-gmailerrorred:before {
   content: "\f03f";
 }
+
 .ms-no-flash:before {
   content: "\f1a6";
 }
+
 .ms-no-food:before {
   content: "\f1a7";
 }
+
 .ms-no-luggage:before {
   content: "\f23b";
 }
+
 .ms-no-meals:before {
   content: "\f1d6";
 }
+
 .ms-no-meeting-room:before {
   content: "\eb4e";
 }
+
 .ms-no-photography:before {
   content: "\f1a8";
 }
+
 .ms-no-sim:before {
   content: "\e1ce";
 }
+
 .ms-no-stroller:before {
   content: "\f1af";
 }
+
 .ms-no-transfer:before {
   content: "\f1d5";
 }
+
 .ms-noise-aware:before {
   content: "\ebec";
 }
+
 .ms-noise-control-off:before {
   content: "\ebf3";
 }
+
 .ms-nordic-walking:before {
   content: "\e50e";
 }
+
 .ms-north:before {
   content: "\f1e0";
 }
+
 .ms-north-east:before {
   content: "\f1e1";
 }
+
 .ms-north-west:before {
   content: "\f1e2";
 }
+
 .ms-not-accessible:before {
   content: "\f0fe";
 }
+
 .ms-not-interested:before {
   content: "\f326";
 }
+
 .ms-not-listed-location:before {
   content: "\e575";
 }
+
 .ms-not-started:before {
   content: "\f0d1";
 }
+
 .ms-note:before {
   content: "\e66d";
 }
+
 .ms-note-add:before {
   content: "\e89c";
 }
+
 .ms-note-alt:before {
   content: "\f040";
 }
+
 .ms-notes:before {
   content: "\e26c";
 }
+
 .ms-notification-add:before {
   content: "\e399";
 }
+
 .ms-notification-important:before {
   content: "\e004";
 }
+
 .ms-notifications:before {
   content: "\e7f5";
 }
+
 .ms-notifications-active:before {
   content: "\e7f7";
 }
+
 .ms-notifications-none:before {
   content: "\e7f5";
 }
+
 .ms-notifications-off:before {
   content: "\e7f6";
 }
+
 .ms-notifications-paused:before {
   content: "\e7f8";
 }
+
 .ms-numbers:before {
   content: "\eac7";
 }
+
 .ms-offline-bolt:before {
   content: "\e932";
 }
+
 .ms-offline-pin:before {
   content: "\e90a";
 }
+
 .ms-offline-share:before {
   content: "\e9c5";
 }
+
 .ms-oil-barrel:before {
   content: "\ec15";
 }
+
 .ms-on-device-training:before {
   content: "\ebfd";
 }
+
 .ms-ondemand-video:before {
   content: "\e63b";
 }
+
 .ms-online-prediction:before {
   content: "\f0eb";
 }
+
 .ms-opacity:before {
   content: "\e91c";
 }
+
 .ms-open-in-browser:before {
   content: "\e89d";
 }
+
 .ms-open-in-full:before {
   content: "\f1ce";
 }
+
 .ms-open-in-new:before {
   content: "\e89e";
 }
+
 .ms-open-in-new-off:before {
   content: "\e4f6";
 }
+
 .ms-open-with:before {
   content: "\e89f";
 }
+
 .ms-other-houses:before {
   content: "\e58c";
 }
+
 .ms-outbound:before {
   content: "\e1ca";
 }
+
 .ms-outbox:before {
   content: "\ef5f";
 }
+
 .ms-outdoor-garden:before {
   content: "\e205";
 }
+
 .ms-outdoor-grill:before {
   content: "\ea47";
 }
+
 .ms-outgoing-mail:before {
   content: "\f0d2";
 }
+
 .ms-outlet:before {
   content: "\f1d4";
 }
+
 .ms-outlined-flag:before {
   content: "\ea1a";
 }
+
 .ms-output:before {
   content: "\ebbe";
 }
+
 .ms-oven-gen:before {
   content: "\e843";
 }
+
 .ms-packet-mirroring:before {
   content: "\f115";
 }
+
 .ms-padding:before {
   content: "\e9c8";
 }
+
 .ms-pages:before {
   content: "\e7f9";
 }
+
 .ms-pageview:before {
   content: "\e8a0";
 }
+
 .ms-paid:before {
   content: "\f041";
 }
+
 .ms-palette:before {
   content: "\e40a";
 }
+
 .ms-pan-tool:before {
   content: "\e925";
 }
+
 .ms-pan-tool-alt:before {
   content: "\ebb9";
 }
+
 .ms-panorama:before {
   content: "\e40b";
 }
+
 .ms-panorama-fish-eye:before {
   content: "\e40c";
 }
+
 .ms-panorama-horizontal:before {
   content: "\e40d";
 }
+
 .ms-panorama-photosphere:before {
   content: "\e9c9";
 }
+
 .ms-panorama-vertical:before {
   content: "\e40e";
 }
+
 .ms-panorama-wide-angle:before {
   content: "\e40f";
 }
+
 .ms-paragliding:before {
   content: "\e50f";
 }
+
 .ms-park:before {
   content: "\ea63";
 }
+
 .ms-partly-cloudy-day:before {
   content: "\f172";
 }
+
 .ms-partly-cloudy-night:before {
   content: "\f174";
 }
+
 .ms-party-mode:before {
   content: "\e7fa";
 }
+
 .ms-password:before {
   content: "\f042";
 }
+
 .ms-pattern:before {
   content: "\f043";
 }
+
 .ms-pause:before {
   content: "\e034";
 }
+
 .ms-pause-circle:before {
   content: "\e1a2";
 }
+
 .ms-pause-circle-filled:before {
   content: "\e1a2";
 }
+
 .ms-pause-circle-outline:before {
   content: "\e1a2";
 }
+
 .ms-pause-presentation:before {
   content: "\e0ea";
 }
+
 .ms-payment:before {
   content: "\e8a1";
 }
+
 .ms-payments:before {
   content: "\ef63";
 }
+
 .ms-pedal-bike:before {
   content: "\eb29";
 }
+
 .ms-pending:before {
   content: "\ef64";
 }
+
 .ms-pending-actions:before {
   content: "\f1bb";
 }
+
 .ms-pentagon:before {
   content: "\eb50";
 }
+
 .ms-people:before {
   content: "\ea21";
 }
+
 .ms-people-alt:before {
   content: "\ea21";
 }
+
 .ms-people-outline:before {
   content: "\ea21";
 }
+
 .ms-percent:before {
   content: "\eb58";
 }
+
 .ms-pergola:before {
   content: "\e203";
 }
+
 .ms-perm-camera-mic:before {
   content: "\e8a2";
 }
+
 .ms-perm-contact-calendar:before {
   content: "\e8a3";
 }
+
 .ms-perm-data-setting:before {
   content: "\e8a4";
 }
+
 .ms-perm-device-information:before {
   content: "\e8a5";
 }
+
 .ms-perm-identity:before {
   content: "\f0d3";
 }
+
 .ms-perm-media:before {
   content: "\e8a7";
 }
+
 .ms-perm-phone-msg:before {
   content: "\e8a8";
 }
+
 .ms-perm-scan-wifi:before {
   content: "\e8a9";
 }
+
 .ms-person:before {
   content: "\f0d3";
 }
+
 .ms-person-add:before {
   content: "\ea4d";
 }
+
 .ms-person-add-alt:before {
   content: "\ea4d";
 }
+
 .ms-person-add-disabled:before {
   content: "\e9cb";
 }
+
 .ms-person-filled:before {
   content: "\f0d3";
 }
+
 .ms-person-off:before {
   content: "\e510";
 }
+
 .ms-person-outline:before {
   content: "\f0d3";
 }
+
 .ms-person-pin:before {
   content: "\e55a";
 }
+
 .ms-person-pin-circle:before {
   content: "\e56a";
 }
+
 .ms-person-remove:before {
   content: "\ef66";
 }
+
 .ms-person-search:before {
   content: "\f106";
 }
+
 .ms-personal-injury:before {
   content: "\e6da";
 }
+
 .ms-personal-video:before {
   content: "\e333";
 }
+
 .ms-personalized-recommendations:before {
   content: "\eb6c";
 }
+
 .ms-pest-control:before {
   content: "\f0fa";
 }
+
 .ms-pest-control-rodent:before {
   content: "\f0fd";
 }
+
 .ms-pets:before {
   content: "\e91d";
 }
+
 .ms-phishing:before {
   content: "\ead7";
 }
+
 .ms-phone:before {
   content: "\f0d4";
 }
+
 .ms-phone-alt:before {
   content: "\f0d4";
 }
+
 .ms-phone-android:before {
   content: "\e324";
 }
+
 .ms-phone-bluetooth-speaker:before {
   content: "\e61b";
 }
+
 .ms-phone-callback:before {
   content: "\e649";
 }
+
 .ms-phone-disabled:before {
   content: "\e9cc";
 }
+
 .ms-phone-enabled:before {
   content: "\e9cd";
 }
+
 .ms-phone-forwarded:before {
   content: "\e61c";
 }
+
 .ms-phone-in-talk:before {
   content: "\e61d";
 }
+
 .ms-phone-iphone:before {
   content: "\e325";
 }
+
 .ms-phone-locked:before {
   content: "\e61e";
 }
+
 .ms-phone-missed:before {
   content: "\e61f";
 }
+
 .ms-phone-paused:before {
   content: "\e620";
 }
+
 .ms-phonelink:before {
   content: "\e326";
 }
+
 .ms-phonelink-erase:before {
   content: "\e0db";
 }
+
 .ms-phonelink-lock:before {
   content: "\e0dc";
 }
+
 .ms-phonelink-off:before {
   content: "\e327";
 }
+
 .ms-phonelink-ring:before {
   content: "\e0dd";
 }
+
 .ms-phonelink-setup:before {
   content: "\ef41";
 }
+
 .ms-photo:before {
   content: "\e432";
 }
+
 .ms-photo-album:before {
   content: "\e411";
 }
+
 .ms-photo-camera:before {
   content: "\e412";
 }
+
 .ms-photo-camera-back:before {
   content: "\ef68";
 }
+
 .ms-photo-camera-front:before {
   content: "\ef69";
 }
+
 .ms-photo-filter:before {
   content: "\e43b";
 }
+
 .ms-photo-frame:before {
   content: "\f0d9";
 }
+
 .ms-photo-library:before {
   content: "\e413";
 }
+
 .ms-photo-size-select-actual:before {
   content: "\e432";
 }
+
 .ms-photo-size-select-large:before {
   content: "\e433";
 }
+
 .ms-photo-size-select-small:before {
   content: "\e434";
 }
+
 .ms-php:before {
   content: "\eb8f";
 }
+
 .ms-piano:before {
   content: "\e521";
 }
+
 .ms-piano-off:before {
   content: "\e520";
 }
+
 .ms-picture-as-pdf:before {
   content: "\e415";
 }
+
 .ms-picture-in-picture:before {
   content: "\e8aa";
 }
+
 .ms-picture-in-picture-alt:before {
   content: "\e911";
 }
+
 .ms-pie-chart:before {
   content: "\f0da";
 }
+
 .ms-pie-chart-filled:before {
   content: "\f0da";
 }
+
 .ms-pie-chart-outline:before {
   content: "\f0da";
 }
+
 .ms-pie-chart-outlined:before {
   content: "\f0da";
 }
+
 .ms-pin:before {
   content: "\f045";
 }
+
 .ms-pin-drop:before {
   content: "\e55e";
 }
+
 .ms-pin-end:before {
   content: "\e767";
 }
+
 .ms-pin-invoke:before {
   content: "\e763";
 }
+
 .ms-pinch:before {
   content: "\eb38";
 }
+
 .ms-pinch-zoom-in:before {
   content: "\f1fa";
 }
+
 .ms-pinch-zoom-out:before {
   content: "\f1fb";
 }
+
 .ms-pivot-table-chart:before {
   content: "\e9ce";
 }
+
 .ms-place:before {
   content: "\e55f";
 }
+
 .ms-place-item:before {
   content: "\f1f0";
 }
+
 .ms-plagiarism:before {
   content: "\ea5a";
 }
+
 .ms-play-arrow:before {
   content: "\e037";
 }
+
 .ms-play-circle:before {
   content: "\e1c4";
 }
+
 .ms-play-disabled:before {
   content: "\ef6a";
 }
+
 .ms-play-for-work:before {
   content: "\e906";
 }
+
 .ms-play-lesson:before {
   content: "\f047";
 }
+
 .ms-play-pause:before {
   content: "\f137";
 }
+
 .ms-play-services:before {
   content: "\ea93";
 }
+
 .ms-playlist-add:before {
   content: "\e03b";
 }
+
 .ms-playlist-add-check:before {
   content: "\e065";
 }
+
 .ms-playlist-add-check-circle:before {
   content: "\e7e6";
 }
+
 .ms-playlist-add-circle:before {
   content: "\e7e5";
 }
+
 .ms-playlist-play:before {
   content: "\e05f";
 }
+
 .ms-playlist-remove:before {
   content: "\eb80";
 }
+
 .ms-plumbing:before {
   content: "\f107";
 }
+
 .ms-plus-one:before {
   content: "\e800";
 }
+
 .ms-podcasts:before {
   content: "\f048";
 }
+
 .ms-podcasts-app:before {
   content: "\ea89";
 }
+
 .ms-point-of-sale:before {
   content: "\f17e";
 }
+
 .ms-policy:before {
   content: "\ea17";
 }
+
 .ms-poll:before {
   content: "\e85c";
 }
+
 .ms-polyline:before {
   content: "\ebbb";
 }
+
 .ms-polymer:before {
   content: "\e8ab";
 }
+
 .ms-pool:before {
   content: "\eb48";
 }
+
 .ms-portable-wifi-off:before {
   content: "\f087";
 }
+
 .ms-portrait:before {
   content: "\e851";
 }
+
 .ms-post-add:before {
   content: "\ea20";
 }
+
 .ms-power:before {
   content: "\e63c";
 }
+
 .ms-power-input:before {
   content: "\e336";
 }
+
 .ms-power-off:before {
   content: "\e646";
 }
+
 .ms-power-settings-new:before {
   content: "\e8ac";
 }
+
 .ms-precision-manufacturing:before {
   content: "\f049";
 }
+
 .ms-pregnant-woman:before {
   content: "\e91e";
 }
+
 .ms-present-to-all:before {
   content: "\e0df";
 }
+
 .ms-preview:before {
   content: "\f1c5";
 }
+
 .ms-price-change:before {
   content: "\f04a";
 }
+
 .ms-price-check:before {
   content: "\f04b";
 }
+
 .ms-print:before {
   content: "\e8ad";
 }
+
 .ms-print-disabled:before {
   content: "\e9cf";
 }
+
 .ms-priority:before {
   content: "\e19f";
 }
+
 .ms-priority-high:before {
   content: "\e645";
 }
+
 .ms-privacy:before {
   content: "\f148";
 }
+
 .ms-privacy-tip:before {
   content: "\f0dc";
 }
+
 .ms-private-connectivity:before {
   content: "\e744";
 }
+
 .ms-production-quantity-limits:before {
   content: "\e1d1";
 }
+
 .ms-propane:before {
   content: "\ec14";
 }
+
 .ms-propane-tank:before {
   content: "\ec13";
 }
+
 .ms-psychology:before {
   content: "\ea4a";
 }
+
 .ms-public:before {
   content: "\e80b";
 }
+
 .ms-public-off:before {
   content: "\f1ca";
 }
+
 .ms-publish:before {
   content: "\e255";
 }
+
 .ms-published-with-changes:before {
   content: "\f232";
 }
+
 .ms-punch-clock:before {
   content: "\eaa8";
 }
+
 .ms-qr-code:before {
   content: "\ef6b";
 }
+
 .ms-qr-code-2:before {
   content: "\e00a";
 }
+
 .ms-qr-code-scanner:before {
   content: "\f206";
 }
+
 .ms-query-builder:before {
   content: "\efd6";
 }
+
 .ms-query-stats:before {
   content: "\e4fc";
 }
+
 .ms-question-answer:before {
   content: "\e8af";
 }
+
 .ms-question-mark:before {
   content: "\eb8b";
 }
+
 .ms-queue:before {
   content: "\e03c";
 }
+
 .ms-queue-music:before {
   content: "\e03d";
 }
+
 .ms-queue-play-next:before {
   content: "\e066";
 }
+
 .ms-quick-phrases:before {
   content: "\e7d1";
 }
+
 .ms-quickreply:before {
   content: "\ef6c";
 }
+
 .ms-quiz:before {
   content: "\f04c";
 }
+
 .ms-r-mobiledata:before {
   content: "\f04d";
 }
+
 .ms-radar:before {
   content: "\f04e";
 }
+
 .ms-radio:before {
   content: "\e03e";
 }
+
 .ms-radio-button-checked:before {
   content: "\e837";
 }
+
 .ms-radio-button-unchecked:before {
   content: "\e836";
 }
+
 .ms-railway-alert:before {
   content: "\e9d1";
 }
+
 .ms-rainy:before {
   content: "\f176";
 }
+
 .ms-ramen-dining:before {
   content: "\ea64";
 }
+
 .ms-ramp-left:before {
   content: "\eb9c";
 }
+
 .ms-ramp-right:before {
   content: "\eb96";
 }
+
 .ms-range-hood:before {
   content: "\e1ea";
 }
+
 .ms-rate-review:before {
   content: "\e560";
 }
+
 .ms-raw-off:before {
   content: "\f04f";
 }
+
 .ms-raw-on:before {
   content: "\f050";
 }
+
 .ms-read-more:before {
   content: "\ef6d";
 }
+
 .ms-real-estate-agent:before {
   content: "\e73a";
 }
+
 .ms-receipt:before {
   content: "\e8b0";
 }
+
 .ms-receipt-long:before {
   content: "\ef6e";
 }
+
 .ms-recent-actors:before {
   content: "\e03f";
 }
+
 .ms-recommend:before {
   content: "\e9d2";
 }
+
 .ms-record-voice-over:before {
   content: "\e91f";
 }
+
 .ms-rectangle:before {
   content: "\eb54";
 }
+
 .ms-recycling:before {
   content: "\e760";
 }
+
 .ms-redeem:before {
   content: "\e8f6";
 }
+
 .ms-redo:before {
   content: "\e15a";
 }
+
 .ms-reduce-capacity:before {
   content: "\f21c";
 }
+
 .ms-refresh:before {
   content: "\e5d5";
 }
+
 .ms-remember-me:before {
   content: "\f051";
 }
+
 .ms-remote-gen:before {
   content: "\e83e";
 }
+
 .ms-remove:before {
   content: "\e15b";
 }
+
 .ms-remove-circle:before {
   content: "\f08f";
 }
+
 .ms-remove-circle-outline:before {
   content: "\f08f";
 }
+
 .ms-remove-done:before {
   content: "\e9d3";
 }
+
 .ms-remove-from-queue:before {
   content: "\e067";
 }
+
 .ms-remove-moderator:before {
   content: "\e9d4";
 }
+
 .ms-remove-red-eye:before {
   content: "\e8f4";
 }
+
 .ms-remove-road:before {
   content: "\ebfc";
 }
+
 .ms-remove-shopping-cart:before {
   content: "\e928";
 }
+
 .ms-reorder:before {
   content: "\e8fe";
 }
+
 .ms-repeat:before {
   content: "\e040";
 }
+
 .ms-repeat-on:before {
   content: "\e9d6";
 }
+
 .ms-repeat-one:before {
   content: "\e041";
 }
+
 .ms-repeat-one-on:before {
   content: "\e9d7";
 }
+
 .ms-replay:before {
   content: "\e042";
 }
+
 .ms-replay-10:before {
   content: "\e059";
 }
+
 .ms-replay-30:before {
   content: "\e05a";
 }
+
 .ms-replay-5:before {
   content: "\e05b";
 }
+
 .ms-replay-circle-filled:before {
   content: "\e9d8";
 }
+
 .ms-reply:before {
   content: "\e15e";
 }
+
 .ms-reply-all:before {
   content: "\e15f";
 }
+
 .ms-report:before {
   content: "\f052";
 }
+
 .ms-report-gmailerrorred:before {
   content: "\f052";
 }
+
 .ms-report-off:before {
   content: "\e170";
 }
+
 .ms-report-problem:before {
   content: "\f083";
 }
+
 .ms-request-page:before {
   content: "\f22c";
 }
+
 .ms-request-quote:before {
   content: "\f1b6";
 }
+
 .ms-reset-tv:before {
   content: "\e9d9";
 }
+
 .ms-restart-alt:before {
   content: "\f053";
 }
+
 .ms-restaurant:before {
   content: "\e56c";
 }
+
 .ms-restaurant-menu:before {
   content: "\e561";
 }
+
 .ms-restore:before {
   content: "\e8b3";
 }
+
 .ms-restore-from-trash:before {
   content: "\e938";
 }
+
 .ms-restore-page:before {
   content: "\e929";
 }
+
 .ms-retention:before {
   content: "\f215";
 }
+
 .ms-reviews:before {
   content: "\f07c";
 }
+
 .ms-rice-bowl:before {
   content: "\f1f5";
 }
+
 .ms-ring-volume:before {
   content: "\f0dd";
 }
+
 .ms-ring-volume-filled:before {
   content: "\f0dd";
 }
+
 .ms-rocket:before {
   content: "\eba5";
 }
+
 .ms-rocket-launch:before {
   content: "\eb9b";
 }
+
 .ms-roller-shades:before {
   content: "\ec12";
 }
+
 .ms-roller-shades-closed:before {
   content: "\ec11";
 }
+
 .ms-roller-skating:before {
   content: "\ebcd";
 }
+
 .ms-roofing:before {
   content: "\f201";
 }
+
 .ms-room-preferences:before {
   content: "\f1b8";
 }
+
 .ms-room-service:before {
   content: "\eb49";
 }
+
 .ms-rotate-90-degrees-ccw:before {
   content: "\e418";
 }
+
 .ms-rotate-90-degrees-cw:before {
   content: "\eaab";
 }
+
 .ms-rotate-left:before {
   content: "\e419";
 }
+
 .ms-rotate-right:before {
   content: "\e41a";
 }
+
 .ms-roundabout-left:before {
   content: "\eb99";
 }
+
 .ms-roundabout-right:before {
   content: "\eba3";
 }
+
 .ms-rounded-corner:before {
   content: "\e920";
 }
+
 .ms-route:before {
   content: "\eacd";
 }
+
 .ms-router:before {
   content: "\e328";
 }
+
 .ms-routine:before {
   content: "\e20c";
 }
+
 .ms-rowing:before {
   content: "\e921";
 }
+
 .ms-rss-feed:before {
   content: "\e0e5";
 }
+
 .ms-rsvp:before {
   content: "\f055";
 }
+
 .ms-rtt:before {
   content: "\e9ad";
 }
+
 .ms-rule:before {
   content: "\f1c2";
 }
+
 .ms-rule-folder:before {
   content: "\f1c9";
 }
+
 .ms-run-circle:before {
   content: "\ef6f";
 }
+
 .ms-running-with-errors:before {
   content: "\e51d";
 }
+
 .ms-rv-hookup:before {
   content: "\e642";
 }
+
 .ms-safety-check:before {
   content: "\ebef";
 }
+
 .ms-safety-divider:before {
   content: "\e1cc";
 }
+
 .ms-sailing:before {
   content: "\e502";
 }
+
 .ms-sanitizer:before {
   content: "\f21d";
 }
+
 .ms-satellite:before {
   content: "\e562";
 }
+
 .ms-satellite-alt:before {
   content: "\eb3a";
 }
+
 .ms-save:before {
   content: "\e161";
 }
+
 .ms-save-alt:before {
   content: "\f090";
 }
+
 .ms-save-as:before {
   content: "\eb60";
 }
+
 .ms-saved-search:before {
   content: "\ea11";
 }
+
 .ms-savings:before {
   content: "\e2eb";
 }
+
 .ms-scale:before {
   content: "\eb5f";
 }
+
 .ms-scanner:before {
   content: "\e329";
 }
+
 .ms-scatter-plot:before {
   content: "\e268";
 }
+
 .ms-scene:before {
   content: "\e2a7";
 }
+
 .ms-schedule:before {
   content: "\efd6";
 }
+
 .ms-schedule-send:before {
   content: "\ea0a";
 }
+
 .ms-schema:before {
   content: "\e4fd";
 }
+
 .ms-school:before {
   content: "\e80c";
 }
+
 .ms-science:before {
   content: "\ea4b";
 }
+
 .ms-score:before {
   content: "\e269";
 }
+
 .ms-scoreboard:before {
   content: "\ebd0";
 }
+
 .ms-screen-attention:before {
   content: "\f1ed";
 }
+
 .ms-screen-attention-off:before {
   content: "\f1ee";
 }
+
 .ms-screen-lock-landscape:before {
   content: "\e1be";
 }
+
 .ms-screen-lock-portrait:before {
   content: "\e1bf";
 }
+
 .ms-screen-lock-rotation:before {
   content: "\e1c0";
 }
+
 .ms-screen-rotation:before {
   content: "\e1c1";
 }
+
 .ms-screen-rotation-alt:before {
   content: "\ebee";
 }
+
 .ms-screen-search-desktop:before {
   content: "\ef70";
 }
+
 .ms-screen-share:before {
   content: "\e0e2";
 }
+
 .ms-screenshot:before {
   content: "\f056";
 }
+
 .ms-screenshot-monitor:before {
   content: "\ec08";
 }
+
 .ms-scuba-diving:before {
   content: "\ebce";
 }
+
 .ms-sd:before {
   content: "\e9dd";
 }
+
 .ms-sd-card:before {
   content: "\e623";
 }
+
 .ms-sd-card-alert:before {
   content: "\f057";
 }
+
 .ms-sd-storage:before {
   content: "\e623";
 }
+
 .ms-search:before {
   content: "\e8b6";
 }
+
 .ms-search-off:before {
   content: "\ea76";
 }
+
 .ms-security:before {
   content: "\e32a";
 }
+
 .ms-security-pro-monitoring:before {
   content: "\f142";
 }
+
 .ms-security-update:before {
   content: "\f072";
 }
+
 .ms-security-update-good:before {
   content: "\f073";
 }
+
 .ms-security-update-warning:before {
   content: "\f074";
 }
+
 .ms-segment:before {
   content: "\e94b";
 }
+
 .ms-select-all:before {
   content: "\e162";
 }
+
 .ms-select-check-box:before {
   content: "\f1fe";
 }
+
 .ms-self-improvement:before {
   content: "\ea78";
 }
+
 .ms-sell:before {
   content: "\f05b";
 }
+
 .ms-send:before {
   content: "\e163";
 }
+
 .ms-send-and-archive:before {
   content: "\ea0c";
 }
+
 .ms-send-time-extension:before {
   content: "\eadb";
 }
+
 .ms-send-to-mobile:before {
   content: "\f05c";
 }
+
 .ms-sensor-door:before {
   content: "\f1b5";
 }
+
 .ms-sensor-occupied:before {
   content: "\ec10";
 }
+
 .ms-sensor-window:before {
   content: "\f1b4";
 }
+
 .ms-sensors:before {
   content: "\e51e";
 }
+
 .ms-sensors-off:before {
   content: "\e51f";
 }
+
 .ms-sentiment-dissatisfied:before {
   content: "\e811";
 }
+
 .ms-sentiment-extremely-dissatisfied:before {
   content: "\f194";
 }
+
 .ms-sentiment-neutral:before {
   content: "\e812";
 }
+
 .ms-sentiment-satisfied:before {
   content: "\e813";
 }
+
 .ms-sentiment-satisfied-alt:before {
   content: "\e813";
 }
+
 .ms-sentiment-very-dissatisfied:before {
   content: "\e814";
 }
+
 .ms-sentiment-very-satisfied:before {
   content: "\e815";
 }
+
 .ms-service-directory:before {
   content: "\f1cb";
 }
+
 .ms-set-meal:before {
   content: "\f1ea";
 }
+
 .ms-settings:before {
   content: "\e8b8";
 }
+
 .ms-settings-accessibility:before {
   content: "\f05d";
 }
+
 .ms-settings-applications:before {
   content: "\e8b9";
 }
+
 .ms-settings-backup-restore:before {
   content: "\e8ba";
 }
+
 .ms-settings-bluetooth:before {
   content: "\e8bb";
 }
+
 .ms-settings-brightness:before {
   content: "\e8bd";
 }
+
 .ms-settings-cell:before {
   content: "\e8bc";
 }
+
 .ms-settings-ethernet:before {
   content: "\e8be";
 }
+
 .ms-settings-input-antenna:before {
   content: "\e8bf";
 }
+
 .ms-settings-input-component:before {
   content: "\e8c0";
 }
+
 .ms-settings-input-composite:before {
   content: "\e8c0";
 }
+
 .ms-settings-input-hdmi:before {
   content: "\e8c2";
 }
+
 .ms-settings-input-svideo:before {
   content: "\e8c3";
 }
+
 .ms-settings-overscan:before {
   content: "\e8c4";
 }
+
 .ms-settings-phone:before {
   content: "\e8c5";
 }
+
 .ms-settings-power:before {
   content: "\e8c6";
 }
+
 .ms-settings-remote:before {
   content: "\e8c7";
 }
+
 .ms-settings-suggest:before {
   content: "\f05e";
 }
+
 .ms-settings-system-daydream:before {
   content: "\e1c3";
 }
+
 .ms-settings-voice:before {
   content: "\e8c8";
 }
+
 .ms-settop-component:before {
   content: "\e2ac";
 }
+
 .ms-severe-cold:before {
   content: "\ebd3";
 }
+
 .ms-share:before {
   content: "\e80d";
 }
+
 .ms-share-location:before {
   content: "\f05f";
 }
+
 .ms-sheets:before {
   content: "\ea94";
 }
+
 .ms-sheets-add-on:before {
   content: "\f0de";
 }
+
 .ms-sheets-apps-script:before {
   content: "\f0df";
 }
+
 .ms-shield:before {
   content: "\e9e0";
 }
+
 .ms-shield-moon:before {
   content: "\eaa9";
 }
+
 .ms-shop:before {
   content: "\e8c9";
 }
+
 .ms-shop-2:before {
   content: "\e8ca";
 }
+
 .ms-shop-two:before {
   content: "\e8ca";
 }
+
 .ms-shopping-bag:before {
   content: "\f1cc";
 }
+
 .ms-shopping-basket:before {
   content: "\e8cb";
 }
+
 .ms-shopping-cart:before {
   content: "\e8cc";
 }
+
 .ms-shopping-cart-checkout:before {
   content: "\eb88";
 }
+
 .ms-short-text:before {
   content: "\e261";
 }
+
 .ms-shortcut:before {
   content: "\f060";
 }
+
 .ms-show-chart:before {
   content: "\e6e1";
 }
+
 .ms-shower:before {
   content: "\f061";
 }
+
 .ms-shuffle:before {
   content: "\e043";
 }
+
 .ms-shuffle-on:before {
   content: "\e9e1";
 }
+
 .ms-shutter-speed:before {
   content: "\e43d";
 }
+
 .ms-sick:before {
   content: "\f220";
 }
+
 .ms-sign-language:before {
   content: "\ebe5";
 }
+
 .ms-signal-cellular-0-bar:before {
   content: "\f0a8";
 }
+
 .ms-signal-cellular-1-bar:before {
   content: "\f0a9";
 }
+
 .ms-signal-cellular-2-bar:before {
   content: "\f0aa";
 }
+
 .ms-signal-cellular-3-bar:before {
   content: "\f0ab";
 }
+
 .ms-signal-cellular-4-bar:before {
   content: "\e1c8";
 }
+
 .ms-signal-cellular-alt:before {
   content: "\e202";
 }
+
 .ms-signal-cellular-alt-1-bar:before {
   content: "\ebdf";
 }
+
 .ms-signal-cellular-alt-2-bar:before {
   content: "\ebe3";
 }
+
 .ms-signal-cellular-connected-no-internet-0-bar:before {
   content: "\f0ac";
 }
+
 .ms-signal-cellular-connected-no-internet-4-bar:before {
   content: "\e1cd";
 }
+
 .ms-signal-cellular-no-sim:before {
   content: "\e1ce";
 }
+
 .ms-signal-cellular-nodata:before {
   content: "\f062";
 }
+
 .ms-signal-cellular-null:before {
   content: "\e1cf";
 }
+
 .ms-signal-cellular-off:before {
   content: "\e1d0";
 }
+
 .ms-signal-disconnected:before {
   content: "\f239";
 }
+
 .ms-signal-wifi-0-bar:before {
   content: "\f0b0";
 }
+
 .ms-signal-wifi-4-bar:before {
   content: "\f065";
 }
+
 .ms-signal-wifi-4-bar-lock:before {
   content: "\e1e1";
 }
+
 .ms-signal-wifi-bad:before {
   content: "\f064";
 }
+
 .ms-signal-wifi-connected-no-internet-4:before {
   content: "\f064";
 }
+
 .ms-signal-wifi-off:before {
   content: "\e1da";
 }
+
 .ms-signal-wifi-statusbar-4-bar:before {
   content: "\f065";
 }
+
 .ms-signal-wifi-statusbar-not-connected:before {
   content: "\f0ef";
 }
+
 .ms-signal-wifi-statusbar-null:before {
   content: "\f067";
 }
+
 .ms-signpost:before {
   content: "\eb91";
 }
+
 .ms-sim-card:before {
   content: "\e32b";
 }
+
 .ms-sim-card-alert:before {
   content: "\f057";
 }
+
 .ms-sim-card-download:before {
   content: "\f068";
 }
+
 .ms-single-bed:before {
   content: "\ea48";
 }
+
 .ms-sip:before {
   content: "\f069";
 }
+
 .ms-skateboarding:before {
   content: "\e511";
 }
+
 .ms-skip-next:before {
   content: "\e044";
 }
+
 .ms-skip-previous:before {
   content: "\e045";
 }
+
 .ms-sledding:before {
   content: "\e512";
 }
+
 .ms-slides:before {
   content: "\ea90";
 }
+
 .ms-slides-add-on:before {
   content: "\f0e0";
 }
+
 .ms-slides-apps-script:before {
   content: "\f0e1";
 }
+
 .ms-slideshow:before {
   content: "\e41b";
 }
+
 .ms-slow-motion-video:before {
   content: "\e068";
 }
+
 .ms-smart-button:before {
   content: "\f1c1";
 }
+
 .ms-smart-display:before {
   content: "\f06a";
 }
+
 .ms-smart-outlet:before {
   content: "\e844";
 }
+
 .ms-smart-screen:before {
   content: "\f06b";
 }
+
 .ms-smart-toy:before {
   content: "\f06c";
 }
+
 .ms-smartphone:before {
   content: "\e32c";
 }
+
 .ms-smoke-free:before {
   content: "\eb4a";
 }
+
 .ms-smoking-rooms:before {
   content: "\eb4b";
 }
+
 .ms-sms:before {
   content: "\e625";
 }
+
 .ms-sms-failed:before {
   content: "\e87f";
 }
+
 .ms-snippet-folder:before {
   content: "\f1c7";
 }
+
 .ms-snooze:before {
   content: "\e046";
 }
+
 .ms-snowboarding:before {
   content: "\e513";
 }
+
 .ms-snowing:before {
   content: "\e80f";
 }
+
 .ms-snowmobile:before {
   content: "\e503";
 }
+
 .ms-snowshoeing:before {
   content: "\e514";
 }
+
 .ms-soap:before {
   content: "\f1b2";
 }
+
 .ms-social-distance:before {
   content: "\e1cb";
 }
+
 .ms-solar-power:before {
   content: "\ec0f";
 }
+
 .ms-sort:before {
   content: "\e164";
 }
+
 .ms-sort-by-alpha:before {
   content: "\e053";
 }
+
 .ms-sos:before {
   content: "\ebf7";
 }
+
 .ms-sound-detection-dog-barking:before {
   content: "\f149";
 }
+
 .ms-sound-detection-glass-break:before {
   content: "\f14a";
 }
+
 .ms-sound-detection-loud-sound:before {
   content: "\f14b";
 }
+
 .ms-sound-sensing:before {
   content: "\f146";
 }
+
 .ms-soup-kitchen:before {
   content: "\e7d3";
 }
+
 .ms-south:before {
   content: "\f1e3";
 }
+
 .ms-south-america:before {
   content: "\e7e4";
 }
+
 .ms-south-east:before {
   content: "\f1e4";
 }
+
 .ms-south-west:before {
   content: "\f1e5";
 }
+
 .ms-spa:before {
   content: "\eb4c";
 }
+
 .ms-space-bar:before {
   content: "\e256";
 }
+
 .ms-space-dashboard:before {
   content: "\e66b";
 }
+
 .ms-spatial-audio:before {
   content: "\ebeb";
 }
+
 .ms-spatial-audio-off:before {
   content: "\ebe8";
 }
+
 .ms-spatial-tracking:before {
   content: "\ebea";
 }
+
 .ms-speaker:before {
   content: "\e32d";
 }
+
 .ms-speaker-group:before {
   content: "\e32e";
 }
+
 .ms-speaker-notes:before {
   content: "\e8cd";
 }
+
 .ms-speaker-notes-off:before {
   content: "\e92a";
 }
+
 .ms-speaker-phone:before {
   content: "\e0d2";
 }
+
 .ms-speed:before {
   content: "\e9e4";
 }
+
 .ms-spellcheck:before {
   content: "\e8ce";
 }
+
 .ms-splitscreen:before {
   content: "\f06d";
 }
+
 .ms-spoke:before {
   content: "\e9a7";
 }
+
 .ms-sports:before {
   content: "\ea30";
 }
+
 .ms-sports-bar:before {
   content: "\f1f3";
 }
+
 .ms-sports-baseball:before {
   content: "\ea51";
 }
+
 .ms-sports-basketball:before {
   content: "\ea26";
 }
+
 .ms-sports-cricket:before {
   content: "\ea27";
 }
+
 .ms-sports-esports:before {
   content: "\ea28";
 }
+
 .ms-sports-football:before {
   content: "\ea29";
 }
+
 .ms-sports-golf:before {
   content: "\ea2a";
 }
+
 .ms-sports-gymnastics:before {
   content: "\ebc4";
 }
+
 .ms-sports-handball:before {
   content: "\ea33";
 }
+
 .ms-sports-hockey:before {
   content: "\ea2b";
 }
+
 .ms-sports-kabaddi:before {
   content: "\ea34";
 }
+
 .ms-sports-martial-arts:before {
   content: "\eae9";
 }
+
 .ms-sports-mma:before {
   content: "\ea2c";
 }
+
 .ms-sports-motorsports:before {
   content: "\ea2d";
 }
+
 .ms-sports-rugby:before {
   content: "\ea2e";
 }
+
 .ms-sports-score:before {
   content: "\f06e";
 }
+
 .ms-sports-soccer:before {
   content: "\ea2f";
 }
+
 .ms-sports-tennis:before {
   content: "\ea32";
 }
+
 .ms-sports-volleyball:before {
   content: "\ea31";
 }
+
 .ms-sprinkler:before {
   content: "\e29a";
 }
+
 .ms-square:before {
   content: "\eb36";
 }
+
 .ms-square-foot:before {
   content: "\ea49";
 }
+
 .ms-ssid-chart:before {
   content: "\eb66";
 }
+
 .ms-stabilization:before {
   content: "\f1d3";
 }
+
 .ms-stabilization-action:before {
   content: "\f226";
 }
+
 .ms-stabilization-lock:before {
   content: "\f1eb";
 }
+
 .ms-stabilization-pan:before {
   content: "\f1ec";
 }
+
 .ms-stacked-bar-chart:before {
   content: "\e9e6";
 }
+
 .ms-stacked-line-chart:before {
   content: "\f22b";
 }
+
 .ms-stadia-controller:before {
   content: "\f135";
 }
+
 .ms-stadium:before {
   content: "\eb90";
 }
+
 .ms-stairs:before {
   content: "\f1a9";
 }
+
 .ms-star:before {
   content: "\f0ec";
 }
+
 .ms-star-border:before {
   content: "\f099";
 }
+
 .ms-star-border-purple500:before {
   content: "\f099";
 }
+
 .ms-star-half:before {
   content: "\e839";
 }
+
 .ms-star-outline:before {
   content: "\f099";
 }
+
 .ms-star-purple500:before {
   content: "\f0ec";
 }
+
 .ms-star-rate:before {
   content: "\f0ec";
 }
+
 .ms-stars:before {
   content: "\e8d0";
 }
+
 .ms-start:before {
   content: "\e089";
 }
+
 .ms-stateful:before {
   content: "\f19a";
 }
+
 .ms-stay-current-landscape:before {
   content: "\e0d3";
 }
+
 .ms-stay-current-portrait:before {
   content: "\e0d4";
 }
+
 .ms-stay-primary-landscape:before {
   content: "\e0d5";
 }
+
 .ms-stay-primary-portrait:before {
   content: "\e0d6";
 }
+
 .ms-sticky-note-2:before {
   content: "\f1fc";
 }
+
 .ms-stop:before {
   content: "\e047";
 }
+
 .ms-stop-circle:before {
   content: "\ef71";
 }
+
 .ms-stop-screen-share:before {
   content: "\e0e3";
 }
+
 .ms-storage:before {
   content: "\e1db";
 }
+
 .ms-store:before {
   content: "\e8d1";
 }
+
 .ms-store-mall-directory:before {
   content: "\e8d1";
 }
+
 .ms-storefront:before {
   content: "\ea12";
 }
+
 .ms-storm:before {
   content: "\f070";
 }
+
 .ms-straight:before {
   content: "\eb95";
 }
+
 .ms-straighten:before {
   content: "\e41c";
 }
+
 .ms-stream:before {
   content: "\e9e9";
 }
+
 .ms-streetview:before {
   content: "\e56e";
 }
+
 .ms-strikethrough-s:before {
   content: "\e257";
 }
+
 .ms-stroller:before {
   content: "\f1ae";
 }
+
 .ms-style:before {
   content: "\e41d";
 }
+
 .ms-styler:before {
   content: "\e273";
 }
+
 .ms-subdirectory-arrow-left:before {
   content: "\e5d9";
 }
+
 .ms-subdirectory-arrow-right:before {
   content: "\e5da";
 }
+
 .ms-subject:before {
   content: "\e8d2";
 }
+
 .ms-subscript:before {
   content: "\f111";
 }
+
 .ms-subscriptions:before {
   content: "\e064";
 }
+
 .ms-subtitles:before {
   content: "\e048";
 }
+
 .ms-subtitles-off:before {
   content: "\ef72";
 }
+
 .ms-subway:before {
   content: "\e56f";
 }
+
 .ms-summarize:before {
   content: "\f071";
 }
+
 .ms-sunny:before {
   content: "\e81a";
 }
+
 .ms-sunny-snowing:before {
   content: "\e819";
 }
+
 .ms-superscript:before {
   content: "\f112";
 }
+
 .ms-supervised-user-circle:before {
   content: "\e939";
 }
+
 .ms-supervisor-account:before {
   content: "\e8d3";
 }
+
 .ms-support:before {
   content: "\ef73";
 }
+
 .ms-support-agent:before {
   content: "\f0e2";
 }
+
 .ms-surfing:before {
   content: "\e515";
 }
+
 .ms-surround-sound:before {
   content: "\e049";
 }
+
 .ms-swap-calls:before {
   content: "\e0d7";
 }
+
 .ms-swap-horiz:before {
   content: "\e8d4";
 }
+
 .ms-swap-horizontal-circle:before {
   content: "\e933";
 }
+
 .ms-swap-vert:before {
   content: "\e8d5";
 }
+
 .ms-swap-vertical-circle:before {
   content: "\e8d6";
 }
+
 .ms-swipe:before {
   content: "\e9ec";
 }
+
 .ms-swipe-down:before {
   content: "\eb53";
 }
+
 .ms-swipe-down-alt:before {
   content: "\eb30";
 }
+
 .ms-swipe-left:before {
   content: "\eb59";
 }
+
 .ms-swipe-left-alt:before {
   content: "\eb33";
 }
+
 .ms-swipe-right:before {
   content: "\eb52";
 }
+
 .ms-swipe-right-alt:before {
   content: "\eb56";
 }
+
 .ms-swipe-up:before {
   content: "\eb2e";
 }
+
 .ms-swipe-up-alt:before {
   content: "\eb35";
 }
+
 .ms-swipe-vertical:before {
   content: "\eb51";
 }
+
 .ms-switch:before {
   content: "\e1f4";
 }
+
 .ms-switch-access-shortcut:before {
   content: "\e7e1";
 }
+
 .ms-switch-access-shortcut-add:before {
   content: "\e7e2";
 }
+
 .ms-switch-account:before {
   content: "\e9ed";
 }
+
 .ms-switch-camera:before {
   content: "\e41e";
 }
+
 .ms-switch-left:before {
   content: "\f1d1";
 }
+
 .ms-switch-right:before {
   content: "\f1d2";
 }
+
 .ms-switch-video:before {
   content: "\e41f";
 }
+
 .ms-synagogue:before {
   content: "\eab0";
 }
+
 .ms-sync:before {
   content: "\e627";
 }
+
 .ms-sync-alt:before {
   content: "\ea18";
 }
+
 .ms-sync-disabled:before {
   content: "\e628";
 }
+
 .ms-sync-lock:before {
   content: "\eaee";
 }
+
 .ms-sync-problem:before {
   content: "\e629";
 }
+
 .ms-system-security-update:before {
   content: "\f072";
 }
+
 .ms-system-security-update-good:before {
   content: "\f073";
 }
+
 .ms-system-security-update-warning:before {
   content: "\f074";
 }
+
 .ms-system-update:before {
   content: "\f072";
 }
+
 .ms-system-update-alt:before {
   content: "\e8d7";
 }
+
 .ms-tab:before {
   content: "\e8d8";
 }
+
 .ms-tab-unselected:before {
   content: "\e8d9";
 }
+
 .ms-table:before {
   content: "\f191";
 }
+
 .ms-table-bar:before {
   content: "\ead2";
 }
+
 .ms-table-chart:before {
   content: "\e265";
 }
+
 .ms-table-restaurant:before {
   content: "\eac6";
 }
+
 .ms-table-rows:before {
   content: "\f101";
 }
+
 .ms-table-view:before {
   content: "\f1be";
 }
+
 .ms-tablet:before {
   content: "\e32f";
 }
+
 .ms-tablet-android:before {
   content: "\e330";
 }
+
 .ms-tablet-mac:before {
   content: "\e331";
 }
+
 .ms-tag:before {
   content: "\e9ef";
 }
+
 .ms-tag-faces:before {
   content: "\ea22";
 }
+
 .ms-takeout-dining:before {
   content: "\ea74";
 }
+
 .ms-tamper-detection-off:before {
   content: "\e82e";
 }
+
 .ms-tap-and-play:before {
   content: "\e62b";
 }
+
 .ms-tapas:before {
   content: "\f1e9";
 }
+
 .ms-task:before {
   content: "\f075";
 }
+
 .ms-task-alt:before {
   content: "\e2e6";
 }
+
 .ms-taxi-alert:before {
   content: "\ef74";
 }
+
 .ms-team-dashboard:before {
   content: "\e013";
 }
+
 .ms-temple-buddhist:before {
   content: "\eab3";
 }
+
 .ms-temple-hindu:before {
   content: "\eaaf";
 }
+
 .ms-tenancy:before {
   content: "\f0e3";
 }
+
 .ms-terminal:before {
   content: "\eb8e";
 }
+
 .ms-terrain:before {
   content: "\e564";
 }
+
 .ms-text-decrease:before {
   content: "\eadd";
 }
+
 .ms-text-fields:before {
   content: "\e262";
 }
+
 .ms-text-format:before {
   content: "\e165";
 }
+
 .ms-text-increase:before {
   content: "\eae2";
 }
+
 .ms-text-rotate-up:before {
   content: "\e93a";
 }
+
 .ms-text-rotate-vertical:before {
   content: "\e93b";
 }
+
 .ms-text-rotation-angledown:before {
   content: "\e93c";
 }
+
 .ms-text-rotation-angleup:before {
   content: "\e93d";
 }
+
 .ms-text-rotation-down:before {
   content: "\e93e";
 }
+
 .ms-text-rotation-none:before {
   content: "\e93f";
 }
+
 .ms-text-snippet:before {
   content: "\f1c6";
 }
+
 .ms-text-to-speech:before {
   content: "\f1bc";
 }
+
 .ms-textsms:before {
   content: "\e625";
 }
+
 .ms-texture:before {
   content: "\e421";
 }
+
 .ms-theater-comedy:before {
   content: "\ea66";
 }
+
 .ms-theaters:before {
   content: "\e8da";
 }
+
 .ms-thermometer:before {
   content: "\e846";
 }
+
 .ms-thermostat:before {
   content: "\f076";
 }
+
 .ms-thermostat-auto:before {
   content: "\f077";
 }
+
 .ms-thermostat-carbon:before {
   content: "\f178";
 }
+
 .ms-threat-intelligence:before {
   content: "\eaed";
 }
+
 .ms-thumb-down:before {
   content: "\e8db";
 }
+
 .ms-thumb-down-alt:before {
   content: "\e8db";
 }
+
 .ms-thumb-down-filled:before {
   content: "\e8db";
 }
+
 .ms-thumb-down-off:before {
   content: "\e8db";
 }
+
 .ms-thumb-down-off-alt:before {
   content: "\e8db";
 }
+
 .ms-thumb-up:before {
   content: "\f079";
 }
+
 .ms-thumb-up-alt:before {
   content: "\f079";
 }
+
 .ms-thumb-up-filled:before {
   content: "\f079";
 }
+
 .ms-thumb-up-off:before {
   content: "\f079";
 }
+
 .ms-thumb-up-off-alt:before {
   content: "\f079";
 }
+
 .ms-thumbs-up-down:before {
   content: "\e8dd";
 }
+
 .ms-thunderstorm:before {
   content: "\ebdb";
 }
+
 .ms-time-auto:before {
   content: "\f0e4";
 }
+
 .ms-time-to-leave:before {
   content: "\eff7";
 }
+
 .ms-timelapse:before {
   content: "\e422";
 }
+
 .ms-timeline:before {
   content: "\e922";
 }
+
 .ms-timer:before {
   content: "\e425";
 }
+
 .ms-timer-10:before {
   content: "\e423";
 }
+
 .ms-timer-10-alt-1:before {
   content: "\efbf";
 }
+
 .ms-timer-10-select:before {
   content: "\f07a";
 }
+
 .ms-timer-3:before {
   content: "\e424";
 }
+
 .ms-timer-3-alt-1:before {
   content: "\efc0";
 }
+
 .ms-timer-3-select:before {
   content: "\f07b";
 }
+
 .ms-timer-off:before {
   content: "\e426";
 }
+
 .ms-tips-and-updates:before {
   content: "\e79a";
 }
+
 .ms-tire-repair:before {
   content: "\ebc8";
 }
+
 .ms-title:before {
   content: "\e264";
 }
+
 .ms-toc:before {
   content: "\e8de";
 }
+
 .ms-today:before {
   content: "\e8df";
 }
+
 .ms-toggle-off:before {
   content: "\e9f5";
 }
+
 .ms-toggle-on:before {
   content: "\e9f6";
 }
+
 .ms-token:before {
   content: "\ea25";
 }
+
 .ms-toll:before {
   content: "\e8e0";
 }
+
 .ms-tonality:before {
   content: "\e427";
 }
+
 .ms-topic:before {
   content: "\f1c8";
 }
+
 .ms-tornado:before {
   content: "\e199";
 }
+
 .ms-touch-app:before {
   content: "\e913";
 }
+
 .ms-tour:before {
   content: "\ef75";
 }
+
 .ms-toys:before {
   content: "\e332";
 }
+
 .ms-track-changes:before {
   content: "\e8e1";
 }
+
 .ms-traffic:before {
   content: "\e565";
 }
+
 .ms-trail-length:before {
   content: "\eb5e";
 }
+
 .ms-trail-length-medium:before {
   content: "\eb63";
 }
+
 .ms-trail-length-short:before {
   content: "\eb6d";
 }
+
 .ms-train:before {
   content: "\e570";
 }
+
 .ms-tram:before {
   content: "\e571";
 }
+
 .ms-transfer-within-a-station:before {
   content: "\e572";
 }
+
 .ms-transform:before {
   content: "\e428";
 }
+
 .ms-transgender:before {
   content: "\e58d";
 }
+
 .ms-transit-enterexit:before {
   content: "\e579";
 }
+
 .ms-translate:before {
   content: "\e8e2";
 }
+
 .ms-transportation:before {
   content: "\e21d";
 }
+
 .ms-travel-explore:before {
   content: "\e2db";
 }
+
 .ms-trending-down:before {
   content: "\e8e3";
 }
+
 .ms-trending-flat:before {
   content: "\e8e4";
 }
+
 .ms-trending-up:before {
   content: "\e8e5";
 }
+
 .ms-trip-origin:before {
   content: "\e57b";
 }
+
 .ms-try:before {
   content: "\f07c";
 }
+
 .ms-tsunami:before {
   content: "\ebd8";
 }
+
 .ms-tty:before {
   content: "\f1aa";
 }
+
 .ms-tune:before {
   content: "\e429";
 }
+
 .ms-tungsten:before {
   content: "\f00d";
 }
+
 .ms-turn-left:before {
   content: "\eba6";
 }
+
 .ms-turn-right:before {
   content: "\ebab";
 }
+
 .ms-turn-sharp-left:before {
   content: "\eba7";
 }
+
 .ms-turn-sharp-right:before {
   content: "\ebaa";
 }
+
 .ms-turn-slight-left:before {
   content: "\eba4";
 }
+
 .ms-turn-slight-right:before {
   content: "\eb9a";
 }
+
 .ms-turned-in:before {
   content: "\e8e7";
 }
+
 .ms-turned-in-not:before {
   content: "\e8e7";
 }
+
 .ms-tv:before {
   content: "\e333";
 }
+
 .ms-tv-gen:before {
   content: "\e830";
 }
+
 .ms-tv-off:before {
   content: "\e647";
 }
+
 .ms-tv-with-assistant:before {
   content: "\e785";
 }
+
 .ms-two-wheeler:before {
   content: "\e9f9";
 }
+
 .ms-type-specimen:before {
   content: "\f8f0";
 }
+
 .ms-u-turn-left:before {
   content: "\eba1";
 }
+
 .ms-u-turn-right:before {
   content: "\eba2";
 }
+
 .ms-umbrella:before {
   content: "\f1ad";
 }
+
 .ms-unarchive:before {
   content: "\e169";
 }
+
 .ms-unblock-flipped:before {
   content: "\efc4";
 }
+
 .ms-undo:before {
   content: "\e166";
 }
+
 .ms-unfold-less:before {
   content: "\e5d6";
 }
+
 .ms-unfold-more:before {
   content: "\e5d7";
 }
+
 .ms-unpin:before {
   content: "\e017";
 }
+
 .ms-unpublished:before {
   content: "\f236";
 }
+
 .ms-unsubscribe:before {
   content: "\e0eb";
 }
+
 .ms-upcoming:before {
   content: "\f07e";
 }
+
 .ms-update:before {
   content: "\e923";
 }
+
 .ms-update-disabled:before {
   content: "\e075";
 }
+
 .ms-upgrade:before {
   content: "\f0fb";
 }
+
 .ms-upload:before {
   content: "\f09b";
 }
+
 .ms-upload-file:before {
   content: "\e9fc";
 }
+
 .ms-usb:before {
   content: "\e1e0";
 }
+
 .ms-usb-off:before {
   content: "\e4fa";
 }
+
 .ms-vaccines:before {
   content: "\e138";
 }
+
 .ms-valve:before {
   content: "\e224";
 }
+
 .ms-vape-free:before {
   content: "\ebc6";
 }
+
 .ms-vaping-rooms:before {
   content: "\ebcf";
 }
+
 .ms-verified:before {
   content: "\ef76";
 }
+
 .ms-verified-user:before {
   content: "\f013";
 }
+
 .ms-vertical-align-bottom:before {
   content: "\e258";
 }
+
 .ms-vertical-align-center:before {
   content: "\e259";
 }
+
 .ms-vertical-align-top:before {
   content: "\e25a";
 }
+
 .ms-vertical-distribute:before {
   content: "\e076";
 }
+
 .ms-vertical-shades:before {
   content: "\ec0e";
 }
+
 .ms-vertical-shades-closed:before {
   content: "\ec0d";
 }
+
 .ms-vertical-split:before {
   content: "\e949";
 }
+
 .ms-vibration:before {
   content: "\e62d";
 }
+
 .ms-video-audio-call:before {
   content: "\f183";
 }
+
 .ms-video-call:before {
   content: "\e070";
 }
+
 .ms-video-camera-back:before {
   content: "\f07f";
 }
+
 .ms-video-camera-front:before {
   content: "\f080";
 }
+
 .ms-video-file:before {
   content: "\eb87";
 }
+
 .ms-video-label:before {
   content: "\e071";
 }
+
 .ms-video-library:before {
   content: "\e04a";
 }
+
 .ms-video-settings:before {
   content: "\ea75";
 }
+
 .ms-video-stable:before {
   content: "\f081";
 }
+
 .ms-videocam:before {
   content: "\e04b";
 }
+
 .ms-videocam-off:before {
   content: "\e04c";
 }
+
 .ms-videogame-asset:before {
   content: "\e338";
 }
+
 .ms-videogame-asset-off:before {
   content: "\e500";
 }
+
 .ms-view-agenda:before {
   content: "\e8e9";
 }
+
 .ms-view-array:before {
   content: "\e8ea";
 }
+
 .ms-view-carousel:before {
   content: "\e8eb";
 }
+
 .ms-view-column:before {
   content: "\e8ec";
 }
+
 .ms-view-comfy:before {
   content: "\e42a";
 }
+
 .ms-view-comfy-alt:before {
   content: "\eb73";
 }
+
 .ms-view-compact:before {
   content: "\e42b";
 }
+
 .ms-view-compact-alt:before {
   content: "\eb74";
 }
+
 .ms-view-cozy:before {
   content: "\eb75";
 }
+
 .ms-view-day:before {
   content: "\e8ed";
 }
+
 .ms-view-headline:before {
   content: "\e8ee";
 }
+
 .ms-view-in-ar:before {
   content: "\e9fe";
 }
+
 .ms-view-in-ar-new:before {
   content: "\efc9";
 }
+
 .ms-view-kanban:before {
   content: "\eb7f";
 }
+
 .ms-view-list:before {
   content: "\e8ef";
 }
+
 .ms-view-module:before {
   content: "\e8f0";
 }
+
 .ms-view-quilt:before {
   content: "\e8f1";
 }
+
 .ms-view-sidebar:before {
   content: "\f114";
 }
+
 .ms-view-stream:before {
   content: "\e8f2";
 }
+
 .ms-view-timeline:before {
   content: "\eb85";
 }
+
 .ms-view-week:before {
   content: "\e8f3";
 }
+
 .ms-vignette:before {
   content: "\e435";
 }
+
 .ms-villa:before {
   content: "\e586";
 }
+
 .ms-visibility:before {
   content: "\e8f4";
 }
+
 .ms-visibility-off:before {
   content: "\e8f5";
 }
+
 .ms-voice-chat:before {
   content: "\e62e";
 }
+
 .ms-voice-over-off:before {
   content: "\e94a";
 }
+
 .ms-voicemail:before {
   content: "\e0d9";
 }
+
 .ms-volcano:before {
   content: "\ebda";
 }
+
 .ms-volume-down:before {
   content: "\e04d";
 }
+
 .ms-volume-down-alt:before {
   content: "\e79c";
 }
+
 .ms-volume-mute:before {
   content: "\e04e";
 }
+
 .ms-volume-off:before {
   content: "\e04f";
 }
+
 .ms-volume-up:before {
   content: "\e050";
 }
+
 .ms-volunteer-activism:before {
   content: "\ea70";
 }
+
 .ms-vpn-googleone:before {
   content: "\e1c9";
 }
+
 .ms-vpn-key:before {
   content: "\e0da";
 }
+
 .ms-vpn-key-off:before {
   content: "\eb7a";
 }
+
 .ms-vpn-lock:before {
   content: "\e62f";
 }
+
 .ms-vrpano:before {
   content: "\f082";
 }
+
 .ms-wallet:before {
   content: "\f8ff";
 }
+
 .ms-wallpaper:before {
   content: "\e1bc";
 }
+
 .ms-warehouse:before {
   content: "\ebb8";
 }
+
 .ms-warning:before {
   content: "\f083";
 }
+
 .ms-warning-amber:before {
   content: "\f083";
 }
+
 .ms-wash:before {
   content: "\f1b1";
 }
+
 .ms-watch:before {
   content: "\e334";
 }
+
 .ms-watch-later:before {
   content: "\efd6";
 }
+
 .ms-watch-off:before {
   content: "\eae3";
 }
+
 .ms-water:before {
   content: "\f084";
 }
+
 .ms-water-damage:before {
   content: "\f203";
 }
+
 .ms-water-drop:before {
   content: "\e798";
 }
+
 .ms-water-heater:before {
   content: "\e284";
 }
+
 .ms-waterfall-chart:before {
   content: "\ea00";
 }
+
 .ms-waves:before {
   content: "\e176";
 }
+
 .ms-waving-hand:before {
   content: "\e766";
 }
+
 .ms-wb-auto:before {
   content: "\e42c";
 }
+
 .ms-wb-cloudy:before {
   content: "\f15c";
 }
+
 .ms-wb-incandescent:before {
   content: "\f07d";
 }
+
 .ms-wb-iridescent:before {
   content: "\f00d";
 }
+
 .ms-wb-shade:before {
   content: "\ea01";
 }
+
 .ms-wb-sunny:before {
   content: "\e430";
 }
+
 .ms-wb-twilight:before {
   content: "\e1c6";
 }
+
 .ms-wc:before {
   content: "\e63d";
 }
+
 .ms-web:before {
   content: "\e051";
 }
+
 .ms-web-asset:before {
   content: "\e069";
 }
+
 .ms-web-asset-off:before {
   content: "\ef47";
 }
+
 .ms-web-stories:before {
   content: "\e595";
 }
+
 .ms-webhook:before {
   content: "\eb92";
 }
+
 .ms-weekend:before {
   content: "\e16b";
 }
+
 .ms-west:before {
   content: "\f1e6";
 }
+
 .ms-whatshot:before {
   content: "\e80e";
 }
+
 .ms-wheelchair-pickup:before {
   content: "\f1ab";
 }
+
 .ms-where-to-vote:before {
   content: "\e177";
 }
+
 .ms-whiteboard:before {
   content: "\f213";
 }
+
 .ms-widgets:before {
   content: "\e1bd";
 }
+
 .ms-width-full:before {
   content: "\f8f5";
 }
+
 .ms-width-normal:before {
   content: "\f8f6";
 }
+
 .ms-width-wide:before {
   content: "\f8f7";
 }
+
 .ms-wifi:before {
   content: "\e63e";
 }
+
 .ms-wifi-1-bar:before {
   content: "\e4ca";
 }
+
 .ms-wifi-2-bar:before {
   content: "\e4d9";
 }
+
 .ms-wifi-calling:before {
   content: "\ef77";
 }
+
 .ms-wifi-calling-1:before {
   content: "\f0e7";
 }
+
 .ms-wifi-calling-2:before {
   content: "\f0e7";
 }
+
 .ms-wifi-calling-3:before {
   content: "\f0e7";
 }
+
 .ms-wifi-channel:before {
   content: "\eb6a";
 }
+
 .ms-wifi-find:before {
   content: "\eb31";
 }
+
 .ms-wifi-lock:before {
   content: "\e1e1";
 }
+
 .ms-wifi-off:before {
   content: "\e648";
 }
+
 .ms-wifi-password:before {
   content: "\eb6b";
 }
+
 .ms-wifi-protected-setup:before {
   content: "\f0fc";
 }
+
 .ms-wifi-tethering:before {
   content: "\e1e2";
 }
+
 .ms-wifi-tethering-error:before {
   content: "\ead9";
 }
+
 .ms-wifi-tethering-off:before {
   content: "\f087";
 }
+
 .ms-wind-power:before {
   content: "\ec0c";
 }
+
 .ms-window:before {
   content: "\f088";
 }
+
 .ms-wine-bar:before {
   content: "\f1e8";
 }
+
 .ms-woman:before {
   content: "\e13e";
 }
+
 .ms-work:before {
   content: "\e943";
 }
+
 .ms-work-history:before {
   content: "\ec09";
 }
+
 .ms-work-off:before {
   content: "\e942";
 }
+
 .ms-work-outline:before {
   content: "\e943";
 }
+
 .ms-workbench:before {
   content: "\eb6e";
 }
+
 .ms-workspace-premium:before {
   content: "\e7af";
 }
+
 .ms-workspaces:before {
   content: "\e1a0";
 }
+
 .ms-workspaces-outline:before {
   content: "\e1a0";
 }
+
 .ms-wrap-text:before {
   content: "\e25b";
 }
+
 .ms-wrong-location:before {
   content: "\ef78";
 }
+
 .ms-wysiwyg:before {
   content: "\f1c3";
 }
+
 .ms-yard:before {
   content: "\f089";
 }
+
 .ms-youtube-music:before {
   content: "\e35c";
 }
+
 .ms-youtube-searched-for:before {
   content: "\e8fa";
 }
+
 .ms-youtube-tv:before {
   content: "\e377";
 }
+
 .ms-zoom-in:before {
   content: "\e8ff";
 }
+
 .ms-zoom-in-map:before {
   content: "\eb2d";
 }
+
 .ms-zoom-out:before {
   content: "\e900";
 }
+
 .ms-zoom-out-map:before {
   content: "\e56b";
 }

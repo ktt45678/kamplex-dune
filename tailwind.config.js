@@ -58,10 +58,24 @@ module.exports = {
         '4xl': '2000px'
       },
       spacing: {
+        '34': '8.5rem',
         '30px': '30px'
       },
+      transformOrigin: {
+        'left-center': 'left center'
+      },
+      transitionProperty: {
+        'width': 'width',
+        'height': 'height',
+        'width-height': 'width, height',
+        'left': 'left'
+      },
       zIndex: {
-        '1': '1'
+        '1': '1',
+        '2': '2',
+        '3': '3',
+        '4': '4',
+        '5': '5'
       }
     },
   },

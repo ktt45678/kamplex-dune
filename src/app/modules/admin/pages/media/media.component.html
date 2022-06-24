@@ -1,19 +1,19 @@
 <ng-container *transloco="let t">
-  <div class="tw-bg-neutral-850 tw-rounded-md tw-mx-4 tw-p-4">
+  <div class="tw-bg-neutral-850 tw-rounded-md tw-ml-4 tw-p-4">
     <div class="tw-flex tw-flex-wrap tw-mb-4">
       <div class="tw-w-full md:tw-w-auto tw-mr-auto tw-mt-2 md:tw-mt-0">
         <span class="p-input-icon-left tw-w-full">
-          <i class="pi pi-search"></i>
+          <i class="ms ms-search"></i>
           <input pInputText class="p-inputtext-sm tw-w-full" type="text"
             (input)="mediaTable.filter($any($event).target.value, 'title', 'contains')"
             [placeholder]="t('admin.media.searchPlaceholder')" />
         </span>
       </div>
       <div class="tw-w-full tw-ml-auto tw-mt-2 md:tw-mt-0 md:tw-w-auto">
-        <button pButton [label]="t('admin.media.createMovie')" icon="pi pi-plus" class="p-button tw-w-full sm:tw-w-auto"
+        <button pButton [label]="t('admin.media.createMovie')" icon="ms ms-add" class="p-button tw-w-full sm:tw-w-auto"
           (click)="showCreateMediaDialog(MediaType.MOVIE)">
         </button>
-        <button pButton [label]="t('admin.media.createTV')" icon="pi pi-plus"
+        <button pButton [label]="t('admin.media.createTV')" icon="ms ms-add"
           class="p-button tw-w-full sm:tw-w-auto sm:tw-ml-2 tw-mt-2 sm:tw-mt-0"
           (click)="showCreateMediaDialog(MediaType.TV)">
         </button>
@@ -32,11 +32,10 @@
           <th class="tw-w-96" pSortableColumn="title">
             {{ t('admin.media.title') }} <p-sortIcon field="title"></p-sortIcon>
           </th>
-          <th class="tw-w-32"></th>
           <th class="tw-w-28">
             {{ t('admin.media.type') }}
           </th>
-          <th class="tw-w-52">
+          <th class="tw-w-40">
             {{ t('admin.media.episodesOrDuration') }}
           </th>
           <th class="tw-w-36">
@@ -46,8 +45,9 @@
             {{ t('admin.media.rating') }}
           </th>
           <th class="tw-w-20">
-            {{ t('admin.media.status') }}
+            {{ t('admin.media.pStatus') }}
           </th>
+          <th class="tw-w-32"></th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-media>
@@ -58,14 +58,14 @@
                 (change)="uploadPoster(media, $event)" accept=".jpg, .jpeg, .png" />
               <div *ngIf="media.thumbnailPosterUrl; else noPoster" class="tw-w-16 tw-flex-shrink-0">
                 <div class="tw-aspect-w-2 tw-aspect-h-3">
-                  <img class="tw-rounded-md" [src]="media.thumbnailPosterUrl" [alt]="media.title">
+                  <img class="tw-rounded-md" [src]="media.smallPosterUrl" [alt]="media.title">
                   <div class="row-image-actions tw-flex tw-flex-col tw-justify-center tw-items-center">
-                    <button pButton type="button" icon="pi pi-images" pTooltip="Change this poster" [showDelay]="1000"
-                      (click)="inputPoster.click()" [disabled]="inputPoster.disabled"
-                      class="p-button-rounded p-button-success p-button-sm">
+                    <button pButton type="button" icon="ms ms-add-photo-alternate"
+                      [pTooltip]="t('admin.media.updatePoster')" [showDelay]="1000" (click)="inputPoster.click()"
+                      [disabled]="inputPoster.disabled" class="p-button-rounded p-button-success p-button-sm">
                     </button>
-                    <button pButton type="button" icon="pi pi-times" pTooltip="Delete this poster" [showDelay]="1000"
-                      (click)="deletePoster(media, $event)"
+                    <button pButton type="button" icon="ms ms-close" [pTooltip]="t('admin.media.deletePoster')"
+                      [showDelay]="1000" (click)="deletePoster(media, $event)"
                       class="p-button-rounded p-button-danger p-button-sm tw-mt-1">
                     </button>
                   </div>
@@ -74,30 +74,20 @@
               <ng-template #noPoster>
                 <button
                   class="tw-bg-transparent tw-text-white tw-w-16 tw-flex-shrink-0 tw-rounded-md tw-border-2 tw-border-dashed disabled:tw-border-gray-500 disabled:tw-text-gray-500"
-                  (click)="inputPoster.click()" pTooltip="Add a poster" [showDelay]="1000"
+                  (click)="inputPoster.click()" [pTooltip]="t('admin.media.addPoster')" [showDelay]="1000"
                   [disabled]="inputPoster.disabled">
                   <div class="tw-aspect-w-2 tw-aspect-h-3">
                     <div class="tw-flex tw-justify-center tw-items-center">
-                      <i class="pi pi-plus"></i>
+                      <i class="ms ms-add"></i>
                     </div>
                   </div>
                 </button>
               </ng-template>
               <div class="tw-ml-2">
-                <p class="tw-text-base tw-font-medium tw-line-clamp-2">{{ media.title }}</p>
+                <p class="tw-text-base tw-font-semibold tw-line-clamp-2">{{ media.title }}</p>
                 <p class="tw-text-sm tw-text-slate-400 tw-line-clamp-1">{{ media.originalTitle }}</p>
               </div>
             </div>
-          </td>
-          <td>
-            <button pButton icon="pi pi-cog"
-              class="p-button-outlined p-button-rounded p-button-info p-button-sm tw-mr-2"
-              (click)="showConfigureMediaDialog(media)">
-            </button>
-            <button pButton icon="pi pi-ellipsis-h"
-              class="p-button-outlined p-button-rounded p-button-secondary p-button-sm"
-              (click)="toggleMediaMenu(mediaMenu, $event, media)">
-            </button>
           </td>
           <ng-container *ngIf="media.type === MediaType.MOVIE; else isTV">
             <td class="tw-w-24 tw-text-sm">{{ t('admin.media.movie') }}</td>
@@ -113,15 +103,32 @@
             </td>
           </ng-template>
           <td class="tw-w-36 tw-text-sm">{{ media.releaseDate | shortDate }}</td>
-          <td class="tw-w-auto tw-text-sm">
-            <i class="pi pi-star-fill tw-text-yellow-500"></i> {{ media.ratingAverage }}
+          <td class="tw-w-auto">
+            <div class="tw-text-center">
+              <i class="ms ms-star tw-text-yellow-500"></i>
+              <p class="tw-text-lg">{{ media.ratingAverage }}</p>
+            </div>
           </td>
-          <td class="tw-w-20 tw-text-sm" [ngSwitch]="media.pStatus">
-            <ng-container *ngSwitchCase="MediaPStatus.PENDING">{{ t('admin.media.statusPending') }}</ng-container>
-            <ng-container *ngSwitchCase="MediaPStatus.REVIEW">{{ t('admin.media.statusReview') }}</ng-container>
-            <ng-container *ngSwitchCase="MediaPStatus.PROCESSING">{{ t('admin.media.statusProcessing') }}</ng-container>
-            <ng-container *ngSwitchCase="MediaPStatus.DONE">{{ t('admin.media.statusDone') }}</ng-container>
-            <ng-container *ngSwitchDefault>{{ t('admin.media.statusUnknown') }}</ng-container>
+          <td class="tw-w-20" [ngSwitch]="media.pStatus">
+            <div class="tw-text-center">
+              <ng-container *ngSwitchCase="MediaPStatus.PENDING">
+                <i class="ms ms-draft ms-opsz-lg tw-text-4xl" [pTooltip]="t('admin.media.statusPending')"></i>
+              </ng-container>
+              <ng-container *ngSwitchCase="MediaPStatus.PROCESSING">
+                <i class="ms ms-hourglass-empty ms-opsz-lg tw-text-4xl" [pTooltip]="t('admin.media.statusProcessing')"></i>
+              </ng-container>
+              <ng-container *ngSwitchCase="MediaPStatus.DONE">
+                <i class="ms ms-check-circle ms-opsz-lg tw-text-4xl" [pTooltip]="t('admin.media.statusDone')"></i>
+              </ng-container>
+            </div>
+          </td>
+          <td>
+            <button pButton icon="ms ms-settings" class="p-button-rounded p-button-info p-button-sm tw-mr-2"
+              (click)="showConfigureMediaDialog(media)">
+            </button>
+            <button pButton icon="ms ms-more-horiz" class="p-button-rounded p-button-secondary p-button-sm"
+              (click)="toggleMediaMenu(mediaMenu, $event, media)">
+            </button>
           </td>
         </tr>
       </ng-template>

@@ -1,16 +1,18 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, Renderer2, Inject } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, Renderer2, Inject, OnDestroy } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { TranslocoService, TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { ConfirmationService, MenuItem } from 'primeng/api';
 import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { finalize, first, of, switchMap, takeWhile, zipWith } from 'rxjs';
+import { finalize, first, merge, of, switchMap, takeUntil, takeWhile, tap, zipWith } from 'rxjs';
 import { escape, isEqual } from 'lodash';
 
-import { MediaPStatus, MediaSourceStatus, MediaStatus, MediaType, QueueUploadStatus } from '../../../../core/enums';
+import { MediaPStatus, MediaSourceStatus, MediaStatus, MediaType, SocketMessage, SocketRoom } from '../../../../core/enums';
 import { MediaDetails, MediaVideo, MediaSubtitle, TVEpisode, Genre, Producer } from '../../../../core/models';
-import { GenresService, ItemDataService, MediaService, ProducersService, QueueUploadService } from '../../../../core/services';
+import { DestroyService, GenresService, ItemDataService, MediaService, ProducersService, QueueUploadService } from '../../../../core/services';
+import { WsService } from '../../../../shared/modules/ws';
 import { DropdownOptionDto } from '../../../../core/dto/media';
+import { MediaChange, MediaVideoChange } from '../../../../core/interfaces/ws';
 import { AddVideoComponent } from '../add-video';
 import { UpdateVideoComponent } from '../update-video';
 import { CreateEpisodeComponent } from '../create-episode';
@@ -23,9 +25,10 @@ import { SUBTITLE_UPLOAD_EXT, SUBTITLE_UPLOAD_SIZE } from '../../../../../enviro
   selector: 'app-configure-media',
   templateUrl: './configure-media.component.html',
   styleUrls: ['./configure-media.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.Default,
   providers: [
     ItemDataService,
+    DestroyService,
     {
       provide: TRANSLOCO_SCOPE,
       useValue: 'media',
@@ -38,7 +41,7 @@ import { SUBTITLE_UPLOAD_EXT, SUBTITLE_UPLOAD_SIZE } from '../../../../../enviro
     }
   ]
 })
-export class ConfigureMediaComponent implements OnInit {
+export class ConfigureMediaComponent implements OnInit, OnDestroy {
   MediaType = MediaType;
   MediaStatus = MediaStatus;
   MediaPStatus = MediaPStatus;
@@ -73,9 +76,10 @@ export class ConfigureMediaComponent implements OnInit {
     private dialogRef: DynamicDialogRef, private config: DynamicDialogConfig, public dialogService: DialogService,
     private confirmationService: ConfirmationService, private mediaService: MediaService, private itemDataService: ItemDataService,
     private genresService: GenresService, private producersService: ProducersService, private queueUploadService: QueueUploadService,
-    private translocoService: TranslocoService) {
+    private wsService: WsService, private translocoService: TranslocoService, private destroyService: DestroyService) {
+    const lang = this.translocoService.getActiveLang();
     this.addSubtitleForm = new FormGroup({
-      language: new FormControl(null, [Validators.required]),
+      language: new FormControl(lang, [Validators.required]),
       file: new FormControl(null, [Validators.required, maxFileSize(SUBTITLE_UPLOAD_SIZE), fileExtension(SUBTITLE_UPLOAD_EXT)])
     });
   }
@@ -84,27 +88,65 @@ export class ConfigureMediaComponent implements OnInit {
     this.loadMedia();
     this.checkUploadInQueue();
     this.loadTranslations();
+    this.initSocket();
     this.days = this.itemDataService.createDateList();
     this.months = this.itemDataService.createMonthList();
     this.years = this.itemDataService.createYearList();
     this.loadGenreSuggestions();
     this.loadProducerSuggestions();
-    this.itemDataService.createLanguageList().pipe(first()).subscribe(languages => {
-      this.languages = languages
-    });
+    this.itemDataService.createLanguageList().pipe(first()).subscribe(languages => this.languages = languages);
   }
 
-  loadMedia(): void {
+  initSocket(): void {
+    const mediaId = this.config.data['_id'];
+    const connect$ = this.wsService.fromEvent('connect').pipe(tap(() => {
+      this.wsService.joinRoom(`${SocketRoom.ADMIN_MEDIA_DETAILS}:${mediaId}`);
+    }));
+    const refreshMedia$ = this.wsService.fromEvent<MediaChange>(SocketMessage.REFRESH_MEDIA).pipe(tap(() => this.loadMedia(false)));
+    const refreshMediaVideos$ = this.wsService.fromEvent<MediaVideoChange>(SocketMessage.REFRESH_MEDIA_VIDEOS)
+      .pipe(tap(data => this.updateMediaVideos(data.videos)));
+    const refreshMovieSubtitles$ = this.wsService.fromEvent<MediaVideoChange>(SocketMessage.REFRESH_MOVIE_SUBTITLES)
+      .pipe(tap(data => this.updateMediaVideos(data.videos)));
+    const mediaProcessingSuccess$ = this.wsService.fromEvent<MediaChange>(SocketMessage.MEDIA_PROCESSING_SUCCESS)
+      .pipe(tap(() => this.updateMovieSourceStatus(MediaSourceStatus.DONE)));
+    const mediaProcessingFailure$ = this.wsService.fromEvent<MediaChange>(SocketMessage.MEDIA_PROCESSING_FAILURE)
+      .pipe(tap(() => this.updateMovieSourceStatus(MediaSourceStatus.PENDING)));
+    const deleteMovieSource$ = this.wsService.fromEvent<MediaChange>(SocketMessage.DELETE_MOVIE_SOURCE)
+      .pipe(tap(() => this.updateMovieSourceStatus(MediaSourceStatus.PENDING)));
+    merge(connect$, refreshMedia$, refreshMediaVideos$, refreshMovieSubtitles$, mediaProcessingSuccess$,
+      mediaProcessingFailure$, deleteMovieSource$)
+      .pipe(takeUntil(this.destroyService)).subscribe();
+  }
+
+  updateMovieSourceStatus(status: MediaSourceStatus): void {
+    if (!this.media) return;
+    this.media = { ...this.media, movie: { ...this.media.movie, status } };
+    this.ref.markForCheck();
+  }
+
+  updateMediaVideos(videos: MediaVideo[]): void {
+    if (!this.media) return;
+    this.media = { ...this.media, videos };
+    this.ref.markForCheck();
+  }
+
+  updateMediaSubtitles(subtitles: MediaSubtitle[]): void {
+    if (!this.media) return;
+    this.media = { ...this.media, movie: { ...this.media.movie, subtitles } };
+    this.ref.markForCheck();
+  }
+
+  loadMedia(showLoading: boolean = true): void {
     if (!this.config.data) return;
     const mediaId = this.config.data['_id'];
-    this.loadingMedia = true;
+    showLoading && (this.loadingMedia = true);
     this.mediaService.findOne(mediaId).subscribe(media => {
       this.media = media;
       this.createUpdateMediaForm(media);
       if (media.type === MediaType.MOVIE)
         this.loadSubtitleFormData(media);
     }).add(() => {
-      this.loadingMedia = false;
+      showLoading && (this.loadingMedia = false);
       this.ref.markForCheck();
     });
   }
@@ -531,6 +573,11 @@ export class ConfigureMediaComponent implements OnInit {
 
   trackId(index: number, item: any): any {
     return item?._id;
+  }
+
+  ngOnDestroy(): void {
+    const mediaId = this.config.data['_id'];
+    this.wsService.leaveRoom(`${SocketRoom.ADMIN_MEDIA_DETAILS}:${mediaId}`);
   }
 
 }

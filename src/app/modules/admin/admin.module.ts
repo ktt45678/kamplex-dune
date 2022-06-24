@@ -34,6 +34,7 @@ import { ValidationPipeModule } from '../../shared/pipes/validation-pipe';
 import { DateTimePipeModule } from '../../shared/pipes/date-time-pipe';
 import { NumberPipeModule } from '../../shared/pipes/number-pipe';
 import { UrlPipeModule } from '../../shared/pipes/url-pipe/url-pipe.module';
+import { WS_AUTH, WS_NAMESPACE, WsModule } from '../../shared/modules/ws';
 import { CreateProducerComponent } from './dialogs/create-producer/create-producer.component';
 import { UpdateProducerComponent } from './dialogs/update-producer/update-producer.component';
 import { CreateMediaComponent } from './dialogs/create-media/create-media.component';
@@ -46,9 +47,9 @@ import { AddSubtitleComponent } from './dialogs/add-subtitle/add-subtitle.compon
 import { ViewMediaComponent } from './dialogs/view-media/view-media.component';
 import { ConfigureMediaComponent } from './dialogs/configure-media/configure-media.component';
 import { AddSourceComponent } from './dialogs/add-source/add-source.component';
-import { ConfirmDeactivateGuard } from '../../core/guards';
-import { GenresService, MediaService, ProducersService, QueueUploadService } from '../../core/services';
+import { ConfirmDeactivateGuard, WsActivatorGuard } from '../../core/guards';
 import { ConfigureEpisodeComponent } from './dialogs/configure-episode/configure-episode.component';
+import { GenresService, MediaService, ProducersService, QueueUploadService } from '../../core/services';
 
 @NgModule({
   declarations: [
@@ -99,7 +100,8 @@ import { ConfigureEpisodeComponent } from './dialogs/configure-episode/configure
     InputSwitchModule,
     InputNumberModule,
     DropdownModule,
-    MessageModule
+    MessageModule,
+    WsModule
   ],
   providers: [
     DialogService,
@@ -109,9 +111,18 @@ import { ConfigureEpisodeComponent } from './dialogs/configure-episode/configure
     ProducersService,
     QueueUploadService,
     ConfirmDeactivateGuard,
+    WsActivatorGuard,
     {
       provide: TRANSLOCO_SCOPE,
       useValue: 'admin'
+    },
+    {
+      provide: WS_NAMESPACE,
+      useValue: 'admin'
+    },
+    {
+      provide: WS_AUTH,
+      useValue: true
     }
   ]
 })

@@ -1861,7 +1861,7 @@ p-togglebutton.ng-dirty.ng-invalid > .p-togglebutton.p-button {
   padding: 0.62475rem 0.875rem;
 }
 .p-button.p-button-sm .p-button-icon {
-  font-size: 0.875rem;
+  font-size: 24px;
 }
 .p-button.p-button-lg {
   font-size: 1.25rem;
@@ -4790,7 +4790,7 @@ p-togglebutton.ng-dirty.ng-invalid > .p-togglebutton.p-button {
   width: 12.5rem;
 }
 .p-menu .p-menuitem-link {
-  padding: 1rem 1rem;
+  padding: 0.75rem 1rem;
   color: rgba(255, 255, 255, 0.87);
   border-radius: 0;
   transition: none;
@@ -7672,4 +7672,13 @@ p-inputnumber.ng-touched.ng-invalid > .p-inputnumber > .p-inputtext {
 
 .p-menuitem-link-active:hover {
   background: rgba(255, 255, 255, 0.12) !important;
+}
+
+.p-menu .p-menuitem-text {
+  line-height: 1.5 !important;
+}
+
+.p-input-icon-left > i, .p-input-icon-right > i {
+  margin-top: 0 !important;
+  transform: translateY(-50%);
 }

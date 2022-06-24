@@ -14,7 +14,7 @@
   "private": true,
   "dependencies": {
     "@angular/animations": "^13.3.3",
-    "@angular/cdk": "^13.3.3",
+    "@angular/cdk": "^13.3.7",
     "@angular/common": "~13.3.3",
     "@angular/compiler": "~13.3.3",
     "@angular/core": "~13.3.3",
@@ -31,7 +31,7 @@
     "@tailwindcss/aspect-ratio": "^0.4.0",
     "@tailwindcss/line-clamp": "^0.4.0",
     "@tailwindcss/typography": "^0.5.2",
-    "@vidstack/player": "^1.5.2",
+    "@vidstack/player": "^1.4.0",
     "iso-639-1": "^2.1.13",
     "jwt-decode": "^3.1.2",
     "lit": "^2.2.4",
@@ -47,7 +47,7 @@
     "swiper": "^8.1.5",
     "tailwindcss": "^3.0.24",
     "tslib": "^2.4.0",
-    "zone.js": "~0.11.5"
+    "zone.js": "^0.11.5"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~13.3.3",

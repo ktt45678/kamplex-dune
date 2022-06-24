@@ -66,7 +66,8 @@
           <label for="original-language" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
             {{ t('admin.createMedia.originalLanguage') }}
           </label>
-          <p-dropdown id="original-language" class="tw-w-full" styleClass="tw-w-full" panelStyleClass="p-dropdown-sm"
+          <p-dropdown id="original-language" class="tw-w-full" styleClass="tw-w-full"
+            panelStyleClass="md:tw-dropdown-cols-2 md:tw-max-w-lg p-dropdown-sm"
             aria-describedby="original-language-error" [options]="languages" formControlName="originalLanguage"
             appendTo="body" [placeholder]="t('admin.createMedia.originalLanguagePlaceholder')" [showClear]="true"
             scrollHeight="300px" [disabledControl]="isCreatingMedia">
@@ -209,8 +210,8 @@
               <p-radioButton name="status" value="airing" label="Airing" formControlName="status"
                 class="tw-block tw-mb-2" [disabledControl]="isCreatingMedia">
               </p-radioButton>
-              <p-radioButton name="status" value="aired" label="Aired" formControlName="status"
-                class="tw-block tw-mb-2" [disabledControl]="isCreatingMedia">
+              <p-radioButton name="status" value="aired" label="Aired" formControlName="status" class="tw-block tw-mb-2"
+                [disabledControl]="isCreatingMedia">
               </p-radioButton>
             </ng-container>
             <ng-template #isMovie>

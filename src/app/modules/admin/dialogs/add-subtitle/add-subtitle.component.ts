@@ -1,6 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { TranslocoService } from '@ngneat/transloco';
 import { first, takeUntil } from 'rxjs';
 
 import { DropdownOptionDto } from '../../../../core/dto/media';
@@ -22,9 +23,11 @@ export class AddSubtitleComponent implements OnInit {
   addSubtitleForm: FormGroup;
 
   constructor(private dialogRef: DynamicDialogRef, private config: DynamicDialogConfig,
-    private itemDataService: ItemDataService, private mediaService: MediaService, private destroyService: DestroyService) {
+    private translocoService: TranslocoService, private itemDataService: ItemDataService, private mediaService: MediaService,
+    private destroyService: DestroyService) {
+    const lang = this.translocoService.getActiveLang();
     this.addSubtitleForm = new FormGroup({
-      language: new FormControl(null, [Validators.required]),
+      language: new FormControl(lang, [Validators.required]),
       file: new FormControl(null, [Validators.required, maxFileSize(SUBTITLE_UPLOAD_SIZE), fileExtension(SUBTITLE_UPLOAD_EXT)])
     });
   }

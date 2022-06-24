@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild, Renderer2, Inject } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild, Renderer2, Inject, OnDestroy } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslocoService } from '@ngneat/transloco';
@@ -6,18 +6,20 @@ import { ConfirmationService } from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
 import { Table } from 'primeng/table';
 import { Menu } from 'primeng/menu';
-import { first, map, Observable, of, tap } from 'rxjs';
+import { first, map, merge, Observable, of, takeUntil, tap } from 'rxjs';
 import { escape } from 'lodash';
 
-import { MediaService, QueueUploadService } from '../../../../core/services';
+import { DestroyService, MediaService, QueueUploadService } from '../../../../core/services';
+import { WsService } from '../../../../shared/modules/ws';
 import { Media, MediaDetails, Paginated } from '../../../../core/models';
 import { PaginateMediaDto } from '../../../../core/dto/media';
 import { DataMenuItem } from '../../../../core/interfaces/primeng';
+import { MediaChange } from '../../../../core/interfaces/ws';
 import { CreateMediaComponent } from '../../dialogs/create-media';
 import { ViewMediaComponent } from '../../dialogs/view-media';
 import { ConfigureMediaComponent } from '../../dialogs/configure-media';
 import { UpdateMediaComponent } from '../../dialogs/update-media';
-import { MediaPStatus, MediaType } from '../../../../core/enums';
+import { MediaPStatus, MediaType, SocketMessage, SocketRoom } from '../../../../core/enums';
 import { AddVideoComponent } from '../../dialogs/add-video';
 import { AddSubtitleComponent } from '../../dialogs/add-subtitle';
 import { AddSourceComponent } from '../../dialogs/add-source';
@@ -26,9 +28,10 @@ import { AddSourceComponent } from '../../dialogs/add-source';
   selector: 'app-media',
   templateUrl: './media.component.html',
   styleUrls: ['./media.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [DestroyService]
 })
-export class MediaComponent implements OnInit {
+export class MediaComponent implements OnInit, OnDestroy {
   MediaType = MediaType;
   MediaPStatus = MediaPStatus;
 
@@ -42,12 +45,45 @@ export class MediaComponent implements OnInit {
   constructor(@Inject(DOCUMENT) private document: Document, private ref: ChangeDetectorRef, private renderer: Renderer2,
     private route: ActivatedRoute, private router: Router, public dialogService: DialogService,
     private confirmationService: ConfirmationService, private mediaService: MediaService,
-    private queueUploadService: QueueUploadService, private translocoService: TranslocoService) { }
+    private queueUploadService: QueueUploadService, private wsService: WsService,
+    private translocoService: TranslocoService, private destroyService: DestroyService) { }
 
   ngOnInit(): void {
+    this.initSocket();
   }
 
-  loadMedia(): void {
+  initSocket(): void {
+    const connect$ = this.wsService.fromEvent('connect').pipe(tap(() => {
+      this.wsService.joinRoom(SocketRoom.ADMIN_MEDIA_LIST);
+    }));
+    const refreshMedia$ = this.wsService.fromEvent<MediaChange>(SocketMessage.REFRESH_MEDIA).pipe(tap(data => {
+      if (!data) return this.loadMedia(false);
+      if (!this.mediaList) return;
+      const mediaIndex = this.mediaList.results.findIndex(m => m._id === data.mediaId);
+      if (mediaIndex === -1) return;
+      this.loadMedia(false);
+    }));
+    const saveMovieSource$ = this.wsService.fromEvent<MediaChange>(SocketMessage.SAVE_MOVIE_SOURCE)
+      .pipe(tap(data => this.updateMediaStatus(data.mediaId, MediaPStatus.PROCESSING)));
+    const addMovieStream$ = this.wsService.fromEvent<MediaChange>(SocketMessage.ADD_MOVIE_STREAM)
+      .pipe(tap(data => this.updateMediaStatus(data.mediaId, MediaPStatus.DONE)));
+    const saveTVSource$ = this.wsService.fromEvent<MediaChange>(SocketMessage.SAVE_TV_SOURCE)
+      .pipe(tap(data => this.updateMediaStatus(data.mediaId, MediaPStatus.PROCESSING)));
+    const addTVStream$ = this.wsService.fromEvent<MediaChange>(SocketMessage.ADD_TV_STREAM)
+      .pipe(tap(data => this.updateMediaStatus(data.mediaId, MediaPStatus.DONE)));
+    merge(connect$, refreshMedia$, saveMovieSource$, addMovieStream$, saveTVSource$, addTVStream$)
+      .pipe(takeUntil(this.destroyService)).subscribe();
+  }
+
+  updateMediaStatus(id: string, pStatus: MediaPStatus): void {
+    if (!this.mediaList) return;
+    const mediaIndex = this.mediaList.results.findIndex(m => m._id === id);
+    if (mediaIndex === -1) return;
+    this.mediaList.results[mediaIndex].pStatus = pStatus;
+    this.ref.markForCheck();
+  }
+
+  loadMedia(showLoading: boolean = true): void {
     const params = new PaginateMediaDto();
     params.includeHidden = true;
     params.includeUnprocessed = true;
@@ -66,13 +102,15 @@ export class MediaComponent implements OnInit {
       params.page = 1;
       params.limit = this.rowsPerPage;
     }
-    this.loadingMediaList = true;
+    showLoading && (this.loadingMediaList = true);
     this.mediaService.findPage(params).subscribe({
       next: (mediaList) => {
         this.mediaList = mediaList;
         this.ref.markForCheck();
       }
-    }).add(() => this.loadingMediaList = false);
+    }).add(() => {
+      showLoading && (this.loadingMediaList = false);
+    });
   }
 
   findMediaDetails(mediaId: string) {
@@ -87,7 +125,7 @@ export class MediaComponent implements OnInit {
       width: '1024px',
       modal: true,
       styleClass: 'p-dialog-header-sm',
-      contentStyle: { 'margin-top': '-1.5rem', 'overflow-y': 'hidden', 'padding': '0px' },
+      contentStyle: { 'margin-top': '-1.5rem', 'overflow-y': 'hidden', 'padding': '0' },
       dismissableMask: false
     });
     dialogRef.onClose.pipe(first()).subscribe((result: boolean) => {
@@ -113,6 +151,7 @@ export class MediaComponent implements OnInit {
       height: '100%',
       modal: true,
       showHeader: false,
+      contentStyle: { 'overflow-y': 'hidden', 'padding': '0' },
       styleClass: 'p-dialog-header-sm !tw-max-h-full'
     });
     dialogRef.onClose.pipe(first()).subscribe((isUpdated: boolean) => {
@@ -311,7 +350,7 @@ export class MediaComponent implements OnInit {
         { separator: true },
         {
           label: t['configureMedia.deleteMedia'],
-          icon: 'pi pi-trash',
+          icon: 'ms ms-delete',
           data: media,
           disabled: media.pStatus === MediaPStatus.PROCESSING,
           command: (event) => this.showDeleteMediaDialog(event.item.data)
@@ -323,6 +362,10 @@ export class MediaComponent implements OnInit {
 
   trackId(index: number, item: any): any {
     return item?._id;
+  }
+
+  ngOnDestroy(): void {
+    this.wsService.leaveRoom(SocketRoom.ADMIN_MEDIA_LIST);
   }
 
 }

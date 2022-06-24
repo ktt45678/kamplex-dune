@@ -6,4 +6,3 @@ export * from './media.service';
 export * from './producers.service';
 export * from './queue-upload.service';
 export * from './users.service';
-export * from './ws.service';

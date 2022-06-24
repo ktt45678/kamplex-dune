@@ -36,7 +36,7 @@
                 <img class="tw-block tw-w-9 tw-rounded-full" [src]="currentUser.avatarUrl" [alt]="currentUser.username">
                 <p class="tw-text-white tw-font-medium tw-mx-2">{{ currentUser.username }}</p>
               </button>
-              <button pButton type="button" icon="pi pi-ellipsis-v" aria-label="User menu"
+              <button pButton type="button" icon="ms ms-more-vert" aria-label="User menu"
                 (click)="userMenu.toggle($event)"
                 class="p-button-rounded p-button-text p-button-secondary p-button-sm tw-ml-2">
               </button>
@@ -51,8 +51,8 @@
           <div class="tw-flex sm:tw-hidden tw-items-center sm:tw-static sm:tw-inset-auto sm:tw-ml-6 sm:tw-pr-0">
             <div class="tw-flex tw-items-center sm:tw-hidden">
               <!-- Mobile menu button-->
-              <button pButton (click)="onOpenMenu()" icon="pi pi-bars" type="button" aria-label="Toggle navbar"
-                class="p-button-rounded p-button-text p-button-secondary" icon="pi pi-bars">
+              <button pButton (click)="onOpenMenu()" icon="ms ms-menu" type="button" aria-label="Toggle navbar"
+                class="p-button-rounded p-button-text p-button-secondary">
               </button>
             </div>
           </div>

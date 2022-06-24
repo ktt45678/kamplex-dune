@@ -2,17 +2,17 @@
   <div *ngIf="episode" class="tw-my-4">
     <app-vertical-tab>
       <!--General info-->
-      <app-tab-panel [header]="t('admin.configureMedia.general')">
+      <ng-template appTabPanel [label]="t('admin.configureMedia.general')">
 
-      </app-tab-panel>
+      </ng-template>
       <!--Subtitles-->
-      <app-tab-panel [header]="t('admin.configureMedia.subtitles')">
+      <ng-template appTabPanel [label]="t('admin.configureMedia.subtitles')">
 
-      </app-tab-panel>
+      </ng-template>
       <!--Source-->
-      <app-tab-panel [header]="t('admin.configureMedia.source')">
+      <ng-template appTabPanel [label]="t('admin.configureMedia.source')">
 
-      </app-tab-panel>
+      </ng-template>
     </app-vertical-tab>
   </div>
 </ng-container>

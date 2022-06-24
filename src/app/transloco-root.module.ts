@@ -1,17 +1,17 @@
 import { HttpClient } from '@angular/common/http';
-import { Translation, TranslocoLoader, TRANSLOCO_CONFIG, translocoConfig, TranslocoModule } from '@ngneat/transloco';
+import { Translation, TranslocoLoader, TRANSLOCO_CONFIG, translocoConfig, TranslocoModule, TRANSLOCO_LOADER } from '@ngneat/transloco';
 import { Injectable, NgModule } from '@angular/core';
 import { TranslocoMessageFormatModule } from '@ngneat/transloco-messageformat';
-import { TranslocoPersistTranslationsModule, PERSIST_TRANSLATIONS_STORAGE } from '@ngneat/transloco-persist-translations';
-import * as localForage from 'localforage';
+// import { TranslocoPersistTranslationsModule, PERSIST_TRANSLATIONS_STORAGE } from '@ngneat/transloco-persist-translations';
+// import * as localForage from 'localforage';
 
 import { environment } from '../environments/environment';
 
-localForage.config({
-  driver: localForage.INDEXEDDB,
-  name: 'KamPlexI18N',
-  storeName: 'translations'
-});
+// localForage.config({
+//   driver: [localForage.INDEXEDDB, localForage.LOCALSTORAGE],
+//   name: 'KamPlexI18N',
+//   storeName: 'translations'
+// });
 
 @Injectable({ providedIn: 'root' })
 export class TranslocoHttpLoader implements TranslocoLoader {
@@ -29,14 +29,14 @@ export class TranslocoHttpLoader implements TranslocoLoader {
 @NgModule({
   imports: [
     TranslocoMessageFormatModule.forRoot(),
-    TranslocoPersistTranslationsModule.forRoot({
-      loader: TranslocoHttpLoader,
-      ttl: environment.production ? 3600 : 30,
-      storage: {
-        provide: PERSIST_TRANSLATIONS_STORAGE,
-        useValue: localForage
-      }
-    })
+    // TranslocoPersistTranslationsModule.forRoot({
+    //   loader: TranslocoHttpLoader,
+    //   ttl: environment.production ? 3600 : 30,
+    //   storage: {
+    //     provide: PERSIST_TRANSLATIONS_STORAGE,
+    //     useValue: localForage.driver() ? localForage : localStorage
+    //   }
+    // })
   ],
   exports: [TranslocoModule],
   providers: [
@@ -49,6 +49,10 @@ export class TranslocoHttpLoader implements TranslocoLoader {
         reRenderOnLangChange: false,
         prodMode: environment.production,
       })
+    },
+    {
+      provide: TRANSLOCO_LOADER,
+      useClass: TranslocoHttpLoader
     }
   ]
 })
