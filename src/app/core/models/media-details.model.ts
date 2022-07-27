@@ -1,7 +1,7 @@
-import { User, Media, Movie, TVShow, MediaVideo, Producer } from '.';
+import { User, Media, Movie, TVShow, MediaVideo, Production } from '.';
 
 export interface MediaDetails extends Media {
-  producers: Producer[];
+  productions: Production[];
   movie: Movie;
   tv: TVShow;
   videos: MediaVideo[];

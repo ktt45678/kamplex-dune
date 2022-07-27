@@ -109,20 +109,20 @@
                 </small>
               </div>
               <div class="tw-w-full md:tw-w-1/2 md:tw-pl-2">
-                <label for="producers" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
-                  {{ t('admin.updateMedia.producers') }}
+                <label for="productions" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
+                  {{ t('admin.updateMedia.productions') }}
                 </label>
-                <p-autoComplete formControlName="producers" [suggestions]="producerSuggestions"
-                  (completeMethod)="loadProducerSuggestions($event.query)" field="name" dataKey="_id" [multiple]="true"
+                <p-autoComplete formControlName="productions" [suggestions]="productionSuggestions"
+                  (completeMethod)="loadProductionSuggestions($event.query)" field="name" dataKey="_id" [multiple]="true"
                   [unique]="true" [completeOnFocus]="true" scrollHeight="300px" appendTo="body" styleClass="tw-w-full"
-                  panelStyleClass="p-autocomplete-xs" inputId="producers" aria-describedby="producers-error"
+                  panelStyleClass="p-autocomplete-xs" inputId="productions" aria-describedby="productions-error"
                   [disabledControl]="isUpdatingMedia">
                 </p-autoComplete>
-                <small id="producers-error"
+                <small id="productions-error"
                   class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
-                  [ngClass]="(updateMediaForm.controls['producers'].dirty || updateMediaForm.controls['producers'].touched)
-                    && updateMediaForm.controls['producers'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
-                  {{ updateMediaForm.controls['producers'].errors | firstErrorKey:'updateMedia':'producers' }}
+                  [ngClass]="(updateMediaForm.controls['productions'].dirty || updateMediaForm.controls['productions'].touched)
+                    && updateMediaForm.controls['productions'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
+                  {{ updateMediaForm.controls['productions'].errors | firstErrorKey:'updateMedia':'productions' }}
                 </small>
               </div>
             </div>

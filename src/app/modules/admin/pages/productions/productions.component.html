@@ -5,51 +5,51 @@
         <span class="p-input-icon-left tw-w-full">
           <i class="ms ms-search"></i>
           <input pInputText class="p-inputtext-sm tw-w-full" type="text"
-            (input)="producerTable.filter($any($event).target.value, 'name', 'contains')"
-            [placeholder]="t('admin.producers.searchPlaceholder')" />
+            (input)="productionTable.filter($any($event).target.value, 'name', 'contains')"
+            [placeholder]="t('admin.productions.searchPlaceholder')" />
         </span>
       </div>
       <div class="tw-w-full tw-ml-auto tw-mt-2 md:tw-mt-0 md:tw-w-auto">
-        <button pButton [label]="t('admin.producers.create')" icon="ms ms-add" class="p-button tw-w-full sm:tw-w-auto"
-          (click)="showCreateProducerDialog()">
+        <button pButton [label]="t('admin.productions.create')" icon="ms ms-add" class="p-button tw-w-full sm:tw-w-auto"
+          (click)="showCreateProductionDialog()">
         </button>
       </div>
     </div>
-    <p-table #producerTable styleClass="p-datatable-sm tw-bg-neutral-875 tw-p-4 tw-rounded-md"
-      [value]="producerList?.results || []" [rows]="rowsPerPage" [totalRecords]="producerList?.totalResults || 0"
-      [paginator]="true" [rowsPerPageOptions]="[10, 25, 50]" responsiveLayout="scroll" [(selection)]="selectedProducers"
-      dataKey="_id" [rowTrackBy]="trackId" [rowHover]="true" [lazy]="true" (onLazyLoad)="loadProducers()"
-      [loading]="loadingProducerList" [currentPageReportTemplate]="t('admin.producers.pageReport')"
+    <p-table #productionTable styleClass="p-datatable-sm tw-bg-neutral-875 tw-p-4 tw-rounded-md"
+      [value]="productionList?.results || []" [rows]="rowsPerPage" [totalRecords]="productionList?.totalResults || 0"
+      [paginator]="true" [rowsPerPageOptions]="[10, 25, 50]" responsiveLayout="scroll" [(selection)]="selectedProductions"
+      dataKey="_id" [rowTrackBy]="trackId" [rowHover]="true" [lazy]="true" (onLazyLoad)="loadProductions()"
+      [loading]="loadingProductionList" [currentPageReportTemplate]="t('admin.productions.pageReport')"
       [showCurrentPageReport]="true">
       <ng-template pTemplate="caption">
-        <h4 class="tw-mb-2">{{ t('admin.producers.tableHeader') }}</h4>
+        <h4 class="tw-mb-2">{{ t('admin.productions.tableHeader') }}</h4>
       </ng-template>
       <ng-template pTemplate="header">
         <tr>
           <th class="tw-w-12">
             <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
           </th>
-          <th class="tw-w-auto" pSortableColumn="name">{{ t('admin.producers.name') }} <p-sortIcon field="name">
+          <th class="tw-w-auto" pSortableColumn="name">{{ t('admin.productions.name') }} <p-sortIcon field="name">
             </p-sortIcon>
           </th>
-          <th class="tw-w-auto">{{ t('admin.producers.country') }}
+          <th class="tw-w-auto">{{ t('admin.productions.country') }}
           </th>
           <th class="tw-w-28"></th>
         </tr>
       </ng-template>
-      <ng-template pTemplate="body" let-producer>
+      <ng-template pTemplate="body" let-production>
         <tr>
           <td>
-            <p-tableCheckbox [value]="producer"></p-tableCheckbox>
+            <p-tableCheckbox [value]="production"></p-tableCheckbox>
           </td>
-          <td class="tw-text-sm">{{ producer.name }}</td>
-          <td class="tw-text-sm">{{ producer.country }}</td>
+          <td class="tw-text-sm">{{ production.name }}</td>
+          <td class="tw-text-sm">{{ production.country }}</td>
           <td>
             <button pButton icon="ms ms-edit" class="p-button-rounded p-button-success p-button-sm p-button-sm-icon tw-mr-2"
-              (click)="showUpdateProducerDialog(producer)">
+              (click)="showUpdateProductionDialog(production)">
             </button>
             <button pButton icon="ms ms-delete" class="p-button-rounded p-button-danger p-button-sm p-button-sm-icon"
-              (click)="showDeleteProducerDialog(producer)">
+              (click)="showDeleteProductionDialog(production)">
             </button>
           </td>
         </tr>

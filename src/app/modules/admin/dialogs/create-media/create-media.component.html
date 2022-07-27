@@ -99,20 +99,20 @@
           </small>
         </div>
         <div class="tw-w-full md:tw-w-1/2 md:tw-pl-2">
-          <label for="producers" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
-            {{ t('admin.createMedia.producers') }}
+          <label for="productions" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
+            {{ t('admin.createMedia.productions') }}
           </label>
-          <p-autoComplete formControlName="producers" [suggestions]="producerSuggestions"
-            (completeMethod)="loadProducerSuggestions($event.query)" field="name" dataKey="_id" [multiple]="true"
+          <p-autoComplete formControlName="productions" [suggestions]="productionSuggestions"
+            (completeMethod)="loadProductionSuggestions($event.query)" field="name" dataKey="_id" [multiple]="true"
             [unique]="true" [completeOnFocus]="true" scrollHeight="300px" appendTo="body" styleClass="tw-w-full"
-            panelStyleClass="p-autocomplete-xs" inputId="producers" aria-describedby="producers-error"
+            panelStyleClass="p-autocomplete-xs" inputId="productions" aria-describedby="productions-error"
             [disabledControl]="isCreatingMedia">
           </p-autoComplete>
-          <small id="producers-error"
+          <small id="productions-error"
             class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
-            [ngClass]="(createMediaForm.controls['producers'].dirty || createMediaForm.controls['producers'].touched)
-            && createMediaForm.controls['producers'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
-            {{ createMediaForm.controls['producers'].errors | firstErrorKey:'createMedia':'producers' }}
+            [ngClass]="(createMediaForm.controls['productions'].dirty || createMediaForm.controls['productions'].touched)
+            && createMediaForm.controls['productions'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
+            {{ createMediaForm.controls['productions'].errors | firstErrorKey:'createMedia':'productions' }}
           </small>
         </div>
       </div>

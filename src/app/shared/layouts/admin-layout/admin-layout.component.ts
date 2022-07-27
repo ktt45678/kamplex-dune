@@ -36,7 +36,7 @@ export class AdminLayoutComponent implements OnInit, OnDestroy, CanComponentDeac
       this.sideBarItems = [
         { label: t['menu.media'], routerLink: '/admin/media' },
         { label: t['menu.genres'], routerLink: '/admin/genres' },
-        { label: t['menu.producers'], routerLink: '/admin/producers' },
+        { label: t['menu.productions'], routerLink: '/admin/productions' },
         { separator: true, },
         { label: t['menu.users'], routerLink: '/admin/users' },
         { label: t['menu.roles'], routerLink: '/admin/roles' },
@@ -47,7 +47,7 @@ export class AdminLayoutComponent implements OnInit, OnDestroy, CanComponentDeac
       this.tabMenuItems = [
         { label: t['menu.media'], routerLink: '/admin/media' },
         { label: t['menu.genres'], routerLink: '/admin/genres' },
-        { label: t['menu.producers'], routerLink: '/admin/producers' },
+        { label: t['menu.productions'], routerLink: '/admin/productions' },
         { label: t['menu.users'], routerLink: '/admin/users' },
         { label: t['menu.roles'], routerLink: '/admin/roles' },
         { label: t['menu.auditLog'], routerLink: '/admin/audit-log' },

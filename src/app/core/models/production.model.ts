@@ -1,4 +1,4 @@
-export interface Producer {
+export interface Production {
   _id: string;
   name: string;
   country?: string;

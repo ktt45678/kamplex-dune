@@ -1,4 +1,4 @@
-export interface UpdateProducerDto {
+export interface UpdateProductionDto {
   name: string | null;
   country: string | null;
 }

@@ -10,8 +10,8 @@ import { first, map, merge, Observable, of, switchMap, takeUntil, takeWhile, tap
 import { escape, isEqual } from 'lodash';
 
 import { AppErrorCode, MediaPStatus, MediaSourceStatus, MediaStatus, MediaType, SocketMessage, SocketRoom } from '../../../../core/enums';
-import { MediaDetails, MediaVideo, MediaSubtitle, TVEpisode, Genre, Producer } from '../../../../core/models';
-import { DestroyService, GenresService, ItemDataService, MediaService, ProducersService, QueueUploadService } from '../../../../core/services';
+import { MediaDetails, MediaVideo, MediaSubtitle, TVEpisode, Genre, Production } from '../../../../core/models';
+import { DestroyService, GenresService, ItemDataService, MediaService, ProductionsService, QueueUploadService } from '../../../../core/services';
 import { WsService } from '../../../../shared/modules/ws';
 import { DropdownOptionDto, UpdateMediaDto } from '../../../../core/dto/media';
 import { MediaChange, MediaVideoChange } from '../../../../core/interfaces/ws';
@@ -40,7 +40,7 @@ interface UpdateMediaForm {
   overview: FormControl<string>;
   originalLanguage: FormControl<string | null>;
   genres: FormControl<Genre[] | null>;
-  producers: FormControl<Producer[] | null>;
+  productions: FormControl<Production[] | null>;
   runtime: FormControl<number | null>;
   adult: FormControl<boolean>;
   releaseDate: FormGroup<ShortDateForm>;
@@ -98,14 +98,14 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
   years: DropdownOptionDto[] = [];
   languages: DropdownOptionDto[] = [];
   genreSuggestions: Genre[] = [];
-  producerSuggestions: Producer[] = [];
+  productionSuggestions: Production[] = [];
   sideBarItems: MenuItem[] = [];
   episodeMenuItems: DataMenuItem<TVEpisode>[] = [];
 
   constructor(@Inject(DOCUMENT) private document: Document, private ref: ChangeDetectorRef, private renderer: Renderer2,
     private dialogRef: DynamicDialogRef, private config: DynamicDialogConfig, private dialogService: DialogService,
     private confirmationService: ConfirmationService, private mediaService: MediaService,
-    private itemDataService: ItemDataService, private genresService: GenresService, private producersService: ProducersService,
+    private itemDataService: ItemDataService, private genresService: GenresService, private productionsService: ProductionsService,
     private queueUploadService: QueueUploadService, private wsService: WsService, private translocoService: TranslocoService,
     private destroyService: DestroyService) {
     const mediaType = this.config.data['type'] || MediaType.MOVIE;
@@ -116,7 +116,7 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
       overview: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(10), Validators.maxLength(2000)] }),
       originalLanguage: new FormControl(''),
       genres: new FormControl(null),
-      producers: new FormControl(null),
+      productions: new FormControl(null),
       runtime: new FormControl(null, [Validators.required, Validators.min(0), Validators.max(10000)]),
       adult: new FormControl(false, { nonNullable: true, validators: Validators.required }),
       releaseDate: new FormGroup<ShortDateForm>({
@@ -149,7 +149,7 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
     this.months = this.itemDataService.createMonthList();
     this.years = this.itemDataService.createYearList();
     this.loadGenreSuggestions();
-    this.loadProducerSuggestions();
+    this.loadProductionSuggestions();
     this.itemDataService.createLanguageList().pipe(first()).subscribe(languages => this.languages = languages);
   }
 
@@ -233,9 +233,9 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
     }).add(() => this.ref.markForCheck());
   }
 
-  loadProducerSuggestions(search?: string): void {
-    this.producersService.findProducerSuggestions(search).subscribe({
-      next: producers => this.producerSuggestions = producers
+  loadProductionSuggestions(search?: string): void {
+    this.productionsService.findProductionSuggestions(search).subscribe({
+      next: productions => this.productionSuggestions = productions
     }).add(() => this.ref.markForCheck());
   }
 
@@ -245,14 +245,14 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
     const mediaId = this.config.data['_id'];
     const formValue = this.updateMediaForm.getRawValue();
     const genreIds = formValue.genres?.map(g => g._id) || [];
-    const producerIds = formValue.producers?.map(p => p._id) || [];
+    const productionIds = formValue.productions?.map(p => p._id) || [];
     const updateMediaDto: UpdateMediaDto = {
       title: formValue.title,
       originalTitle: formValue.originalTitle || null,
       overview: formValue.overview,
       genres: genreIds,
       originalLanguage: formValue.originalLanguage,
-      producers: producerIds,
+      productions: productionIds,
       runtime: formValue.runtime!,
       adult: formValue.adult,
       releaseDate: {
@@ -759,7 +759,7 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
       overview: media.overview,
       originalLanguage: media.originalLanguage || null,
       genres: media.genres,
-      producers: media.producers,
+      productions: media.productions,
       runtime: media.runtime,
       adult: media.adult,
       releaseDate: {

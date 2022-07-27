@@ -1,0 +1,35 @@
+<ng-container *transloco="let t">
+  <h3 class="tw-text-white tw-text-2xl tw-font-bold tw-text-center tw-mb-4">
+    {{ t('admin.updateProduction.formHeader') }}
+  </h3>
+  <form [formGroup]="updateProductionForm" formHandler (ngSubmit)="onUpdateProductionFormSubmit()">
+    <label for="name" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
+      {{ t('admin.updateProduction.name') }}
+    </label>
+    <input formControlName="name" class="tw-w-full" id="name" type="text" aria-describedby="name-error" pInputText
+      [disabledControl]="isUpdatingProduction" controlAutofocus>
+    <small id="name-error"
+      class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
+      [ngClass]="(updateProductionForm.controls['name'].dirty || updateProductionForm.controls['name'].touched)
+          && updateProductionForm.controls['name'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
+      {{ updateProductionForm.controls['name'].errors | firstErrorKey:'updateProduction':'name' }}
+    </small>
+    <label for="country" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
+      {{ t('admin.updateProduction.country') }}
+    </label>
+    <p-dropdown id="country" formControlName="country" [options]="countryOptions || []" scrollHeight="250px"
+      [placeholder]="t('admin.updateProduction.countryPlaceholder')" [showClear]="true" appendTo="body"
+      panelStyleClass="p-dropdown-sm" styleClass="tw-w-full tw-mb-4" [disabledControl]="isUpdatingProduction">
+    </p-dropdown>
+    <div class="tw-flex tw-mt-4">
+      <div class="tw-ml-auto">
+        <button pButton type="button" [label]="t('admin.updateProduction.cancel')" (click)="onUpdateProductionFormCancel()"
+          class="p-button-text p-button-secondary p-button-sm">
+        </button>
+        <button pButton type="submit" [label]="t('admin.updateProduction.submit')"
+          class="p-button-success p-button-sm tw-ml-1" [disabled]="isUpdatingProduction">
+        </button>
+      </div>
+    </div>
+  </form>
+</ng-container>

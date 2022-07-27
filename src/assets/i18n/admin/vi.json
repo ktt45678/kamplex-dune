@@ -5,13 +5,13 @@
     "cancel": "Missing value for 'admin.createGenre.cancel'",
     "submit": "Missing value for 'admin.createGenre.submit'"
   },
-  "createProducer": {
-    "formHeader": "Missing value for 'admin.createProducer.formHeader'",
-    "name": "Missing value for 'admin.createProducer.name'",
-    "country": "Missing value for 'admin.createProducer.country'",
-    "countryPlaceholder": "Missing value for 'admin.createProducer.countryPlaceholder'",
-    "cancel": "Missing value for 'admin.createProducer.cancel'",
-    "submit": "Missing value for 'admin.createProducer.submit'"
+  "createProduction": {
+    "formHeader": "Missing value for 'admin.createProduction.formHeader'",
+    "name": "Missing value for 'admin.createProduction.name'",
+    "country": "Missing value for 'admin.createProduction.country'",
+    "countryPlaceholder": "Missing value for 'admin.createProduction.countryPlaceholder'",
+    "cancel": "Missing value for 'admin.createProduction.cancel'",
+    "submit": "Missing value for 'admin.createProduction.submit'"
   },
   "updateGenre": {
     "formHeader": "Missing value for 'admin.updateGenre.formHeader'",
@@ -21,13 +21,13 @@
     "cancel": "Missing value for 'admin.updateGenre.cancel'",
     "submit": "Missing value for 'admin.updateGenre.submit'"
   },
-  "updateProducer": {
-    "formHeader": "Missing value for 'admin.updateProducer.formHeader'",
-    "name": "Missing value for 'admin.updateProducer.name'",
-    "country": "Missing value for 'admin.updateProducer.country'",
-    "countryPlaceholder": "Missing value for 'admin.updateProducer.countryPlaceholder'",
-    "cancel": "Missing value for 'admin.updateProducer.cancel'",
-    "submit": "Missing value for 'admin.updateProducer.submit'"
+  "updateProduction": {
+    "formHeader": "Missing value for 'admin.updateProduction.formHeader'",
+    "name": "Missing value for 'admin.updateProduction.name'",
+    "country": "Missing value for 'admin.updateProduction.country'",
+    "countryPlaceholder": "Missing value for 'admin.updateProduction.countryPlaceholder'",
+    "cancel": "Missing value for 'admin.updateProduction.cancel'",
+    "submit": "Missing value for 'admin.updateProduction.submit'"
   },
   "genres": {
     "searchPlaceholder": "Missing value for 'admin.genres.searchPlaceholder'",

@@ -71,17 +71,17 @@
               {{ media.overview }}
             </p>
             <p class="tw-text-white tw-text-base sm:tw-text-lg tw-font-medium tw-leading-5 tw-mt-4">
-              {{ t('media.details.producers') }}
+              {{ t('media.details.productions') }}
             </p>
-            <p *ngIf="media.producers.length; else noProducers"
+            <p *ngIf="media.productions.length; else noProductions"
               class="tw-text-white tw-text-sm sm:tw-text-base tw-space-x-2 tw-mt-2">
-              <span *ngFor="let producer of media.producers; trackBy: trackId">
-                {{ producer.name }}
+              <span *ngFor="let production of media.productions; trackBy: trackId">
+                {{ production.name }}
               </span>
             </p>
-            <ng-template #noProducers>
+            <ng-template #noProductions>
               <p class="tw-text-gray-400 tw-text-sm sm:tw-text-base tw-space-x-2 tw-mt-2 tw-italic">
-                {{ t('media.details.noProducers') }}
+                {{ t('media.details.noProductions') }}
               </p>
             </ng-template>
             <p class="tw-text-white tw-text-base sm:tw-text-lg tw-font-medium tw-leading-5 tw-mt-4">

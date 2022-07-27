@@ -25,7 +25,7 @@ import { AdminRoutingModule } from './admin-routing.module';
 import { AdminLayoutModule } from '../../shared/layouts/admin-layout';
 import { MediaComponent } from './pages/media/media.component';
 import { GenresComponent } from './pages/genres/genres.component';
-import { ProducersComponent } from './pages/producers/producers.component';
+import { ProductionsComponent } from './pages/productions/productions.component';
 import { CreateGenreComponent } from './dialogs/create-genre/create-genre.component';
 import { UpdateGenreComponent } from './dialogs/update-genre/update-genre.component';
 import { FileUploadModule } from '../../shared/components/file-upload';
@@ -37,8 +37,8 @@ import { DateTimePipeModule } from '../../shared/pipes/date-time-pipe';
 import { NumberPipeModule } from '../../shared/pipes/number-pipe';
 import { UrlPipeModule } from '../../shared/pipes/url-pipe/url-pipe.module';
 import { WS_AUTH, WS_NAMESPACE, WsModule } from '../../shared/modules/ws';
-import { CreateProducerComponent } from './dialogs/create-producer/create-producer.component';
-import { UpdateProducerComponent } from './dialogs/update-producer/update-producer.component';
+import { CreateProductionComponent } from './dialogs/create-production/create-production.component';
+import { UpdateProductionComponent } from './dialogs/update-production/update-production.component';
 import { CreateMediaComponent } from './dialogs/create-media/create-media.component';
 import { UpdateMediaComponent } from './dialogs/update-media/update-media.component';
 import { AddVideoComponent } from './dialogs/add-video/add-video.component';
@@ -51,17 +51,17 @@ import { ConfigureMediaComponent } from './dialogs/configure-media/configure-med
 import { AddSourceComponent } from './dialogs/add-source/add-source.component';
 import { ConfirmDeactivateGuard, WsActivatorGuard } from '../../core/guards';
 import { ConfigureEpisodeComponent } from './dialogs/configure-episode/configure-episode.component';
-import { GenresService, MediaService, ProducersService, QueueUploadService } from '../../core/services';
+import { GenresService, MediaService, ProductionsService, QueueUploadService } from '../../core/services';
 
 @NgModule({
   declarations: [
     MediaComponent,
     GenresComponent,
-    ProducersComponent,
+    ProductionsComponent,
     CreateGenreComponent,
     UpdateGenreComponent,
-    CreateProducerComponent,
-    UpdateProducerComponent,
+    CreateProductionComponent,
+    UpdateProductionComponent,
     CreateMediaComponent,
     UpdateMediaComponent,
     ViewMediaComponent,
@@ -112,7 +112,7 @@ import { GenresService, MediaService, ProducersService, QueueUploadService } fro
     ConfirmationService,
     MediaService,
     GenresService,
-    ProducersService,
+    ProductionsService,
     QueueUploadService,
     ConfirmDeactivateGuard,
     WsActivatorGuard,

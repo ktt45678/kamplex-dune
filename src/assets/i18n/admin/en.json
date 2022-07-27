@@ -2,7 +2,7 @@
   "menu": {
     "media": "Media",
     "genres": "Genres",
-    "producers": "Producers",
+    "productions": "Productions",
     "users": "Users",
     "roles": "Roles",
     "auditLog": "Audit Log",
@@ -19,8 +19,8 @@
     "cancel": "Cancel",
     "submit": "Create"
   },
-  "createProducer": {
-    "formHeader": "Create Producer",
+  "createProduction": {
+    "formHeader": "Create Company",
     "name": "{{ admin.createGenre.name }}",
     "country": "Country (optional)",
     "countryPlaceholder": "No country selected",
@@ -35,11 +35,11 @@
     "cancel": "{{ admin.createGenre.cancel }}",
     "submit": "Save Changes"
   },
-  "updateProducer": {
-    "formHeader": "Update Producer",
+  "updateProduction": {
+    "formHeader": "Update Company",
     "name": "{{ admin.createGenre.name }}",
-    "country": "{{ admin.createProducer.country }}",
-    "countryPlaceholder": "{{ admin.createProducer.countryPlaceholder }}",
+    "country": "{{ admin.createProduction.country }}",
+    "countryPlaceholder": "{{ admin.createProduction.countryPlaceholder }}",
     "cancel": "{{ admin.createGenre.cancel }}",
     "submit": "{{ admin.updateGenre.submit }}"
   },
@@ -55,8 +55,8 @@
     "originalLanguagePlaceholder": "Language of the show",
     "genres": "Genres (optional)",
     "createGenreByName": "Create Genre: {{ name }}",
-    "createProducerByName": "Create Producer: {{ name }}",
-    "producers": "Producers (optional)",
+    "createProductionByName": "Create Company: {{ name }}",
+    "productions": "Production Companies (optional)",
     "runtime": "Running time",
     "runtimePlaceholder": "How long does it take to finish a movie/episode?",
     "adult": "Is this show adult only?",
@@ -117,8 +117,8 @@
     "originalLanguagePlaceholder": "{{ admin.createMedia.originalLanguagePlaceholder }}",
     "genres": "{{ admin.createMedia.genres }}",
     "createGenreByName": "{{ admin.createMedia.createGenreByName }}",
-    "createProducerByName": "{{ admin.createMedia.createProducerByName }}",
-    "producers": "{{ admin.createMedia.producers }}",
+    "createProductionByName": "{{ admin.createMedia.createProductionByName }}",
+    "productions": "{{ admin.createMedia.productions }}",
     "runtime": "{{ admin.createMedia.runtime }}",
     "runtimePlaceholder": "{{ admin.createMedia.runtimePlaceholder }}",
     "adult": "{{ admin.createMedia.adult }}",
@@ -233,14 +233,14 @@
     "deleteConfirmationHeader": "Delete Genre",
     "deleteConfirmation": "Are you sure you want to delete <strong>{{ name }}</strong>? This action cannot be undone."
   },
-  "producers": {
+  "productions": {
     "searchPlaceholder": "{{ admin.genres.searchPlaceholder }}",
     "create": "{{ admin.genres.create }}",
-    "tableHeader": "Manage Producers",
+    "tableHeader": "Manage Production Companies",
     "name": "{{ admin.createGenre.name }}",
     "country": "Country",
     "pageReport": "Showing '{first'} to '{last'} of '{totalRecords'} entries",
-    "deleteConfirmationHeader": "Delete Producer",
+    "deleteConfirmationHeader": "Delete Company",
     "deleteConfirmation": "Are you sure you want to delete <strong>{{ name }}</strong>? This action cannot be undone."
   },
   "media": {

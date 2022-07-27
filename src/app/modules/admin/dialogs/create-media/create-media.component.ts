@@ -6,8 +6,8 @@ import { first, takeUntil } from 'rxjs';
 import { CreateMediaDto, DropdownOptionDto } from '../../../../core/dto/media';
 import { MediaStatus, MediaType } from '../../../../core/enums';
 import { ShortDateForm } from '../../../../core/interfaces/forms';
-import { Genre, Producer } from '../../../../core/models';
-import { DestroyService, GenresService, ItemDataService, MediaService, ProducersService } from '../../../../core/services';
+import { Genre, Production } from '../../../../core/models';
+import { DestroyService, GenresService, ItemDataService, MediaService, ProductionsService } from '../../../../core/services';
 import { shortDate } from '../../../../core/validators';
 
 interface CreateMediaForm {
@@ -17,7 +17,7 @@ interface CreateMediaForm {
   overview: FormControl<string>;
   originalLanguage: FormControl<string | null>;
   genres: FormControl<Genre[] | null>;
-  producers: FormControl<Producer[] | null>;
+  productions: FormControl<Production[] | null>;
   runtime: FormControl<number | null>;
   adult: FormControl<boolean>;
   releaseDate: FormGroup<ShortDateForm>;
@@ -42,11 +42,11 @@ export class CreateMediaComponent implements OnInit {
   years: DropdownOptionDto[] = [];
   languages: DropdownOptionDto[] = [];
   genreSuggestions: Genre[] = [];
-  producerSuggestions: Producer[] = [];
+  productionSuggestions: Production[] = [];
 
   constructor(private ref: ChangeDetectorRef, private dialogRef: DynamicDialogRef,
     private config: DynamicDialogConfig, private mediaService: MediaService, private genresService: GenresService,
-    private producersService: ProducersService, private itemDataService: ItemDataService, private destroyService: DestroyService) {
+    private productionsService: ProductionsService, private itemDataService: ItemDataService, private destroyService: DestroyService) {
     const mediaType = this.config.data['type'] || MediaType.MOVIE;
     this.createMediaForm = new FormGroup<CreateMediaForm>({
       type: new FormControl(mediaType),
@@ -55,7 +55,7 @@ export class CreateMediaComponent implements OnInit {
       overview: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(10), Validators.maxLength(2000)] }),
       originalLanguage: new FormControl(null),
       genres: new FormControl(null),
-      producers: new FormControl(null),
+      productions: new FormControl(null),
       runtime: new FormControl(null, [Validators.required, Validators.min(0), Validators.max(10000)]),
       adult: new FormControl(false, { nonNullable: true, validators: Validators.required }),
       releaseDate: new FormGroup<ShortDateForm>({
@@ -81,7 +81,7 @@ export class CreateMediaComponent implements OnInit {
     this.months = this.itemDataService.createMonthList();
     this.years = this.itemDataService.createYearList();
     this.loadGenreSuggestions();
-    this.loadProducerSuggestions();
+    this.loadProductionSuggestions();
     this.itemDataService.createLanguageList().pipe(first()).subscribe(languages => {
       this.languages = languages
     });
@@ -93,9 +93,9 @@ export class CreateMediaComponent implements OnInit {
     }).add(() => this.ref.markForCheck());
   }
 
-  loadProducerSuggestions(search?: string): void {
-    this.producersService.findProducerSuggestions(search).subscribe({
-      next: producers => this.producerSuggestions = producers
+  loadProductionSuggestions(search?: string): void {
+    this.productionsService.findProductionSuggestions(search).subscribe({
+      next: productions => this.productionSuggestions = productions
     }).add(() => this.ref.markForCheck());
   }
 
@@ -104,7 +104,7 @@ export class CreateMediaComponent implements OnInit {
     this.isCreatingMedia = true;
     const formValue = this.createMediaForm.getRawValue();
     const genreIds = formValue.genres?.map(g => g._id) || [];
-    const producerIds = formValue.producers?.map(p => p._id) || [];
+    const productionIds = formValue.productions?.map(p => p._id) || [];
     const createMediaDto: CreateMediaDto = {
       type: formValue.type,
       title: formValue.title,
@@ -112,7 +112,7 @@ export class CreateMediaComponent implements OnInit {
       overview: formValue.overview,
       genres: genreIds,
       originalLanguage: formValue.originalLanguage,
-      producers: producerIds,
+      productions: productionIds,
       runtime: formValue.runtime!,
       adult: formValue.adult,
       releaseDate: {

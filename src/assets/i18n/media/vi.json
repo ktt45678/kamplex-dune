@@ -3,8 +3,8 @@
     "runtimeValue": "{{ runtime }} phút",
     "noGenres": "Không có thể loại",
     "overview": "Mô tả",
-    "producers": "Sản xuất bởi",
-    "noProducers": "Không có thông tin nhà sản xuất",
+    "productions": "Sản xuất bởi",
+    "noProductions": "Không có thông tin nhà sản xuất",
     "releaseDate": "Ngày phát hành",
     "noVideos": "Không tìm thấy video nào",
     "episodeCountValue": "{{ episodeCount }} tập"

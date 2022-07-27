@@ -92,16 +92,16 @@
         "maxlength": "{{ validationErrors.createGenre.name.maxlength }}"
       }
     },
-    "createProducer": {
+    "createProduction": {
       "name": {
         "required": "Name is required",
         "maxlength": "Name must not be longer than 150 characters"
       }
     },
-    "updateProducer": {
+    "updateProduction": {
       "name": {
-        "required": "{{ validationErrors.createProducer.name.required }}",
-        "maxlength": "{{ validationErrors.createProducer.name.maxlength }}"
+        "required": "{{ validationErrors.createProduction.name.required }}",
+        "maxlength": "{{ validationErrors.createProduction.name.maxlength }}"
       }
     },
     "createMedia": {

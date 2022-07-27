@@ -4,28 +4,28 @@ import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { first, takeUntil } from 'rxjs';
 
 import { DropdownOptionDto } from '../../../../core/dto/media';
-import { DestroyService, ItemDataService, ProducersService } from '../../../../core/services';
+import { DestroyService, ItemDataService, ProductionsService } from '../../../../core/services';
 
-interface CreateProducerForm {
+interface CreateProductionForm {
   name: FormControl<string>;
   country: FormControl<string | null>;
 }
 
 @Component({
-  selector: 'app-create-producer',
-  templateUrl: './create-producer.component.html',
-  styleUrls: ['./create-producer.component.scss'],
+  selector: 'app-create-production',
+  templateUrl: './create-production.component.html',
+  styleUrls: ['./create-production.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [ItemDataService, DestroyService]
 })
-export class CreateProducerComponent implements OnInit {
-  isCreatingProducer: boolean = false;
-  createProducerForm: FormGroup<CreateProducerForm>;
+export class CreateProductionComponent implements OnInit {
+  isCreatingProduction: boolean = false;
+  createProductionForm: FormGroup<CreateProductionForm>;
   countryOptions?: DropdownOptionDto[];
 
-  constructor(private ref: ChangeDetectorRef, private dialogRef: DynamicDialogRef, private producersService: ProducersService,
+  constructor(private ref: ChangeDetectorRef, private dialogRef: DynamicDialogRef, private productionsService: ProductionsService,
     private itemDataService: ItemDataService, private destroyService: DestroyService) {
-    this.createProducerForm = new FormGroup<CreateProducerForm>({
+    this.createProductionForm = new FormGroup<CreateProductionForm>({
       name: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(150)] }),
       country: new FormControl(null)
     });
@@ -37,23 +37,23 @@ export class CreateProducerComponent implements OnInit {
     });
   }
 
-  onCreateProducerFormSubmit(): void {
-    if (this.createProducerForm.invalid) return;
-    this.isCreatingProducer = true;
-    const formValue = this.createProducerForm.getRawValue();
-    this.producersService.create({
+  onCreateProductionFormSubmit(): void {
+    if (this.createProductionForm.invalid) return;
+    this.isCreatingProduction = true;
+    const formValue = this.createProductionForm.getRawValue();
+    this.productionsService.create({
       name: formValue.name,
       country: formValue.country
     }).pipe(takeUntil(this.destroyService)).subscribe({
       next: () => this.dialogRef.close(true),
       error: () => {
-        this.isCreatingProducer = false;
+        this.isCreatingProduction = false;
         this.ref.markForCheck();
       }
     });
   }
 
-  onCreateProducerFormCancel(): void {
+  onCreateProductionFormCancel(): void {
     this.dialogRef.close(false);
   }
 

@@ -5,7 +5,7 @@ import { ConfirmDeactivateGuard, WsActivatorGuard } from '../../core/guards';
 import { AdminLayoutComponent } from '../../shared/layouts/admin-layout';
 import { GenresComponent } from './pages/genres/genres.component';
 import { MediaComponent } from './pages/media/media.component';
-import { ProducersComponent } from './pages/producers/producers.component';
+import { ProductionsComponent } from './pages/productions/productions.component';
 
 const routes: Routes = [
   {
@@ -19,8 +19,8 @@ const routes: Routes = [
         component: GenresComponent
       },
       {
-        path: 'producers',
-        component: ProducersComponent,
+        path: 'productions',
+        component: ProductionsComponent,
       },
       {
         path: 'media',

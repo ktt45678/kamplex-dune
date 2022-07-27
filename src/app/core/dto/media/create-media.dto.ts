@@ -7,7 +7,7 @@ export interface CreateMediaDto {
   overview: string;
   genres: string[] | null;
   originalLanguage: string | null;
-  producers: string[] | null;
+  productions: string[] | null;
   runtime: number;
   adult: boolean;
   releaseDate: ShortDate;
