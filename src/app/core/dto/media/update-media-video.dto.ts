@@ -1,5 +1,5 @@
-export class UpdateMediaVideoDto {
-  name?: string;
-  url?: string;
+export interface UpdateMediaVideoDto {
+  name: string | null;
+  url: string | null;
   translate?: string;
 }

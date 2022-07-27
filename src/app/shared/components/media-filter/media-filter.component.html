@@ -23,20 +23,21 @@
         scrollHeight="400px" [showClear]="true" [appendTo]="dropdownZone" [placeholder]="t('media.filter.status')"
         styleClass="tw-w-full p-dropdown-xs">
       </p-dropdown>
-      <p-dropdown [hidden]="!showAdvanced" formControlName="originalLanguage" [options]="languages || []" [baseZIndex]="100"
-        scrollHeight="400px" [showClear]="true" [appendTo]="dropdownZone" [placeholder]="t('media.filter.language')"
-        styleClass="tw-w-full p-dropdown-xs" panelStyleClass="md:tw-dropdown-cols-4 md:tw-max-w-2xl">
+      <p-dropdown [hidden]="!showAdvanced" formControlName="originalLanguage" [options]="languages || []"
+        [baseZIndex]="100" scrollHeight="400px" [showClear]="true" [appendTo]="dropdownZone"
+        [placeholder]="t('media.filter.language')" styleClass="tw-w-full p-dropdown-xs"
+        panelStyleClass="md:tw-dropdown-cols-4 md:tw-max-w-2xl">
       </p-dropdown>
       <p-dropdown [hidden]="!showAdvanced" formControlName="year" [options]="yearOptions || []" [baseZIndex]="100"
         scrollHeight="400px" [showClear]="true" [appendTo]="dropdownZone" [placeholder]="t('media.filter.year')"
         styleClass="tw-w-full p-dropdown-xs" panelStyleClass="md:tw-dropdown-cols-4 md:tw-max-w-xl">
       </p-dropdown>
-      <button pButton type="submit" [label]="t('media.filter.beginFilter')" class="p-button-sm tw-block"
-        icon="pi pi-filter"></button>
+      <button pButton type="submit" [label]="t('media.filter.beginFilter')" class="p-button-sm p-button-shrink"
+        icon="ms ms-filter-alt"></button>
     </div>
     <div class="tw-flex tw-mt-4">
       <p-toggleButton formControlName="showAdvanced" class="tw-ml-auto" styleClass="p-button-sm"
-        onIcon="pi pi-angle-double-up" offIcon="pi pi-angle-double-down" pTooltip="Toggle advanced options"
+        onIcon="ms ms-expand-less" offIcon="ms ms-expand-more" pTooltip="Toggle advanced options"
         [showDelay]="1000" tooltipPosition="bottom" (onChange)="showAdvanced = $event.checked">
       </p-toggleButton>
     </div>

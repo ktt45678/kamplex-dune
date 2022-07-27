@@ -1,4 +1,4 @@
-export class AddMediaVideoDto {
-  name?: string;
-  url!: string;
+export interface AddMediaVideoDto {
+  name: string | null;
+  url: string;
 }

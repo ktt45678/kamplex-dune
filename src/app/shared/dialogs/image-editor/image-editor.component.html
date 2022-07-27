@@ -1,0 +1,31 @@
+<ng-container *transloco="let t; loadingTpl: loadingSpinner">
+  <ng-container *ngIf="!loadedImage; then loadingSpinner"></ng-container>
+  <div [hidden]="!loadedImage">
+    <image-cropper [maintainAspectRatio]="true" [aspectRatio]="aspectRatio" [cropperMinWidth]="minWidth"
+      [cropperMinHeight]="minHeight" [imageFile]="imageFile" [autoCrop]="false" alignImage="center"
+      [transform]="transform" fixAspectRatioBy="width" [fixAspectRatioWidth]="aspectRatioWidth"
+      [fixAspectRatioHeight]="aspectRatioHeight" [fixAttempts]="100" [format]="format" backgroundColor="white"
+      (imageLoaded)="imageLoaded($event)" (loadImageFailed)="loadImageFailed()" (imageCropped)="imageCropped($event)">
+    </image-cropper>
+  </div>
+  <p-slider styleClass="tw-mt-4" [min]="0" [max]="100" (onChange)="zoomSliderChange($event)" [disabled]="!loadedImage">
+  </p-slider>
+  <div class="tw-flex tw-mt-4">
+    <button pButton type="button" [label]="t('common.imageEditor.skip')"
+      class="p-button-text p-button-secondary p-button-sm" [disabled]="!loadedImage" (click)="onSkip()">
+    </button>
+    <div class="tw-ml-auto">
+      <button pButton type="button" [label]="t('common.imageEditor.cancel')"
+        class="p-button-text p-button-secondary p-button-sm" (click)="onCancel()">
+      </button>
+      <button pButton type="button" [label]="t('common.imageEditor.confirm')" class="p-button p-button-sm tw-ml-1"
+        [disabled]="!loadedImage" (click)="onConfirm()">
+      </button>
+    </div>
+  </div>
+</ng-container>
+<ng-template #loadingSpinner>
+  <div class="tw-flex tw-justify-center tw-items-center tw-h-32">
+    <p-progressSpinner></p-progressSpinner>
+  </div>
+</ng-template>

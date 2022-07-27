@@ -5,6 +5,10 @@ import { takeUntil } from 'rxjs';
 
 import { DestroyService, GenresService } from '../../../../core/services';
 
+interface CreateGenreForm {
+  name: FormControl<string>;
+}
+
 @Component({
   selector: 'app-create-genre',
   templateUrl: './create-genre.component.html',
@@ -14,12 +18,12 @@ import { DestroyService, GenresService } from '../../../../core/services';
 })
 export class CreateGenreComponent implements OnInit {
   creatingGenre: boolean = false;
-  createGenreForm: FormGroup;
+  createGenreForm: FormGroup<CreateGenreForm>;
 
   constructor(private ref: ChangeDetectorRef, private dialogRef: DynamicDialogRef, private genresService: GenresService,
     private destroyService: DestroyService) {
-    this.createGenreForm = new FormGroup({
-      name: new FormControl('', [Validators.required, Validators.maxLength(32)])
+    this.createGenreForm = new FormGroup<CreateGenreForm>({
+      name: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(32)] })
     });
   }
 
@@ -29,8 +33,9 @@ export class CreateGenreComponent implements OnInit {
   onCreateGenreFormSubmit(): void {
     if (this.createGenreForm.invalid) return;
     this.creatingGenre = true;
+    const formValue = this.createGenreForm.getRawValue();
     this.genresService.create({
-      name: this.createGenreForm.value['name']
+      name: formValue.name
     }).pipe(takeUntil(this.destroyService)).subscribe({
       next: () => this.dialogRef.close(true),
       error: () => {

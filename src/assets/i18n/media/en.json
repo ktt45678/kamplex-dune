@@ -1,4 +1,6 @@
 {
+  "play": "Play",
+  "playlist": "Playlist",
   "details": {
     "runtimeValue": "{{ runtime }} min",
     "noGenres": "No genres found",

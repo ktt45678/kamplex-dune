@@ -6,7 +6,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 export class HexColorPipe implements PipeTransform {
 
   transform(value: number): string {
-    return '#' + value.toString(16);
+    const hex = value.toString(16);
+    return '#' + ('000000' + hex).slice(-6);
   }
 
 }

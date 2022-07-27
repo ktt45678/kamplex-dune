@@ -3,10 +3,13 @@
   [ngClass]="styleClass">
   <div class="tw-text-center tw-mx-4">
     <input #inputFile hidden="true" type="file" id="file-upload" onclick="this.value = null"
-      (change)="onFileInputChange($event)" [attr.accept]="accept" [attr.aria-describedby]="ariaDescribedby" />
-    <button pButton type="button" class="p-button-secondary" [label]="label" icon="pi pi-upload" iconPos="right"
-      ariaLabel="Select file" (click)="inputFile.click()" [disabled]="disabled">
+      (change)="onFileInputChange($event)" [attr.accept]="accept" [attr.aria-label]="ariaLabel"
+      [attr.aria-describedby]="ariaDescribedby" />
+    <button pButton type="button" class="p-button-secondary p-button-shrink" [label]="label" icon="ms ms-file-upload"
+      iconPos="right" ariaLabel="Select file" (click)="inputFile.click()" [disabled]="disabled">
     </button>
-    <p *ngIf="selectedFile" class="tw-text-base tw-line-clamp-2 tw-mt-2">{{ selectedFile.name }}</p>
+    <p *ngIf="desciption" class="tw-text-sm tw-text-gray-400 tw-mt-2">{{ desciption }}</p>
+    <p *ngIf="selectedFile && showFilename" class="tw-text-base tw-font-medium tw-line-clamp-2 tw-mt-2">{{
+      selectedFile.name }}</p>
   </div>
 </div>

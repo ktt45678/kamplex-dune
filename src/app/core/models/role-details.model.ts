@@ -1,6 +1,6 @@
 import { Role } from '.';
 
-export class RoleDetails extends Role {
-  createdAt!: string;
-  updatedAt!: string;
+export interface RoleDetails extends Role {
+  createdAt: string;
+  updatedAt: string;
 }

@@ -1,5 +1,4 @@
 import { Component, OnInit, ChangeDetectionStrategy, Input, ElementRef, Renderer2, AfterViewInit, ViewChildren, QueryList } from '@angular/core';
-import { forkJoin } from 'rxjs';
 import '@vidstack/player/define/vds-media.js';
 import '@vidstack/player/define/vds-video.js';
 import '@vidstack/player/define/vds-play-button.js';

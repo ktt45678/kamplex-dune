@@ -1,4 +1,4 @@
-export class PaginateProducersDto {
+export interface PaginateProducersDto {
   page?: number;
   limit?: number;
   search?: string;

@@ -1,4 +1,4 @@
-export class AddMediaSubtitleDto {
-  language!: string;
-  file!: File;
+export interface AddMediaSubtitleDto {
+  language: string;
+  file: File;
 }

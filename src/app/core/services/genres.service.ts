@@ -47,8 +47,9 @@ export class GenresService {
       const genreSuggestions = genres.results;
       const hasMatch = genres.results.find(g => g.name === search);
       if (search && search.length <= 32 && !hasMatch) {
+        const encodedName = encodeURIComponent(search);
         genreSuggestions.push({
-          _id: `create:${search}`,
+          _id: `create:name=${encodedName}`,
           name: this.translocoService.translate('admin.createMedia.createGenreByName', { name: search })
         });
       }

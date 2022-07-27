@@ -5,6 +5,7 @@ import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { MediaType } from '../../../../core/enums';
 import { MediaDetails } from '../../../../core/models';
 import { MediaService } from '../../../../core/services';
+import { YOUTUBE_EMBED_URL, YOUTUBE_THUMBNAIL_URL } from '../../../../../environments/config';
 
 @Component({
   selector: 'app-view-media',
@@ -23,8 +24,8 @@ export class ViewMediaComponent implements OnInit {
   loadingMedia: boolean = false;
   displayVideo: boolean = false;
   activeVideoIndex: number = 0;
-  youtubeUrl = 'https://www.youtube.com/embed/';
-  youtubeThumbnailUrl = 'https://img.youtube.com/vi/';
+  youtubeUrl = YOUTUBE_EMBED_URL;
+  youtubeThumbnailUrl = YOUTUBE_THUMBNAIL_URL;
   media?: MediaDetails;
 
   constructor(private ref: ChangeDetectorRef, private dialogRef: DynamicDialogRef, private config: DynamicDialogConfig,

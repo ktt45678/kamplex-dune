@@ -7,6 +7,12 @@ import { UpdateGenreDto } from '../../../../core/dto/genres';
 import { DropdownOptionDto } from '../../../../core/dto/media';
 import { DestroyService, GenresService, ItemDataService } from '../../../../core/services';
 
+interface UpdateGenreForm {
+  name: FormControl<string>;
+  isTranslation: FormControl<boolean>;
+  translate: FormControl<string>;
+}
+
 @Component({
   selector: 'app-update-genre',
   templateUrl: './update-genre.component.html',
@@ -16,15 +22,15 @@ import { DestroyService, GenresService, ItemDataService } from '../../../../core
 })
 export class UpdateGenreComponent implements OnInit {
   updatingGenre: boolean = false;
-  updateGenreForm: FormGroup;
+  updateGenreForm: FormGroup<UpdateGenreForm>;
   translateOptions: DropdownOptionDto[] = [];
 
   constructor(private ref: ChangeDetectorRef, private dialogRef: DynamicDialogRef, private config: DynamicDialogConfig,
     private genresService: GenresService, private itemDataService: ItemDataService, private destroyService: DestroyService) {
-    this.updateGenreForm = new FormGroup({
-      name: new FormControl(this.config.data['name'] || '', [Validators.maxLength(32)]),
-      isTranslation: new FormControl(false),
-      translate: new FormControl({ value: 'vi', disabled: true })
+    this.updateGenreForm = new FormGroup<UpdateGenreForm>({
+      name: new FormControl(this.config.data['name'] || '', { nonNullable: true, validators: [Validators.required, Validators.maxLength(32)] }),
+      isTranslation: new FormControl(false, { nonNullable: true }),
+      translate: new FormControl({ value: 'vi', disabled: true }, { nonNullable: true })
     });
   }
 
@@ -37,9 +43,11 @@ export class UpdateGenreComponent implements OnInit {
   onUpdateGenreFormSubmit(): void {
     if (this.updateGenreForm.invalid) return;
     this.updatingGenre = true;
-    const params = new UpdateGenreDto();
-    params.name = this.updateGenreForm.value['name'];
-    this.updateGenreForm.value['isTranslation'] && (params.translate = this.updateGenreForm.value['translate']);
+    const formValue = this.updateGenreForm.getRawValue();
+    const params: UpdateGenreDto = {
+      name: formValue.name
+    };
+    formValue.isTranslation && (params.translate = this.updateGenreForm.value.translate);
     this.genresService.update(this.config.data['_id'], params).pipe(takeUntil(this.destroyService)).subscribe({
       next: () => this.dialogRef.close(true),
       error: () => {

@@ -4,8 +4,9 @@
 
 export const environment = {
   production: false,
-  apiUrl: 'http://192.168.1.10:3000/api',
-  socketUrl: 'http://192.168.1.10:3000/ws'
+  apiUrl: 'http://localhost:3000/api',
+  socketUrl: 'http://localhost:3000/ws',
+  consumetApiUrl: 'https://consumet-api.herokuapp.com'
 };
 
 /*

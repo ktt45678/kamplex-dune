@@ -2,7 +2,8 @@ const exec = require('child_process').exec;
 const fs = require('fs');
 const path = require('path');
 
-const { defaultProject } = require('./angular.json')
+const { projects } = require('./angular.json');
+const defaultProject = Object.keys(projects)[0];
 
 // find the styles css file
 const files = getFilesFromPath(`./dist/${defaultProject}`, '.css');

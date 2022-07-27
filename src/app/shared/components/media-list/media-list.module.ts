@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { LazyLoadImageModule } from 'ng-lazyload-image';
 import { SkeletonModule } from 'primeng/skeleton';
+import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
 
 import { NumberPipeModule } from '../../pipes/number-pipe';
 import { MediaListComponent } from './media-list.component';
@@ -14,7 +15,14 @@ import { MediaListComponent } from './media-list.component';
     RouterModule,
     LazyLoadImageModule,
     SkeletonModule,
-    NumberPipeModule
+    NumberPipeModule,
+    TranslocoModule
+  ],
+  providers: [
+    {
+      provide: TRANSLOCO_SCOPE,
+      useValue: 'home'
+    }
   ],
   exports: [MediaListComponent]
 })

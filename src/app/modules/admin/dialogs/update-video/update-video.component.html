@@ -9,7 +9,7 @@
           {{ t('admin.updateMediaVideo.name') }}
         </label>
         <input formControlName="name" class="tw-w-full" id="name" type="text" aria-describedby="name-error" pInputText
-          [disabledControl]="updatingVideo">
+          [disabledControl]="isUpdatingVideo">
         <small id="name-error"
           class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
           [ngClass]="(updateVideoForm.controls['name'].dirty || updateVideoForm.controls['name'].touched)
@@ -22,7 +22,7 @@
           {{ t('admin.updateMediaVideo.url') }}
         </label>
         <input formControlName="url" class="tw-w-full" id="url" type="text" aria-describedby="url-error" pInputText
-          [disabledControl]="updatingVideo || updateVideoForm.controls['isTranslation'].value" controlAutofocus>
+          [disabledControl]="isUpdatingVideo || updateVideoForm.controls['isTranslation'].value" controlAutofocus>
         <small id="url-error"
           class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
           [ngClass]="(updateVideoForm.controls['url'].dirty || updateVideoForm.controls['url'].touched)
@@ -36,7 +36,7 @@
         {{ t('admin.updateMediaVideo.isTranslation') }}
       </label>
       <p-inputSwitch formControlName="isTranslation" id="is-translation" class="tw-ml-auto"
-        [disabledControl]="updatingVideo"></p-inputSwitch>
+        [disabledControl]="isUpdatingVideo"></p-inputSwitch>
     </div>
     <div class="tw-flex tw-my-2">
       <label for="translate" class="tw-inline-block tw-text-base tw-font-medium">
@@ -44,7 +44,7 @@
       </label>
       <p-dropdown formControlName="translate" id="translate" class="tw-ml-auto" panelStyleClass="p-dropdown-sm"
         appendTo="body" [options]="translateOptions"
-        [disabledControl]="updatingVideo || !updateVideoForm.controls['isTranslation'].value">
+        [disabledControl]="isUpdatingVideo || !updateVideoForm.controls['isTranslation'].value">
       </p-dropdown>
     </div>
     <div class="tw-aspect-w-16 tw-aspect-h-9 tw-mt-2">
@@ -63,7 +63,7 @@
           class="p-button-text p-button-secondary p-button-sm">
         </button>
         <button pButton type="submit" class="p-button-success p-button-sm tw-ml-1"
-          [label]="t('admin.updateMediaVideo.submit')" [disabled]="updatingVideo">
+          [label]="t('admin.updateMediaVideo.submit')" [disabled]="isUpdatingVideo">
         </button>
       </div>
     </div>

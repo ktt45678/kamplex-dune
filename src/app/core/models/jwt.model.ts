@@ -1,4 +1,4 @@
-export class JWT {
-  accessToken!: string;
-  refreshToken!: string;
+export interface JWT {
+  accessToken: string;
+  //refreshToken: string;
 }

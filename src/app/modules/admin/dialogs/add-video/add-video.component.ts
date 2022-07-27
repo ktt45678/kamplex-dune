@@ -1,9 +1,15 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { takeUntil } from 'rxjs';
 
 import { DestroyService, MediaService } from '../../../../core/services';
+import { YOUTUBE_EMBED_URL } from '../../../../../environments/config';
+
+interface AddVideoForm {
+  name: FormControl<string | null>;
+  url: FormControl<string>
+}
 
 @Component({
   selector: 'app-add-video',
@@ -13,16 +19,16 @@ import { DestroyService, MediaService } from '../../../../core/services';
   providers: [DestroyService]
 })
 export class AddVideoComponent implements OnInit {
-  youtubeUrl = 'https://www.youtube.com/embed/';
-  addingVideo: boolean = false;
+  youtubeUrl = YOUTUBE_EMBED_URL;
+  isAddingVideo: boolean = false;
   previewVideoKey?: string;
-  addVideoForm: FormGroup;
+  addVideoForm: FormGroup<AddVideoForm>;
 
-  constructor(private dialogRef: DynamicDialogRef, private config: DynamicDialogConfig, private mediaService: MediaService,
-    private destroyService: DestroyService) {
-    this.addVideoForm = new FormGroup({
-      name: new FormControl(null, [Validators.maxLength(50)]),
-      url: new FormControl(null, [Validators.required])
+  constructor(private ref: ChangeDetectorRef, private dialogRef: DynamicDialogRef, private config: DynamicDialogConfig,
+    private mediaService: MediaService, private destroyService: DestroyService) {
+    this.addVideoForm = new FormGroup<AddVideoForm>({
+      name: new FormControl('', Validators.maxLength(50)),
+      url: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(1000)] })
     });
   }
 
@@ -47,13 +53,19 @@ export class AddVideoComponent implements OnInit {
 
   onAddVideoFormSubmit(): void {
     if (this.addVideoForm.invalid) return;
+    this.isAddingVideo = true;
     const mediaId = this.config.data['_id'];
+    const formValue = this.addVideoForm.getRawValue();
     this.mediaService.addVideo(mediaId, {
-      name: this.addVideoForm.value['name'],
-      url: this.addVideoForm.value['url'],
+      name: formValue.name,
+      url: formValue.url,
     }).pipe(takeUntil(this.destroyService)).subscribe({
       next: (videos) => {
         this.dialogRef.close(videos);
+      },
+      error: () => {
+        this.isAddingVideo = false;
+        this.ref.markForCheck();
       }
     });
   }

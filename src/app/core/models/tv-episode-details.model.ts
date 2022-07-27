@@ -1,6 +1,5 @@
-import { MediaSubtitle } from './media-subtitle.model';
-import { TVEpisode } from './tv-episode.model';
+import { MediaSubtitle, TVEpisode } from '.';
 
-export class TVEpisodeDetails extends TVEpisode {
-  subtitles!: MediaSubtitle[];
+export interface TVEpisodeDetails extends TVEpisode {
+  subtitles: MediaSubtitle[];
 }

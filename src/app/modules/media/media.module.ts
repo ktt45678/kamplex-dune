@@ -11,7 +11,6 @@ import { MediaRoutingModule } from './media-routing.module';
 import { MediaFilterModule } from '../../shared/components/media-filter';
 import { MediaListModule } from '../../shared/components/media-list';
 import { MediaTopModule } from '../../shared/components/media-top';
-import { VideoPlayerModule } from '../../shared/components/video-player';
 import { WatchComponent } from './pages/watch/watch.component';
 import { DetailsComponent } from './pages/details/details.component';
 import { UrlPipeModule } from '../../shared/pipes/url-pipe/url-pipe.module';
@@ -33,7 +32,6 @@ import { SearchComponent } from './pages/search/search.component';
     MediaFilterModule,
     MediaListModule,
     MediaTopModule,
-    VideoPlayerModule,
     TranslocoModule,
     LazyLoadImageModule,
     NumberPipeModule,

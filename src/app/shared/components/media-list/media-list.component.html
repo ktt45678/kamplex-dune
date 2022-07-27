@@ -1,4 +1,46 @@
-<ng-container *ngIf="loading; else mediaLoaded">
+<ng-container *transloco="let t; loadingTpl: skeletonLoading">
+  <ng-container *ngIf="loading; then skeletonLoading; else mediaLoaded"></ng-container>
+  <ng-template #mediaLoaded>
+    <ng-container *ngIf="mediaList">
+      <p *ngIf="!mediaList.results.length" class="tw-text-center">{{ t('home.media.noResults') }}</p>
+      <div class="tw-grid tw-grid-cols-2 xs:tw-grid-cols-3 md:tw-grid-cols-4 lg:tw-grid-cols-5 xl:tw-grid-cols-6">
+        <a class="tw-bg-transparent hover:tw-bg-neutral-700 focus-visible:tw-bg-neutral-700 tw-transition-colors tw-duration-200
+        tw-rounded-sm tw-px-1.5 tw-py-2" *ngFor="let media of mediaList.results; trackBy: trackId"
+          [routerLink]="['/details', media._id]">
+          <div class="tw-aspect-w-2 tw-aspect-h-3 tw-rounded-t-md tw-overflow-hidden">
+            <img *ngIf="media.thumbnailPosterUrl; else noPoster" class="tw-object-cover"
+              [lazyLoad]="media.thumbnailPosterUrl" [alt]="media.title" errorImage="assets/images/media-poster-md.png">
+            <div *ngIf="media.posterColor" class="ng-lazyload-placeholder tw-w-full tw-h-full"
+              [ngStyle]="{ 'background-color': media.posterColor | rgbColor }">
+            </div>
+            <ng-template #noPoster>
+              <img class="tw-object-cover" lazyLoad="assets/images/media-poster-md.png"
+                defaultImage="assets/images/media-poster-sm.png" [alt]="media.title">
+            </ng-template>
+          </div>
+          <p
+            class="tw-left-0 tw-bottom-0 tw-right-0 tw-bg-indigo-700 tw-flex tw-content-between tw-py-1 tw-px-2 tw-rounded-b-md">
+            <small class="tw-text-white tw-text-xs tw-font-semibold">
+              {{ media.releaseDate.year }}
+            </small>
+            <small class="tw-text-white tw-text-xs tw-font-semibold tw-ml-auto"
+              *ngIf="media.type === MediaType.MOVIE; else notMovie">{{ t('home.media.runtimeValue', { runtime:
+              media.runtime }) }}
+            </small>
+            <ng-template #notMovie>
+              <small class="tw-text-white tw-text-xs tw-font-semibold tw-ml-auto" *ngIf="media.type === MediaType.TV">
+                {{ t('home.media.episodeCountValue', { episodeCount:
+                media.tv.episodeCount }) }}
+              </small>
+            </ng-template>
+          </p>
+          <p class="tw-text-white tw-text-xs sm:tw-text-sm tw-font-bold tw-mt-2">{{ media.title }}</p>
+        </a>
+      </div>
+    </ng-container>
+  </ng-template>
+</ng-container>
+<ng-template #skeletonLoading>
   <div class="tw-grid tw-grid-cols-2 md:tw-grid-cols-3 lg:tw-grid-cols-4 xl:tw-grid-cols-6 tw-gap-4">
     <div *ngFor="let item of skeletonArray">
       <div class="tw-aspect-w-2 tw-aspect-h-3 tw-mb-2">
@@ -8,42 +50,4 @@
       <p-skeleton animation="none" width="80%" height="20px"></p-skeleton>
     </div>
   </div>
-</ng-container>
-<ng-template #mediaLoaded>
-  <ng-container *ngIf="mediaList">
-    <p *ngIf="!mediaList.results.length" class="tw-text-center">No results were found</p>
-    <div
-      class="tw-grid tw-grid-cols-2 sm:tw-grid-cols-3 md:tw-grid-cols-4 lg:tw-grid-cols-5 xl:tw-grid-cols-6 tw-gap-4">
-      <a class="tw-opacity-100 hover:tw-opacity-70 tw-transition-opacity tw-duration-200"
-        *ngFor="let media of mediaList.results; trackBy: trackId" [routerLink]="['/details', media._id]">
-        <div class="tw-aspect-w-2 tw-aspect-h-3 tw-rounded-t-md tw-overflow-hidden">
-          <img *ngIf="media.thumbnailPosterUrl; else noPoster" class="tw-object-cover"
-            [lazyLoad]="media.thumbnailPosterUrl" [alt]="media.title" errorImage="assets/images/media-poster-md.png">
-          <div *ngIf="media.posterColor" class="ng-lazyload-placeholder tw-w-full tw-h-full"
-            [ngStyle]="{ 'background-color': media.posterColor | hexColor }">
-          </div>
-          <ng-template #noPoster>
-            <img class="tw-object-cover" lazyLoad="assets/images/media-poster-md.png"
-              defaultImage="assets/images/media-poster-sm.png" [alt]="media.title">
-          </ng-template>
-        </div>
-        <p
-          class="tw-left-0 tw-bottom-0 tw-right-0 tw-bg-indigo-700 tw-flex tw-content-between tw-py-1 tw-px-2 tw-rounded-b-md">
-          <small class="tw-text-white tw-text-xs tw-font-semibold">
-            {{ media.releaseDate.year }}
-          </small>
-          <small class="tw-text-white tw-text-xs tw-font-semibold tw-ml-auto"
-            *ngIf="media.type === MediaType.MOVIE; else notMovie">
-            {{ media.runtime || 0 }} min
-          </small>
-          <ng-template #notMovie>
-            <small class="tw-text-white tw-text-xs tw-font-semibold tw-ml-auto" *ngIf="media.type === MediaType.TV">
-              {{ media.tv.episodeCount }} episodes
-            </small>
-          </ng-template>
-        </p>
-        <p class="tw-text-white tw-text-sm tw-font-bold tw-mt-2">{{ media.title }}</p>
-      </a>
-    </div>
-  </ng-container>
 </ng-template>

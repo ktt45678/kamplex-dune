@@ -1,8 +1,11 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { TranslocoService } from '@ngneat/transloco';
-import { DateTime } from 'luxon';
+import { format as dateFormat } from 'date-fns';
+import { enUS, vi } from 'date-fns/locale';
 
 import { ShortDate } from '../../../../core/models';
+
+const locales: { [key: string]: Locale } = { en: enUS, vi: vi };
 
 @Pipe({
   name: 'shortDate'
@@ -10,14 +13,12 @@ import { ShortDate } from '../../../../core/models';
 export class ShortDatePipe implements PipeTransform {
   constructor(private translocoService: TranslocoService) { }
 
-  transform(value: ShortDate, format?: string): string | null {
+  transform(value: ShortDate, format: string = 'PP'): string | null {
     if (!value)
       return null;
-    const date = DateTime.fromObject({ year: value.year, month: value.month, day: value.day });
+    const date = new Date(value.year, value.month - 1, value.day);
     const lang = this.translocoService.getActiveLang();
-    if (format)
-      return date.toFormat(format, { locale: lang });
-    return date.toLocaleString(DateTime.DATE_MED, { locale: lang });
+    return dateFormat(date, format, { locale: locales[lang] });
   }
 
 }

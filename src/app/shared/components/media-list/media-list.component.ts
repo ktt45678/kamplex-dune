@@ -1,21 +1,13 @@
 import { Component, OnInit, ChangeDetectionStrategy, Input } from '@angular/core';
-import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
 
 import { Media, Paginated } from '../../../core/models';
 import { MediaType } from '../../../core/enums';
-
 
 @Component({
   selector: 'app-media-list',
   templateUrl: './media-list.component.html',
   styleUrls: ['./media-list.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [
-    {
-      provide: TRANSLOCO_SCOPE,
-      useValue: 'media'
-    }
-  ]
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MediaListComponent implements OnInit {
   MediaType = MediaType;

@@ -28,7 +28,9 @@ export class HttpErrorInterceptor implements HttpInterceptor {
         const detail = error.error.message || 'Request failed';
         switch (error.status) {
           case 401:
-            if (this.authService.refreshTokenValue) {
+            // Check if the authenticated flag exist in the cookie
+            const authenticated = document.cookie.indexOf('authenticated=true') > -1;
+            if (authenticated) {
               this.authService.signOut();
               location.reload();
             }

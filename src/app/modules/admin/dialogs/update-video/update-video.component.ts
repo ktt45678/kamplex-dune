@@ -5,6 +5,14 @@ import { first, takeUntil } from 'rxjs';
 
 import { DropdownOptionDto, UpdateMediaVideoDto } from '../../../../core/dto/media';
 import { DestroyService, ItemDataService, MediaService } from '../../../../core/services';
+import { YOUTUBE_EMBED_URL } from '../../../../../environments/config';
+
+interface UpdateVideoForm {
+  name: FormControl<string | null>;
+  url: FormControl<string | null>;
+  isTranslation: FormControl<boolean>;
+  translate: FormControl<string>;
+}
 
 @Component({
   selector: 'app-update-video',
@@ -14,20 +22,20 @@ import { DestroyService, ItemDataService, MediaService } from '../../../../core/
   providers: [ItemDataService, DestroyService]
 })
 export class UpdateVideoComponent implements OnInit {
-  youtubeUrl = 'https://www.youtube.com/embed/';
-  updatingVideo: boolean = false;
+  youtubeUrl = YOUTUBE_EMBED_URL;
+  isUpdatingVideo: boolean = false;
   previewVideoKey?: string;
-  updateVideoForm: FormGroup;
+  updateVideoForm: FormGroup<UpdateVideoForm>;
   translateOptions: DropdownOptionDto[] = [];
 
   constructor(private ref: ChangeDetectorRef, private dialogRef: DynamicDialogRef, private config: DynamicDialogConfig,
     private mediaService: MediaService, private itemDataService: ItemDataService, private destroyService: DestroyService) {
     const videoUrl = `https://www.youtube.com/watch?v=${this.config.data['video']['key']}`;
-    this.updateVideoForm = new FormGroup({
-      name: new FormControl(this.config.data['video']['name'], [Validators.maxLength(50)]),
-      url: new FormControl(videoUrl),
-      isTranslation: new FormControl(false),
-      translate: new FormControl({ value: 'vi', disabled: true })
+    this.updateVideoForm = new FormGroup<UpdateVideoForm>({
+      name: new FormControl(this.config.data['video']['name'] || '', [Validators.maxLength(50)]),
+      url: new FormControl(videoUrl, [Validators.required, Validators.maxLength(1000)]),
+      isTranslation: new FormControl(false, { nonNullable: true }),
+      translate: new FormControl({ value: 'vi', disabled: true }, { nonNullable: true })
     });
   }
 
@@ -42,7 +50,8 @@ export class UpdateVideoComponent implements OnInit {
     const urlControl = this.updateVideoForm.get('url');
     if (!urlControl) return;
     this.createVideoPreview(urlControl);
-    urlControl.valueChanges.pipe(takeUntil(this.destroyService)).subscribe((value: string) => {
+    urlControl.valueChanges.pipe(takeUntil(this.destroyService)).subscribe(value => {
+      if (!value) return;
       this.createVideoPreview(urlControl, value);
     });
   }
@@ -62,18 +71,20 @@ export class UpdateVideoComponent implements OnInit {
 
   onUpdateVideoFormSubmit(): void {
     if (this.updateVideoForm.invalid) return;
-    this.updatingVideo = true;
+    this.isUpdatingVideo = true;
     const mediaId = this.config.data['media']['_id'];
     const videoId = this.config.data['video']['_id'];
-    const params = new UpdateMediaVideoDto();
-    params.name = this.updateVideoForm.value['name'];
-    params.url = this.updateVideoForm.value['url'];
-    this.updateVideoForm.value['isTranslation'] && (params.translate = this.updateVideoForm.value['translate']);
+    const formValue = this.updateVideoForm.getRawValue();
+    const params: UpdateMediaVideoDto = {
+      name: formValue.name,
+      url: formValue.url
+    };
+    formValue.isTranslation && (params.translate = formValue.translate);
     this.mediaService.updateVideo(mediaId, videoId, params).pipe(takeUntil(this.destroyService)).subscribe({
       next: (videos) => {
         this.dialogRef.close(videos);
       }, error: () => {
-        this.updatingVideo = false;
+        this.isUpdatingVideo = false;
         this.ref.markForCheck();
       }
     });

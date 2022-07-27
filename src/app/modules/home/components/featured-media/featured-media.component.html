@@ -1,52 +1,101 @@
 <ng-container *transloco="let t; loadingTpl: noMediaList">
-  <swiper [config]="swiperConfig" *ngIf="mediaList; else noMediaList" [ngClass]="swiperClass || ''">
-    <ng-template swiperSlide *ngFor="let media of mediaList; trackBy:trackId">
-      <div role="banner" aria-label="Media backdrop" *ngIf="media.thumbnailBackdropUrl"
-        class="tw-fixed tw-block tw-w-full tw-h-full tw-bg-cover tw-bg-no-repeat tw-bg-center tw-brightness-40 tw--z-1"
-        [lazyLoad]="media.thumbnailBackdropUrl"
-        [ngStyle]="{ 'background-color': media.backdropColor ? (media.backdropColor | hexColor) : '#212121' }">
-      </div>
-      <div class="tw-max-w-8xl tw-mx-auto">
-        <div class="tw-mx-5%">
-          <div class="tw-flex tw-flex-col tw-grow tw-my-12">
-            <h1 class="tw-text-white tw-text-center md:tw-text-left tw-text-3xl md:tw-text-4xl tw-font-bold
-            tw-mb-4 tw-line-clamp-3">{{ media.title }}</h1>
-            <div class="tw-justify-center md:tw-justify-start tw-flex tw-items-center tw-mb-4">
-              <p-badge [value]="media.releaseDate.year + ''" styleClass="tw-text-gray-200 tw-bg-gray-500">
-              </p-badge>
-              <p-badge [value]="media.runtime + ' min'" styleClass="tw-text-gray-200 tw-bg-gray-500" class="tw-ml-1.5">
-              </p-badge>
+  <div class="tw-relative">
+    <swiper [config]="swiperConfig" *ngIf="mediaList?.length; else noMediaList" [ngClass]="swiperClass || ''"
+      (slideChange)="onSwiperSlideChange($event)">
+      <ng-template swiperSlide *ngFor="let media of mediaList; trackBy:trackId">
+        <div class="tw-max-w-8xl tw-mx-auto">
+          <div class="tw-flex tw-flex-wrap">
+            <div class="tw-hidden md:tw-block sm:tw-w-1/6">
+              <img *ngIf="media.thumbnailPosterUrl; else noPoster" class="tw-object-cover tw-h-full"
+                [lazyLoad]="media.thumbnailPosterUrl" [alt]="media.title"
+                errorImage="assets/images/media-poster-md.png">
+              <div *ngIf="media.posterColor" class="ng-lazyload-placeholder tw-w-full tw-h-full"
+                [ngStyle]="{ 'background-color': media.posterColor | rgbColor }">
+              </div>
+              <ng-template #noPoster>
+                <img class="tw-object-cover tw-h-full" src="assets/images/media-poster-md.png" loading="lazy"
+                  [alt]="media.title">
+              </ng-template>
             </div>
-            <p *ngIf="media.genres.length; else noGenres"
-              class="tw-text-gray-300 tw-text-base md:tw-text-lg tw-font-semibold tw-text-center md:tw-text-left tw-mb-4 tw-space-x-2">
-              <span *ngFor="let genre of media.genres; last as isLast; trackBy:trackId">{{
-                isLast ? genre.name : genre.name + ',' }}</span>
-            </p>
-            <ng-template #noGenres>
-              <p
-                class="tw-text-gray-400 tw-italic tw-text-base md:tw-text-lg tw-font-semibold tw-text-center md:tw-text-left tw-mb-4 tw-space-x-2">
-                No genres found
-              </p>
-            </ng-template>
-            <div class="tw-text-center md:tw-text-left tw-mt-2">
-              <button type="button" role="navigation" aria-label="Play media" pButton icon="pi pi-play" iconPos="left"
-                label="Play" [routerLink]="['/watch', media._id]"
-                class="p-button-rounded tw-block sm:tw-inline-flex tw-w-full sm:tw-w-auto tw-max-w-xs sm:tw-max-w-none not-disabled:hover:!tw-text-gray-600 tw-text-lg sm:tw-text-xl tw-mt-2 sm:tw-mt-0 tw-mx-auto sm:tw-mx-0 tw-px-8">
-              </button>
-              <button type="button" role="navigation" aria-label="View media details"
-                [routerLink]="['/details', media._id]" pButton icon="pi pi-info-circle" label="Details"
-                class="p-button-secondary p-button-rounded tw-block sm:tw-inline-flex tw-w-full sm:tw-w-auto tw-max-w-xs sm:tw-max-w-none not-disabled:hover:!tw-text-gray-600 tw-text-lg sm:tw-text-xl tw-mt-2 sm:tw-mt-0 tw-mx-auto sm:tw-mr-0 sm:tw-ml-2.5 tw-px-8">
-              </button>
-              <button type="button" role="button" aria-label="Add media to playlist" routerLink="#" disabled="true"
-                pButton icon="pi pi-plus" label="Playlist"
-                class="p-button-secondary p-button-rounded tw-block sm:tw-inline-flex tw-w-full sm:tw-w-auto tw-max-w-xs sm:tw-max-w-none not-disabled:hover:!tw-text-gray-600 tw-text-lg sm:tw-text-xl tw-mt-2 sm:tw-mt-0 tw-mx-auto sm:tw-mr-0 sm:tw-ml-2.5 tw-px-8">
-              </button>
+            <div class="tw-w-full md:tw-w-5/6 tw-relative tw-overflow-hidden">
+              <div role="banner" aria-label="Media backdrop" *ngIf="media.thumbnailBackdropUrl"
+                class="tw-absolute tw-bg-cover tw-bg-no-repeat tw-bg-center tw-brightness-40 tw-blur-md -tw-inset-4 -tw-z-1"
+                [lazyLoad]="media.thumbnailBackdropUrl"
+                [ngStyle]="{ 'background-color': media.backdropColor ? (media.backdropColor | rgbColor) : '#212121' }">
+              </div>
+              <div class="tw-mx-8 tw-my-8 md:tw-my-4">
+                <div class="tw-mb-4 tw-h-16 md:tw-h-auto tw-flex tw-items-center">
+                  <h2 class="tw-text-white tw-w-full tw-text-center md:tw-text-left tw-text-2xl md:tw-text-3xl tw-font-bold
+                    tw-line-clamp-2 md:tw-line-clamp-1">{{ media.title }}</h2>
+                </div>
+                <div class="tw-mb-4 tw-h-16 md:tw-h-20 tw-flex tw-items-center">
+                  <p class="tw-text-white tw-w-full tw-text-center md:tw-text-left tw-text-sm md:tw-text-base tw-font-medium
+                    tw-line-clamp-3">{{ media.overview }}</p>
+                </div>
+                <!--div class="tw-flex tw-justify-center md:tw-justify-start tw-items-center tw-mb-4">
+                  <p-badge [value]="media.releaseDate.year + ''" styleClass="tw-text-gray-200 tw-bg-gray-500">
+                  </p-badge>
+                  <p-badge [value]="media.runtime + ' min'" styleClass="tw-text-gray-200 tw-bg-gray-500"
+                    class="tw-ml-1.5">
+                  </p-badge>
+                </div-->
+                <div class="tw-flex tw-flex-wrap tw-items-center tw-justify-center md:tw-justify-start">
+                  <i class="tw-text-gray-300 ms ms-calendar-today ms-icon-sm tw-mr-1.5 tw-text-center sm:tw-text-left">
+                  </i>
+                  <p class="tw-text-gray-300 tw-text-sm md:tw-text-base tw-font-semibold tw-text-center sm:tw-text-left
+                  tw-mr-2">{{ media.releaseDate.year }}</p>
+                  <i class="tw-text-gray-300 ms ms-timer ms-icon-sm tw-mr-1.5 tw-text-center sm:tw-text-left">
+                  </i>
+                  <p class="tw-text-gray-300 tw-text-sm md:tw-text-base tw-font-semibold tw-text-center sm:tw-text-left
+                  tw-mr-2">{{ t('home.media.runtimeValue', { runtime: media.runtime }) }}</p>
+                </div>
+                <div
+                  class="tw-mb-4 tw-h-12 md:tw-h-8 tw-flex tw-flex-wrap tw-items-center tw-justify-center md:tw-justify-start">
+                  <i class="tw-text-gray-300 ms ms-sell ms-icon-sm tw-mr-1.5 tw-text-center sm:tw-text-left">
+                  </i>
+                  <p *ngIf="media.genres.length; else noGenres" class="tw-text-gray-300 tw-text-sm md:tw-text-base tw-font-semibold
+                      tw-text-center sm:tw-text-left tw-space-x-2 tw-line-clamp-2 md:tw-line-clamp-1">
+                    <span class="tw-inline-block" *ngFor="let genre of media.genres; last as isLast; trackBy:trackId">{{
+                      isLast ? genre.name : genre.name + ',' }}</span>
+                  </p>
+                  <ng-template #noGenres>
+                    <p
+                      class="tw-text-gray-400 tw-italic tw-text-sm md:tw-text-base tw-font-semibold tw-text-center md:tw-text-left">
+                      No genres found
+                    </p>
+                  </ng-template>
+                </div>
+                <div class="tw-text-center md:tw-text-left tw-mt-2">
+                  <button tabindex="-1" type="button" role="navigation" aria-label="Play media" pButton
+                    icon="ms ms-play-arrow" iconPos="left" [label]="t('home.media.play')"
+                    [routerLink]="['/watch', media._id]"
+                    class="p-button-rounded p-button-shrink sm:tw-inline-flex tw-w-full sm:tw-w-auto tw-max-w-xs sm:tw-max-w-none not-disabled:hover:!tw-text-gray-600 tw-text-lg sm:tw-text-xl tw-mt-2 sm:tw-mt-0 tw-mx-auto sm:tw-mx-0 tw-px-8">
+                  </button>
+                  <button tabindex="-1" type="button" role="navigation" aria-label="View media details"
+                    [routerLink]="['/details', media._id]" pButton icon="ms ms-info" [label]="t('home.media.details')"
+                    class="p-button-secondary p-button-rounded p-button-shrink sm:tw-inline-flex tw-w-full sm:tw-w-auto tw-max-w-xs sm:tw-max-w-none not-disabled:hover:!tw-text-gray-600 tw-text-lg sm:tw-text-xl tw-mt-2 sm:tw-mt-0 tw-mx-auto sm:tw-mr-0 sm:tw-ml-2.5 tw-px-8">
+                  </button>
+                  <button tabindex="-1" type="button" role="button" aria-label="Add media to playlist" routerLink="#"
+                    disabled="true" pButton icon="ms ms-playlist-add" [label]="t('home.media.playlist')"
+                    class="p-button-secondary p-button-rounded p-button-shrink sm:tw-inline-flex tw-w-full sm:tw-w-auto tw-max-w-xs sm:tw-max-w-none not-disabled:hover:!tw-text-gray-600 tw-text-lg sm:tw-text-xl tw-mt-2 sm:tw-mt-0 tw-mx-auto sm:tw-mr-0 sm:tw-ml-2.5 tw-px-8">
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </ng-template>
-  </swiper>
+      </ng-template>
+    </swiper>
+    <div class="tw-absolute tw-right-4 tw-bottom-4 tw-z-2">
+      <button id="swiper-nav-prev" type="button" role="navigation" aria-label="Previous show" pButton
+        icon="ms ms-navigate-before" class="p-button p-button-rounded p-button-text focus-visible:tw-shadow-focus-box">
+      </button>
+      <button id="swiper-nav-next" type="button" role="navigation" aria-label="Previous show" pButton
+        icon="ms ms-navigate-next"
+        class="p-button p-button-rounded p-button-text focus-visible:tw-shadow-focus-box tw-ml-2">
+      </button>
+    </div>
+  </div>
 </ng-container>
 <ng-template #noMediaList>
   <div *ngIf="loading" class="tw-bg-neutral-850" [ngClass]="swiperClass || ''">

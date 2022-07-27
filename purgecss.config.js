@@ -1,4 +1,5 @@
-const { defaultProject } = require('./angular.json')
+const { projects } = require('./angular.json');
+const defaultProject = Object.keys(projects)[0];
 
 module.exports = {
   content: [
@@ -6,8 +7,9 @@ module.exports = {
     `dist/${defaultProject}/*.js`
   ],
   css: [`dist/${defaultProject}/*.css`],
+  defaultExtractor: (content) => content.match(/[\w-/:]+(?<!:)/g) || [],
   safelist: {
-    standard: [/tw-|plyr/]
+    standard: ['tw-', 'plyr']
   },
   output: `dist/${defaultProject}`
 };

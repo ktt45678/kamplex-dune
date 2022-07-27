@@ -119,53 +119,51 @@
       <label for="release-date" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
         {{ t('admin.createMedia.releaseDate') }}
       </label>
-      <div id="release-date" class="tw-flex tw-flex-wrap tw-w-full" aria-describedby="release-date-error">
+      <div id="release-date" formGroupName="releaseDate" class="dropdown-group tw-flex tw-flex-wrap tw-w-full"
+        aria-describedby="release-date-error">
         <p-dropdown class="tw-w-full sm:tw-w-3/12" styleClass="tw-w-full" panelStyleClass="p-dropdown-sm"
-          [options]="days" formControlName="releaseDateDay" appendTo="body" [placeholder]="t('admin.createMedia.day')"
+          [options]="days" formControlName="day" appendTo="body" [placeholder]="t('admin.createMedia.day')"
           scrollHeight="300px" [disabledControl]="isCreatingMedia">
         </p-dropdown>
         <p-dropdown class="tw-w-full sm:tw-w-5/12 tw-pt-2 sm:tw-pt-0 sm:tw-pl-2" styleClass="tw-w-full"
-          panelStyleClass="p-dropdown-sm" [options]="months" formControlName="releaseDateMonth" appendTo="body"
+          panelStyleClass="p-dropdown-sm" [options]="months" formControlName="month" appendTo="body"
           [placeholder]="t('admin.createMedia.month')" scrollHeight="300px" [disabledControl]="isCreatingMedia">
         </p-dropdown>
         <p-dropdown class="tw-w-full sm:tw-w-4/12 tw-pt-2 sm:tw-pt-0 sm:tw-pl-2" styleClass="tw-w-full"
-          panelStyleClass="p-dropdown-sm" [options]="years" formControlName="releaseDateYear" appendTo="body"
+          panelStyleClass="p-dropdown-sm" [options]="years" formControlName="year" appendTo="body"
           [placeholder]="t('admin.createMedia.year')" scrollHeight="300px" [disabledControl]="isCreatingMedia">
         </p-dropdown>
       </div>
       <small id="release-date-error"
         class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
-        [ngClass]="(createMediaForm.controls['releaseDateDay'].dirty || createMediaForm.controls['releaseDateDay'].touched
-            || createMediaForm.controls['releaseDateMonth'].dirty || createMediaForm.controls['releaseDateMonth'].touched
-            || createMediaForm.controls['releaseDateYear'].dirty || createMediaForm.controls['releaseDateYear'].touched)
-            && createMediaForm.controls['releaseDateDay'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
-        {{ createMediaForm.controls['releaseDateDay'].errors | firstErrorKey:'createMedia':'releaseDate' }}
+        [ngClass]="(createMediaForm.controls['releaseDate'].dirty || createMediaForm.controls['releaseDate'].touched)
+              && createMediaForm.controls['releaseDate'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
+        {{ createMediaForm.controls['releaseDate'].errors | firstErrorKey:'createMedia':'releaseDate' }}
       </small>
-      <ng-container *ngIf="createMediaForm.value['type'] === MediaType.TV">
-        <label for="lastAirDate" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
+      <ng-container *ngIf="createMediaForm.value.type === MediaType.TV">
+        <label for="last-air-date" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
           {{ t('admin.createMedia.lastAirDate') }}
         </label>
-        <div id="last-air-date" class="tw-flex tw-flex-wrap tw-w-full" aria-describedby="last-air-date-error">
+        <div id="last-air-date" formGroupName="lastAirDate" class="dropdown-group tw-flex tw-flex-wrap tw-w-full"
+          aria-describedby="last-air-date-error">
           <p-dropdown class="tw-w-full sm:tw-w-3/12" styleClass="tw-w-full" panelStyleClass="p-dropdown-sm"
-            [options]="days" formControlName="lastAirDateDay" appendTo="body" [placeholder]="t('admin.createMedia.day')"
+            [options]="days" formControlName="day" appendTo="body" [placeholder]="t('admin.createMedia.day')"
             scrollHeight="300px" [disabledControl]="isCreatingMedia">
           </p-dropdown>
           <p-dropdown class="tw-w-full sm:tw-w-5/12 tw-pt-2 sm:tw-pt-0 sm:tw-pl-2" styleClass="tw-w-full"
-            panelStyleClass="p-dropdown-sm" [options]="months" formControlName="lastAirDateMonth" appendTo="body"
+            panelStyleClass="p-dropdown-sm" [options]="months" formControlName="month" appendTo="body"
             [placeholder]="t('admin.createMedia.month')" scrollHeight="300px" [disabledControl]="isCreatingMedia">
           </p-dropdown>
           <p-dropdown class="tw-w-full sm:tw-w-4/12 tw-pt-2 sm:tw-pt-0 sm:tw-pl-2" styleClass="tw-w-full"
-            panelStyleClass="p-dropdown-sm" [options]="years" formControlName="lastAirDateYear" appendTo="body"
+            panelStyleClass="p-dropdown-sm" [options]="years" formControlName="year" appendTo="body"
             [placeholder]="t('admin.createMedia.year')" scrollHeight="300px" [disabledControl]="isCreatingMedia">
           </p-dropdown>
         </div>
-        <small id="last-air-date-error"
+        <small id="last-air-date-error" *ngIf="createMediaForm.controls['lastAirDate']"
           class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
-          [ngClass]="(createMediaForm.controls['lastAirDateDay'].dirty || createMediaForm.controls['lastAirDateDay'].touched
-              || createMediaForm.controls['lastAirDateMonth'].dirty || createMediaForm.controls['lastAirDateMonth'].touched
-              || createMediaForm.controls['lastAirDateYear'].dirty || createMediaForm.controls['lastAirDateYear'].touched)
-              && createMediaForm.controls['lastAirDateDay'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
-          {{ createMediaForm.controls['lastAirDateDay'].errors | firstErrorKey:'createMedia':'lastAirDate' }}
+          [ngClass]="(createMediaForm.controls['lastAirDate'].dirty || createMediaForm.controls['lastAirDate'].touched)
+                && createMediaForm.controls['lastAirDate'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
+          {{ createMediaForm.controls['lastAirDate'].errors | firstErrorKey:'createMedia':'lastAirDate' }}
         </small>
       </ng-container>
       <div class="tw-flex tw-flex-wrap">
@@ -174,14 +172,14 @@
             {{ t('admin.createMedia.visibility') }}
           </label>
           <div id="visibility">
-            <p-radioButton name="visibility" [value]="1" label="Public" formControlName="visibility"
-              class="tw-block tw-mb-2" [disabledControl]="isCreatingMedia">
+            <p-radioButton name="visibility" [value]="1" [label]="t('admin.createMedia.visibilityPublic')"
+              formControlName="visibility" class="tw-block tw-mb-2" [disabledControl]="isCreatingMedia">
             </p-radioButton>
-            <p-radioButton name="visibility" [value]="2" label="Unlisted" formControlName="visibility"
-              class="tw-block tw-mb-2" [disabledControl]="isCreatingMedia">
+            <p-radioButton name="visibility" [value]="2" [label]="t('admin.createMedia.visibilityUnlisted')"
+              formControlName="visibility" class="tw-block tw-mb-2" [disabledControl]="isCreatingMedia">
             </p-radioButton>
-            <p-radioButton name="visibility" [value]="3" label="Private" formControlName="visibility" class="tw-block"
-              [disabledControl]="isCreatingMedia">
+            <p-radioButton name="visibility" [value]="3" [label]="t('admin.createMedia.visibilityPrivate')"
+              formControlName="visibility" class="tw-block" [disabledControl]="isCreatingMedia">
             </p-radioButton>
           </div>
         </div>
@@ -190,11 +188,11 @@
             {{ t('admin.createMedia.adult') }}
           </label>
           <div id="adult">
-            <p-radioButton name="adult" [value]="true" label="Yes, this show is only for adult" formControlName="adult"
+            <p-radioButton name="adult" [value]="true" [label]="t('admin.createMedia.forAdult')" formControlName="adult"
               class="tw-block tw-mb-2" [disabledControl]="isCreatingMedia">
             </p-radioButton>
-            <p-radioButton name="adult" [value]="false" label="No, this show is for everyone" formControlName="adult"
-              class="tw-block" [disabledControl]="isCreatingMedia">
+            <p-radioButton name="adult" [value]="false" [label]="t('admin.createMedia.forEveryone')"
+              formControlName="adult" class="tw-block" [disabledControl]="isCreatingMedia">
             </p-radioButton>
           </div>
         </div>
@@ -204,22 +202,22 @@
           </label>
           <div id="status">
             <ng-container *ngIf="createMediaForm.value['type'] === MediaType.TV; else isMovie">
-              <p-radioButton name="status" value="upcoming" label="Upcoming" formControlName="status"
-                class="tw-block tw-mb-2" [disabledControl]="isCreatingMedia">
+              <p-radioButton name="status" value="upcoming" [label]="t('media.statusOptions.upcoming')"
+                formControlName="status" class="tw-block tw-mb-2" [disabledControl]="isCreatingMedia">
               </p-radioButton>
-              <p-radioButton name="status" value="airing" label="Airing" formControlName="status"
-                class="tw-block tw-mb-2" [disabledControl]="isCreatingMedia">
+              <p-radioButton name="status" value="airing" [label]="t('media.statusOptions.airing')"
+                formControlName="status" class="tw-block tw-mb-2" [disabledControl]="isCreatingMedia">
               </p-radioButton>
-              <p-radioButton name="status" value="aired" label="Aired" formControlName="status" class="tw-block tw-mb-2"
-                [disabledControl]="isCreatingMedia">
+              <p-radioButton name="status" value="aired" [label]="t('media.statusOptions.aired')"
+                formControlName="status" class="tw-block tw-mb-2" [disabledControl]="isCreatingMedia">
               </p-radioButton>
             </ng-container>
             <ng-template #isMovie>
-              <p-radioButton name="status" value="upcoming" label="Upcoming" formControlName="status"
-                class="tw-block tw-mb-2" [disabledControl]="isCreatingMedia">
+              <p-radioButton name="status" value="upcoming" [label]="t('media.statusOptions.upcoming')"
+                formControlName="status" class="tw-block tw-mb-2" [disabledControl]="isCreatingMedia">
               </p-radioButton>
-              <p-radioButton name="status" value="released" label="Released" formControlName="status" class="tw-block"
-                [disabledControl]="isCreatingMedia">
+              <p-radioButton name="status" value="released" [label]="t('media.statusOptions.released')"
+                formControlName="status" class="tw-block" [disabledControl]="isCreatingMedia">
               </p-radioButton>
             </ng-template>
           </div>

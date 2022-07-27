@@ -19,7 +19,7 @@ import { CreateMediaComponent } from '../../dialogs/create-media';
 import { ViewMediaComponent } from '../../dialogs/view-media';
 import { ConfigureMediaComponent } from '../../dialogs/configure-media';
 import { UpdateMediaComponent } from '../../dialogs/update-media';
-import { MediaPStatus, MediaType, SocketMessage, SocketRoom } from '../../../../core/enums';
+import { MediaPStatus, MediaSourceStatus, MediaType, SocketMessage, SocketRoom } from '../../../../core/enums';
 import { AddVideoComponent } from '../../dialogs/add-video';
 import { AddSubtitleComponent } from '../../dialogs/add-subtitle';
 import { AddSourceComponent } from '../../dialogs/add-source';
@@ -84,7 +84,7 @@ export class MediaComponent implements OnInit, OnDestroy {
   }
 
   loadMedia(showLoading: boolean = true): void {
-    const params = new PaginateMediaDto();
+    const params: PaginateMediaDto = {};
     params.includeHidden = true;
     params.includeUnprocessed = true;
     if (this.mediaTable) {
@@ -136,7 +136,7 @@ export class MediaComponent implements OnInit, OnDestroy {
 
   showViewMediaDialog(media: Media): void {
     this.dialogService.open(ViewMediaComponent, {
-      data: media,
+      data: { ...media },
       width: '1024px',
       modal: true,
       styleClass: 'p-dialog-header-sm',
@@ -146,13 +146,14 @@ export class MediaComponent implements OnInit, OnDestroy {
 
   showConfigureMediaDialog(media: Media): void {
     const dialogRef = this.dialogService.open(ConfigureMediaComponent, {
-      data: media,
+      closeOnEscape: false,
+      data: { ...media },
       width: '100%',
       height: '100%',
       modal: true,
       showHeader: false,
       contentStyle: { 'overflow-y': 'hidden', 'padding': '0' },
-      styleClass: 'p-dialog-header-sm !tw-max-h-full'
+      styleClass: '!tw-max-h-full'
     });
     dialogRef.onClose.pipe(first()).subscribe((isUpdated: boolean) => {
       if (!isUpdated) return;
@@ -162,7 +163,7 @@ export class MediaComponent implements OnInit, OnDestroy {
 
   showUpdateMediaDialog(media: Media): void {
     const dialogRef = this.dialogService.open(UpdateMediaComponent, {
-      data: media,
+      data: { ...media },
       width: '1024px',
       modal: true,
       styleClass: 'p-dialog-header-sm',
@@ -178,7 +179,7 @@ export class MediaComponent implements OnInit, OnDestroy {
   showAddMediaVideoDialog(media: Media): void {
     this.findMediaDetails(media._id).pipe(tap(mediaDetails => {
       this.dialogService.open(AddVideoComponent, {
-        data: mediaDetails,
+        data: { ...mediaDetails },
         width: '700px',
         modal: true,
         dismissableMask: true,
@@ -191,7 +192,7 @@ export class MediaComponent implements OnInit, OnDestroy {
   showAddSubtitleDialog(media: Media): void {
     this.findMediaDetails(media._id).pipe(tap(mediaDetails => {
       this.dialogService.open(AddSubtitleComponent, {
-        data: mediaDetails,
+        data: { media: { ...mediaDetails } },
         width: '500px',
         modal: true,
         dismissableMask: true,
@@ -204,7 +205,7 @@ export class MediaComponent implements OnInit, OnDestroy {
   showAddSourceDialog(media: Media): void {
     this.findMediaDetails(media._id).pipe(tap(mediaDetails => {
       this.dialogService.open(AddSourceComponent, {
-        data: mediaDetails,
+        data: { ...mediaDetails },
         width: '500px',
         modal: true,
         dismissableMask: true,
@@ -241,7 +242,6 @@ export class MediaComponent implements OnInit, OnDestroy {
     }).add(() => {
       if (this.document.body.contains(element)) {
         this.renderer.setProperty(element, 'disabled', false);
-        this.ref.markForCheck();
       }
     });
   }
@@ -257,7 +257,6 @@ export class MediaComponent implements OnInit, OnDestroy {
       accept: () => {
         const element = <HTMLButtonElement>event.target;
         this.renderer.setProperty(element, 'disabled', true);
-        this.ref.markForCheck();
         this.mediaService.deletePoster(media._id).subscribe().add(() => {
           this.renderer.setProperty(element, 'disabled', false);
           this.loadMedia();
@@ -275,7 +274,6 @@ export class MediaComponent implements OnInit, OnDestroy {
     }).add(() => {
       if (this.document.body.contains(element)) {
         this.renderer.setProperty(element, 'disabled', false);
-        this.ref.markForCheck();
       }
     });
   }
@@ -291,7 +289,6 @@ export class MediaComponent implements OnInit, OnDestroy {
       accept: () => {
         const element = <HTMLButtonElement>event.target;
         this.renderer.setProperty(element, 'disabled', true);
-        this.ref.markForCheck();
         this.mediaService.deleteBackdrop(media._id).subscribe().add(() => {
           this.renderer.setProperty(element, 'disabled', false);
           this.loadMedia();
@@ -332,7 +329,7 @@ export class MediaComponent implements OnInit, OnDestroy {
           {
             label: t['configureMedia.addSource'],
             data: media,
-            disabled: media.pStatus !== MediaPStatus.PENDING || this.queueUploadService.isMediaInQueue(media._id),
+            disabled: media.movie.status !== MediaSourceStatus.PENDING || this.queueUploadService.isMediaInQueue(media._id),
             command: (event) => this.showAddSourceDialog(event.item.data)
           }
         );
@@ -366,6 +363,9 @@ export class MediaComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.wsService.leaveRoom(SocketRoom.ADMIN_MEDIA_LIST);
+    this.dialogService.dialogComponentRefMap.forEach(dialogRef => {
+      dialogRef.instance.close();
+    });
   }
 
 }

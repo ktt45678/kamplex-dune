@@ -7,7 +7,7 @@ import { NgControl } from '@angular/forms';
 export class DisabledControlDirective {
   @Input() set disabledControl(state: boolean) {
     const action = state ? 'disable' : 'enable';
-    this.ngControl.control?.[action]();
+    this.ngControl.control?.[action]({ emitEvent: false });
   }
 
   constructor(private readonly ngControl: NgControl) { }

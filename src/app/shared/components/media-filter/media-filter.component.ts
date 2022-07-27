@@ -8,6 +8,17 @@ import { Genre } from '../../../core/models';
 import { GenresService } from '../../../core/services';
 import { MediaFilterService } from './media-filter.service';
 
+interface FilterForm {
+  genres: FormControl<string[]>;
+  sort: FormControl<string | null>;
+  search: FormControl<string>;
+  type: FormControl<string | null>;
+  status: FormControl<string | null>;
+  originalLanguage: FormControl<string | null>;
+  year: FormControl<number | null>;
+  showAdvanced: FormControl<boolean>;
+}
+
 @Component({
   selector: 'app-media-filter',
   templateUrl: './media-filter.component.html',
@@ -32,19 +43,19 @@ export class MediaFilterComponent implements OnInit {
   typeOptions?: DropdownOptionDto[];
   statusOptions?: DropdownOptionDto[];
   selectedCountry?: DropdownOptionDto;
-  filterForm: FormGroup;
+  filterForm: FormGroup<FilterForm>;
 
   constructor(private mediaFilterService: MediaFilterService, private translocoService: TranslocoService,
     private genresService: GenresService) {
-    this.filterForm = new FormGroup({
-      genres: new FormControl([]),
+    this.filterForm = new FormGroup<FilterForm>({
+      genres: new FormControl([], { nonNullable: true }),
       sort: new FormControl(),
-      search: new FormControl(null, [Validators.minLength(3), Validators.maxLength(100)]),
+      search: new FormControl('', { nonNullable: true, validators: [Validators.minLength(3), Validators.maxLength(100)] }),
       type: new FormControl(),
       status: new FormControl(),
       originalLanguage: new FormControl(),
       year: new FormControl(),
-      showAdvanced: new FormControl(this.showAdvanced)
+      showAdvanced: new FormControl(this.showAdvanced, { nonNullable: true })
     });
   }
 
@@ -90,22 +101,23 @@ export class MediaFilterComponent implements OnInit {
 
   onFilterFormSubmit(): void {
     if (this.filterForm.invalid) return;
-    if (!this.filterForm.value['showAdvanced']) {
+    const formValue = this.filterForm.getRawValue();
+    if (!formValue.showAdvanced) {
       this.onChange.emit({
-        search: this.filterForm.value['search'] || undefined,
-        genres: this.filterForm.value['genres'],
-        sort: this.filterForm.value['sort']
+        search: formValue.search || undefined,
+        genres: formValue.genres,
+        sort: formValue.sort
       });
       return;
     }
     this.onChange.emit({
-      search: this.filterForm.value['search'],
-      genres: this.filterForm.value['genres'],
-      sort: this.filterForm.value['sort'],
-      type: this.filterForm.value['type'],
-      status: this.filterForm.value['status'],
-      originalLanguage: this.filterForm.value['originalLanguage'],
-      year: this.filterForm.value['year']
+      search: formValue.search,
+      genres: formValue.genres,
+      sort: formValue.sort,
+      type: formValue.type,
+      status: formValue.status,
+      originalLanguage: formValue.originalLanguage,
+      year: formValue.year
     });
   }
 

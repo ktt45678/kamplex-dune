@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, Input, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, ChangeDetectorRef, Output, EventEmitter } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Component({
@@ -17,11 +17,15 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 export class FileUploadComponent implements ControlValueAccessor {
   @Input() styleClass: string;
   @Input() label: string;
+  @Input() desciption?: string;
   @Input() accept?: string;
+  @Input() showFilename: boolean = true;
+  @Input() ariaLabel?: string;
   @Input() ariaDescribedby?: string;
+  @Input() disabled: boolean = false;
+  @Output() fileChange = new EventEmitter<File>();
 
   selectedFile?: File;
-  disabled: boolean = false;
   touched: boolean = false;
 
   onChange = (file: File) => { };
@@ -63,12 +67,16 @@ export class FileUploadComponent implements ControlValueAccessor {
   }
 
   submitFile(file: File): void {
-    // this.selectedFileName = file.name;
-    // this.onFileChange.emit(file);
     this.markAsTouched();
     if (this.disabled) return;
     this.selectedFile = file;
     this.onChange(this.selectedFile);
+    this.fileChange.emit(this.selectedFile);
+  }
+
+  clear(): void {
+    if (this.selectedFile)
+      this.selectedFile = undefined;
   }
 
 }

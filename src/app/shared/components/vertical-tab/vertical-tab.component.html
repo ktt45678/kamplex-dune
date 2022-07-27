@@ -1,31 +1,38 @@
-<div class="tw-flex"
-  [style]="{ '--menu-width': menuWidth, '--menu-spacing-x': menuSpacingX, '--menu-spacing-y': menuSpacingY }">
-  <div class="tw-hidden md:tw-block">
-    <p-menu [model]="menuItems"
-      styleClass="tw-w-[var(--menu-width)] tw-h-[calc(100vh-var(--menu-spacing-y)*2)]
-      tw-ml-[var(--menu-spacing-x)] tw-my-[var(--menu-spacing-y)] p-scrollbar tw-overflow-y-auto tw-border-0 tw-rounded-md">
-    </p-menu>
+<div [style]="{
+  '--menu-width': menuWidth, '--menu-spacing-x': menuSpacingX, '--menu-spacing-y': menuSpacingY,
+  '--content-width': width, '--content-height': height }">
+  <div class="md:tw-hidden">
+    <p-tabMenu [model]="tabMenuItems" [scrollable]="true" class="md:tw-hidden"
+      styleClass="tw-mb-[var(--menu-spacing-x)]">
+    </p-tabMenu>
   </div>
-  <div class="tw-relative">
-    <div
-      class="md:tw-w-[calc(100vw-var(--menu-width)-var(--menu-spacing-x))] p-scrollbar tw-overflow-y-auto tw-h-screen">
-      <div class="md:tw-mx-8">
-        <div [ngClass]="panelStyleClass">
-          <div [ngClass]="contentStyleClass">
-            <ng-container *ngFor="let tab of tabs.toArray(); trackBy: trackId">
-              <ng-container *ngIf="tab.id === selectedTabId">
-                <ng-container [ngTemplateOutlet]="tab.template"></ng-container>
+  <div class="tw-flex">
+    <div class="tw-hidden md:tw-block">
+      <p-menu [model]="menuItems"
+        styleClass="tw-vertical-tab-menu p-scrollbar tw-overflow-y-auto tw-border-0 tw-rounded-md">
+      </p-menu>
+    </div>
+    <div class="tw-relative tw-w-full">
+      <!-- [ngClass]="fullContentWidth ? 'tw-w-full' : 'tw-vertical-tab-content-sm md:tw-vertical-tab-content-md'" -->
+      <div class="tw-vertical-tab-content tw-w-full p-scrollbar tw-overflow-y-auto">
+        <div class="md:tw-mx-8">
+          <div [ngClass]="panelStyleClass">
+            <div [ngClass]="contentStyleClass">
+              <ng-container *ngFor="let tab of tabs; trackBy: trackId">
+                <ng-container *ngIf="tab.id === selectedTabId">
+                  <ng-container [ngTemplateOutlet]="tab.template"></ng-container>
+                </ng-container>
               </ng-container>
-            </ng-container>
+            </div>
           </div>
         </div>
       </div>
+      <ng-container *ngFor="let toast of toasts; trackBy: trackTabId">
+        <div *ngIf="toast.tabId === selectedTabId && toast.visible" class="tw-absolute" [ngClass]="toast.styleClass"
+          @tabPanelToastAnimation>
+          <ng-container [ngTemplateOutlet]="toast.template"></ng-container>
+        </div>
+      </ng-container>
     </div>
-    <ng-container *ngFor="let toast of toasts.toArray(); trackBy: trackId">
-      <div *ngIf="toast.tabId === selectedTabId && toast.visible" class="tw-absolute" [ngClass]="toast.styleClass"
-        @tabPanelToastAnimation>
-        <ng-container [ngTemplateOutlet]="toast.template"></ng-container>
-      </div>
-    </ng-container>
   </div>
 </div>

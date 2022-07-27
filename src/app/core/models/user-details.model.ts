@@ -1,6 +1,6 @@
 import { ShortDate, User } from '.';
 
-export class UserDetails extends User {
+export interface UserDetails extends User {
   email?: string;
   birthdate?: ShortDate;
   verified?: boolean;

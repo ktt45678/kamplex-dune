@@ -8,9 +8,11 @@
           <label for="episode-number" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
             {{ t('admin.createEpisode.episodeNumber') }}
           </label>
-          <input formControlName="episodeNumber" class="tw-w-full" id="episode-number" type="text"
-            aria-describedby="episode-number-error" [placeholder]="t('admin.createEpisode.episodeNumberPlaceholder')"
-            pInputText [disabledControl]="isCreatingEpisode" autofocus>
+          <p-inputNumber formControlName="episodeNumber" class="tw-w-full" styleClass="tw-w-full" id="episode-number"
+            aria-describedby="episode-number-error" [min]="0" [max]="10000" [showButtons]="true"
+            inputId="minmax-buttons" [placeholder]="t('admin.createEpisode.episodeNumberPlaceholder')"
+            [disabledControl]="isCreatingEpisode" autofocus>
+          </p-inputNumber>
           <small id="episode-number-error"
             class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
             [ngClass]="(createEpisodeForm.controls['episodeNumber'].dirty || createEpisodeForm.controls['episodeNumber'].touched)
@@ -60,27 +62,26 @@
       <label for="air-date" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
         {{ t('admin.createEpisode.airDate') }}
       </label>
-      <div id="air-date" class="tw-flex tw-flex-wrap tw-w-full" aria-describedby="air-date-error">
+      <div id="air-date" formGroupName="airDate" class="dropdown-group tw-flex tw-flex-wrap tw-w-full"
+        aria-describedby="air-date-error">
         <p-dropdown class="tw-w-full sm:tw-w-3/12" styleClass="tw-w-full" panelStyleClass="p-dropdown-sm"
-          [options]="days" formControlName="airDateDay" appendTo="body" [placeholder]="t('admin.createEpisode.day')"
+          [options]="days" formControlName="day" appendTo="body" [placeholder]="t('admin.createEpisode.day')"
           scrollHeight="300px" [disabledControl]="isCreatingEpisode">
         </p-dropdown>
         <p-dropdown class="tw-w-full sm:tw-w-5/12 tw-pt-2 sm:tw-pt-0 sm:tw-pl-2" styleClass="tw-w-full"
-          panelStyleClass="p-dropdown-sm" [options]="months" formControlName="airDateMonth" appendTo="body"
+          panelStyleClass="p-dropdown-sm" [options]="months" formControlName="month" appendTo="body"
           [placeholder]="t('admin.createEpisode.month')" scrollHeight="300px" [disabledControl]="isCreatingEpisode">
         </p-dropdown>
         <p-dropdown class="tw-w-full sm:tw-w-4/12 tw-pt-2 sm:tw-pt-0 sm:tw-pl-2" styleClass="tw-w-full"
-          panelStyleClass="p-dropdown-sm" [options]="years" formControlName="airDateYear" appendTo="body"
+          panelStyleClass="p-dropdown-sm" [options]="years" formControlName="year" appendTo="body"
           [placeholder]="t('admin.createEpisode.year')" scrollHeight="300px" [disabledControl]="isCreatingEpisode">
         </p-dropdown>
       </div>
       <small id="air-date-error"
         class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
-        [ngClass]="(createEpisodeForm.controls['airDateDay'].dirty || createEpisodeForm.controls['airDateDay'].touched
-            || createEpisodeForm.controls['airDateMonth'].dirty || createEpisodeForm.controls['airDateMonth'].touched
-            || createEpisodeForm.controls['airDateYear'].dirty || createEpisodeForm.controls['airDateYear'].touched)
-            && createEpisodeForm.controls['airDateDay'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
-        {{ createEpisodeForm.controls['airDateDay'].errors | firstErrorKey:'createEpisode':'airDate' }}
+        [ngClass]="(createEpisodeForm.controls['airDate'].dirty || createEpisodeForm.controls['airDate'].touched)
+            && createEpisodeForm.controls['airDate'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
+        {{ createEpisodeForm.controls['airDate'].errors | firstErrorKey:'createEpisode':'airDate' }}
       </small>
       <div class="tw-flex tw-flex-wrap">
         <div class="tw-w-full sm:tw-w-1/3">
@@ -88,14 +89,14 @@
             {{ t('admin.createEpisode.visibility') }}
           </label>
           <div id="visibility">
-            <p-radioButton name="visibility" [value]="1" label="Public" formControlName="visibility"
-              class="tw-block tw-mb-2" [disabledControl]="isCreatingEpisode">
+            <p-radioButton name="visibility" [value]="1" [label]="t('admin.createEpisode.visibilityPublic')"
+              formControlName="visibility" class="tw-block tw-mb-2" [disabledControl]="isCreatingEpisode">
             </p-radioButton>
-            <p-radioButton name="visibility" [value]="2" label="Unlisted" formControlName="visibility"
-              class="tw-block tw-mb-2" [disabledControl]="isCreatingEpisode">
+            <p-radioButton name="visibility" [value]="2" [label]="t('admin.createEpisode.visibilityUnlisted')"
+              formControlName="visibility" class="tw-block tw-mb-2" [disabledControl]="isCreatingEpisode">
             </p-radioButton>
-            <p-radioButton name="visibility" [value]="3" label="Private" formControlName="visibility" class="tw-block"
-              [disabledControl]="isCreatingEpisode">
+            <p-radioButton name="visibility" [value]="3" [label]="t('admin.createEpisode.visibilityPrivate')"
+              formControlName="visibility" class="tw-block" [disabledControl]="isCreatingEpisode">
             </p-radioButton>
           </div>
         </div>

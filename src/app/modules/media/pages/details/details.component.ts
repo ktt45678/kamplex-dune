@@ -8,6 +8,7 @@ import { MediaDetails } from '../../../../core/models';
 import { MediaService } from '../../../../core/services';
 import { DestroyService } from '../../../../core/services';
 import { MediaType } from '../../../../core/enums';
+import { YOUTUBE_EMBED_URL, YOUTUBE_THUMBNAIL_URL } from '../../../../../environments/config';
 
 @Component({
   selector: 'app-details',
@@ -21,8 +22,8 @@ export class DetailsComponent implements OnInit {
   media?: MediaDetails;
   displayVideo: boolean = false;
   activeVideoIndex: number = 0;
-  youtubeUrl = 'https://www.youtube.com/embed/';
-  youtubeThumbnailUrl = 'https://img.youtube.com/vi/';
+  youtubeUrl = YOUTUBE_EMBED_URL;
+  youtubeThumbnailUrl = YOUTUBE_THUMBNAIL_URL;
 
   swiperConfig: SwiperOptions;
 

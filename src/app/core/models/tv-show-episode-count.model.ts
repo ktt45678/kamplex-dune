@@ -1,3 +1,3 @@
-export class TVShowEpisodeCount {
-  episodeCount!: number;
+export interface TVShowEpisodeCount {
+  episodeCount: number;
 }

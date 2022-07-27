@@ -10,21 +10,21 @@
             </a>
             <div class="tw-hidden sm:tw-block sm:tw-ml-8">
               <div class="tw-flex tw-items-center">
-                <a routerLink="/" routerLinkActive="tw-border-b-white" [routerLinkActiveOptions]="{exact: true}" class="
-                tw-text-white tw-text-sm md:tw-text-base tw-font-medium tw-text-center tw-mx-2 tw-p-2 tw-border-b-2
-                  tw-border-transparent hover:tw-border-b-white tw-transition-colors tw-duration-200">{{
+                <a routerLink="/" routerLinkActive="tw-border-b-white" [routerLinkActiveOptions]="{exact: true}" class="tw-text-white tw-text-sm md:tw-text-base tw-font-medium tw-text-center tw-mx-2 tw-p-2 tw-border-b-2
+                  tw-border-transparent hover:tw-border-b-white focus-visible:tw-shadow-focus-box focus-visible:tw-rounded-md
+                  focus-visible:tw-border-transparent focus-visible:tw-transition-none tw-transition-colors tw-duration-200">{{
                   t('homeHeader.home') }}</a>
-                <a routerLink="/media" routerLinkActive="tw-border-b-white"
-                  class="tw-text-white tw-text-sm md:tw-text-base tw-font-medium tw-text-center tw-mx-2
-                  tw-p-2 tw-border-b-2 tw-border-transparent hover:tw-border-b-white tw-transition-colors tw-duration-200">{{
+                <a routerLink="/media" routerLinkActive="tw-border-b-white" class="tw-text-white tw-text-sm md:tw-text-base tw-font-medium tw-text-center tw-mx-2 tw-p-2 tw-border-b-2
+                  tw-border-transparent hover:tw-border-b-white focus-visible:tw-shadow-focus-box focus-visible:tw-rounded-md
+                  focus-visible:tw-border-transparent focus-visible:tw-transition-none tw-transition-colors tw-duration-200">{{
                   t('homeHeader.movies') }}</a>
-                <a routerLink="/media" routerLinkActive="tw-border-b-white"
-                  class="tw-text-white tw-text-sm md:tw-text-base tw-font-medium tw-text-center tw-mx-2
-                  tw-p-2 tw-border-b-2 tw-border-transparent hover:tw-border-b-white tw-transition-colors tw-duration-200">{{
+                <a routerLink="/media" routerLinkActive="tw-border-b-white" class="tw-text-white tw-text-sm md:tw-text-base tw-font-medium tw-text-center tw-mx-2 tw-p-2 tw-border-b-2
+                  tw-border-transparent hover:tw-border-b-white focus-visible:tw-shadow-focus-box focus-visible:tw-rounded-md
+                  focus-visible:tw-border-transparent focus-visible:tw-transition-none tw-transition-colors tw-duration-200">{{
                   t('homeHeader.tvShows') }}</a>
-                <a routerLink="/search" routerLinkActive="tw-border-b-white"
-                  class="tw-text-white tw-text-sm md:tw-text-base tw-font-medium tw-text-center tw-mx-2
-                  tw-p-2 tw-border-b-2 tw-border-transparent hover:tw-border-b-white tw-transition-colors tw-duration-200">{{
+                <a routerLink="/search" routerLinkActive="tw-border-b-white" class="tw-text-white tw-text-sm md:tw-text-base tw-font-medium tw-text-center tw-mx-2 tw-p-2 tw-border-b-2
+                  tw-border-transparent hover:tw-border-b-white focus-visible:tw-shadow-focus-box focus-visible:tw-rounded-md
+                  focus-visible:tw-border-transparent focus-visible:tw-transition-none tw-transition-colors tw-duration-200">{{
                   t('homeHeader.search') }}</a>
               </div>
             </div>
@@ -32,27 +32,29 @@
           <div class="tw-hidden sm:tw-flex tw-items-center tw-pr-2 sm:tw-ml-6 sm:tw-pr-0">
             <ng-container *ngIf="currentUser; else notLoggedIn">
               <button type="button" role="navigation" aria-label="User profile"
-                class="tw-flex tw-items-center tw-rounded-3xl tw-bg-transparent tw-p-1 hover:tw-bg-neutral-650">
+                class="tw-flex tw-items-center tw-rounded-3xl tw-bg-transparent tw-p-1 hover:tw-bg-neutral-650
+                  focus-visible:tw-outline-none focus-visible:tw-shadow-focus-box">
                 <img class="tw-block tw-w-9 tw-rounded-full" [src]="currentUser.avatarUrl" [alt]="currentUser.username">
                 <p class="tw-text-white tw-font-medium tw-mx-2">{{ currentUser.username }}</p>
               </button>
               <button pButton type="button" icon="ms ms-more-vert" aria-label="User menu"
                 (click)="userMenu.toggle($event)"
-                class="p-button-rounded p-button-text p-button-secondary p-button-sm tw-ml-2">
+                class="p-button-rounded p-button-text p-button-secondary p-button-sm p-button-sm-icon tw-ml-2">
               </button>
               <p-menu #userMenu [popup]="true" [appendTo]="userMenuZone" [model]="userMenuItems"></p-menu>
             </ng-container>
             <ng-template #notLoggedIn>
-              <a routerLink="/sign-in" routerLinkActive="tw-border-b-white" class="tw-text-white tw-text-sm md:tw-text-base
-                tw-font-medium tw-mx-2 tw-p-2 tw-border-b-2 tw-border-transparent hover:tw-border-b-white tw-transition-colors
-                tw-duration-200">{{ t('homeHeader.signIn') }}</a>
+              <a routerLink="/sign-in" routerLinkActive="tw-border-b-white" class="tw-text-white tw-text-sm md:tw-text-base tw-font-medium tw-text-center tw-mx-2 tw-p-2 tw-border-b-2
+                tw-border-transparent hover:tw-border-b-white focus-visible:tw-shadow-focus-box focus-visible:tw-rounded-md
+                focus-visible:tw-border-transparent focus-visible:tw-transition-none tw-transition-colors tw-duration-200">{{
+                t('homeHeader.signIn') }}</a>
             </ng-template>
           </div>
           <div class="tw-flex sm:tw-hidden tw-items-center sm:tw-static sm:tw-inset-auto sm:tw-ml-6 sm:tw-pr-0">
             <div class="tw-flex tw-items-center sm:tw-hidden">
               <!-- Mobile menu button-->
               <button pButton (click)="onOpenMenu()" icon="ms ms-menu" type="button" aria-label="Toggle navbar"
-                class="p-button-rounded p-button-text p-button-secondary">
+                class="p-button-rounded p-button-text p-button-secondary p-button-sm p-button-sm-icon">
               </button>
             </div>
           </div>

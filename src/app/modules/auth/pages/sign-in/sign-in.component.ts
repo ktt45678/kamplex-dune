@@ -4,6 +4,11 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 import { AuthService } from '../../../../core/services';
 
+interface SignInForm {
+  email: FormControl<string>;
+  password: FormControl<string>;
+}
+
 @Component({
   selector: 'app-sign-in',
   templateUrl: './sign-in.component.html',
@@ -13,12 +18,12 @@ import { AuthService } from '../../../../core/services';
 export class SignInComponent implements OnInit {
   continueUrl: string;
   isSigningIn: boolean = false;
-  signInForm: FormGroup;
+  signInForm: FormGroup<SignInForm>;
 
   constructor(private ref: ChangeDetectorRef, private route: ActivatedRoute, private router: Router, private authService: AuthService) {
-    this.signInForm = new FormGroup({
-      email: new FormControl('', [Validators.required, Validators.email]),
-      password: new FormControl('', [Validators.required, Validators.maxLength(128)])
+    this.signInForm = new FormGroup<SignInForm>({
+      email: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
+      password: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(128)] })
     });
     this.continueUrl = this.route.snapshot.queryParams['continue'] || '/';
   }
@@ -31,7 +36,7 @@ export class SignInComponent implements OnInit {
     if (this.signInForm.invalid)
       return;
     this.isSigningIn = true;
-    this.authService.signIn(this.signInForm.value).subscribe(() => this.router.navigate([this.continueUrl])).add(() => {
+    this.authService.signIn(this.signInForm.getRawValue()).subscribe(() => this.router.navigate([this.continueUrl])).add(() => {
       this.isSigningIn = false;
       this.ref.markForCheck();
     });

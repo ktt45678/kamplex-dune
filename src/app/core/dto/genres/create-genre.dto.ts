@@ -1,3 +1,3 @@
-export class CreateGenreDto {
-  name!: string;
+export interface CreateGenreDto {
+  name: string;
 }

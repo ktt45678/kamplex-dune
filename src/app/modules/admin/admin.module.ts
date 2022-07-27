@@ -13,6 +13,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import { TableModule } from 'primeng/table';
 import { DialogModule } from 'primeng/dialog';
 import { DialogService, DynamicDialogModule } from 'primeng/dynamicdialog';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { InputSwitchModule } from 'primeng/inputswitch';
@@ -29,6 +30,7 @@ import { CreateGenreComponent } from './dialogs/create-genre/create-genre.compon
 import { UpdateGenreComponent } from './dialogs/update-genre/update-genre.component';
 import { FileUploadModule } from '../../shared/components/file-upload';
 import { VerticalTabModule } from '../../shared/components/vertical-tab';
+import { ImageEditorModule } from '../../shared/dialogs/image-editor';
 import { FormDirectiveModule } from '../../shared/directives/form-directive';
 import { ValidationPipeModule } from '../../shared/pipes/validation-pipe';
 import { DateTimePipeModule } from '../../shared/pipes/date-time-pipe';
@@ -80,6 +82,7 @@ import { GenresService, MediaService, ProducersService, QueueUploadService } fro
     AdminLayoutModule,
     FileUploadModule,
     VerticalTabModule,
+    ImageEditorModule,
     FormDirectiveModule,
     ValidationPipeModule,
     DateTimePipeModule,
@@ -95,6 +98,7 @@ import { GenresService, MediaService, ProducersService, QueueUploadService } fro
     TableModule,
     DialogModule,
     DynamicDialogModule,
+    ProgressSpinnerModule,
     ConfirmDialogModule,
     RadioButtonModule,
     InputSwitchModule,
@@ -114,7 +118,13 @@ import { GenresService, MediaService, ProducersService, QueueUploadService } fro
     WsActivatorGuard,
     {
       provide: TRANSLOCO_SCOPE,
-      useValue: 'admin'
+      useValue: 'admin',
+      multi: true
+    },
+    {
+      provide: TRANSLOCO_SCOPE,
+      useValue: 'media',
+      multi: true
     },
     {
       provide: WS_NAMESPACE,

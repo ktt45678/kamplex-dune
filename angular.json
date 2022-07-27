@@ -116,5 +116,7 @@
       }
     }
   },
-  "defaultProject": "kamplex-v2"
+  "cli": {
+    "analytics": "fe2e070d-0468-4aec-82e9-4732b462d3d3"
+  }
 }

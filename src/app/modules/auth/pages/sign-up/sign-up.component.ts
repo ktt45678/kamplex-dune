@@ -8,6 +8,14 @@ import { ToastKey } from '../../../../core/enums';
 import { AuthService, ItemDataService } from '../../../../core/services';
 import { shortDate } from '../../../../core/validators';
 import { DropdownOptionDto } from '../../../../core/dto/media';
+import { ShortDateForm } from '../../../../core/interfaces/forms';
+
+interface SignUpForm {
+  username: FormControl<string>;
+  email: FormControl<string>;
+  password: FormControl<string>;
+  birthdate: FormGroup<ShortDateForm>;
+}
 
 @Component({
   selector: 'app-sign-up',
@@ -18,22 +26,24 @@ import { DropdownOptionDto } from '../../../../core/dto/media';
 })
 export class SignUpComponent implements OnInit {
   isSigningUp: boolean = false;
-  signUpForm: FormGroup;
+  signUpForm: FormGroup<SignUpForm>;
   days: DropdownOptionDto[];
   months: DropdownOptionDto[];
   years: DropdownOptionDto[];
 
   constructor(private ref: ChangeDetectorRef, private router: Router, private translocoService: TranslocoService,
     private messageService: MessageService, private authService: AuthService, private itemDataService: ItemDataService) {
-    this.signUpForm = new FormGroup({
-      username: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(32)]),
-      email: new FormControl('', [Validators.required, Validators.email]),
-      password: new FormControl('', [Validators.required, Validators.minLength(8), Validators.maxLength(128)]),
-      birthdateDay: new FormControl(null),
-      birthdateMonth: new FormControl(null),
-      birthdateYear: new FormControl(null)
-    }, {
-      validators: shortDate('birthdateDay', 'birthdateMonth', 'birthdateYear', true, new Date())
+    this.signUpForm = new FormGroup<SignUpForm>({
+      username: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(3), Validators.maxLength(32)] }),
+      email: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
+      password: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(8), Validators.maxLength(128)] }),
+      birthdate: new FormGroup<ShortDateForm>({
+        day: new FormControl(null),
+        month: new FormControl(null),
+        year: new FormControl(null)
+      }, {
+        validators: shortDate('day', 'month', 'year', true, new Date())
+      })
     });
     this.days = this.itemDataService.createDateList();
     this.months = this.itemDataService.createMonthList();
@@ -47,14 +57,15 @@ export class SignUpComponent implements OnInit {
     if (this.signUpForm.invalid)
       return;
     this.isSigningUp = true;
+    const formValue = this.signUpForm.getRawValue();
     this.authService.signUp({
-      username: this.signUpForm.value.username,
-      email: this.signUpForm.value.email,
-      password: this.signUpForm.value.password,
+      username: formValue.username,
+      email: formValue.email,
+      password: formValue.password,
       birthdate: {
-        day: this.signUpForm.value.birthdateDay,
-        month: this.signUpForm.value.birthdateMonth,
-        year: this.signUpForm.value.birthdateYear
+        day: formValue.birthdate.day!,
+        month: formValue.birthdate.month!,
+        year: formValue.birthdate.year!
       }
     }).subscribe(() => {
       this.messageService.add({

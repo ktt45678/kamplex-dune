@@ -34,28 +34,28 @@
           [ngClass]="(signUpForm.controls['password'].dirty || signUpForm.controls['password'].touched) && signUpForm.controls['password'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
           {{ signUpForm.controls['password'].errors | firstErrorKey:'signUp':'password' }}
         </small>
-        <p class="tw-text-white tw-text-sm tw-font-medium tw-mb-4">{{ t('auth.signUp.birthdate') }}</p>
-        <div class="tw-flex tw-flex-wrap tw-w-full" aria-describedby="birthdate-error">
-          <p-dropdown class="tw-w-full sm:tw-w-3/12" styleClass="tw-w-full" [options]="days"
-            formControlName="birthdateDay" [appendTo]="dropdownZone" [placeholder]="t('auth.signUp.birthdateDay')"
+        <label for="birthdate" class="tw-text-white tw-inline-block tw-text-base tw-font-medium tw-mb-2">{{
+          t('auth.signUp.birthdate') }}</label>
+        <div id="birthdate" formGroupName="birthdate" class="dropdown-group tw-flex tw-flex-wrap tw-w-full"
+          aria-describedby="birthdate-error">
+          <p-dropdown class="dropdown-group tw-w-full sm:tw-w-3/12" styleClass="tw-w-full" [options]="days"
+            formControlName="day" [appendTo]="dropdownZone" [placeholder]="t('auth.signUp.birthdateDay')"
             scrollHeight="300px">
           </p-dropdown>
           <p-dropdown class="tw-w-full sm:tw-w-5/12 tw-pt-2 sm:tw-pt-0 sm:tw-pl-2" styleClass="tw-w-full"
-            [options]="months" formControlName="birthdateMonth" [appendTo]="dropdownZone"
+            [options]="months" formControlName="month" [appendTo]="dropdownZone"
             [placeholder]="t('auth.signUp.birthdateMonth')" scrollHeight="300px">
           </p-dropdown>
           <p-dropdown class="tw-w-full sm:tw-w-4/12 tw-pt-2 sm:tw-pt-0 sm:tw-pl-2" styleClass="tw-w-full"
-            [options]="years" formControlName="birthdateYear" [appendTo]="dropdownZone"
+            [options]="years" formControlName="year" [appendTo]="dropdownZone"
             [placeholder]="t('auth.signUp.birthdateYear')" scrollHeight="300px">
           </p-dropdown>
         </div>
         <small id="birthdate-error"
           class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
-          [ngClass]="(signUpForm.controls['birthdateDay'].dirty || signUpForm.controls['birthdateDay'].touched
-          || signUpForm.controls['birthdateMonth'].dirty || signUpForm.controls['birthdateMonth'].touched
-          || signUpForm.controls['birthdateYear'].dirty || signUpForm.controls['birthdateYear'].touched)
-          && signUpForm.controls['birthdateDay'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
-          {{ signUpForm.controls['birthdateDay'].errors | firstErrorKey:'signUp':'birthdate' }}
+          [ngClass]="(signUpForm.controls['birthdate'].dirty || signUpForm.controls['birthdate'].touched)
+            && signUpForm.controls['birthdate'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
+          {{ signUpForm.controls['birthdate'].errors | firstErrorKey:'signUp':'birthdate' }}
         </small>
         <div class="tw-flex tw-flex-wrap-reverse tw-mt-4">
           <div class="tw-mr-auto">
@@ -64,7 +64,7 @@
           </div>
           <div class="tw-ml-auto">
             <button pButton type="submit" [label]="t('auth.signUp.submit')"
-              class="p-button-rounded tw-block tw-px-8 tw-mb-4 md:tw-mb-4 tw-w-full md:tw-w-auto"
+              class="p-button-rounded tw-px-8 tw-mb-4 md:tw-mb-4 tw-w-full md:tw-w-auto"
               [disabled]="isSigningUp"></button>
           </div>
         </div>

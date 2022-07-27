@@ -1,5 +1,5 @@
 import { AbstractControl, ValidationErrors } from '@angular/forms';
-import { DateTime } from 'luxon';
+import { isValid, startOfDay } from 'date-fns';
 
 export const shortDate = (dayControlName: string, monthControlName: string, yearControlName: string, required?: boolean, beforeDate?: Date) => {
   return (control: AbstractControl): ValidationErrors | null => {
@@ -8,32 +8,18 @@ export const shortDate = (dayControlName: string, monthControlName: string, year
     const yearControl = control.get(yearControlName);
     if (dayControl && monthControl && yearControl) {
       if (dayControl.value && monthControl.value && yearControl.value) {
-        const date = DateTime.fromObject({ day: dayControl.value, month: monthControl.value, year: yearControl.value });
-        if (!date.isValid) {
-          dayControl.setErrors({ validShortDate: true });
-          monthControl.setErrors({ validShortDate: true });
-          yearControl.setErrors({ validShortDate: true });
-          return null;
+        const date = new Date(yearControl.value, monthControl.value - 1, dayControl.value);
+        if (!isValid(date) || date.getMonth() !== monthControl.value - 1) {
+          return { validShortDate: true };
         }
-        dayControl.setErrors(null);
-        monthControl.setErrors(null);
-        yearControl.setErrors(null);
         if (beforeDate) {
-          const maxDate = DateTime.fromJSDate(beforeDate).startOf('day');
-          if (date.startOf('day') >= maxDate) {
-            dayControl.setErrors({ shortDateBefore: true });
-            monthControl.setErrors({ shortDateBefore: true });
-            yearControl.setErrors({ shortDateBefore: true });
+          const maxDate = startOfDay(beforeDate);
+          if (startOfDay(date) >= maxDate) {
+            return { shortDateBefore: true };
           }
-        } else {
-          dayControl.setErrors(null);
-          monthControl.setErrors(null);
-          yearControl.setErrors(null);
         }
-      } else if (required) {
-        dayControl.setErrors({ required: true });
-        monthControl.setErrors({ required: true });
-        yearControl.setErrors({ required: true });
+      } else if (required && !dayControl.dirty && !monthControl.dirty && !yearControl.dirty) {
+        return { required: true };
       }
     }
     return null;

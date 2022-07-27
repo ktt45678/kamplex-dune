@@ -54,35 +54,20 @@
         <tr>
           <td class="tw-w-96">
             <div class="tw-flex">
-              <input #inputPoster hidden="true" type="file" onclick="this.value = null"
-                (change)="uploadPoster(media, $event)" accept=".jpg, .jpeg, .png" />
-              <div *ngIf="media.thumbnailPosterUrl; else noPoster" class="tw-w-16 tw-flex-shrink-0">
-                <div class="tw-aspect-w-2 tw-aspect-h-3">
-                  <img class="tw-rounded-md" [src]="media.smallPosterUrl" [alt]="media.title">
-                  <div class="row-image-actions tw-flex tw-flex-col tw-justify-center tw-items-center">
-                    <button pButton type="button" icon="ms ms-add-photo-alternate"
-                      [pTooltip]="t('admin.media.updatePoster')" [showDelay]="1000" (click)="inputPoster.click()"
-                      [disabled]="inputPoster.disabled" class="p-button-rounded p-button-success p-button-sm">
-                    </button>
-                    <button pButton type="button" icon="ms ms-close" [pTooltip]="t('admin.media.deletePoster')"
-                      [showDelay]="1000" (click)="deletePoster(media, $event)"
-                      class="p-button-rounded p-button-danger p-button-sm tw-mt-1">
-                    </button>
+              <div class="tw-w-16 tw-flex-shrink-0">
+                <div *ngIf="media.thumbnailPosterUrl; else noPoster"
+                  class="tw-aspect-w-2 tw-aspect-h-3 tw-rounded-md tw-overflow-hidden">
+                  <img class="tw-object-cover" [lazyLoad]="media.smallPosterUrl"
+                    errorImage="assets/images/media-poster-error-sm.png" [alt]="media.title">
+                  <div *ngIf="media.posterColor" class="ng-lazyload-placeholder tw-w-full tw-h-full"
+                    [ngStyle]="{ 'background-color': media.posterColor | rgbColor }">
                   </div>
                 </div>
+                <ng-template #noPoster>
+                  <img class="tw-object-cover tw-rounded-md" src="assets/images/media-poster-sm.png" loading="lazy"
+                    [alt]="media.title">
+                </ng-template>
               </div>
-              <ng-template #noPoster>
-                <button
-                  class="tw-bg-transparent tw-text-white tw-w-16 tw-flex-shrink-0 tw-rounded-md tw-border-2 tw-border-dashed disabled:tw-border-gray-500 disabled:tw-text-gray-500"
-                  (click)="inputPoster.click()" [pTooltip]="t('admin.media.addPoster')" [showDelay]="1000"
-                  [disabled]="inputPoster.disabled">
-                  <div class="tw-aspect-w-2 tw-aspect-h-3">
-                    <div class="tw-flex tw-justify-center tw-items-center">
-                      <i class="ms ms-add"></i>
-                    </div>
-                  </div>
-                </button>
-              </ng-template>
               <div class="tw-ml-2">
                 <p class="tw-text-base tw-font-semibold tw-line-clamp-2">{{ media.title }}</p>
                 <p class="tw-text-sm tw-text-slate-400 tw-line-clamp-1">{{ media.originalTitle }}</p>
@@ -92,14 +77,14 @@
           <ng-container *ngIf="media.type === MediaType.MOVIE; else isTV">
             <td class="tw-w-24 tw-text-sm">{{ t('admin.media.movie') }}</td>
             <td class="tw-w-40 tw-text-sm">
-              {{ t('admin.media.runtimeValue', { runtime: media.runtime }) }}
+              {{ media.runtime * 60 * 1000 | time }}
             </td>
           </ng-container>
           <ng-template #isTV>
             <td class="tw-w-24 tw-text-sm">{{ t('admin.media.tv') }}</td>
             <td class="tw-w-40 tw-text-sm">
               <p>{{ t('admin.media.episodeCountValue', { episodeCount: media.tv.episodeCount }) }}</p>
-              <p>{{ t('admin.media.episodeRuntimeValue', { runtime: media.runtime }) }}</p>
+              <p>{{ media.runtime * 60 * 1000 | time }} {{ t('admin.media.episodeRuntimeValue') }}</p>
             </td>
           </ng-template>
           <td class="tw-w-36 tw-text-sm">{{ media.releaseDate | shortDate }}</td>
@@ -115,7 +100,8 @@
                 <i class="ms ms-draft ms-opsz-lg tw-text-4xl" [pTooltip]="t('admin.media.statusPending')"></i>
               </ng-container>
               <ng-container *ngSwitchCase="MediaPStatus.PROCESSING">
-                <i class="ms ms-hourglass-empty ms-opsz-lg tw-text-4xl" [pTooltip]="t('admin.media.statusProcessing')"></i>
+                <i class="ms ms-hourglass-empty ms-opsz-lg tw-text-4xl"
+                  [pTooltip]="t('admin.media.statusProcessing')"></i>
               </ng-container>
               <ng-container *ngSwitchCase="MediaPStatus.DONE">
                 <i class="ms ms-check-circle ms-opsz-lg tw-text-4xl" [pTooltip]="t('admin.media.statusDone')"></i>
@@ -123,10 +109,12 @@
             </div>
           </td>
           <td>
-            <button pButton icon="ms ms-settings" class="p-button-rounded p-button-info p-button-sm tw-mr-2"
+            <button pButton icon="ms ms-settings"
+              class="p-button-rounded p-button-info p-button-sm p-button-sm-icon tw-mr-2"
               (click)="showConfigureMediaDialog(media)">
             </button>
-            <button pButton icon="ms ms-more-horiz" class="p-button-rounded p-button-secondary p-button-sm"
+            <button pButton icon="ms ms-more-horiz"
+              class="p-button-rounded p-button-secondary p-button-sm p-button-sm-icon"
               (click)="toggleMediaMenu(mediaMenu, $event, media)">
             </button>
           </td>

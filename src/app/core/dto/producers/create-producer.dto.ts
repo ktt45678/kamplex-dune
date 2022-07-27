@@ -1,4 +1,4 @@
-export class CreateProducerDto {
-  name!: string;
-  country?: string;
+export interface CreateProducerDto {
+  name: string;
+  country: string | null;
 }

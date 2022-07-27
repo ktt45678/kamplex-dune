@@ -1,6 +1,6 @@
 import { MediaStreamFile, MediaStreamSubtitle } from '.';
 
-export class MediaStream {
-  streams!: MediaStreamFile[];
-  subtitles!: MediaStreamSubtitle[];
+export interface MediaStream {
+  streams: MediaStreamFile[];
+  subtitles: MediaStreamSubtitle[];
 }

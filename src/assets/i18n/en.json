@@ -118,7 +118,9 @@
         "maxlength": "Overview must not be longer than 2000 characters"
       },
       "runtime": {
-        "required": "Running time is required"
+        "required": "Running time is required",
+        "max": "Running time must not be greater than 10000",
+        "min": "Running time must not be a negative number"
       },
       "releaseDate": {
         "required": "Release date is required",
@@ -128,17 +130,48 @@
         "validShortDate": "Last air date must be a valid date"
       }
     },
+    "updateMedia": {
+      "title": {
+        "required": "{{ validationErrors.createMedia.title.required }}",
+        "maxlength": "{{ validationErrors.createMedia.title.maxlength }}"
+      },
+      "originalTitle": {
+        "maxlength": "{{ validationErrors.createMedia.originalTitle.maxlength }}"
+      },
+      "overview": {
+        "required": "{{ validationErrors.createMedia.overview.required }}",
+        "minlength": "{{ validationErrors.createMedia.overview.minlength }}",
+        "maxlength": "{{ validationErrors.createMedia.overview.maxlength }}"
+      },
+      "runtime": {
+        "required": "{{ validationErrors.createMedia.runtime.required }}",
+        "max": "{{ validationErrors.createMedia.runtime.max }}",
+        "min": "{{ validationErrors.createMedia.runtime.min }}"
+      },
+      "releaseDate": {
+        "required": "{{ validationErrors.createMedia.releaseDate.required }}",
+        "validShortDate": "{{ validationErrors.createMedia.releaseDate.validShortDate }}"
+      },
+      "lastAirDate": {
+        "validShortDate": "{{ validationErrors.createMedia.lastAirDate.validShortDate }}"
+      }
+    },
     "addMediaVideo": {
       "name": {
         "maxlength": "Name must not be longer than 50 characters"
       },
       "url": {
-        "required": "URL is required"
+        "required": "URL is required",
+        "maxlength": "URL must not be longer than 1000 characters"
       }
     },
     "updateMediaVideo": {
       "name": {
         "maxlength": "{{ validationErrors.addMediaVideo.name.maxlength }}"
+      },
+      "url": {
+        "required": "{{ validationErrors.addMediaVideo.url.required }}",
+        "maxlength": "{{ validationErrors.addMediaVideo.url.maxlength }}"
       }
     },
     "addMediaSubtitle": {
@@ -157,7 +190,62 @@
         "maxFileSize": "Maximum file size is 40GB",
         "fileExtension": "File must be in .mp4, .mkv, .webm or .m2ts format"
       }
+    },
+    "createEpisode": {
+      "episodeNumber": {
+        "required": "Episode number is required",
+        "min": "Episode number must not be a negative number",
+        "max": "Episode number must not be greater than 10000"
+      },
+      "name": {
+        "required": "Name is required",
+        "maxlength": "Name must not be longer than 500 characters"
+      },
+      "overview": {
+        "minlength": "Overview must be at least 10 characters",
+        "maxlength": "Overview must not be longer than 2000 characters"
+      },
+      "runtime": {
+        "required": "Running time is required",
+        "min": "Running time must not be a negative number",
+        "max": "Running time must not be greater than 10000"
+      },
+      "airDate": {
+        "required": "Air date is required",
+        "validShortDate": "Air date must be a valid date"
+      }
+    },
+    "updateEpisode": {
+      "episodeNumber": {
+        "required": "{{ validationErrors.createEpisode.episodeNumber.required }}",
+        "min": "{{ validationErrors.createEpisode.episodeNumber.min }}",
+        "max": "{{ validationErrors.createEpisode.episodeNumber.max }}"
+      },
+      "name": {
+        "required": "{{ validationErrors.createEpisode.name.required }}",
+        "maxlength": "{{ validationErrors.createEpisode.name.maxlength }}"
+      },
+      "overview": {
+        "minlength": "{{ validationErrors.createEpisode.overview.minlength }}",
+        "maxlength": "{{ validationErrors.createEpisode.overview.maxlength }}"
+      },
+      "runtime": {
+        "required": "{{ validationErrors.createEpisode.runtime.required }}",
+        "min": "{{ validationErrors.createEpisode.runtime.min }}",
+        "max": "{{ validationErrors.createEpisode.runtime.max }}"
+      },
+      "airDate": {
+        "required": "{{ validationErrors.createEpisode.airDate.required }}",
+        "validShortDate": "{{ validationErrors.createEpisode.airDate.validShortDate }}"
+      }
     }
+  },
+  "errorMessagesHeader": "An error occurred",
+  "errorMessages": {
+    "uploadPosterTooLarge": "Your file is too large, recommended size is 8MB or less",
+    "uploadBackdropTooLarge": "{{ errorMessages.uploadPosterTooLarge }}",
+    "uploadStillTooLarge": "{{ errorMessages.uploadPosterTooLarge }}",
+    "uploadSubtitleTooLarge": "Your file is too large, recommended size is 500KB or less"
   },
   "window": {
     "leaveSite": "Leave site? Changes you made may not be saved."

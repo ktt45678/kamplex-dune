@@ -6,6 +6,11 @@ import { takeUntil } from 'rxjs';
 import { DestroyService, QueueUploadService } from '../../../../core/services';
 import { fileExtension, maxFileSize } from '../../../../core/validators';
 import { UPLOAD_MEDIA_SOURCE_EXT, UPLOAD_MEDIA_SOURCE_MAX_SIZE } from '../../../../../environments/config';
+import { MediaType } from '../../../../core/enums';
+
+interface AddSourceForm {
+  file: FormControl<File | null>;
+}
 
 @Component({
   selector: 'app-add-source',
@@ -17,11 +22,11 @@ import { UPLOAD_MEDIA_SOURCE_EXT, UPLOAD_MEDIA_SOURCE_MAX_SIZE } from '../../../
 export class AddSourceComponent implements OnInit {
   @ViewChild('addSourceFormElement') addSourceFormElement?: NgForm;
   isAddingSource: boolean = false;
-  addSourceForm: FormGroup;
+  addSourceForm: FormGroup<AddSourceForm>;
 
   constructor(private dialogRef: DynamicDialogRef, private config: DynamicDialogConfig, private queueUploadService: QueueUploadService,
     private destroyService: DestroyService) {
-    this.addSourceForm = new FormGroup({
+    this.addSourceForm = new FormGroup<AddSourceForm>({
       file: new FormControl(null,
         [Validators.required, maxFileSize(UPLOAD_MEDIA_SOURCE_MAX_SIZE), fileExtension(UPLOAD_MEDIA_SOURCE_EXT)]
       )
@@ -38,14 +43,21 @@ export class AddSourceComponent implements OnInit {
   }
 
   uploadFile(file: File): void {
-    const mediaId = this.config.data._id;
-    this.queueUploadService.addToQueue(mediaId, file, `media/${mediaId}/movie/source`, `media/${mediaId}/movie/source/:id`);
+    const mediaId = this.config.data['media']['_id'];
+    const mediaType = this.config.data['media']['type'];
+    if (mediaType === MediaType.MOVIE) {
+      this.queueUploadService.addToQueue(mediaId, file, `media/${mediaId}/movie/source`, `media/${mediaId}/movie/source/:id`);
+      return;
+    }
+    const episodeId = this.config.data['episode']['_id'];
+    this.queueUploadService.addToQueue(`${mediaId}:${episodeId}`, file, `media/${mediaId}/tv/episodes/${episodeId}/source`, `media/${mediaId}/tv/episodes/${episodeId}/source/:id`);
   }
 
   onAddSourceFormSubmit(): void {
     if (this.addSourceForm.invalid) return;
     this.isAddingSource = true;
-    this.uploadFile(this.addSourceForm.value['file']);
+    const formValue = this.addSourceForm.getRawValue();
+    this.uploadFile(formValue.file!);
     this.dialogRef.close();
   }
 

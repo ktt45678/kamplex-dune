@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslocoService } from '@ngneat/transloco';
 import { ConfirmationService } from 'primeng/api';
@@ -19,7 +19,7 @@ import { UpdateProducerComponent } from '../../dialogs/update-producer';
   styleUrls: ['./producers.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ProducersComponent implements OnInit {
+export class ProducersComponent implements OnInit, OnDestroy {
   @ViewChild('producerTable') producerTable?: Table;
   loadingProducerList: boolean = false;
   rowsPerPage: number = 10;
@@ -34,7 +34,7 @@ export class ProducersComponent implements OnInit {
   }
 
   loadProducers(): void {
-    const params = new PaginateProducersDto();
+    const params: PaginateProducersDto = {};
     if (this.producerTable) {
       params.limit = this.producerTable.rows;
       params.page = this.producerTable.first ? this.producerTable.first / this.producerTable.rows + 1 : 1;
@@ -74,7 +74,7 @@ export class ProducersComponent implements OnInit {
 
   showUpdateProducerDialog(producer: Producer): void {
     const dialogRef = this.dialogService.open(UpdateProducerComponent, {
-      data: producer,
+      data: { ...producer },
       width: '500px',
       modal: true,
       styleClass: 'p-dialog-header-sm',
@@ -104,6 +104,12 @@ export class ProducersComponent implements OnInit {
 
   trackId(index: number, item: any): any {
     return item?._id;
+  }
+
+  ngOnDestroy(): void {
+    this.dialogService.dialogComponentRefMap.forEach(dialogRef => {
+      dialogRef.instance.close();
+    });
   }
 
 }

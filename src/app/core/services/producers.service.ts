@@ -42,8 +42,9 @@ export class ProducersService {
       const producerSuggestions = producers.results;
       const hasMatch = producers.results.find(p => p.name === search);
       if (search && search.length <= 150 && !hasMatch) {
+        const encodedName = encodeURIComponent(search);
         producerSuggestions.push({
-          _id: `create:${search}`,
+          _id: `create:name=${encodedName}`,
           name: this.translocoService.translate('admin.createMedia.createProducerByName', { name: search })
         });
       }

@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
-import { AddMediaSubtitleDto, AddMediaVideoDto, AddTVEpisodeDto, CreateMediaDto, PaginateMediaDto, UpdateMediaVideoDto } from '../dto/media';
+import { AddMediaSubtitleDto, AddMediaVideoDto, AddTVEpisodeDto, CreateMediaDto, FindTVEpisodesDto, PaginateMediaDto, UpdateMediaDto, UpdateMediaVideoDto, UpdateTVEpisodeDto } from '../dto/media';
 import { Media, MediaDetails, MediaStream, MediaSubtitle, MediaVideo, Paginated, TVEpisode, TVEpisodeDetails } from '../models';
+import { getImageName } from '../../core/utils';
 
 @Injectable()
 export class MediaService {
@@ -36,6 +37,10 @@ export class MediaService {
     return this.http.get<MediaDetails>(`media/${id}`);
   }
 
+  update(id: string, updateMediaDto: UpdateMediaDto) {
+    return this.http.patch<MediaDetails>(`media/${id}`, updateMediaDto);
+  }
+
   findMovieStreams(id: string) {
     return this.http.get<MediaStream>(`media/${id}/movie/streams`);
   }
@@ -44,9 +49,11 @@ export class MediaService {
     return this.http.delete<MediaDetails>(`media/${id}`);
   }
 
-  uploadPoster(id: string, poster: File) {
+  uploadPoster(id: string, poster: File | Blob, name?: string) {
+    if (!name)
+      name = getImageName(poster);
     const data = new FormData();
-    data.set('file', poster);
+    data.set('file', poster, name);
     return this.http.patch<MediaDetails>(`media/${id}/poster`, data);
   }
 
@@ -54,9 +61,11 @@ export class MediaService {
     return this.http.delete(`media/${id}/poster`);
   }
 
-  uploadBackdrop(id: string, backdrop: File) {
+  uploadBackdrop(id: string, backdrop: File | Blob, name?: string) {
+    if (!name)
+      name = getImageName(backdrop);
     const data = new FormData();
-    data.set('file', backdrop);
+    data.set('file', backdrop, name);
     return this.http.patch<MediaDetails>(`media/${id}/backdrop`, data);
   }
 
@@ -105,8 +114,35 @@ export class MediaService {
     return this.http.post<TVEpisode>(`media/${id}/tv/episodes`, addTVEpisodeDto);
   }
 
+  findAllTVEpisodes(id: string, findTVEpisodesDto: FindTVEpisodesDto) {
+    const params: any = {};
+    const { limited } = findTVEpisodesDto;
+    limited !== undefined && (params['limited'] = limited);
+    return this.http.get<TVEpisode[]>(`media/${id}/tv/episodes`, { params });
+  }
+
   findOneTVEpisode(id: string, episodeId: string) {
     return this.http.get<TVEpisodeDetails>(`media/${id}/tv/episodes/${episodeId}`);
+  }
+
+  updateTVEpisode(id: string, episodeId: string, updateTVEpisodeDto: UpdateTVEpisodeDto) {
+    return this.http.patch<TVEpisodeDetails>(`media/${id}/tv/episodes/${episodeId}`, updateTVEpisodeDto);
+  }
+
+  deleteTVEpisode(id: string, episodeId: string) {
+    return this.http.delete(`media/${id}/tv/episodes/${episodeId}`);
+  }
+
+  uploadStill(id: string, episodeId: string, still: File | Blob, name?: string) {
+    if (!name)
+      name = getImageName(still);
+    const data = new FormData();
+    data.set('file', still, name);
+    return this.http.patch<TVEpisodeDetails>(`media/${id}/tv/episodes/${episodeId}/still`, data);
+  }
+
+  deleteStill(id: string, episodeId: string) {
+    return this.http.delete(`media/${id}/tv/episodes/${episodeId}/still`);
   }
 
   findAllTVSubtitles(id: string, episodeId: string) {

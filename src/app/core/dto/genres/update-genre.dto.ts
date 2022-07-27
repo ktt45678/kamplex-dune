@@ -1,4 +1,4 @@
-export class UpdateGenreDto {
-  name?: string;
+export interface UpdateGenreDto {
+  name: string | null;
   translate?: string;
 }

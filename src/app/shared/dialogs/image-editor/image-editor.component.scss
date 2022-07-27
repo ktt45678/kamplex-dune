@@ -1,0 +1,16 @@
+:host ::ng-deep {
+  .ngx-ic-cropper:after {
+    display: none;
+  }
+
+  .ngx-ic-overlay {
+    --cropper-outline-color: transparent;
+    --cropper-overlay-color: transparent;
+  }
+
+  image-cropper > div {
+    width: auto !important;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}

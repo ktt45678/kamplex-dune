@@ -1,14 +1,30 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { TranslocoService } from '@ngneat/transloco';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { first, takeUntil } from 'rxjs';
 
 import { CreateMediaDto, DropdownOptionDto } from '../../../../core/dto/media';
 import { MediaStatus, MediaType } from '../../../../core/enums';
+import { ShortDateForm } from '../../../../core/interfaces/forms';
 import { Genre, Producer } from '../../../../core/models';
 import { DestroyService, GenresService, ItemDataService, MediaService, ProducersService } from '../../../../core/services';
 import { shortDate } from '../../../../core/validators';
+
+interface CreateMediaForm {
+  type: FormControl<string>;
+  title: FormControl<string>;
+  originalTitle: FormControl<string | null>;
+  overview: FormControl<string>;
+  originalLanguage: FormControl<string | null>;
+  genres: FormControl<Genre[] | null>;
+  producers: FormControl<Producer[] | null>;
+  runtime: FormControl<number | null>;
+  adult: FormControl<boolean>;
+  releaseDate: FormGroup<ShortDateForm>;
+  lastAirDate?: FormGroup<ShortDateForm>;
+  visibility: FormControl<number>;
+  status: FormControl<string>;
+}
 
 @Component({
   selector: 'app-create-media',
@@ -20,7 +36,7 @@ import { shortDate } from '../../../../core/validators';
 export class CreateMediaComponent implements OnInit {
   MediaType = MediaType;
   isCreatingMedia: boolean = false;
-  createMediaForm: FormGroup;
+  createMediaForm: FormGroup<CreateMediaForm>;
   days: DropdownOptionDto[] = [];
   months: DropdownOptionDto[] = [];
   years: DropdownOptionDto[] = [];
@@ -30,33 +46,33 @@ export class CreateMediaComponent implements OnInit {
 
   constructor(private ref: ChangeDetectorRef, private dialogRef: DynamicDialogRef,
     private config: DynamicDialogConfig, private mediaService: MediaService, private genresService: GenresService,
-    private producersService: ProducersService, private itemDataService: ItemDataService, private destroyService: DestroyService,
-    private translocoService: TranslocoService) {
-    const type = this.config.data['type'] || MediaType.MOVIE;
-    this.createMediaForm = new FormGroup({
-      type: new FormControl(type),
-      title: new FormControl(null, [Validators.required, Validators.maxLength(500)]),
+    private producersService: ProducersService, private itemDataService: ItemDataService, private destroyService: DestroyService) {
+    const mediaType = this.config.data['type'] || MediaType.MOVIE;
+    this.createMediaForm = new FormGroup<CreateMediaForm>({
+      type: new FormControl(mediaType),
+      title: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(500)] }),
       originalTitle: new FormControl(null, [Validators.maxLength(500)]),
-      overview: new FormControl(null, [Validators.required, Validators.minLength(10), Validators.maxLength(2000)]),
+      overview: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(10), Validators.maxLength(2000)] }),
       originalLanguage: new FormControl(null),
       genres: new FormControl(null),
       producers: new FormControl(null),
-      runtime: new FormControl(null, [Validators.required]),
-      adult: new FormControl(false, [Validators.required]),
-      releaseDateDay: new FormControl(null),
-      releaseDateMonth: new FormControl(null),
-      releaseDateYear: new FormControl(null),
-      visibility: new FormControl(1, [Validators.required]),
-      status: new FormControl(MediaStatus.RELEASED, [Validators.required])
-    }, {
-      validators: shortDate('releaseDateDay', 'releaseDateMonth', 'releaseDateYear', true)
+      runtime: new FormControl(null, [Validators.required, Validators.min(0), Validators.max(10000)]),
+      adult: new FormControl(false, { nonNullable: true, validators: Validators.required }),
+      releaseDate: new FormGroup<ShortDateForm>({
+        day: new FormControl(null),
+        month: new FormControl(null),
+        year: new FormControl(null)
+      }, { validators: shortDate('day', 'month', 'year', true) }),
+      visibility: new FormControl(1, { nonNullable: true, validators: Validators.required }),
+      status: new FormControl(MediaStatus.RELEASED, { nonNullable: true, validators: Validators.required })
     });
-    if (type === MediaType.TV) {
-      this.createMediaForm.addControl('lastAirDateDay', new FormControl(null));
-      this.createMediaForm.addControl('lastAirDateMonth', new FormControl(null));
-      this.createMediaForm.addControl('lastAirDateYear', new FormControl(null));
+    if (mediaType === MediaType.TV) {
+      this.createMediaForm.addControl('lastAirDate', new FormGroup<ShortDateForm>({
+        day: new FormControl(null),
+        month: new FormControl(null),
+        year: new FormControl(null)
+      }, { validators: shortDate('day', 'month', 'year', false) }));
       this.createMediaForm.get('status')?.setValue(MediaStatus.AIRED);
-      this.createMediaForm.addValidators(shortDate('lastAirDateDay', 'lastAirDateMonth', 'lastAirDateYear', false));
     }
   }
 
@@ -85,32 +101,33 @@ export class CreateMediaComponent implements OnInit {
 
   onCreateMediaFormSubmit(): void {
     if (this.createMediaForm.invalid) return;
-    const genreIds = this.createMediaForm.value['genres']?.map((g: Genre) => g._id) || [];
-    const producerIds = this.createMediaForm.value['producers']?.map((p: Producer) => p._id) || [];
     this.isCreatingMedia = true;
-    const createMediaDto: CreateMediaDto = ({
-      type: this.createMediaForm.value['type'],
-      title: this.createMediaForm.value['title'],
-      originalTitle: this.createMediaForm.value['originalTitle'] || null,
-      overview: this.createMediaForm.value['overview'],
+    const formValue = this.createMediaForm.getRawValue();
+    const genreIds = formValue.genres?.map(g => g._id) || [];
+    const producerIds = formValue.producers?.map(p => p._id) || [];
+    const createMediaDto: CreateMediaDto = {
+      type: formValue.type,
+      title: formValue.title,
+      originalTitle: formValue.originalTitle || null,
+      overview: formValue.overview,
       genres: genreIds,
-      originalLanguage: this.createMediaForm.value['originalLanguage'],
+      originalLanguage: formValue.originalLanguage,
       producers: producerIds,
-      runtime: this.createMediaForm.value['runtime'],
-      adult: this.createMediaForm.value['adult'],
+      runtime: formValue.runtime!,
+      adult: formValue.adult,
       releaseDate: {
-        day: this.createMediaForm.value['releaseDateDay'],
-        month: this.createMediaForm.value['releaseDateMonth'],
-        year: this.createMediaForm.value['releaseDateYear']
+        day: formValue.releaseDate.day!,
+        month: formValue.releaseDate.month!,
+        year: formValue.releaseDate.year!
       },
-      visibility: this.createMediaForm.value['visibility'],
-      status: this.createMediaForm.value['status']
-    });
-    if (createMediaDto.type === MediaType.TV) {
+      visibility: formValue.visibility,
+      status: formValue.status
+    };
+    if (createMediaDto.type === MediaType.TV && formValue.lastAirDate) {
       createMediaDto.lastAirDate = {
-        day: this.createMediaForm.value['lastAirDateDay'],
-        month: this.createMediaForm.value['lastAirDateMonth'],
-        year: this.createMediaForm.value['lastAirDateYear']
+        day: formValue.lastAirDate.day!,
+        month: formValue.lastAirDate.month!,
+        year: formValue.lastAirDate.year!
       }
     }
     this.mediaService.create(createMediaDto).pipe(takeUntil(this.destroyService)).subscribe({

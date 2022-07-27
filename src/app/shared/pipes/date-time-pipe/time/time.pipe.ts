@@ -1,6 +1,9 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { TranslocoService } from '@ngneat/transloco';
-import { Duration } from 'luxon';
+import { formatDuration, intervalToDuration } from 'date-fns';
+import { enUS, vi } from 'date-fns/locale';
+
+const locales: { [key: string]: Locale } = { en: enUS, vi: vi };
 
 @Pipe({
   name: 'time'
@@ -8,15 +11,13 @@ import { Duration } from 'luxon';
 export class TimePipe implements PipeTransform {
   constructor(private translocoService: TranslocoService) { }
 
-  transform(value: number, format?: string): string | null {
+  transform(value: number, format: string[] = ['hours', 'minutes', 'seconds']): string | null {
     if (!value)
       return null;
     const roundedValue = Math.floor(value / 1000) * 1000;
     const lang = this.translocoService.getActiveLang();
-    const time = Duration.fromMillis(roundedValue, { locale: lang });
-    if (format)
-      return time.toFormat(format);
-    return time.shiftTo('minutes', 'seconds').toHuman();
+    const duration = intervalToDuration({ start: 0, end: roundedValue });
+    return formatDuration(duration, { format, locale: locales[lang] });
   }
 
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslocoService } from '@ngneat/transloco';
 import { ConfirmationService } from 'primeng/api';
@@ -19,7 +19,7 @@ import { UpdateGenreComponent } from '../../dialogs/update-genre';
   styleUrls: ['./genres.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class GenresComponent implements OnInit {
+export class GenresComponent implements OnInit, OnDestroy {
   @ViewChild('genreTable') genreTable?: Table;
   loadingGenreList: boolean = false;
   rowsPerPage: number = 10;
@@ -34,7 +34,7 @@ export class GenresComponent implements OnInit {
   }
 
   loadGenres(): void {
-    const params = new PaginateGenresDto();
+    const params: PaginateGenresDto = {};
     if (this.genreTable) {
       params.limit = this.genreTable.rows;
       params.page = this.genreTable.first ? this.genreTable.first / this.genreTable.rows + 1 : 1;
@@ -74,7 +74,7 @@ export class GenresComponent implements OnInit {
 
   showUpdateGenreDialog(genre: Genre): void {
     const dialogRef = this.dialogService.open(UpdateGenreComponent, {
-      data: genre,
+      data: { ...genre },
       width: '500px',
       modal: true,
       styleClass: 'p-dialog-header-sm',
@@ -104,6 +104,12 @@ export class GenresComponent implements OnInit {
 
   trackId(index: number, item: any): any {
     return item?._id;
+  }
+
+  ngOnDestroy(): void {
+    this.dialogService.dialogComponentRefMap.forEach(dialogRef => {
+      dialogRef.instance.close();
+    });
   }
 
 }

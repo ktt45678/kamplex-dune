@@ -1,5 +1,6 @@
 const { guessProductionMode } = require('@ngneat/tailwind');
 const plugin = require('tailwindcss/plugin');
+const defaultTheme = require('tailwindcss/defaultTheme');
 const _ = require('lodash');
 
 process.env.TAILWIND_MODE = guessProductionMode() ? 'build' : 'watch';
@@ -21,9 +22,16 @@ module.exports = {
       '4': theme('width.1/4'),
       '5': theme('width.1/5')
     }),
+    screens: {
+      'xs': '360px',
+      ...defaultTheme.screens,
+      '3xl': '1600px',
+      '4xl': '2000px'
+    },
     extend: {
       boxShadow: {
-        'border': '0 0 0 1px rgba(0, 0, 0, 0.1)'
+        'border': '0 0 0 1px rgba(0, 0, 0, 0.1)',
+        'focus-box': '0 0 0 3px #A855F7'
       },
       brightness: {
         '20': '.2',
@@ -47,15 +55,16 @@ module.exports = {
       margin: {
         '5%': '5%'
       },
+      height: {
+        'screen-50': '50vh',
+        'screen-75': '75vh',
+        'screen-80': '80vh'
+      },
       maxHeight: {
         'fill-available': '-webkit-fill-available'
       },
       maxWidth: {
         '8xl': '90rem'
-      },
-      screens: {
-        '3xl': '1600px',
-        '4xl': '2000px'
       },
       spacing: {
         '34': '8.5rem',
@@ -84,7 +93,25 @@ module.exports = {
     require('@tailwindcss/line-clamp'),
     require('@tailwindcss/typography'),
     require('@vidstack/player/tailwind.cjs'),
-    plugin(function ({ addUtilities, addVariant, config, e }) {
+    plugin(function ({ addComponents, addUtilities, addVariant, config, e }) {
+      addComponents({
+        '.vertical-tab-menu': {
+          'width': 'var(--menu-width)',
+          'height': 'calc(var(--content-height) - var(--menu-spacing-y) * 2)',
+          'margin-left': 'var(--menu-spacing-x)',
+          'margin-top': 'var(--menu-spacing-y)',
+          'margin-bottom': 'var(--menu-spacing-y)'
+        },
+        '.vertical-tab-content': {
+          'height': 'var(--content-height)'
+        },
+        '.vertical-tab-content-md': {
+          'width': 'calc(var(--content-width) - var(--menu-width) - var(--menu-spacing-x))'
+        },
+        '.vertical-tab-content-sm': {
+          'width': 'var(--content-width)'
+        }
+      });
       addUtilities(_.map(config('theme.dropdownColumns'), (value, key) => {
         return {
           [`.${e(`dropdown-cols-${key}`)}`]: {

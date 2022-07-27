@@ -14,7 +14,7 @@
                 [lazyLoad]="media.thumbnailPosterUrl" [alt]="media.title"
                 errorImage="assets/images/media-poster-md.png">
               <div *ngIf="media.posterColor" class="ng-lazyload-placeholder tw-w-full tw-h-full"
-                [ngStyle]="{ 'background-color': media.posterColor | hexColor }">
+                [ngStyle]="{ 'background-color': media.posterColor | rgbColor }">
               </div>
               <ng-template #noPoster>
                 <img class="tw-object-cover" lazyLoad="assets/images/media-poster-md.png"
@@ -57,11 +57,11 @@
             <div class="tw-mt-4">
               <button type="button" role="navigation" aria-label="Play media" pButton icon="pi pi-play" iconPos="left"
                 label="Play" [routerLink]="['/watch', media._id]"
-                class="p-button-rounded tw-block sm:tw-inline-flex tw-w-full sm:tw-w-auto tw-max-w-xs sm:tw-max-w-none tw-text-white not-disabled:hover:!tw-text-gray-600 tw-text-lg sm:tw-text-xl tw-mt-2 sm:tw-mt-0 tw-mx-auto sm:tw-mx-0 tw-px-8">
+                class="p-button-rounded p-button-shrink sm:tw-inline-flex tw-w-full sm:tw-w-auto tw-max-w-xs sm:tw-max-w-none tw-text-white not-disabled:hover:!tw-text-gray-600 tw-text-lg sm:tw-text-xl tw-mt-2 sm:tw-mt-0 tw-mx-auto sm:tw-mx-0 tw-px-8">
               </button>
               <button type="button" role="button" aria-label="Add media to playlist" routerLink="#" disabled="true"
                 pButton icon="pi pi-plus" label="Playlist"
-                class="p-button-rounded tw-block sm:tw-inline-flex tw-w-full sm:tw-w-auto tw-max-w-xs sm:tw-max-w-none tw-text-white not-disabled:hover:!tw-text-gray-600 tw-text-lg sm:tw-text-xl tw-mt-2 sm:tw-mt-0 tw-mx-auto sm:tw-mr-0 sm:tw-ml-2.5 tw-px-8">
+                class="p-button-rounded p-button-shrink sm:tw-inline-flex tw-w-full sm:tw-w-auto tw-max-w-xs sm:tw-max-w-none tw-text-white not-disabled:hover:!tw-text-gray-600 tw-text-lg sm:tw-text-xl tw-mt-2 sm:tw-mt-0 tw-mx-auto sm:tw-mr-0 sm:tw-ml-2.5 tw-px-8">
               </button>
             </div>
             <p class="tw-text-white tw-text-base sm:tw-text-lg tw-font-medium tw-leading-5 tw-mt-4">

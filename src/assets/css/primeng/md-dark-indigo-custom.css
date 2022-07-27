@@ -1940,52 +1940,52 @@ p-togglebutton.ng-dirty.ng-invalid > .p-togglebutton.p-button {
 }
 
 .p-button.p-button-info, .p-buttonset.p-button-info > .p-button, .p-splitbutton.p-button-info > .p-button {
-  color: #212121;
-  background: #90CAF9;
+  color: #FFFFFF;
+  background: #9750DD;
   border: 0 none;
 }
 .p-button.p-button-info:enabled:hover, .p-buttonset.p-button-info > .p-button:enabled:hover, .p-splitbutton.p-button-info > .p-button:enabled:hover {
-  background: rgba(144, 202, 249, 0.92);
-  color: #212121;
+  background: #7828C8;
+  color: #FFFFFF;
   border-color: transparent;
 }
 .p-button.p-button-info:enabled:focus, .p-buttonset.p-button-info > .p-button:enabled:focus, .p-splitbutton.p-button-info > .p-button:enabled:focus {
   box-shadow: none;
 }
 .p-button.p-button-info:enabled:active, .p-buttonset.p-button-info > .p-button:enabled:active, .p-splitbutton.p-button-info > .p-button:enabled:active {
-  background: rgba(144, 202, 249, 0.68);
-  color: #212121;
+  background: #571D91;
+  color: #FFFFFF;
   border-color: transparent;
 }
 .p-button.p-button-info.p-button-outlined, .p-buttonset.p-button-info > .p-button.p-button-outlined, .p-splitbutton.p-button-info > .p-button.p-button-outlined {
   background-color: transparent;
-  color: #90CAF9;
+  color: #9750DD;
   border: 0 none;
 }
 .p-button.p-button-info.p-button-outlined:enabled:hover, .p-buttonset.p-button-info > .p-button.p-button-outlined:enabled:hover, .p-splitbutton.p-button-info > .p-button.p-button-outlined:enabled:hover {
   background: rgba(144, 202, 249, 0.04);
-  color: #90CAF9;
+  color: #9750DD;
   border: 0 none;
 }
 .p-button.p-button-info.p-button-outlined:enabled:active, .p-buttonset.p-button-info > .p-button.p-button-outlined:enabled:active, .p-splitbutton.p-button-info > .p-button.p-button-outlined:enabled:active {
   background: rgba(144, 202, 249, 0.16);
-  color: #90CAF9;
+  color: #9750DD;
   border: 0 none;
 }
 .p-button.p-button-info.p-button-text, .p-buttonset.p-button-info > .p-button.p-button-text, .p-splitbutton.p-button-info > .p-button.p-button-text {
   background-color: transparent;
-  color: #90CAF9;
+  color: #9750DD;
   border-color: transparent;
 }
 .p-button.p-button-info.p-button-text:enabled:hover, .p-buttonset.p-button-info > .p-button.p-button-text:enabled:hover, .p-splitbutton.p-button-info > .p-button.p-button-text:enabled:hover {
   background: rgba(144, 202, 249, 0.04);
   border-color: transparent;
-  color: #90CAF9;
+  color: #9750DD;
 }
 .p-button.p-button-info.p-button-text:enabled:active, .p-buttonset.p-button-info > .p-button.p-button-text:enabled:active, .p-splitbutton.p-button-info > .p-button.p-button-text:enabled:active {
   background: rgba(144, 202, 249, 0.16);
   border-color: transparent;
-  color: #90CAF9;
+  color: #9750DD;
 }
 
 .p-button.p-button-success, .p-buttonset.p-button-success > .p-button, .p-splitbutton.p-button-success > .p-button {
@@ -2381,31 +2381,31 @@ p-togglebutton.ng-dirty.ng-invalid > .p-togglebutton.p-button {
 
 .p-splitbutton.p-button-info.p-button-outlined > .p-button {
   background-color: transparent;
-  color: #90CAF9;
+  color: #9750DD;
   border: 0 none;
 }
 .p-splitbutton.p-button-info.p-button-outlined > .p-button:enabled:hover, .p-splitbutton.p-button-info.p-button-outlined > .p-button:not(button):not(a):not(.p-disabled):hover {
   background: rgba(144, 202, 249, 0.04);
-  color: #90CAF9;
+  color: #9750DD;
 }
 .p-splitbutton.p-button-info.p-button-outlined > .p-button:enabled:active, .p-splitbutton.p-button-info.p-button-outlined > .p-button:not(button):not(a):not(.p-disabled):active {
   background: rgba(144, 202, 249, 0.16);
-  color: #90CAF9;
+  color: #9750DD;
 }
 .p-splitbutton.p-button-info.p-button-text > .p-button {
   background-color: transparent;
-  color: #90CAF9;
+  color: #9750DD;
   border-color: transparent;
 }
 .p-splitbutton.p-button-info.p-button-text > .p-button:enabled:hover, .p-splitbutton.p-button-info.p-button-text > .p-button:not(button):not(a):not(.p-disabled):hover {
   background: rgba(144, 202, 249, 0.04);
   border-color: transparent;
-  color: #90CAF9;
+  color: #9750DD;
 }
 .p-splitbutton.p-button-info.p-button-text > .p-button:enabled:active, .p-splitbutton.p-button-info.p-button-text > .p-button:not(button):not(a):not(.p-disabled):active {
   background: rgba(144, 202, 249, 0.16);
   border-color: transparent;
-  color: #90CAF9;
+  color: #9750DD;
 }
 
 .p-splitbutton.p-button-success.p-button-outlined > .p-button {
@@ -5632,6 +5632,7 @@ p-togglebutton.ng-dirty.ng-invalid > .p-togglebutton.p-button {
   border-radius: 50%;
   background: transparent;
   transition: background-color 0.2s, color 0.2s, box-shadow 0.2s;
+  flex: 0 0 auto;
 }
 .p-toast .p-toast-message .p-toast-icon-close:hover {
   background: rgba(255, 255, 255, 0.3);
@@ -6210,10 +6211,10 @@ p-autocomplete.ng-dirty.ng-invalid .p-autocomplete .p-autocomplete-multiple-cont
 }
 
 .p-button.p-button-info:enabled:focus, .p-buttonset.p-button-info > .p-button:enabled:focus, .p-splitbutton.p-button-info > .p-button:enabled:focus {
-  background: rgba(144, 202, 249, 0.76);
+  background: #571D91;
 }
 .p-button.p-button-info:enabled:active, .p-buttonset.p-button-info > .p-button:enabled:active, .p-splitbutton.p-button-info > .p-button:enabled:active {
-  background: rgba(144, 202, 249, 0.68);
+  background: #571D91;
 }
 .p-button.p-button-info.p-button-text:enabled:focus, .p-button.p-button-info.p-button-outlined:enabled:focus, .p-buttonset.p-button-info > .p-button.p-button-text:enabled:focus, .p-buttonset.p-button-info > .p-button.p-button-outlined:enabled:focus, .p-splitbutton.p-button-info > .p-button.p-button-text:enabled:focus, .p-splitbutton.p-button-info > .p-button.p-button-outlined:enabled:focus {
   background: rgba(144, 202, 249, 0.12);
@@ -7549,7 +7550,7 @@ p-multiselect.ng-dirty.ng-invalid .p-multiselect:not(.p-disabled).p-focus {
 .p-dropdown-items-wrapper::-webkit-scrollbar, .p-multiselect-items-wrapper::-webkit-scrollbar,
 .p-autocomplete-panel::-webkit-scrollbar,
 .p-autocomplete-multiple-nowrap > .p-autocomplete-multiple-container::-webkit-scrollbar,
-.p-dialog-content::-webkit-scrollbar,
+.p-dialog-content::-webkit-scrollbar, .p-inputtextarea::-webkit-scrollbar,
 .p-scrollbar::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -7557,7 +7558,7 @@ p-multiselect.ng-dirty.ng-invalid .p-multiselect:not(.p-disabled).p-focus {
 .p-dropdown-items-wrapper::-webkit-scrollbar-track, .p-multiselect-items-wrapper::-webkit-scrollbar-track,
 .p-autocomplete-panel::-webkit-scrollbar-track,
 .p-autocomplete-multiple-nowrap > .p-autocomplete-multiple-container::-webkit-scrollbar-track,
-.p-dialog-content::-webkit-scrollbar-track,
+.p-dialog-content::-webkit-scrollbar-track, .p-inputtextarea::-webkit-scrollbar-track,
 .p-scrollbar::-webkit-scrollbar-track {
   background: #424242;
   border-radius: 3px;
@@ -7565,19 +7566,25 @@ p-multiselect.ng-dirty.ng-invalid .p-multiselect:not(.p-disabled).p-focus {
 .p-dropdown-items-wrapper::-webkit-scrollbar-thumb, .p-multiselect-items-wrapper::-webkit-scrollbar-thumb,
 .p-autocomplete-panel::-webkit-scrollbar-thumb,
 .p-autocomplete-multiple-nowrap > .p-autocomplete-multiple-container::-webkit-scrollbar-thumb,
-.p-dialog-content::-webkit-scrollbar-thumb,
+.p-dialog-content::-webkit-scrollbar-thumb, .p-inputtextarea::-webkit-scrollbar-thumb,
 .p-scrollbar::-webkit-scrollbar-thumb {
   background: #646464;
   border-radius: 3px;
 }
 
-.p-button-rounded.p-button-sm {
+/*
+.p-inputtextarea::-webkit-resizer {
+  background: #646464;
+}
+*/
+
+.p-button-rounded.p-button-sm-icon {
   width: 2.5rem;
   height: 2.5rem !important;
 }
 
 .p-dialog-header-sm > .p-dialog-header {
-  padding: 0.5rem;
+  padding: 0.5rem 1.5rem;
 }
 
 .p-inputtext:enabled:focus.ng-invalid.ng-touched {
@@ -7681,4 +7688,28 @@ p-inputnumber.ng-touched.ng-invalid > .p-inputnumber > .p-inputtext {
 .p-input-icon-left > i, .p-input-icon-right > i {
   margin-top: 0 !important;
   transform: translateY(-50%);
+}
+
+.dropdown-group.ng-touched.ng-invalid .p-dropdown {
+  border-color: #f44435;
+}
+
+.dropdown-group.ng-touched.ng-invalid .p-dropdown:not(.p-disabled).p-focus {
+  box-shadow: inset 0 0 0 1px #f44435, inset 0 0 0 1px #f44435, inset 0 0 0 1px #f44435, inset 0 0 0 1px #f44435;
+}
+
+.p-button-shrink {
+  justify-content: center;
+}
+
+.p-button-shrink > .p-button-icon, .p-button-shrink > .p-button-label {
+  flex: 0 1 auto;
+}
+
+.p-multiselect .p-multiselect-label {
+  color: rgba(255, 255, 255, 0.87);
+}
+
+.p-tabmenu-center .p-tabmenu-nav {
+  justify-content: center;
 }

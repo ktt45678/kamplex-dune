@@ -1,4 +1,4 @@
-export class PaginateMediaDto {
+export interface PaginateMediaDto {
   page?: number;
   limit?: number;
   search?: string;

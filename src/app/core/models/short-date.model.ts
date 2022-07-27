@@ -1,5 +1,5 @@
-export class ShortDate {
-  day!: number;
-  month!: number;
-  year!: number;
+export interface ShortDate {
+  day: number;
+  month: number;
+  year: number;
 }

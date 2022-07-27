@@ -8,7 +8,7 @@
     </label>
     <p-dropdown formControlName="language" [placeholder]="t('admin.addMediaSubtitle.languagePlaceholder')"
       [options]="languages || []" [baseZIndex]="100" scrollHeight="400px" appendTo="body"
-      [disabledControl]="addingSubtitle" styleClass="tw-w-full" id="language"
+      [disabledControl]="isAddingSubtitle" styleClass="tw-w-full" id="language"
       panelStyleClass="md:tw-dropdown-cols-4 md:tw-max-w-2xl p-dropdown-xs">
     </p-dropdown>
     <small id="language-error"
@@ -19,7 +19,7 @@
     </small>
     <!--input hidden="true" [value]="null" aria-describedby="file-error" /-->
     <app-file-upload formControlName="file" accept=".vtt" [label]="t('admin.addMediaSubtitle.chooseFile')"
-      [disabledControl]="addingSubtitle" ariaDescribedby="file-error">
+      [disabledControl]="isAddingSubtitle" ariaDescribedby="file-error">
     </app-file-upload>
     <!--label for="file" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
       {{ t('admin.addMediaSubtitle.file') }}
@@ -29,9 +29,9 @@
     <div class="p-inputgroup">
       <input formControlName="file" class="p-inputtext-sm tw-w-full" id="file" type="text"
         [value]="addSubtitleForm.controls['file'].value?.name" aria-describedby="file-error" pInputText readonly
-        [disabledControl]="addingSubtitle">
+        [disabledControl]="isAddingSubtitle">
       <button pButton type="button" class="p-button-secondary" icon="pi pi-upload" ariaLabel="Select subtitle"
-        (click)="inputSubtitle.click()" [disabled]="addingSubtitle">
+        (click)="inputSubtitle.click()" [disabled]="isAddingSubtitle">
       </button>
     </div-->
     <small id="file-error"
@@ -46,7 +46,7 @@
           class="p-button-text p-button-secondary p-button-sm">
         </button>
         <button pButton type="submit" class="p-button p-button-sm tw-ml-1" [label]="t('admin.addMediaSubtitle.submit')"
-          [disabled]="addingSubtitle">
+          [disabled]="isAddingSubtitle">
         </button>
       </div>
     </div>

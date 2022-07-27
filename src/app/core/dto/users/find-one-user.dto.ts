@@ -1,3 +1,3 @@
-export class FindOneUserDto {
-  id!: string;
+export interface FindOneUserDto {
+  id: string;
 }

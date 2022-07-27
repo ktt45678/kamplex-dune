@@ -1,4 +1,4 @@
-export class PaginateGenresDto {
+export interface PaginateGenresDto {
   page?: number;
   limit?: number;
   search?: string;

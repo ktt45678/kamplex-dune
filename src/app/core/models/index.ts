@@ -9,6 +9,7 @@ export * from './media-stream.model';
 export * from './media-subtitle.model';
 export * from './media-video.model';
 export * from './media.model';
+export * from './movie-status.model';
 export * from './movie.model';
 export * from './paginated.model';
 export * from './producer-details.model';

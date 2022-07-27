@@ -9,7 +9,7 @@
           {{ t('admin.addMediaVideo.name') }}
         </label>
         <input formControlName="name" class="tw-w-full" id="name" type="text" aria-describedby="name-error" pInputText
-          [disabledControl]="addingVideo">
+          [disabledControl]="isAddingVideo">
         <small id="name-error"
           class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
           [ngClass]="(addVideoForm.controls['name'].dirty || addVideoForm.controls['name'].touched)
@@ -22,7 +22,7 @@
           {{ t('admin.addMediaVideo.url') }}
         </label>
         <input formControlName="url" class="tw-w-full" id="url" type="text" aria-describedby="url-error" pInputText
-          [disabledControl]="addingVideo" autofocus>
+          [disabledControl]="isAddingVideo" autofocus>
         <small id="url-error"
           class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
           [ngClass]="(addVideoForm.controls['url'].dirty || addVideoForm.controls['url'].touched)
@@ -47,7 +47,7 @@
           class="p-button-text p-button-secondary p-button-sm">
         </button>
         <button pButton type="submit" class="p-button p-button-sm tw-ml-1" [label]="t('admin.addMediaVideo.submit')"
-          [disabled]="addingVideo">
+          [disabled]="isAddingVideo">
         </button>
       </div>
     </div>
