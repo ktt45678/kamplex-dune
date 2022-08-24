@@ -15,8 +15,8 @@ export class BaseUrlInterceptor implements HttpInterceptor {
     const ngIntercept = request.headers.get('x-ng-intercept');
     if (ngIntercept) {
       const canIntercept = ngIntercept !== 'ignore';
-      const canInterceptError = ngIntercept.includes('base-url');
-      if (!canIntercept || !canInterceptError)
+      const canInterceptUrl = ngIntercept.includes('base-url');
+      if (!canIntercept || !canInterceptUrl)
         return next.handle(request);
     }
     const canInsertBaseUrl = request.url.indexOf('http://') !== 0 && request.url.indexOf('https://') !== 0 && request.url.indexOf('/assets/i18n/') !== 0;

@@ -30,6 +30,8 @@ import { CreateGenreComponent } from './dialogs/create-genre/create-genre.compon
 import { UpdateGenreComponent } from './dialogs/update-genre/update-genre.component';
 import { FileUploadModule } from '../../shared/components/file-upload';
 import { VerticalTabModule } from '../../shared/components/vertical-tab';
+import { VideoPlayerModule } from '../../shared/components/video-player';
+import { StepperModule } from '../../shared/components/stepper';
 import { ImageEditorModule } from '../../shared/dialogs/image-editor';
 import { FormDirectiveModule } from '../../shared/directives/form-directive';
 import { ValidationPipeModule } from '../../shared/pipes/validation-pipe';
@@ -40,17 +42,16 @@ import { WS_AUTH, WS_NAMESPACE, WsModule } from '../../shared/modules/ws';
 import { CreateProductionComponent } from './dialogs/create-production/create-production.component';
 import { UpdateProductionComponent } from './dialogs/update-production/update-production.component';
 import { CreateMediaComponent } from './dialogs/create-media/create-media.component';
-import { UpdateMediaComponent } from './dialogs/update-media/update-media.component';
 import { AddVideoComponent } from './dialogs/add-video/add-video.component';
 import { UpdateVideoComponent } from './dialogs/update-video/update-video.component';
 import { CreateEpisodeComponent } from './dialogs/create-episode/create-episode.component';
 import { UpdateEpisodeComponent } from './dialogs/update-episode/update-episode.component';
 import { AddSubtitleComponent } from './dialogs/add-subtitle/add-subtitle.component';
-import { ViewMediaComponent } from './dialogs/view-media/view-media.component';
 import { ConfigureMediaComponent } from './dialogs/configure-media/configure-media.component';
 import { AddSourceComponent } from './dialogs/add-source/add-source.component';
-import { ConfirmDeactivateGuard, WsActivatorGuard } from '../../core/guards';
 import { ConfigureEpisodeComponent } from './dialogs/configure-episode/configure-episode.component';
+import { AddExtStreamsComponent } from './components/add-ext-streams/add-ext-streams.component';
+import { ConfirmDeactivateGuard, WsActivatorGuard } from '../../core/guards';
 import { GenresService, MediaService, ProductionsService, QueueUploadService } from '../../core/services';
 
 @NgModule({
@@ -63,8 +64,6 @@ import { GenresService, MediaService, ProductionsService, QueueUploadService } f
     CreateProductionComponent,
     UpdateProductionComponent,
     CreateMediaComponent,
-    UpdateMediaComponent,
-    ViewMediaComponent,
     ConfigureMediaComponent,
     AddVideoComponent,
     UpdateVideoComponent,
@@ -72,7 +71,8 @@ import { GenresService, MediaService, ProductionsService, QueueUploadService } f
     UpdateEpisodeComponent,
     AddSubtitleComponent,
     AddSourceComponent,
-    ConfigureEpisodeComponent
+    ConfigureEpisodeComponent,
+    AddExtStreamsComponent
   ],
   imports: [
     CommonModule,
@@ -82,6 +82,8 @@ import { GenresService, MediaService, ProductionsService, QueueUploadService } f
     AdminLayoutModule,
     FileUploadModule,
     VerticalTabModule,
+    VideoPlayerModule,
+    StepperModule,
     ImageEditorModule,
     FormDirectiveModule,
     ValidationPipeModule,

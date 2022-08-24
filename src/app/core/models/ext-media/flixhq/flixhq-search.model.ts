@@ -1,13 +1,12 @@
+import { ExtMediaResult } from '../ext-media-result.model';
+
 export interface FlixHQSearch {
   currentPage: number;
   hasNextPage: boolean;
   results: FlixHQSearchResult[];
 }
 
-export interface FlixHQSearchResult {
-  id: string;
-  title: string;
+export interface FlixHQSearchResult extends ExtMediaResult {
   url: string;
-  image: string;
   type: 'Movie' | 'TV Series';
 }

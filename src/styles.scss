@@ -66,6 +66,12 @@ a:focus {
     @apply tw-border-neutral-625 tw-border-t tw-my-10 tw-px-10;
   }
 
+  .tw-nav-item {
+    @apply tw-text-white tw-text-sm md:tw-text-base tw-font-medium tw-text-center tw-mx-2 tw-p-2 before:tw-absolute
+    before:tw-bottom-0 before:tw-left-0 before:tw-h-0.5 before:tw-w-full before:tw-bg-transparent hover:before:tw-bg-white
+    focus-visible:tw-shadow-focus-box focus-visible:tw-rounded-md before:tw-transition-colors before:tw-duration-200 tw-relative;
+  }
+
   .tw-upload-file {
     @apply tw-border-neutral-500;
   }

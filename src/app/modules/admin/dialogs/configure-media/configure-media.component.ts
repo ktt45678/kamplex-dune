@@ -3,11 +3,11 @@ import { DOCUMENT } from '@angular/common';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { TranslocoService, TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { ConfirmationService, MenuItem } from 'primeng/api';
-import { DialogService, DynamicDialogComponent, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { Menu } from 'primeng/menu';
-import { ZIndexUtils } from 'primeng/utils';
-import { first, map, merge, Observable, of, switchMap, takeUntil, takeWhile, tap, zipWith } from 'rxjs';
-import { escape, isEqual } from 'lodash';
+import { first, map, merge, Observable, switchMap, takeUntil, takeWhile, tap } from 'rxjs';
+import { cloneDeep, isEqual } from 'lodash';
+import { SourceInfo, Source, Track } from 'plyr';
 
 import { AppErrorCode, MediaPStatus, MediaSourceStatus, MediaStatus, MediaType, SocketMessage, SocketRoom } from '../../../../core/enums';
 import { MediaDetails, MediaVideo, MediaSubtitle, TVEpisode, Genre, Production } from '../../../../core/models';
@@ -25,8 +25,9 @@ import { AddSourceComponent } from '../add-source';
 import { FileUploadComponent } from '../../../../shared/components/file-upload';
 import { fileExtension, maxFileSize, shortDate } from '../../../../core/validators';
 import { AddSubtitleForm, ShortDateForm } from '../../../../core/interfaces/forms';
+import { ExtStreamSelected } from '../../../../core/interfaces/events';
 import { ImageEditorComponent } from '../../../../shared/dialogs/image-editor';
-import { dataURItoBlob } from '../../../../core/utils';
+import { dataURItoBlob, translocoEscape, fixNestedDialogFocus, replaceDialogHideMethod } from '../../../../core/utils';
 import {
   UPLOAD_SUBTITLE_EXT, UPLOAD_SUBTITLE_SIZE, YOUTUBE_EMBED_URL, YOUTUBE_THUMBNAIL_URL, IMAGE_PREVIEW_SIZE, UPLOAD_POSTER_SIZE,
   UPLOAD_BACKDROP_SIZE, UPLOAD_POSTER_MIN_WIDTH, UPLOAD_POSTER_MIN_HEIGHT, UPLOAD_BACKDROP_MIN_WIDTH,
@@ -76,16 +77,18 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
   isUpdatingMedia: boolean = false;
   isUpdatingPoster: boolean = false;
   isUpdatingBackdrop: boolean = false;
-  isUpdated: boolean = false;
   isUploadingSource: boolean = false;
   isAddingSubtitle: boolean = false;
   isLoadedAllEpisodes: boolean = false;
+  isUpdated: boolean = false;
   updateMediaFormChanged: boolean = false;
+  showMoviePlayer: boolean = false;
   activeVideoIndex: number = 0;
   youtubeUrl = YOUTUBE_EMBED_URL;
   youtubeThumbnailUrl = YOUTUBE_THUMBNAIL_URL;
   media?: MediaDetails;
   episodes?: TVEpisode[];
+  previewSource?: SourceInfo;
   addSubtitleForm: FormGroup<AddSubtitleForm>;
   updateMediaForm: FormGroup<UpdateMediaForm>;
   updateMediaInitValue: {} = {};
@@ -148,8 +151,6 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
     this.days = this.itemDataService.createDateList();
     this.months = this.itemDataService.createMonthList();
     this.years = this.itemDataService.createYearList();
-    this.loadGenreSuggestions();
-    this.loadProductionSuggestions();
     this.itemDataService.createLanguageList().pipe(first()).subscribe(languages => this.languages = languages);
   }
 
@@ -175,7 +176,9 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   ngAfterViewInit(): void {
-    this.bindDocumentEscapeListener();
+    replaceDialogHideMethod(this.dialogService, () => {
+      this.closeDialog();
+    }, this.dialogRef);
   }
 
   updateMovieSourceStatus(status: MediaSourceStatus): void {
@@ -271,18 +274,18 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
       }
     }
     this.mediaService.update(mediaId, updateMediaDto).pipe(takeUntil(this.destroyService)).subscribe(media => {
-      this.media = { ...media };
-      this.updateMediaInitValue = { ...this.updateMediaForm.getRawValue() };
-      this.detectFormChange(this.updateMediaForm);
+      this.media = media;
+      this.detectFormChange(this.updateMediaForm, this.updateMediaInitValue, this.updateMediaFormChanged);
       this.isUpdated = true;
     }).add(() => {
       this.isUpdatingMedia = false;
+      this.ref.markForCheck();
     });
   }
 
   onUpdateMediaFormReset(): void {
     this.updateMediaForm.reset(this.updateMediaInitValue);
-    this.detectFormChange(this.updateMediaForm);
+    this.detectFormChange(this.updateMediaForm, this.updateMediaInitValue, this.updateMediaFormChanged);
   }
 
   onInputPosterChange(event: Event): void {
@@ -290,26 +293,17 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
     if (!element.files?.length || !this.media) return;
     if (element.files[0].size > IMAGE_PREVIEW_SIZE)
       throw new Error(AppErrorCode.UPLOAD_POSTER_TOO_LARGE);
-    const dialogRef = this.dialogService.open(ImageEditorComponent, {
-      data: {
-        aspectRatioWidth: UPLOAD_POSTER_ASPECT_WIDTH, aspectRatioHeight: UPLOAD_POSTER_ASPECT_HEIGHT,
-        minWidth: UPLOAD_POSTER_MIN_WIDTH, minHeight: UPLOAD_POSTER_MIN_HEIGHT,
-        imageFile: element.files[0], maxSize: UPLOAD_POSTER_SIZE
-      },
-      header: this.translocoService.translate('admin.configureMedia.editImage'),
-      width: '700px',
-      modal: true,
-      dismissableMask: false,
-      styleClass: 'p-dialog-header-sm'
-    });
-    dialogRef.onClose.pipe(first()).subscribe((result: string[] | null) => {
+    this.editImage({
+      aspectRatioWidth: UPLOAD_POSTER_ASPECT_WIDTH, aspectRatioHeight: UPLOAD_POSTER_ASPECT_HEIGHT,
+      minWidth: UPLOAD_POSTER_MIN_WIDTH, minHeight: UPLOAD_POSTER_MIN_HEIGHT,
+      imageFile: element.files[0], maxSize: UPLOAD_POSTER_SIZE
+    }).subscribe(result => {
       if (!result) return;
       const [previewUri, name] = result;
       this.posterPreviewName = name;
       this.posterPreviewUri = previewUri;
       this.ref.markForCheck();
     });
-    this.fixNestedDialogFocus(dialogRef);
   }
 
   onInputBackdropChange(event: Event): void {
@@ -317,26 +311,30 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
     if (!element.files?.length || !this.media) return;
     if (element.files[0].size > IMAGE_PREVIEW_SIZE)
       throw new Error(AppErrorCode.UPLOAD_BACKDROP_TOO_LARGE);
-    const dialogRef = this.dialogService.open(ImageEditorComponent, {
-      data: {
-        aspectRatioWidth: UPLOAD_BACKDROP_ASPECT_WIDTH, aspectRatioHeight: UPLOAD_BACKDROP_ASPECT_HEIGHT,
-        minWidth: UPLOAD_BACKDROP_MIN_WIDTH, minHeight: UPLOAD_BACKDROP_MIN_HEIGHT,
-        imageFile: element.files[0], maxSize: UPLOAD_BACKDROP_SIZE
-      },
-      header: this.translocoService.translate('admin.configureMedia.editImage'),
-      width: '700px',
-      modal: true,
-      dismissableMask: false,
-      styleClass: 'p-dialog-header-sm'
-    });
-    dialogRef.onClose.pipe(first()).subscribe((result: string[] | null) => {
+    this.editImage({
+      aspectRatioWidth: UPLOAD_BACKDROP_ASPECT_WIDTH, aspectRatioHeight: UPLOAD_BACKDROP_ASPECT_HEIGHT,
+      minWidth: UPLOAD_BACKDROP_MIN_WIDTH, minHeight: UPLOAD_BACKDROP_MIN_HEIGHT,
+      imageFile: element.files[0], maxSize: UPLOAD_BACKDROP_SIZE
+    }).subscribe(result => {
       if (!result) return;
       const [previewUri, name] = result;
       this.backdropPreviewName = name;
       this.backdropPreviewUri = previewUri;
       this.ref.markForCheck();
     });
-    this.fixNestedDialogFocus(dialogRef);
+  }
+
+  editImage(data: any): Observable<string[] | null> {
+    const dialogRef = this.dialogService.open(ImageEditorComponent, {
+      data: data,
+      header: this.translocoService.translate('admin.configureMedia.editImage'),
+      width: '700px',
+      modal: true,
+      dismissableMask: false,
+      styleClass: 'p-dialog-header-sm'
+    });
+    fixNestedDialogFocus(dialogRef, this.dialogRef, this.dialogService, this.renderer, this.document);
+    return dialogRef.onClose.pipe(first());
   }
 
   onUpdatePosterSubmit(): void {
@@ -390,7 +388,7 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
 
   deletePoster(event: Event): void {
     const mediaId = this.config.data['_id'];
-    const safeMediaTitle = escape(this.config.data['title']);
+    const safeMediaTitle = translocoEscape(this.config.data['title']);
     this.confirmationService.confirm({
       key: 'inModal',
       message: this.translocoService.translate('admin.media.deletePosterConfirmation', { name: safeMediaTitle }),
@@ -419,7 +417,7 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
 
   deleteBackdrop(event: Event): void {
     const mediaId = this.config.data['_id'];
-    const safeMediaTitle = escape(this.config.data['title']);
+    const safeMediaTitle = translocoEscape(this.config.data['title']);
     this.confirmationService.confirm({
       key: 'inModal',
       message: this.translocoService.translate('admin.media.deleteBackdropConfirmation', { name: safeMediaTitle }),
@@ -478,7 +476,7 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
       this.media = { ...this.media, videos: [...videos] };
       this.ref.markForCheck();
     });
-    this.fixNestedDialogFocus(dialogRef);
+    fixNestedDialogFocus(dialogRef, this.dialogRef, this.dialogService, this.renderer, this.document);
   }
 
   showUpdateVideoDialog(video: MediaVideo): void {
@@ -496,7 +494,7 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
       this.media = { ...this.media, videos };
       this.ref.markForCheck();
     });
-    this.fixNestedDialogFocus(dialogRef);
+    fixNestedDialogFocus(dialogRef, this.dialogRef, this.dialogService, this.renderer, this.document);
   }
 
   deleteVideo(video: MediaVideo, event: Event): void {
@@ -542,7 +540,7 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
       this.media = { ...this.media, movie: { ...this.media.movie, subtitles } };
       this.ref.markForCheck();
     });
-    this.fixNestedDialogFocus(dialogRef);
+    fixNestedDialogFocus(dialogRef, this.dialogRef, this.dialogService, this.renderer, this.document);
   }
 
   onAddSubtitleFormCancel(): void {
@@ -586,7 +584,7 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
     });
     //dialogRef.onClose.pipe(first()).subscribe() => {
     //});
-    this.fixNestedDialogFocus(dialogRef);
+    fixNestedDialogFocus(dialogRef, this.dialogRef, this.dialogService, this.renderer, this.document);
   }
 
   checkUploadInQueue(): void {
@@ -600,9 +598,44 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
     this.isUploadingSource = true;
   }
 
+  showSourcePreview(): void {
+    this.showMoviePlayer = true;
+    const mediaId = this.config.data['_id'];
+    this.translocoService.selectTranslation('languages').pipe(switchMap(t => {
+      return this.mediaService.findMovieStreams(mediaId).pipe(map(movie => ({ movie, t })));
+    })).subscribe(({ movie, t }) => {
+      const sources: Source[] = [];
+      const tracks: Track[] = [];
+      const selectedCodec = 1;
+      movie.streams.forEach(stream => {
+        if (stream.codec === selectedCodec) {
+          sources.push({
+            src: stream.src,
+            type: stream.mimeType,
+            provider: 'html5',
+            size: stream.quality
+          });
+        }
+      });
+      movie.subtitles.forEach(subtitle => {
+        tracks.push({
+          kind: 'subtitles',
+          label: t[subtitle.language],
+          srcLang: subtitle.language,
+          src: subtitle.src
+        });
+      });
+      this.previewSource = {
+        type: 'video',
+        sources: sources,
+        tracks: tracks
+      };
+    });
+  }
+
   deleteSource(event: Event): void {
     const mediaId = this.config.data['_id'];
-    const safeMediaTitle = escape(this.config.data['title']);
+    const safeMediaTitle = translocoEscape(this.config.data['title']);
     this.confirmationService.confirm({
       key: 'inModal',
       message: this.translocoService.translate('admin.media.deleteSourceConfirmation', { name: safeMediaTitle }),
@@ -615,7 +648,8 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
         this.mediaService.deleteMovieSource(mediaId).subscribe({
           next: () => {
             if (!this.media) return;
-            this.media = { ...this.media, movie: { ...this.media.movie, status: MediaSourceStatus.PENDING }, pStatus: MediaPStatus.PENDING };
+            this.media.movie.status = MediaSourceStatus.PENDING;
+            this.media.pStatus = MediaPStatus.PENDING;
             this.isUpdated = true;
           }
         }).add(() => {
@@ -626,11 +660,19 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
     });
   }
 
+  updateExtStreams(event: ExtStreamSelected): void {
+    const mediaId = this.config.data['_id'];
+    this.mediaService.update(mediaId, { extStreams: event.streams }).subscribe({
+      next: () => event.complete()
+    });
+  }
+
   showCreateEpisodeDialog(): void {
     if (!this.media || !this.episodes) return;
     const dialogRef = this.dialogService.open(CreateEpisodeComponent, {
       data: { media: { ...this.media }, episodes: [...this.episodes] },
-      width: '768px',
+      width: '980px',
+      height: '100%',
       modal: true,
       dismissableMask: false,
       styleClass: 'p-dialog-header-sm',
@@ -638,17 +680,16 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
     });
     dialogRef.onClose.pipe(first()).subscribe((episode) => {
       if (!episode || !this.episodes) return;
-      this.episodes = [...this.episodes, episode];
+      this.episodes.push(episode);
       this.isUpdated = true;
       this.ref.markForCheck();
     });
-    this.fixNestedDialogFocus(dialogRef);
+    fixNestedDialogFocus(dialogRef, this.dialogRef, this.dialogService, this.renderer, this.document);
   }
 
   showConfigureEpisodeDialog(episode: TVEpisode): void {
     if (!this.media) return;
     const dialogRef = this.dialogService.open(ConfigureEpisodeComponent, {
-      closeOnEscape: false,
       data: { media: { ...this.media }, episode: { ...episode } },
       width: '1280px',
       modal: true,
@@ -660,7 +701,7 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
       if (!updated || !this.media) return;
       this.loadEpisodes(true, { limited: !this.isLoadedAllEpisodes });
     });
-    this.fixNestedDialogFocus(dialogRef);
+    fixNestedDialogFocus(dialogRef, this.dialogRef, this.dialogService, this.renderer, this.document);
   }
 
   showDeleteEpisodeDialog(episode: TVEpisode): void {
@@ -730,8 +771,8 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
 
   loadTranslations(): void {
     this.translocoService.selectTranslation('media').pipe(switchMap(t2 => {
-      return this.translocoService.selectTranslation('admin').pipe(zipWith(of(t2)));
-    }), first()).subscribe(([t1, t2]) => {
+      return this.translocoService.selectTranslation('admin').pipe(map(t1 => ({ t1, t2 })));
+    }), first()).subscribe(({ t1, t2 }) => {
       this.sideBarItems = [
         {
           label: t1['configureMedia.general']
@@ -779,49 +820,20 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
         }
       });
     }
-    this.updateMediaInitValue = { ...this.updateMediaForm.getRawValue() };
-    this.detectFormChange(this.updateMediaForm);
+    this.updateMediaInitValue = cloneDeep(this.updateMediaForm.value);
+    this.detectFormChange(this.updateMediaForm, this.updateMediaInitValue, this.updateMediaFormChanged);
   }
 
-  detectFormChange(form: FormGroup): void {
-    this.updateMediaFormChanged = false;
+  detectFormChange(form: FormGroup, initValue: any, isChanged: boolean): void {
+    isChanged = false;
     form.valueChanges.pipe(
       tap(() => {
-        const formChanged = !isEqual(form.value, this.updateMediaInitValue);
-        this.updateMediaFormChanged = formChanged;
+        const formChanged = !isEqual(form.value, initValue);
+        isChanged = formChanged;
       }),
-      takeWhile(() => !this.updateMediaFormChanged),
+      takeWhile(() => !isChanged),
       takeUntil(this.destroyService)
     ).subscribe();
-  }
-
-  fixNestedDialogFocus(dialogRef: DynamicDialogRef): void {
-    const dialogComponent = this.dialogService.dialogComponentRefMap.get(this.dialogRef)?.instance;
-    if (dialogComponent) dialogComponent.unbindGlobalListeners();
-    if (this.document.activeElement instanceof HTMLElement) this.document.activeElement.blur();
-    dialogRef.onDestroy.pipe(first()).subscribe(() => {
-      if (!dialogComponent?.container) return;
-      this.blockScroll();
-      dialogComponent.moveOnTop();
-      dialogComponent.bindGlobalListeners();
-      this.bindDocumentEscapeListener(dialogComponent);
-      dialogComponent.focus();
-    });
-  }
-
-  bindDocumentEscapeListener(dialogComponent?: DynamicDialogComponent): void {
-    if (!dialogComponent) {
-      dialogComponent = this.dialogService.dialogComponentRefMap.get(this.dialogRef)?.instance;
-      if (!dialogComponent) return;
-    }
-    const documentTarget = dialogComponent.maskViewChild ? dialogComponent.maskViewChild.nativeElement.ownerDocument : 'document';
-    dialogComponent.documentEscapeListener = this.renderer.listen(documentTarget, 'keydown', (event) => {
-      if (event.which == 27) {
-        if (dialogComponent?.container && parseInt(dialogComponent.container.style.zIndex) == ZIndexUtils.getCurrent()) {
-          this.closeDialog();
-        }
-      }
-    });
   }
 
   blockScroll(): void {

@@ -1,4 +1,4 @@
-import { ShortDate } from '../../models';
+import { MediaExternalIds, MediaExternalStreams, ShortDate } from '../../models';
 
 export interface CreateMediaDto {
   type: string;
@@ -14,4 +14,6 @@ export interface CreateMediaDto {
   lastAirDate?: ShortDate;
   visibility: number;
   status: string;
+  externalIds?: Partial<MediaExternalIds>;
+  extStreams?: Partial<MediaExternalStreams>;
 }

@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, ContentChildren, QueryList, AfterContentInit, Input, Renderer2, ViewChild, SimpleChanges, OnChanges, AfterViewInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ContentChildren, QueryList, AfterContentInit, Input, Renderer2, ViewChild, SimpleChanges, OnChanges, AfterViewInit, Output, EventEmitter } from '@angular/core';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { MenuItem } from 'primeng/api';
 import { Menu } from 'primeng/menu';
@@ -6,6 +6,7 @@ import { TabMenu } from 'primeng/tabmenu';
 
 import { PanelToastDirective } from './panel-toast.directive';
 import { TabPanelDirective } from './tab-panel.directive';
+import { VerticalTabChange } from '../../../core/interfaces/events';
 
 @Component({
   selector: 'app-vertical-tab',
@@ -34,6 +35,7 @@ export class VerticalTabComponent implements AfterViewInit, AfterContentInit {
   @Input() menuSpacingX: string = '4rem';
   @Input() menuSpacingY: string = '2rem';
   @Input() fullContentWidth: boolean = false;
+  @Output() tabChange = new EventEmitter<VerticalTabChange>();
   @ContentChildren(TabPanelDirective) tabs!: QueryList<TabPanelDirective>;
   @ContentChildren(PanelToastDirective) toasts!: QueryList<PanelToastDirective>;
   @ViewChild(Menu) menu?: Menu;
@@ -93,6 +95,8 @@ export class VerticalTabComponent implements AfterViewInit, AfterContentInit {
   }
 
   selectTab(index: number, id?: number | string) {
+    if (id)
+      this.tabChange.emit({ previous: this.selectedTabId, current: id });
     this.selectedTabIndex = index;
     this.selectedTabId = id;
   }

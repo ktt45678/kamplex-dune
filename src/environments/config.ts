@@ -1,4 +1,5 @@
 export const IMAGE_PREVIEW_SIZE = 8388608; // 8MiB
+export const IMAGE_PREVIEW_MIMES = ['image/jpeg', 'image/png'];
 export const UPLOAD_POSTER_SIZE = 3145728; // 3MiB
 export const UPLOAD_BACKDROP_SIZE = 5242880; // 5MiB
 export const UPLOAD_STILL_SIZE = 2097152; // 2 MiB

@@ -1,10 +1,9 @@
-export interface GogoanimeInfo {
-  id: string;
-  title: string;
-  url: string;
+import { ExtMediaEpisode } from '../ext-media-episode.model';
+import { ExtMediaInfo } from '../ext-media-info.model';
+
+export interface GogoanimeInfo extends ExtMediaInfo {
   genres: string[];
   totalEpisodes: number;
-  image: string;
   releaseDate?: string;
   description?: string;
   subOrDub: 'sub' | 'dub';
@@ -14,8 +13,4 @@ export interface GogoanimeInfo {
   episodes: GogoanimeEpisode[];
 }
 
-export interface GogoanimeEpisode {
-  id: string;
-  number: number;
-  url: string;
-}
+export interface GogoanimeEpisode extends ExtMediaEpisode { }

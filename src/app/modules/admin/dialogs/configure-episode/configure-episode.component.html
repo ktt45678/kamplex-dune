@@ -14,54 +14,6 @@
           <form id="update-episode-form" [formGroup]="updateEpisodeForm" formHandler
             (ngSubmit)="onUpdateEpisodeFormSubmit()">
             <div class="tw-flex tw-flex-wrap">
-              <div class="tw-w-full md:tw-w-1/5">
-                <p class="tw-text-white tw-text-base tw-font-medium tw-text-center">{{ t('admin.episode.still') }}</p>
-                <div class="tw-aspect-w-16 tw-aspect-h-9 tw-rounded-xl tw-overflow-hidden tw-mt-2">
-                  <ng-container *ngIf="!stillPreviewName; else stillPreview">
-                    <img *ngIf="episode.thumbnailStillUrl; else noStill" class="tw-object-cover"
-                      [lazyLoad]="episode.thumbnailStillUrl" [alt]="episode.name"
-                      errorImage="assets/images/episode-image-error-md.png">
-                    <div *ngIf="episode.stillColor" class="ng-lazyload-placeholder tw-w-full tw-h-full"
-                      [ngStyle]="{ 'background-color': episode.stillColor | rgbColor }">
-                    </div>
-                    <ng-template #noStill>
-                      <img class="tw-object-cover" src="assets/images/media-poster-md.png" loading="lazy"
-                        [alt]="episode.name">
-                    </ng-template>
-                  </ng-container>
-                  <ng-template #stillPreview>
-                    <img *ngIf="stillPreviewUri" class="tw-object-cover" [src]="stillPreviewUri">
-                  </ng-template>
-                </div>
-                <!--Upload and delete the still frame-->
-                <div class="tw-flex tw-mt-2">
-                  <div class="tw-mx-auto">
-                    <ng-container *ngIf="!stillPreviewName; else stillPreviewActions">
-                      <input #inputUploadPoster hidden="true" type="file" id="file-upload-poster"
-                        onclick="this.value = null" (change)="onInputStillChange($event)" accept=".jpg, .jpeg, .png"
-                        aria-label="Upload a poster" />
-                      <button pButton type="button" icon="ms ms-upload" class="p-button-rounded p-button-text"
-                        (click)="inputUploadPoster.click()">
-                      </button>
-                      <button pButton type="button" icon="ms ms-delete"
-                        class="p-button-rounded p-button-text p-button-danger tw-ml-1" [disabled]="!episode.stillUrl">
-                      </button>
-                    </ng-container>
-                    <!--Save and cancel still upload-->
-                    <ng-template #stillPreviewActions>
-                      <div class="tw-mx-auto">
-                        <button pButton type="button" [label]="t('admin.configureMedia.saveImage')" class="p-button-sm"
-                          (click)="onUpdateStillSubmit()" [disabled]="isUpdatingStill">
-                        </button>
-                        <button pButton type="button" [label]="t('admin.configureMedia.cancelUploadImage')"
-                          class="p-button-sm p-button-secondary p-button-text tw-ml-1" (click)="onUpdateStillCancel()"
-                          [disabled]="isUpdatingStill">
-                        </button>
-                      </div>
-                    </ng-template>
-                  </div>
-                </div>
-              </div>
               <div class="tw-flex tw-flex-wrap tw-w-full md:tw-w-4/5 md:tw-pl-4">
                 <div class="tw-w-full md:tw-w-1/2">
                   <label for="episode-number" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
@@ -111,6 +63,54 @@
                         && updateEpisodeForm.controls['name'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
                     {{ updateEpisodeForm.controls['name'].errors | firstErrorKey:'updateEpisode':'name' }}
                   </small>
+                </div>
+              </div>
+              <div class="tw-w-full md:tw-w-1/5">
+                <p class="tw-text-white tw-text-base tw-font-medium tw-text-center">{{ t('admin.episode.still') }}</p>
+                <div class="tw-aspect-w-16 tw-aspect-h-9 tw-rounded-xl tw-overflow-hidden tw-mt-2">
+                  <ng-container *ngIf="!stillPreviewName; else stillPreview">
+                    <img *ngIf="episode.thumbnailStillUrl; else noStill" class="tw-object-cover"
+                      [lazyLoad]="episode.thumbnailStillUrl" [alt]="episode.name"
+                      errorImage="assets/images/episode-image-error-md.png">
+                    <div *ngIf="episode.stillColor" class="ng-lazyload-placeholder tw-w-full tw-h-full"
+                      [ngStyle]="{ 'background-color': episode.stillColor | rgbColor }">
+                    </div>
+                    <ng-template #noStill>
+                      <img class="tw-object-cover" src="assets/images/media-poster-md.png" loading="lazy"
+                        [alt]="episode.name">
+                    </ng-template>
+                  </ng-container>
+                  <ng-template #stillPreview>
+                    <img *ngIf="stillPreviewUri" class="tw-object-cover" [src]="stillPreviewUri">
+                  </ng-template>
+                </div>
+                <!--Upload and delete the still frame-->
+                <div class="tw-flex tw-mt-2">
+                  <div class="tw-mx-auto">
+                    <ng-container *ngIf="!stillPreviewName; else stillPreviewActions">
+                      <input #inputUploadPoster hidden="true" type="file" id="file-upload-poster"
+                        onclick="this.value = null" (change)="onInputStillChange($event)" accept=".jpg, .jpeg, .png"
+                        aria-label="Upload a poster" />
+                      <button pButton type="button" icon="ms ms-upload" class="p-button-rounded p-button-text"
+                        (click)="inputUploadPoster.click()">
+                      </button>
+                      <button pButton type="button" icon="ms ms-delete"
+                        class="p-button-rounded p-button-text p-button-danger tw-ml-1" [disabled]="!episode.stillUrl">
+                      </button>
+                    </ng-container>
+                    <!--Save and cancel still upload-->
+                    <ng-template #stillPreviewActions>
+                      <div class="tw-mx-auto">
+                        <button pButton type="button" [label]="t('admin.configureMedia.saveImage')" class="p-button-sm"
+                          (click)="onUpdateStillSubmit()" [disabled]="isUpdatingStill">
+                        </button>
+                        <button pButton type="button" [label]="t('admin.configureMedia.cancelUploadImage')"
+                          class="p-button-sm p-button-secondary p-button-text tw-ml-1" (click)="onUpdateStillCancel()"
+                          [disabled]="isUpdatingStill">
+                        </button>
+                      </div>
+                    </ng-template>
+                  </div>
                 </div>
               </div>
             </div>
@@ -244,7 +244,7 @@
         <div [ngSwitch]="episode.status" class="tw-mt-3">
           <div *ngSwitchCase="MediaSourceStatus.PENDING">
             <app-file-upload accept=".mp4, .mkv, .webm, .m2ts" [label]="t('admin.addMediaSource.chooseFile')"
-              [showFilename]="false" (fileChange)="uploadSource($event)">
+              ariaLabel="Upload episode source" [showFilename]="false" (fileChange)="uploadSource($event)">
               [disabled]="isUploadingSource"
             </app-file-upload>
           </div>

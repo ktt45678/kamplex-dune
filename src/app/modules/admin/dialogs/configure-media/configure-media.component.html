@@ -9,7 +9,7 @@
       [fullContentWidth]="true">
       <!--General info-->
       <ng-template appTabPanel [label]="t('admin.configureMedia.general')" id="general">
-        <p class="tw-text-white tw-font-semibold tw-text-xl">{{ t('admin.configureMedia.general') }}</p>
+        <p class="tw-text-white tw-font-bold tw-text-2xl">{{ t('admin.configureMedia.general') }}</p>
         <div class="tw-mt-4 tw-mb-24">
           <form id="update-media-form" [formGroup]="updateMediaForm" formHandler (ngSubmit)="onUpdateMediaFormSubmit()">
             <div class="tw-flex tw-flex-wrap">
@@ -98,7 +98,8 @@
                 <p-autoComplete formControlName="genres" [suggestions]="genreSuggestions"
                   (completeMethod)="loadGenreSuggestions($event.query)" field="name" dataKey="_id" [multiple]="true"
                   [unique]="true" [completeOnFocus]="true" scrollHeight="300px" appendTo="body" styleClass="tw-w-full"
-                  panelStyleClass="p-autocomplete-xs" inputId="genres" aria-describedby="genres-error"
+                  panelStyleClass="p-autocomplete-xs" inputId="genres" ariaLabel="Find genres"
+                  dropdownAriaLabel="Genre search results" aria-describedby="genres-error"
                   [disabledControl]="isUpdatingMedia">
                 </p-autoComplete>
                 <small id="genres-error"
@@ -113,10 +114,11 @@
                   {{ t('admin.updateMedia.productions') }}
                 </label>
                 <p-autoComplete formControlName="productions" [suggestions]="productionSuggestions"
-                  (completeMethod)="loadProductionSuggestions($event.query)" field="name" dataKey="_id" [multiple]="true"
-                  [unique]="true" [completeOnFocus]="true" scrollHeight="300px" appendTo="body" styleClass="tw-w-full"
-                  panelStyleClass="p-autocomplete-xs" inputId="productions" aria-describedby="productions-error"
-                  [disabledControl]="isUpdatingMedia">
+                  (completeMethod)="loadProductionSuggestions($event.query)" field="name" dataKey="_id"
+                  [multiple]="true" [unique]="true" [completeOnFocus]="true" scrollHeight="300px" appendTo="body"
+                  styleClass="tw-w-full" panelStyleClass="p-autocomplete-xs" inputId="productions"
+                  ariaLabel="Find companies" dropdownAriaLabel="Company search results"
+                  aria-describedby="productions-error" [disabledControl]="isUpdatingMedia">
                 </p-autoComplete>
                 <small id="productions-error"
                   class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
@@ -264,22 +266,7 @@
       </ng-template>
       <!--Images-->
       <ng-template appTabPanel [label]="t('admin.configureMedia.images')">
-        <p class="tw-text-white tw-font-semibold tw-text-xl">{{ t('admin.configureMedia.images') }}</p>
-        <!--div class="tw-relative tw-h-screen-80 tw-flex tw-items-center tw-justify-center">
-          <div
-            class="tw-absolute tw-top-0 tw-left-0 tw-w-full tw-h-full tw-bg-cover tw-bg-no-repeat tw-bg-center tw-brightness-40 tw-z-1"
-            *ngIf="media.thumbnailBackdropUrl" [lazyLoad]="media.thumbnailBackdropUrl"
-            [ngStyle]="{ 'background-color': media.backdropColor ? (media.backdropColor | rgbColor) : '#212121' }">
-          </div>
-          <div class="tw-relative tw-w-4/5 tw-h-4/5 tw-z-2 tw-bg-neutral-850/90 tw-shadow-md tw-rounded-md">
-            <div class="tw-w-32 tw-bg-cover tw-bg-no-repeat tw-bg-center" *ngIf="media.thumbnailPosterUrl"
-              [lazyLoad]="media.thumbnailPosterUrl" errorImage="assets/images/media-poster-md.png">
-            </div>
-            <div *ngIf="media.posterColor" class="ng-lazyload-placeholder tw-w-full tw-h-full"
-              [ngStyle]="{ 'background-color': media.posterColor | rgbColor }">
-            </div>
-          </div>
-        </div-->
+        <p class="tw-text-white tw-font-bold tw-text-2xl">{{ t('admin.configureMedia.images') }}</p>
         <div class="tw-flex tw-flex-wrap tw-mt-3">
           <div class="tw-w-full md:tw-w-1/4">
             <p class="tw-text-white tw-text-base tw-font-medium tw-text-center">{{ t('admin.media.poster') }}</p>
@@ -381,7 +368,7 @@
       <!--Videos-->
       <!--Separator-->
       <ng-template appTabPanel [label]="t('admin.configureMedia.videos')" [separator]="true">
-        <p class="tw-text-white tw-font-semibold tw-text-xl">{{ t('admin.configureMedia.videos') }}</p>
+        <p class="tw-text-white tw-font-bold tw-text-2xl">{{ t('admin.configureMedia.videos') }}</p>
         <div class="tw-text-right tw-my-3">
           <button pButton type="button" role="dialog" [label]="t('admin.configureMedia.addVideo')"
             (click)="showAddVideoDialog()">
@@ -458,13 +445,8 @@
       <!--Subtitles-->
       <ng-container *ngIf="media.type === MediaType.MOVIE; else isTV">
         <ng-template appTabPanel [label]="t('admin.configureMedia.subtitles')">
-          <p class="tw-text-white tw-font-semibold tw-text-xl">{{ t('admin.configureMedia.subtitles')
+          <p class="tw-text-white tw-font-bold tw-text-2xl">{{ t('admin.configureMedia.subtitles')
             }}</p>
-          <!-- <div class="tw-text-right tw-my-3">
-              <button pButton role="dialog" type="button" [label]="t('admin.configureMedia.addSubtitle')"
-                (click)="showAddSubtitleDialog()">
-              </button>
-            </div> -->
           <div class="tw-my-3">
             <app-file-upload #subtitleFileUpload accept=".vtt" [label]="t('admin.configureMedia.addSubtitle')"
               [desciption]="t('admin.configureMedia.addSubtitleDesc')" [showFilename]="false"
@@ -512,36 +494,60 @@
         </ng-template>
         <!--Source-->
         <ng-template appTabPanel [label]="t('admin.configureMedia.source')">
-          <p class="tw-text-white tw-font-semibold tw-text-xl">{{ t('admin.configureMedia.source')
+          <p class="tw-text-white tw-font-bold tw-text-2xl">{{ t('admin.configureMedia.source')
             }}</p>
-          <div [ngSwitch]="media.movie.status" class="tw-mt-3">
+          <p class="tw-text-base tw-font-medium tw-mt-3 tw-mb-2">{{ t('admin.configureMedia.addMovieSourceLabel') }}</p>
+          <ng-container [ngSwitch]="media.movie.status">
             <div *ngSwitchCase="MediaSourceStatus.PENDING">
-              <app-file-upload accept=".mp4, .mkv, .webm, .m2ts" [label]="t('admin.addMediaSource.chooseFile')">
-                [disabled]="isUploadingSource" (fileChange)="uploadSource($event)"
+              <app-file-upload accept=".mp4, .mkv, .webm, .m2ts" [label]="t('admin.addMediaSource.chooseFile')"
+                [disabled]="isUploadingSource" [desciption]="t('admin.configureMedia.addMovieSourceDescription')"
+                styleClass="tw-max-w-xl tw-h-40 tw-mx-auto" ariaLabel="Upload movie source"
+                (fileChange)="uploadSource($event)">
               </app-file-upload>
             </div>
             <div *ngSwitchCase="MediaSourceStatus.PROCESSING" class="tw-text-center">
               <i class="ms ms-hourglass-empty tw-text-5xl"></i>
               <p class="tw-text-lg tw-mt-2">{{ t('admin.media.statusProcessingDescription') }}</p>
             </div>
-            <div *ngSwitchCase="MediaSourceStatus.READY">
-              <p-message styleClass="tw-w-full" severity="warn" [text]="t('admin.media.statusReadyDescription')">
-              </p-message>
-            </div>
-            <div *ngSwitchCase="MediaSourceStatus.DONE">
-              <div class="tw-text-right tw-mb-3">
-                <button pButton role=" dialog" type="button" class="p-button-danger p-button-outlined tw-ml-2"
-                  [label]="t('admin.configureMedia.deleteSource')" (click)="deleteSource($event)">
-                </button>
+            <ng-container *ngSwitchCase="MediaSourceStatus.READY">
+              <div class="tw-flex tw-mb-4">
+                <p class="tw-text-base">{{ t('admin.media.statusReadyDescription') }}</p>
+                <div class="tw-ml-auto">
+                  <ng-container *ngIf="!showMoviePlayer; then sourcePreviewButton"></ng-container>
+                </div>
               </div>
-            </div>
-          </div>
+              <ng-container *ngIf="showMoviePlayer; then sourcePreview"></ng-container>
+            </ng-container>
+            <ng-container *ngSwitchCase="MediaSourceStatus.DONE">
+              <div class="tw-flex tw-mb-4">
+                <p class="tw-text-base">{{ t('admin.media.statusDoneDescription') }}</p>
+                <div class="tw-ml-auto">
+                  <ng-container *ngIf="!showMoviePlayer; then sourcePreviewButton"></ng-container>
+                  <button pButton role=" dialog" type="button" class="p-button-danger p-button-outlined tw-ml-2"
+                    [label]="t('admin.configureMedia.deleteSource')" (click)="deleteSource($event)">
+                  </button>
+                </div>
+              </div>
+              <ng-container *ngIf="showMoviePlayer; then sourcePreview"></ng-container>
+            </ng-container>
+          </ng-container>
+          <ng-template #sourcePreviewButton>
+            <button *ngIf="!showMoviePlayer" pButton type="button" class="p-button-secondary"
+              [label]="t('admin.configureMedia.previewSource')" (click)="showSourcePreview()">
+            </button>
+          </ng-template>
+          <ng-template #sourcePreview>
+            <app-video-player [source]="previewSource"></app-video-player>
+          </ng-template>
+          <p class="tw-text-base tw-font-medium tw-mt-4 tw-mb-2">{{ t('admin.configureMedia.addMovieSourceAltLabel') }}
+          </p>
+          <app-add-ext-streams (onSelect)="updateExtStreams($event)"></app-add-ext-streams>
         </ng-template>
       </ng-container>
       <ng-template #isTV>
         <!--Episodes-->
         <ng-template appTabPanel [label]="t('admin.configureMedia.episodes')">
-          <p class="tw-text-white tw-font-semibold tw-text-xl">{{ t('admin.configureMedia.episodes')
+          <p class="tw-text-white tw-font-bold tw-text-2xl">{{ t('admin.configureMedia.episodes')
             }}</p>
           <div class="tw-text-right tw-my-3">
             <button pButton type="button" role="dialog" [label]="t('admin.configureMedia.addEpisode')"

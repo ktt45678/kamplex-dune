@@ -1,4 +1,4 @@
 import { CreateMediaDto } from './create-media.dto';
 
-export interface UpdateMediaDto extends Omit<CreateMediaDto, 'type'> {
+export interface UpdateMediaDto extends Partial<Omit<CreateMediaDto, 'type'>> {
 }

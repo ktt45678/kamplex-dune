@@ -243,8 +243,11 @@
   "errorMessagesHeader": "An error occurred",
   "errorMessages": {
     "uploadPosterTooLarge": "Your file is too large, recommended size is 8MB or less",
+    "uploadPosterUnsuported": "Unsuported file format, must be jpeg or png",
     "uploadBackdropTooLarge": "{{ errorMessages.uploadPosterTooLarge }}",
+    "uploadBackdropUnsuported": "{{ errorMessages.uploadPosterUnsuported }}",
     "uploadStillTooLarge": "{{ errorMessages.uploadPosterTooLarge }}",
+    "uploadStillUnsuported": "{{ errorMessages.uploadPosterUnsuported }}",
     "uploadSubtitleTooLarge": "Your file is too large, recommended size is 500KB or less"
   },
   "window": {

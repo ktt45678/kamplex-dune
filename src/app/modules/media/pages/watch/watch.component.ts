@@ -2,8 +2,8 @@ import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, ChangeDetectorRe
 import { Meta } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { TranslocoService } from '@ngneat/transloco';
-import { of, switchMap, takeUntil, zipWith } from 'rxjs';
-import * as Plyr from 'plyr';
+import { map, switchMap, takeUntil } from 'rxjs';
+import { SourceInfo, Source, Track } from 'plyr';
 
 import { MediaService } from '../../../../core/services';
 import { DestroyService } from '../../../../core/services';
@@ -16,21 +16,13 @@ import { DestroyService } from '../../../../core/services';
   providers: [DestroyService]
 })
 export class WatchComponent implements OnInit, OnDestroy {
-  player?: Plyr;
-  sources: Plyr.Source[] = [];
-  tracks: Plyr.Track[] = [];
+  playerSource?: SourceInfo;
   selectedCodec: number = 1;
 
   constructor(private ref: ChangeDetectorRef, private meta: Meta, private mediaService: MediaService, private route: ActivatedRoute,
     private translocoService: TranslocoService, private destroyService: DestroyService) { }
 
   ngOnInit(): void {
-    this.player = new Plyr('#plyrPlayer', {
-      captions: { active: true },
-      controls: ['play-large', 'play', 'rewind', 'fast-forward', 'progress', 'current-time', 'duration', 'mute', 'volume', 'captions', 'settings', 'pip', 'airplay', 'fullscreen'],
-      settings: ['captions', 'quality', 'speed', 'loop'],
-      autoplay: true
-    });
     this.route.params.pipe(takeUntil(this.destroyService)).subscribe(params => {
       const id = params['id'];
       if (!id) return;
@@ -46,10 +38,6 @@ export class WatchComponent implements OnInit, OnDestroy {
           content: 'Watch on KamPlex'
         },
         {
-          property: 'og:site_name',
-          content: 'KamPlex'
-        },
-        {
           property: 'og:title',
           content: media.title
         },
@@ -60,14 +48,13 @@ export class WatchComponent implements OnInit, OnDestroy {
       ]);
     });
     this.translocoService.selectTranslation('languages').pipe(switchMap(t => {
-      return this.mediaService.findMovieStreams(id).pipe(zipWith(of(t)));
-    })).subscribe(([movie, t]) => {
-      if (!this.player) return;
-      this.sources = [];
-      this.tracks = [];
+      return this.mediaService.findMovieStreams(id).pipe(map(movie => ({ movie, t })));
+    })).subscribe(({ movie, t }) => {
+      const sources: Source[] = [];
+      const tracks: Track[] = [];
       movie.streams.forEach(stream => {
         if (stream.codec === this.selectedCodec) {
-          this.sources.push({
+          sources.push({
             src: stream.src,
             type: stream.mimeType,
             provider: 'html5',
@@ -76,24 +63,24 @@ export class WatchComponent implements OnInit, OnDestroy {
         }
       });
       movie.subtitles.forEach(subtitle => {
-        this.tracks.push({
+        tracks.push({
           kind: 'subtitles',
           label: t[subtitle.language],
           srcLang: subtitle.language,
           src: subtitle.src
         });
       });
-      this.player.source = {
+      this.playerSource = {
         type: 'video',
-        sources: this.sources,
-        tracks: this.tracks
+        sources: sources,
+        tracks: tracks
       };
     });
   }
 
   ngOnDestroy(): void {
-    if (this.player)
-      this.player.destroy();
+    this.meta.removeTag('name="description"');
+    this.meta.removeTag('property="og:title"');
+    this.meta.removeTag('property="og:description"');
   }
-
 }

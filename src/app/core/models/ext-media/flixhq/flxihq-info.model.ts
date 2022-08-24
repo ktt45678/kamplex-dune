@@ -1,8 +1,7 @@
-export interface FlixHQInfo {
-  id: string;
-  title: string;
-  url: string;
-  image: string;
+import { ExtMediaEpisode } from '../ext-media-episode.model';
+import { ExtMediaInfo } from '../ext-media-info.model';
+
+export interface FlixHQInfo extends ExtMediaInfo {
   description: string;
   type: 'Movie' | 'TV Series';
   releaseDate?: string;
@@ -15,10 +14,7 @@ export interface FlixHQInfo {
   episodes: FlixHQEpisode[];
 }
 
-export interface FlixHQEpisode {
-  id: string;
+export interface FlixHQEpisode extends ExtMediaEpisode {
   title: string;
-  number?: number;
   season?: number;
-  url: string;
 }

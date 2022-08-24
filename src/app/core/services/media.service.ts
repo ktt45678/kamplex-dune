@@ -1,9 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { forkJoin, map, Observable } from 'rxjs';
 
 import { AddMediaSubtitleDto, AddMediaVideoDto, AddTVEpisodeDto, CreateMediaDto, FindTVEpisodesDto, PaginateMediaDto, UpdateMediaDto, UpdateMediaVideoDto, UpdateTVEpisodeDto } from '../dto/media';
-import { Media, MediaDetails, MediaStream, MediaSubtitle, MediaVideo, Paginated, TVEpisode, TVEpisodeDetails } from '../models';
+import { ExtMediaSuggestions, FlixHQInfo, FlixHQSearch, GogoanimeInfo, GogoanimeSearch, Media, MediaDetails, MediaStream, MediaSubtitle, MediaVideo, Paginated, TVEpisode, TVEpisodeDetails, ZoroInfo, ZoroSearch } from '../models';
+import { ExtMediaProvider } from '../../core/enums';
 import { getImageName } from '../../core/utils';
+import { environment } from '../../../environments/environment';
 
 @Injectable()
 export class MediaService {
@@ -111,7 +114,7 @@ export class MediaService {
   }
 
   addTVEpisode(id: string, addTVEpisodeDto: AddTVEpisodeDto) {
-    return this.http.post<TVEpisode>(`media/${id}/tv/episodes`, addTVEpisodeDto);
+    return this.http.post<TVEpisodeDetails>(`media/${id}/tv/episodes`, addTVEpisodeDto);
   }
 
   findAllTVEpisodes(id: string, findTVEpisodesDto: FindTVEpisodesDto) {
@@ -162,5 +165,73 @@ export class MediaService {
 
   deleteTVSource(id: string, episodeId: string) {
     return this.http.delete(`media/${id}/tv/episodes/${episodeId}/source`);
+  }
+
+  findExtMediaSuggestions(query: string, limit: number = 8) {
+    const headers = { 'x-ng-intercept': 'http-error' };
+    const requests: {
+      flixHQ: Observable<FlixHQSearch>;
+      zoro: Observable<ZoroSearch>;
+      gogoanime: Observable<GogoanimeSearch>;
+    } = {
+      flixHQ: this.http.get<FlixHQSearch>(`${environment.consumetApiUrl}/movies/flixhq/${query}`, { headers }),
+      zoro: this.http.get<ZoroSearch>(`${environment.consumetApiUrl}/anime/zoro/${query}`, { headers }),
+      gogoanime: this.http.get<GogoanimeSearch>(`${environment.consumetApiUrl}/anime/gogoanime/${query}`, { headers })
+    };
+    return forkJoin(requests).pipe(map(responses => {
+      const results: ExtMediaSuggestions[] = [];
+      if (responses.flixHQ.results.length) {
+        results.push({
+          label: 'FlixHQ',
+          value: ExtMediaProvider.FLIX_HQ,
+          items: responses.flixHQ.results.slice(0, limit)
+        });
+      }
+      if (responses.zoro.results.length) {
+        results.push({
+          label: 'Zoro',
+          value: ExtMediaProvider.ZORO,
+          items: responses.zoro.results.slice(0, limit)
+        });
+      }
+      if (responses.gogoanime.results.length) {
+        results.push({
+          label: 'Gogoanime',
+          value: ExtMediaProvider.GOGOANIME,
+          items: responses.gogoanime.results.slice(0, limit)
+        });
+      }
+      return results;
+    }));
+  }
+
+  findFlixHQInfo(id: string) {
+    return this.http.get<FlixHQInfo>(`${environment.consumetApiUrl}/movies/flixhq/info`,
+      {
+        headers: { 'x-ng-intercept': 'http-error' },
+        params: { id }
+      }
+    ).pipe(map(media => {
+      if (media.type === 'Movie')
+        media.episodes = media.episodes.slice(0, 1);
+      return media;
+    }));
+  }
+
+  findZoroInfo(id: string) {
+    return this.http.get<ZoroInfo>(`${environment.consumetApiUrl}/anime/zoro/info`,
+      {
+        headers: { 'x-ng-intercept': 'http-error' },
+        params: { id }
+      }
+    );
+  }
+
+  findGogoanimeInfo(id: string) {
+    return this.http.get<GogoanimeInfo>(`${environment.consumetApiUrl}/anime/gogoanime/info/${id}`,
+      {
+        headers: { 'x-ng-intercept': 'http-error' }
+      }
+    );
   }
 }

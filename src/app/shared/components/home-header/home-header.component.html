@@ -10,29 +10,21 @@
             </a>
             <div class="tw-hidden sm:tw-block sm:tw-ml-8">
               <div class="tw-flex tw-items-center">
-                <a routerLink="/" routerLinkActive="tw-border-b-white" [routerLinkActiveOptions]="{exact: true}" class="tw-text-white tw-text-sm md:tw-text-base tw-font-medium tw-text-center tw-mx-2 tw-p-2 tw-border-b-2
-                  tw-border-transparent hover:tw-border-b-white focus-visible:tw-shadow-focus-box focus-visible:tw-rounded-md
-                  focus-visible:tw-border-transparent focus-visible:tw-transition-none tw-transition-colors tw-duration-200">{{
+                <a routerLink="/" routerLinkActive="before:tw-bg-white" [routerLinkActiveOptions]="{exact: true}"
+                  class="tw-nav-item">{{
                   t('homeHeader.home') }}</a>
-                <a routerLink="/media" routerLinkActive="tw-border-b-white" class="tw-text-white tw-text-sm md:tw-text-base tw-font-medium tw-text-center tw-mx-2 tw-p-2 tw-border-b-2
-                  tw-border-transparent hover:tw-border-b-white focus-visible:tw-shadow-focus-box focus-visible:tw-rounded-md
-                  focus-visible:tw-border-transparent focus-visible:tw-transition-none tw-transition-colors tw-duration-200">{{
+                <a routerLink="/media" routerLinkActive="before:tw-bg-white" class="tw-nav-item">{{
                   t('homeHeader.movies') }}</a>
-                <a routerLink="/media" routerLinkActive="tw-border-b-white" class="tw-text-white tw-text-sm md:tw-text-base tw-font-medium tw-text-center tw-mx-2 tw-p-2 tw-border-b-2
-                  tw-border-transparent hover:tw-border-b-white focus-visible:tw-shadow-focus-box focus-visible:tw-rounded-md
-                  focus-visible:tw-border-transparent focus-visible:tw-transition-none tw-transition-colors tw-duration-200">{{
+                <a routerLink="/media" routerLinkActive="before:tw-bg-white" class="tw-nav-item">{{
                   t('homeHeader.tvShows') }}</a>
-                <a routerLink="/search" routerLinkActive="tw-border-b-white" class="tw-text-white tw-text-sm md:tw-text-base tw-font-medium tw-text-center tw-mx-2 tw-p-2 tw-border-b-2
-                  tw-border-transparent hover:tw-border-b-white focus-visible:tw-shadow-focus-box focus-visible:tw-rounded-md
-                  focus-visible:tw-border-transparent focus-visible:tw-transition-none tw-transition-colors tw-duration-200">{{
+                <a routerLink="/search" routerLinkActive="before:tw-bg-white" class="tw-nav-item">{{
                   t('homeHeader.search') }}</a>
               </div>
             </div>
           </div>
           <div class="tw-hidden sm:tw-flex tw-items-center tw-pr-2 sm:tw-ml-6 sm:tw-pr-0">
             <ng-container *ngIf="currentUser; else notLoggedIn">
-              <button type="button" role="navigation" aria-label="User profile"
-                class="tw-flex tw-items-center tw-rounded-3xl tw-bg-transparent tw-p-1 hover:tw-bg-neutral-650
+              <button type="button" role="navigation" aria-label="User profile" class="tw-flex tw-items-center tw-rounded-3xl tw-bg-transparent tw-p-1 hover:tw-bg-neutral-650
                   focus-visible:tw-outline-none focus-visible:tw-shadow-focus-box">
                 <img class="tw-block tw-w-9 tw-rounded-full" [src]="currentUser.avatarUrl" [alt]="currentUser.username">
                 <p class="tw-text-white tw-font-medium tw-mx-2">{{ currentUser.username }}</p>
@@ -44,9 +36,7 @@
               <p-menu #userMenu [popup]="true" [appendTo]="userMenuZone" [model]="userMenuItems"></p-menu>
             </ng-container>
             <ng-template #notLoggedIn>
-              <a routerLink="/sign-in" routerLinkActive="tw-border-b-white" class="tw-text-white tw-text-sm md:tw-text-base tw-font-medium tw-text-center tw-mx-2 tw-p-2 tw-border-b-2
-                tw-border-transparent hover:tw-border-b-white focus-visible:tw-shadow-focus-box focus-visible:tw-rounded-md
-                focus-visible:tw-border-transparent focus-visible:tw-transition-none tw-transition-colors tw-duration-200">{{
+              <a routerLink="/sign-in" routerLinkActive="before:tw-bg-white" class="tw-nav-item">{{
                 t('homeHeader.signIn') }}</a>
             </ng-template>
           </div>

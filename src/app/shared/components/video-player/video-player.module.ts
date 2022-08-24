@@ -1,4 +1,4 @@
-import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
@@ -10,7 +10,6 @@ import { VideoPlayerComponent } from './video-player.component';
     CommonModule,
     RouterModule
   ],
-  exports: [VideoPlayerComponent],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  exports: [VideoPlayerComponent]
 })
 export class VideoPlayerModule { }

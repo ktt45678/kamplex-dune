@@ -7,7 +7,6 @@ import { DialogService } from 'primeng/dynamicdialog';
 import { Table } from 'primeng/table';
 import { Menu } from 'primeng/menu';
 import { first, map, merge, Observable, of, takeUntil, tap } from 'rxjs';
-import { escape } from 'lodash';
 
 import { DestroyService, MediaService, QueueUploadService } from '../../../../core/services';
 import { WsService } from '../../../../shared/modules/ws';
@@ -16,13 +15,12 @@ import { PaginateMediaDto } from '../../../../core/dto/media';
 import { DataMenuItem } from '../../../../core/interfaces/primeng';
 import { MediaChange } from '../../../../core/interfaces/ws';
 import { CreateMediaComponent } from '../../dialogs/create-media';
-import { ViewMediaComponent } from '../../dialogs/view-media';
 import { ConfigureMediaComponent } from '../../dialogs/configure-media';
-import { UpdateMediaComponent } from '../../dialogs/update-media';
 import { MediaPStatus, MediaSourceStatus, MediaType, SocketMessage, SocketRoom } from '../../../../core/enums';
 import { AddVideoComponent } from '../../dialogs/add-video';
 import { AddSubtitleComponent } from '../../dialogs/add-subtitle';
 import { AddSourceComponent } from '../../dialogs/add-source';
+import { translocoEscape } from '../../../../core/utils';
 
 @Component({
   selector: 'app-media',
@@ -93,6 +91,8 @@ export class MediaComponent implements OnInit, OnDestroy {
       const sortOrder = this.mediaTable.sortOrder === -1 ? 'desc' : 'asc';
       if (this.mediaTable.sortField) {
         params.sort = `${sortOrder}(${this.mediaTable.sortField})`;
+      } else {
+        params.sort = 'desc(createdAt)';
       }
       if (this.mediaTable.filters['title'] && !Array.isArray(this.mediaTable.filters['title'])
         && this.mediaTable.filters['title'].value.length >= 3) {
@@ -101,6 +101,7 @@ export class MediaComponent implements OnInit, OnDestroy {
     } else {
       params.page = 1;
       params.limit = this.rowsPerPage;
+      params.sort = 'desc(createdAt)';
     }
     showLoading && (this.loadingMediaList = true);
     this.mediaService.findPage(params).subscribe({
@@ -123,6 +124,7 @@ export class MediaComponent implements OnInit, OnDestroy {
     const dialogRef = this.dialogService.open(CreateMediaComponent, {
       data: { type },
       width: '1024px',
+      height: '100%',
       modal: true,
       styleClass: 'p-dialog-header-sm',
       contentStyle: { 'margin-top': '-1.5rem', 'overflow-y': 'hidden', 'padding': '0' },
@@ -134,19 +136,8 @@ export class MediaComponent implements OnInit, OnDestroy {
     });
   }
 
-  showViewMediaDialog(media: Media): void {
-    this.dialogService.open(ViewMediaComponent, {
-      data: { ...media },
-      width: '1024px',
-      modal: true,
-      styleClass: 'p-dialog-header-sm',
-      contentStyle: { 'margin-top': '-1.5rem' }
-    });
-  }
-
   showConfigureMediaDialog(media: Media): void {
     const dialogRef = this.dialogService.open(ConfigureMediaComponent, {
-      closeOnEscape: false,
       data: { ...media },
       width: '100%',
       height: '100%',
@@ -157,21 +148,6 @@ export class MediaComponent implements OnInit, OnDestroy {
     });
     dialogRef.onClose.pipe(first()).subscribe((isUpdated: boolean) => {
       if (!isUpdated) return;
-      this.loadMedia();
-    });
-  }
-
-  showUpdateMediaDialog(media: Media): void {
-    const dialogRef = this.dialogService.open(UpdateMediaComponent, {
-      data: { ...media },
-      width: '1024px',
-      modal: true,
-      styleClass: 'p-dialog-header-sm',
-      contentStyle: { 'margin-top': '-1.5rem' },
-      dismissableMask: false
-    });
-    dialogRef.onClose.pipe(first()).subscribe((result: boolean) => {
-      if (!result) return;
       this.loadMedia();
     });
   }
@@ -216,7 +192,7 @@ export class MediaComponent implements OnInit, OnDestroy {
   }
 
   showDeleteMediaDialog(media: Media): void {
-    const safeMediaTitle = escape(media.title);
+    const safeMediaTitle = translocoEscape(media.title).replace(/{/g, '&#123;').replace(/}/g, '&#125;');
     this.confirmationService.confirm({
       key: 'default',
       message: this.translocoService.translate('admin.media.deleteConfirmation', { name: safeMediaTitle }),
@@ -247,7 +223,7 @@ export class MediaComponent implements OnInit, OnDestroy {
   }
 
   deletePoster(media: Media, event: Event) {
-    const safeMediaTitle = escape(media.title);
+    const safeMediaTitle = translocoEscape(media.title);
     this.confirmationService.confirm({
       key: 'default',
       message: this.translocoService.translate('admin.media.deletePosterConfirmation', { name: safeMediaTitle }),
@@ -279,7 +255,7 @@ export class MediaComponent implements OnInit, OnDestroy {
   }
 
   deleteBackdrop(media: Media, event: Event) {
-    const safeMediaTitle = escape(media.title);
+    const safeMediaTitle = translocoEscape(media.title);
     this.confirmationService.confirm({
       key: 'default',
       message: this.translocoService.translate('admin.media.deleteBackdropConfirmation', { name: safeMediaTitle }),

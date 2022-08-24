@@ -2,11 +2,10 @@ import { DOCUMENT } from '@angular/common';
 import { Component, OnInit, ChangeDetectionStrategy, Inject, ChangeDetectorRef, Renderer2, ViewChild, AfterViewInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { TranslocoService, TRANSLOCO_SCOPE } from '@ngneat/transloco';
-import { DialogService, DynamicDialogComponent, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { ConfirmationService } from 'primeng/api';
-import { ZIndexUtils } from 'primeng/utils';
 import { first, tap, takeUntil, takeWhile } from 'rxjs';
-import { isEqual, escape } from 'lodash';
+import { cloneDeep, isEqual } from 'lodash';
 
 import { DropdownOptionDto, UpdateTVEpisodeDto } from '../../../../core/dto/media';
 import { DestroyService, ItemDataService, MediaService, QueueUploadService } from '../../../../core/services';
@@ -17,7 +16,7 @@ import { FileUploadComponent } from '../../../../shared/components/file-upload';
 import { AddSubtitleComponent } from '../add-subtitle';
 import { ImageEditorComponent } from '../../../../shared/dialogs/image-editor';
 import { AppErrorCode, MediaSourceStatus } from '../../../../core/enums';
-import { dataURItoBlob } from '../../../../core/utils';
+import { dataURItoBlob, translocoEscape, fixNestedDialogFocus, replaceDialogHideMethod } from '../../../../core/utils';
 import {
   IMAGE_PREVIEW_SIZE, UPLOAD_STILL_ASPECT_HEIGHT, UPLOAD_STILL_ASPECT_WIDTH, UPLOAD_STILL_MIN_HEIGHT,
   UPLOAD_STILL_MIN_WIDTH, UPLOAD_STILL_SIZE, UPLOAD_SUBTITLE_EXT, UPLOAD_SUBTITLE_SIZE
@@ -108,7 +107,9 @@ export class ConfigureEpisodeComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.bindDocumentEscapeListener();
+    replaceDialogHideMethod(this.dialogService, () => {
+      this.closeDialog();
+    }, this.dialogRef);
   }
 
   loadEpisode(): void {
@@ -146,9 +147,9 @@ export class ConfigureEpisodeComponent implements OnInit, AfterViewInit {
     });
     this.mediaService.updateTVEpisode(mediaId, episodeId, updateTVEpisodeDto).pipe(takeUntil(this.destroyService)).subscribe({
       next: (episode) => {
-        this.episode = { ...episode };
-        this.updateEpisodeInitValue = { ...this.updateEpisodeForm.getRawValue() };
-        this.detectFormChange(this.updateEpisodeForm);
+        this.episode = episode;
+        this.updateEpisodeInitValue = cloneDeep(this.updateEpisodeForm.value);
+        this.detectFormChange(this.updateEpisodeForm, this.updateEpisodeInitValue, this.updateEpisodeFormChanged);
         this.isUpdated = true;
       }
     }).add(() => {
@@ -159,7 +160,7 @@ export class ConfigureEpisodeComponent implements OnInit, AfterViewInit {
 
   onUpdateEpisodeFormReset(): void {
     this.updateEpisodeForm.reset(this.updateEpisodeInitValue);
-    this.detectFormChange(this.updateEpisodeForm);
+    this.detectFormChange(this.updateEpisodeForm, this.updateEpisodeInitValue, this.updateEpisodeFormChanged);
   }
 
   onInputStillChange(event: Event): void {
@@ -186,7 +187,7 @@ export class ConfigureEpisodeComponent implements OnInit, AfterViewInit {
       this.stillPreviewUri = previewUri;
       this.ref.markForCheck();
     });
-    this.fixNestedDialogFocus(dialogRef);
+    fixNestedDialogFocus(dialogRef, this.dialogRef, this.dialogService, this.renderer, this.document);
   }
 
   onUpdateStillSubmit(): void {
@@ -228,18 +229,18 @@ export class ConfigureEpisodeComponent implements OnInit, AfterViewInit {
       },
       visibility: episode.visibility
     });
-    this.updateEpisodeInitValue = this.updateEpisodeForm.getRawValue();
-    this.detectFormChange(this.updateEpisodeForm);
+    this.updateEpisodeInitValue = cloneDeep(this.updateEpisodeForm.value);
+    this.detectFormChange(this.updateEpisodeForm, this.updateEpisodeInitValue, this.updateEpisodeFormChanged);
   }
 
-  detectFormChange(form: FormGroup): void {
-    this.updateEpisodeFormChanged = false;
+  detectFormChange(form: FormGroup, initValue: any, isChanged: boolean): void {
+    isChanged = false;
     form.valueChanges.pipe(
       tap(() => {
-        const formChanged = !isEqual(form.value, this.updateEpisodeInitValue);
-        this.updateEpisodeFormChanged = formChanged;
+        const formChanged = !isEqual(form.value, initValue);
+        isChanged = formChanged;
       }),
-      takeWhile(() => !this.updateEpisodeFormChanged),
+      takeWhile(() => !isChanged),
       takeUntil(this.destroyService)
     ).subscribe();
   }
@@ -270,7 +271,7 @@ export class ConfigureEpisodeComponent implements OnInit, AfterViewInit {
       this.episode = { ...this.episode, subtitles };
       this.ref.markForCheck();
     });
-    this.fixNestedDialogFocus(dialogRef);
+    fixNestedDialogFocus(dialogRef, this.dialogRef, this.dialogService, this.renderer, this.document);
   }
 
   deleteSubtitle(subtitle: MediaSubtitle, event: Event): void {
@@ -315,7 +316,7 @@ export class ConfigureEpisodeComponent implements OnInit, AfterViewInit {
   deleteSource(event: Event): void {
     const mediaId = this.config.data['media']['_id'];
     const episodeId = this.config.data['episode']['_id'];
-    const safeEpisodeName = escape(this.config.data['episode']['episodeNumber']);
+    const safeEpisodeName = translocoEscape(this.config.data['episode']['episodeNumber']);
     this.confirmationService.confirm({
       key: 'inModalEpisode',
       message: this.translocoService.translate('admin.media.deleteSourceConfirmation', { name: safeEpisodeName }),
@@ -337,39 +338,6 @@ export class ConfigureEpisodeComponent implements OnInit, AfterViewInit {
         });
       }
     });
-  }
-
-  fixNestedDialogFocus(dialogRef: DynamicDialogRef): void {
-    const dialogComponent = this.dialogService.dialogComponentRefMap.get(this.dialogRef)?.instance;
-    if (dialogComponent) dialogComponent.unbindGlobalListeners();
-    if (this.document.activeElement instanceof HTMLElement) this.document.activeElement.blur();
-    dialogRef.onDestroy.pipe(first()).subscribe(() => {
-      if (!dialogComponent?.container) return;
-      this.blockScroll();
-      dialogComponent.moveOnTop();
-      dialogComponent.bindGlobalListeners();
-      this.bindDocumentEscapeListener(dialogComponent);
-      dialogComponent.focus();
-    });
-  }
-
-  bindDocumentEscapeListener(dialogComponent?: DynamicDialogComponent): void {
-    if (!dialogComponent) {
-      dialogComponent = this.dialogService.dialogComponentRefMap.get(this.dialogRef)?.instance;
-      if (!dialogComponent) return;
-    }
-    const documentTarget = dialogComponent.maskViewChild ? dialogComponent.maskViewChild.nativeElement.ownerDocument : 'document';
-    dialogComponent.documentEscapeListener = this.renderer.listen(documentTarget, 'keydown', (event) => {
-      if (event.which == 27) {
-        if (dialogComponent?.container && parseInt(dialogComponent.container.style.zIndex) == ZIndexUtils.getCurrent()) {
-          this.closeDialog();
-        }
-      }
-    });
-  }
-
-  blockScroll(): void {
-    this.renderer.addClass(this.document.body, 'p-overflow-hidden');
   }
 
   trackId(index: number, item: any): any {

@@ -1,0 +1,92 @@
+<ng-container *transloco="let t">
+  <form [formGroup]="findExtMediaForm" formHandler (ngSubmit)="onFindExtMediaFormSubmit()">
+    <div class="tw-flex">
+      <span class="p-input-icon-left tw-flex-1">
+        <i class="ms ms-search"></i>
+        <input type="text" pInputText [placeholder]="t('admin.addExtStreams.findExtMedia')" formControlName="query"
+          class="tw-w-full p-inputtext-xs" />
+      </span>
+      <button type="submit" pButton icon="ms ms-search" [label]="t('admin.addExtStreams.search')"
+        class="p-button-sm p-button-sm-icon tw-ml-2">
+      </button>
+      <button type="button" pButton icon="ms ms-clear-all" [label]="t('admin.addExtStreams.clear')"
+        class="p-button-secondary p-button-sm p-button-sm-icon tw-ml-2" [disabled]="!extMediaResults?.length"
+        (click)="clearAll()">
+      </button>
+    </div>
+  </form>
+  <ng-container *ngIf="loadingMediaList; then loadingSpinner; else extMediaLoaded"></ng-container>
+  <ng-template #extMediaLoaded>
+    <ng-container *ngIf="extMediaResults">
+      <ng-container *ngIf="extMediaResults.length; else noExtMediaFound">
+        <ng-container *ngFor="let provider of extMediaResults; let i = index; trackBy: trackLabel">
+          <p class="tw-text-white tw-text-lg tw-font-bold tw-my-2">{{ provider.label }}</p>
+          <ng-container *ngIf="loadingMediaInfoObj[provider.value]; then loadingSpinner; else mediaInfoLoaded">
+          </ng-container>
+          <ng-template #mediaInfoLoaded>
+            <ng-container [ngSwitch]="steps[provider.value]">
+              <ng-container *ngSwitchCase="1">
+                <div class="tw-grid tw-grid-cols-1 md:tw-grid-cols-2 tw-gap-2">
+                  <a class="tw-bg-neutral-850 hover:tw-bg-neutral-700 focus-visible:tw-bg-neutral-700 tw-transition-colors
+                    tw-duration-200 tw-p-1 tw-rounded-sm tw-cursor-pointer tw-block" (click)="loadMediaInfo(i, j)"
+                    *ngFor="let media of provider.items; let j = index; trackBy: trackId">
+                    <div class="tw-flex">
+                      <img class="tw-w-24 tw-rounded-md tw-object-cover" [lazyLoad]="media.image" [alt]="media.title"
+                        errorImage="assets/images/media-poster-md.png">
+                      <p class="tw-ml-2 tw-font-semibold">{{ media.title }}</p>
+                    </div>
+                  </a>
+                </div>
+              </ng-container>
+              <ng-container *ngSwitchCase="2">
+                <ng-container *ngIf="selectedMedia[provider.value] as media">
+                  <div class="tw-flex">
+                    <img class="tw-w-36 tw-rounded-sm tw-object-cover" [lazyLoad]="media.image" [alt]="media.title"
+                      errorImage="assets/images/media-poster-md.png">
+                    <div class="tw-ml-2 tw-flex tw-flex-col">
+                      <div>
+                        <p class="tw-text-white tw-text-xl tw-font-semibold tw-mb-2">{{ media.title }}</p>
+                        <p class="tw-text-white">{{ t('admin.addExtStreams.selectStream') }}</p>
+                        <div class="tw-flex tw-flex-wrap">
+                          <button pButton type="button" *ngFor="let episode of media.episodes" [label]="episode.number
+                              ? t('admin.addExtStreams.episodeSource') + episode.number
+                              : t('admin.addExtStreams.movieSource')" class="p-button-secondary p-button-xs tw-m-1"
+                            (click)="selectStream(provider.value, media, episode)"
+                            [disabled]="isUpdatingStreamObj[provider.value]">
+                          </button>
+                        </div>
+                      </div>
+                      <div class="tw-mt-auto">
+                        <button pButton type="button" [label]="t('admin.addExtStreams.back')"
+                          class="p-button-text p-button-secondary p-button-xs !tw-p-0"
+                          (click)="changeStep(provider.value, 1)" [disabled]="isUpdatingStreamObj[provider.value]">
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </ng-container>
+              </ng-container>
+              <div class="tw-text-center" *ngSwitchCase="3">
+                <i class="ms ms-check-circle tw-block tw-text-5xl tw-mb-2"></i>
+                <p class="tw-text-white tw-mb-2">{{ t('admin.addExtStreams.streamSelected', { streamId:
+                  selectedStreamIdObj[provider.value] }) }}</p>
+                <button pButton type="button" [label]="t('admin.addExtStreams.back')"
+                  class="p-button-text p-button-secondary p-button-xs" (click)="changeStep(provider.value, 1)">
+                </button>
+              </div>
+            </ng-container>
+          </ng-template>
+        </ng-container>
+      </ng-container>
+      <ng-template #noExtMediaFound>
+        <p class="tw-text-white tw-text-center tw-font-semibold tw-my-2">{{ t('admin.addExtStreams.noExtMediaFound')
+          }}</p>
+      </ng-template>
+    </ng-container>
+  </ng-template>
+  <ng-template #loadingSpinner>
+    <div class="tw-flex tw-justify-center tw-items-center tw-h-32">
+      <p-progressSpinner></p-progressSpinner>
+    </div>
+  </ng-template>
+</ng-container>

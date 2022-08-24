@@ -1,14 +1,5 @@
-import { Component, OnInit, ChangeDetectionStrategy, Input, ElementRef, Renderer2, AfterViewInit, ViewChildren, QueryList } from '@angular/core';
-import '@vidstack/player/define/vds-media.js';
-import '@vidstack/player/define/vds-video.js';
-import '@vidstack/player/define/vds-play-button.js';
-import '@vidstack/player/define/vds-mute-button.js';
-import '@vidstack/player/define/vds-fullscreen-button.js';
-import '@vidstack/player/define/vds-volume-slider.js';
-import '@vidstack/player/define/vds-time-slider.js';
-import '@vidstack/player/define/vds-slider-value-text.js';
-import '@vidstack/player/define/vds-aspect-ratio.js';
-import '@vidstack/player/define/vds-gesture.js';
+import { Component, OnInit, ChangeDetectionStrategy, Input, OnChanges, SimpleChanges, OnDestroy } from '@angular/core';
+import * as Plyr from 'plyr';
 
 @Component({
   selector: 'app-video-player',
@@ -16,50 +7,31 @@ import '@vidstack/player/define/vds-gesture.js';
   styleUrls: ['./video-player.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class VideoPlayerComponent implements OnInit, AfterViewInit {
-  @Input() src?: string;
-  @ViewChildren('vdsVideo') allPlayers!: QueryList<ElementRef<HTMLElement>>;
-  @ViewChildren('playStatus') allPlayStatus!: QueryList<ElementRef<SVGElement>>;
-  @ViewChildren('pauseStatus') allPauseStatus!: QueryList<ElementRef<SVGElement>>;
+export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
+  @Input() source?: Plyr.SourceInfo;
+  player?: Plyr;
 
-  constructor(private renderer: Renderer2) { }
+  constructor() { }
 
   ngOnInit(): void {
+    this.player = new Plyr('#plyrPlayer', {
+      captions: { active: true },
+      controls: ['play-large', 'play', 'rewind', 'fast-forward', 'progress', 'current-time', 'duration', 'mute', 'volume', 'captions', 'settings', 'pip', 'airplay', 'fullscreen'],
+      settings: ['captions', 'quality', 'speed', 'loop'],
+      autoplay: true
+    });
+    if (this.source) {
+      this.player.source = this.source;
+    }
   }
 
-  ngAfterViewInit(): void {
-    // TODO: Switch to ViewChild in case *ngIf is not used
-    this.registerPlayerAnimation(this.allPlayers.first, this.allPlayStatus.first, this.allPauseStatus.first);
-    /*
-    forkJoin({
-      allPlayers: this.allPlayers.changes,
-      allPlayStatus: this.allPlayStatus.changes,
-      allPauseStatus: this.allPauseStatus.changes
-    }).subscribe((
-      data: {
-        allPlayers: QueryList<ElementRef<HTMLElement>>,
-        allPlayStatus: QueryList<ElementRef<SVGElement>>,
-        allPauseStatus: QueryList<ElementRef<SVGElement>>
-      }) => {
-      this.registerPlayerAnimation(data.allPlayers.first, data.allPlayStatus.first, data.allPauseStatus.first);
-      // PUT TAKE UNTIL HERE
-    });
-    */
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['source']?.currentValue && this.player) {
+      this.player.source = changes['source'].currentValue;
+    }
   }
 
-  registerPlayerAnimation(player: ElementRef, playStatus: ElementRef, pauseStatus: ElementRef): void {
-    player.nativeElement.addEventListener('vds-play', () => {
-      this.renderer.addClass(playStatus.nativeElement, 'bezel-transition');
-    });
-    player.nativeElement.addEventListener('vds-pause', () => {
-      this.renderer.addClass(pauseStatus.nativeElement, 'bezel-transition');
-    });
-    playStatus.nativeElement.addEventListener('animationend', () => {
-      this.renderer.removeClass(playStatus.nativeElement, 'bezel-transition');
-    });
-    pauseStatus.nativeElement.addEventListener('animationend', () => {
-      this.renderer.removeClass(pauseStatus.nativeElement, 'bezel-transition');
-    });
+  ngOnDestroy(): void {
+    this.player?.destroy();
   }
-
 }

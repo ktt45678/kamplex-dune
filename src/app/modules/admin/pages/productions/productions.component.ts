@@ -5,13 +5,13 @@ import { ConfirmationService } from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
 import { Table } from 'primeng/table';
 import { first } from 'rxjs';
-import { escape } from 'lodash';
 
 import { ProductionsService } from '../../../../core/services';
 import { Paginated, Production } from '../../../../core/models';
 import { PaginateProductionsDto } from '../../../../core/dto/productions';
 import { CreateProductionComponent } from '../../dialogs/create-production';
 import { UpdateProductionComponent } from '../../dialogs/update-production';
+import { translocoEscape } from '../../../../core/utils';
 
 @Component({
   selector: 'app-productions',
@@ -41,6 +41,8 @@ export class ProductionsComponent implements OnInit, OnDestroy {
       const sortOrder = this.productionTable.sortOrder === -1 ? 'desc' : 'asc';
       if (this.productionTable.sortField) {
         params.sort = `${sortOrder}(${this.productionTable.sortField})`;
+      } else {
+        params.sort = 'desc(createdAt)';
       }
       if (this.productionTable.filters['name'] && !Array.isArray(this.productionTable.filters['name'])) {
         (params.search = this.productionTable.filters['name'].value);
@@ -48,6 +50,7 @@ export class ProductionsComponent implements OnInit, OnDestroy {
     } else {
       params.page = 1;
       params.limit = this.rowsPerPage;
+      params.sort = 'desc(createdAt)';
     }
     this.loadingProductionList = true;
     this.productionsService.findPage(params).subscribe({
@@ -88,7 +91,7 @@ export class ProductionsComponent implements OnInit, OnDestroy {
   }
 
   showDeleteProductionDialog(production: Production): void {
-    const safeProductionName = escape(production.name);
+    const safeProductionName = translocoEscape(production.name);
     this.confirmationService.confirm({
       message: this.translocoService.translate('admin.productions.deleteConfirmation', { name: safeProductionName }),
       header: this.translocoService.translate('admin.productions.deleteConfirmationHeader'),

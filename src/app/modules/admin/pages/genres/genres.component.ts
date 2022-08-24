@@ -5,13 +5,13 @@ import { ConfirmationService } from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
 import { Table } from 'primeng/table';
 import { first } from 'rxjs';
-import { escape } from 'lodash';
 
 import { PaginateGenresDto } from '../../../../core/dto/genres';
 import { Genre, Paginated } from '../../../../core/models';
 import { GenresService } from '../../../../core/services';
 import { CreateGenreComponent } from '../../dialogs/create-genre';
 import { UpdateGenreComponent } from '../../dialogs/update-genre';
+import { translocoEscape } from '../../../../core/utils';
 
 @Component({
   selector: 'app-genres',
@@ -41,6 +41,8 @@ export class GenresComponent implements OnInit, OnDestroy {
       const sortOrder = this.genreTable.sortOrder === -1 ? 'desc' : 'asc';
       if (this.genreTable.sortField) {
         params.sort = `${sortOrder}(${this.genreTable.sortField})`;
+      } else {
+        params.sort = 'desc(createdAt)';
       }
       if (this.genreTable.filters['name'] && !Array.isArray(this.genreTable.filters['name'])) {
         (params.search = this.genreTable.filters['name'].value);
@@ -48,6 +50,7 @@ export class GenresComponent implements OnInit, OnDestroy {
     } else {
       params.page = 1;
       params.limit = this.rowsPerPage;
+      params.sort = 'desc(createdAt)';
     }
     this.loadingGenreList = true;
     this.genresService.findPage(params).subscribe({
@@ -88,7 +91,7 @@ export class GenresComponent implements OnInit, OnDestroy {
   }
 
   showDeleteGenreDialog(genre: Genre): void {
-    const safeGenreName = escape(genre.name);
+    const safeGenreName = translocoEscape(genre.name);
     this.confirmationService.confirm({
       message: this.translocoService.translate('admin.genres.deleteConfirmation', { name: safeGenreName }),
       header: this.translocoService.translate('admin.genres.deleteConfirmationHeader'),

@@ -1,4 +1,4 @@
-import { ShortDate } from '../../models';
+import { MediaExternalStreams, ShortDate } from '../../models';
 
 export interface AddTVEpisodeDto {
   episodeNumber: number;
@@ -7,4 +7,5 @@ export interface AddTVEpisodeDto {
   runtime: number;
   airDate: ShortDate;
   visibility: number;
+  extStreams?: Partial<MediaExternalStreams>;
 }
