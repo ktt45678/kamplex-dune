@@ -1,11 +1,12 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpEventType, HttpStatusCode } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import * as UpChunk from '@mux/upchunk';
-import { BehaviorSubject, Observable, switchMap } from 'rxjs';
+import { BehaviorSubject, concatMap, finalize, Observable, retry, switchMap, tap } from 'rxjs';
 
 import { QueueUploadStatus } from '../enums';
 import { UploadSession } from '../models';
 import { FileUpload } from '../utils';
+import { QUEUE_UPLOAD_CHUNK_SIZE, QUEUE_UPLOAD_RETRIES, QUEUE_UPLOAD_RETRY_DELAY } from '../../../environments/config';
 
 @Injectable()
 export class QueueUploadService {
@@ -72,6 +73,7 @@ export class QueueUploadService {
       mimeType: queuedUploadFile.file.type,
       size: queuedUploadFile.file.size
     }).pipe(switchMap((session: UploadSession) => {
+      /*
       return new Observable<{ sessionId: string, fileId: string }>(observer => {
         let lastUploadedBytes = 0;
         const upload = UpChunk.createUpload({
@@ -114,6 +116,65 @@ export class QueueUploadService {
           observer.complete();
         };
       });
+      */
+      return new Observable<{ sessionId: string, fileId: string }>(observer2 => {
+        let allChunkUploadedBytes = 0;
+        let lastUploadedBytes = 0;
+        const chunkUploadSub = new Observable<{ startOffset: number, endOffset: number, fileSize: number, chunk: Blob }>(observer => {
+          for (let startOffset = 0; startOffset < queuedUploadFile.file.size; startOffset += QUEUE_UPLOAD_CHUNK_SIZE) {
+            const endOffset = Math.min(startOffset + QUEUE_UPLOAD_CHUNK_SIZE, queuedUploadFile.file.size);
+            const chunk = queuedUploadFile.file.slice(startOffset, endOffset);
+            observer.next({ startOffset, endOffset: endOffset - 1, chunk, fileSize: queuedUploadFile.file.size });
+          }
+          observer.complete();
+        }).pipe(concatMap(({ startOffset, endOffset, fileSize, chunk }) => {
+          return this.http.put<{ id: string }>(session.url, chunk, {
+            headers: {
+              'Content-Range': `bytes ${startOffset}-${endOffset}/${fileSize}`,
+              'x-ng-intercept': 'ignore'
+            },
+            reportProgress: true,
+            responseType: 'json',
+            observe: 'events'
+          }).pipe(
+            retry({ count: QUEUE_UPLOAD_RETRIES, delay: QUEUE_UPLOAD_RETRY_DELAY }),
+            tap(res => {
+              if (res.type === HttpEventType.UploadProgress) {
+                // Chunk upload progress
+                const fileUploadedBytes = allChunkUploadedBytes + res.loaded;
+                const percent = (fileUploadedBytes / queuedUploadFile.file.size) * 100;
+                queuedUploadFile.updateProgress(percent);
+                this._uploadQueue.next(this._files);
+                // Total uploaded bytes in queue
+                this._uploadedBytes += allChunkUploadedBytes - lastUploadedBytes;
+                lastUploadedBytes = allChunkUploadedBytes;
+                // Estimate upload speed
+                const timeElapsed = Date.now() - this._timeStarted;
+                const uploadSpeed = this._uploadedBytes / timeElapsed;
+                // Make sure not to divide by zero
+                if (uploadSpeed > 0)
+                  this._timeRemaining.next((this._totalBytes - this._uploadedBytes) / uploadSpeed);
+              } else if (res.type === HttpEventType.Response) {
+                // Chunk success
+                allChunkUploadedBytes += chunk.size;
+                if (res.status === HttpStatusCode.Created && res.body) {
+                  queuedUploadFile.updateProgress(100);
+                  queuedUploadFile.completed();
+                  this._uploadQueue.next(this._files);
+                  observer2.next({ sessionId: session._id, fileId: res.body.id });
+                  observer2.complete();
+                }
+              }
+            }), finalize(() => console.log('chunk upload done')));
+        })).pipe(finalize(() => console.log('file uploaded'))).subscribe();
+        return () => {
+          if (queuedUploadFile.status !== QueueUploadStatus.UPLOADING) return;
+          chunkUploadSub.unsubscribe();
+          queuedUploadFile.cancel();
+          this._uploadQueue.next(this._files);
+          observer2.complete();
+        }
+      }).pipe(finalize(() => console.log('emit session id and fileId done')));
     }), switchMap(data => {
       const completeUrl = queuedUploadFile.completeUrl.replace(':id', data.sessionId);
       return this.http.post(completeUrl, {

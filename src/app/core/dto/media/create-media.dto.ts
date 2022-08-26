@@ -11,7 +11,7 @@ export interface CreateMediaDto {
   runtime: number;
   adult: boolean;
   releaseDate: ShortDate;
-  lastAirDate?: ShortDate;
+  lastAirDate?: ShortDate | null;
   visibility: number;
   status: string;
   externalIds?: Partial<MediaExternalIds>;

@@ -3,8 +3,8 @@ import { DOCUMENT } from '@angular/common';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { TranslocoService } from '@ngneat/transloco';
 import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { EMPTY, first, Observable, switchMap, takeUntil, takeWhile, tap } from 'rxjs';
-import { cloneDeep, isEqual } from 'lodash';
+import { EMPTY, first, Observable, switchMap, takeUntil } from 'rxjs';
+import { cloneDeep } from 'lodash';
 
 import { AddVideoComponent } from '../add-video';
 import { AddSubtitleComponent } from '../add-subtitle';
@@ -19,7 +19,7 @@ import { ExtStreamSelected } from '../../../../core/interfaces/events';
 import { Genre, MediaDetails, MediaSubtitle, MediaVideo, Production } from '../../../../core/models';
 import { DestroyService, GenresService, ItemDataService, MediaService, ProductionsService, QueueUploadService } from '../../../../core/services';
 import { shortDate } from '../../../../core/validators';
-import { dataURItoBlob, fixNestedDialogFocus, replaceDialogHideMethod } from '../../../../core/utils';
+import { dataURItoBlob, detectFormChange, fixNestedDialogFocus, replaceDialogHideMethod } from '../../../../core/utils';
 import {
   IMAGE_PREVIEW_MIMES, IMAGE_PREVIEW_SIZE, UPLOAD_BACKDROP_ASPECT_HEIGHT, UPLOAD_BACKDROP_ASPECT_WIDTH, UPLOAD_BACKDROP_MIN_HEIGHT,
   UPLOAD_BACKDROP_MIN_WIDTH, UPLOAD_BACKDROP_SIZE, UPLOAD_POSTER_ASPECT_HEIGHT, UPLOAD_POSTER_ASPECT_WIDTH, UPLOAD_POSTER_MIN_HEIGHT,
@@ -62,11 +62,11 @@ export class CreateMediaComponent implements OnInit, AfterViewInit {
   isUpdatingPoster: boolean = false;
   hasBackdrop: boolean = false;
   isUpdatingBackdrop: boolean = false;
-  updateMediaFormChanged: boolean = false;
   videoCount: number = 0;
   subtitleCount: number = 0;
   episodeCount: number = 0;
   isUploadingSource: boolean = false;
+  updateFormChanged: boolean = false;
   createMediaForm: FormGroup<CreateMediaForm>;
   updateMediaForm: FormGroup<UpdateMediaForm>;
   updateMediaInitValue: {} = {};
@@ -76,8 +76,6 @@ export class CreateMediaComponent implements OnInit, AfterViewInit {
   languages: DropdownOptionDto[] = [];
   genreSuggestions: Genre[] = [];
   productionSuggestions: Production[] = [];
-  createMediaCtx;
-  updateMediaCtx;
 
   constructor(@Inject(DOCUMENT) private document: Document, private ref: ChangeDetectorRef,
     private dialogRef: DynamicDialogRef, private dialogService: DialogService, private config: DynamicDialogConfig,
@@ -136,14 +134,6 @@ export class CreateMediaComponent implements OnInit, AfterViewInit {
         year: new FormControl(null)
       }, { validators: shortDate('day', 'month', 'year', false) }));
     }
-    this.createMediaCtx = {
-      action: 'createMedia', formGroup: this.createMediaForm, submitFn: () => this.onCreateMediaFormSubmit(),
-      cancelFn: () => this.onCreateMediaFormCancel(), submitBtnStyle: 'p-button'
-    };
-    this.updateMediaCtx = {
-      action: 'updateMedia', formGroup: this.updateMediaForm, submitFn: () => this.onUpdateMediaFormSubmit(),
-      cancelFn: () => this.onUpdateMediaFormReset(), submitBtnStyle: 'p-button-success'
-    };
   }
 
   ngOnInit(): void {
@@ -197,11 +187,15 @@ export class CreateMediaComponent implements OnInit, AfterViewInit {
       visibility: formValue.visibility,
       status: formValue.status
     };
-    if (createMediaDto.type === MediaType.TV && formValue.lastAirDate) {
-      createMediaDto.lastAirDate = {
-        day: formValue.lastAirDate.day!,
-        month: formValue.lastAirDate.month!,
-        year: formValue.lastAirDate.year!
+    if (createMediaDto.type === MediaType.TV) {
+      if (formValue.lastAirDate && formValue.lastAirDate.day && formValue.lastAirDate.month && formValue.lastAirDate.year) {
+        createMediaDto.lastAirDate = {
+          day: formValue.lastAirDate.day,
+          month: formValue.lastAirDate.month,
+          year: formValue.lastAirDate.year
+        }
+      } else {
+        createMediaDto.lastAirDate = null;
       }
     }
     this.mediaService.create(createMediaDto).pipe(takeUntil(this.destroyService)).subscribe({
@@ -248,19 +242,17 @@ export class CreateMediaComponent implements OnInit, AfterViewInit {
       });
     }
     this.updateMediaInitValue = cloneDeep(this.updateMediaForm.value);
-    this.detectFormChange(this.updateMediaForm, this.updateMediaInitValue, this.updateMediaFormChanged);
+    this.detectUpdateMediaFormChange();
   }
 
-  detectFormChange(form: FormGroup, initValue: any, isChanged: boolean): void {
-    isChanged = false;
-    form.valueChanges.pipe(
-      tap(() => {
-        const formChanged = !isEqual(form.value, initValue);
-        isChanged = formChanged;
-      }),
-      takeWhile(() => !isChanged),
-      takeUntil(this.destroyService)
-    ).subscribe();
+  detectUpdateMediaFormChange(): void {
+    detectFormChange(this.updateMediaForm, this.updateMediaInitValue, () => {
+      this.updateFormChanged = false;
+    }, () => {
+      this.updateFormChanged = true;
+    }).pipe(takeUntil(this.destroyService)).subscribe().add(() => {
+      this.ref.markForCheck();
+    });
   }
 
   onUpdateMediaFormSubmit(): void {
@@ -297,7 +289,7 @@ export class CreateMediaComponent implements OnInit, AfterViewInit {
     this.mediaService.update(mediaId, updateMediaDto).pipe(takeUntil(this.destroyService)).subscribe(media => {
       this.media = media;
       this.updateMediaInitValue = cloneDeep(this.updateMediaForm.value);
-      this.detectFormChange(this.updateMediaForm, this.updateMediaInitValue, this.updateMediaFormChanged);
+      this.detectUpdateMediaFormChange();
       this.ref.markForCheck();
     }).add(() => {
       this.updateMediaForm.enable();
@@ -306,7 +298,7 @@ export class CreateMediaComponent implements OnInit, AfterViewInit {
 
   onUpdateMediaFormReset(): void {
     this.updateMediaForm.reset(this.updateMediaInitValue);
-    this.detectFormChange(this.updateMediaForm, this.updateMediaInitValue, this.updateMediaFormChanged);
+    this.detectUpdateMediaFormChange();
   }
 
   onInputPosterChange(file: File): void {

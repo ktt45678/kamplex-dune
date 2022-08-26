@@ -19,11 +19,22 @@
         <button pButton class="p-panel-header-icon p-link tw-ml-2" icon="pi pi-times" (click)="hideUploadQueue()">
         </button>
       </ng-template>
-      <p *ngLet="(timeRemaining | async) as _timeRemaining" class="tw-px-4 tw-py-2 tw-text-base tw-text-right">{{
-        _timeRemaining ?
-        t('admin.uploadQueue.remaining', { time: _timeRemaining | time }) :
-        t('admin.uploadQueue.allFilesUploaded')
-        }}</p>
+      <ng-container *ngIf="totalUploading; else allFilesUploaded">
+        <ng-container *ngIf="(timeRemaining | async) as _timeRemaining; else preparingUpload">
+          <p *ngIf="_timeRemaining | time as durationRemaining; else finishingUpload"
+            class="tw-px-4 tw-py-2 tw-text-base tw-text-right">{{ t('admin.uploadQueue.remaining', { time:
+            durationRemaining }) }}</p>
+          <ng-template #finishingUpload>
+            <p class="tw-px-4 tw-py-2 tw-text-base tw-text-right">{{ t('admin.uploadQueue.finishing') }}</p>
+          </ng-template>
+        </ng-container>
+        <ng-template #preparingUpload>
+          <p class="tw-px-4 tw-py-2 tw-text-base tw-text-right">{{ t('admin.uploadQueue.preparing') }}</p>
+        </ng-template>
+      </ng-container>
+      <ng-template #allFilesUploaded>
+        <p class="tw-px-4 tw-py-2 tw-text-base tw-text-right">{{ t('admin.uploadQueue.allFilesUploaded') }}</p>
+      </ng-template>
       <div class="p-scrollbar tw-max-h-64 tw-overflow-y-auto">
         <div *ngFor="let upload of uploadQueue; trackBy: trackId"
           class="tw-flex tw-items-center tw-px-4 tw-py-2 hover:tw-bg-neutral-700 tw-transition-colors tw-duration-200 tw-delay-75 hover:tw-transition-none">

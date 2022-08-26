@@ -12,7 +12,7 @@ export class TimePipe implements PipeTransform {
   constructor(private translocoService: TranslocoService) { }
 
   transform(value: number, format: string[] = ['hours', 'minutes', 'seconds']): string | null {
-    if (!value)
+    if (!value || !isFinite(value))
       return null;
     const roundedValue = Math.floor(value / 1000) * 1000;
     const lang = this.translocoService.getActiveLang();

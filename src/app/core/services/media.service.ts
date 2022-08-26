@@ -119,7 +119,9 @@ export class MediaService {
 
   findAllTVEpisodes(id: string, findTVEpisodesDto: FindTVEpisodesDto) {
     const params: any = {};
-    const { limited } = findTVEpisodesDto;
+    const { includeHidden, includeUnprocessed, limited } = findTVEpisodesDto;
+    includeHidden !== undefined && (params['includeHidden'] = includeHidden);
+    includeUnprocessed !== undefined && (params['includeUnprocessed'] = includeUnprocessed);
     limited !== undefined && (params['limited'] = limited);
     return this.http.get<TVEpisode[]>(`media/${id}/tv/episodes`, { params });
   }

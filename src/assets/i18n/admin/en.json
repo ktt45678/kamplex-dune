@@ -9,8 +9,10 @@
     "settings": "Settings"
   },
   "uploadQueue": {
+    "preparing": "Preparing...",
     "uploading": "{ fileCount, plural, =0 {Not uploading} one {Uploading 1 file} other {Uploading # files} }",
     "remaining": "Remaining: {{ time }}",
+    "finishing": "Less than 1 second",
     "allFilesUploaded": "All files uploaded"
   },
   "createGenre": {
@@ -279,7 +281,7 @@
     "visibilityPublic": "{{ admin.createMedia.visibilityPublic }}",
     "visibilityUnlisted": "{{ admin.createMedia.visibilityUnlisted }}",
     "visibilityPrivate": "{{ admin.createMedia.visibilityPrivate }}",
-    "cancel": "{{ admin.createGenre.cancel }}",
+    "cancel": "{{ admin.updateMedia.cancel }}",
     "submit": "{{ admin.updateGenre.submit }}"
   },
   "addExtStreams": {

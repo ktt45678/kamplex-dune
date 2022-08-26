@@ -5,11 +5,10 @@ import { TranslocoService, TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { ConfirmationService, MenuItem } from 'primeng/api';
 import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { Menu } from 'primeng/menu';
-import { first, map, merge, Observable, switchMap, takeUntil, takeWhile, tap } from 'rxjs';
-import { cloneDeep, isEqual } from 'lodash';
+import { first, map, merge, Observable, switchMap, takeUntil, tap } from 'rxjs';
+import { cloneDeep } from 'lodash';
 import { SourceInfo, Source, Track } from 'plyr';
 
-import { AppErrorCode, MediaPStatus, MediaSourceStatus, MediaStatus, MediaType, SocketMessage, SocketRoom } from '../../../../core/enums';
 import { MediaDetails, MediaVideo, MediaSubtitle, TVEpisode, Genre, Production } from '../../../../core/models';
 import { DestroyService, GenresService, ItemDataService, MediaService, ProductionsService, QueueUploadService } from '../../../../core/services';
 import { WsService } from '../../../../shared/modules/ws';
@@ -27,7 +26,8 @@ import { fileExtension, maxFileSize, shortDate } from '../../../../core/validato
 import { AddSubtitleForm, ShortDateForm } from '../../../../core/interfaces/forms';
 import { ExtStreamSelected } from '../../../../core/interfaces/events';
 import { ImageEditorComponent } from '../../../../shared/dialogs/image-editor';
-import { dataURItoBlob, translocoEscape, fixNestedDialogFocus, replaceDialogHideMethod } from '../../../../core/utils';
+import { dataURItoBlob, detectFormChange, translocoEscape, fixNestedDialogFocus, replaceDialogHideMethod } from '../../../../core/utils';
+import { AppErrorCode, MediaPStatus, MediaSourceStatus, MediaStatus, MediaType, SocketMessage, SocketRoom } from '../../../../core/enums';
 import {
   UPLOAD_SUBTITLE_EXT, UPLOAD_SUBTITLE_SIZE, YOUTUBE_EMBED_URL, YOUTUBE_THUMBNAIL_URL, IMAGE_PREVIEW_SIZE, UPLOAD_POSTER_SIZE,
   UPLOAD_BACKDROP_SIZE, UPLOAD_POSTER_MIN_WIDTH, UPLOAD_POSTER_MIN_HEIGHT, UPLOAD_BACKDROP_MIN_WIDTH,
@@ -206,10 +206,9 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
     this.mediaService.findOne(mediaId).subscribe(media => {
       this.media = media;
       if (media.type === MediaType.TV) {
-        this.episodes = [...media.tv.episodes];
-        if (media.tv.episodes.length >= media.tv.episodeCount) {
+        this.episodes = media.tv.episodes;
+        if (media.tv.episodes.length >= media.tv.episodeCount)
           this.isLoadedAllEpisodes = true;
-        }
       }
       this.patchUpdateMediaForm(media);
     }).add(() => {
@@ -223,7 +222,11 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
     if (mediaType !== MediaType.TV) return;
     const mediaId = this.config.data['_id'];
     showLoading && (this.loadingEpisodes = true);
-    this.mediaService.findAllTVEpisodes(mediaId, { limited: options.limited }).subscribe(episodes => {
+    this.mediaService.findAllTVEpisodes(mediaId, {
+      includeHidden: true,
+      includeUnprocessed: true,
+      limited: options.limited
+    }).subscribe(episodes => {
       this.episodes = episodes;
       showLoading && (this.loadingEpisodes = false);
       this.ref.markForCheck();
@@ -267,15 +270,19 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
       status: formValue.status
     };
     if (this.media.type === MediaType.TV && formValue.lastAirDate) {
-      updateMediaDto.lastAirDate = {
-        day: formValue.lastAirDate.day!,
-        month: formValue.lastAirDate.month!,
-        year: formValue.lastAirDate.year!
+      if (formValue.lastAirDate.day && formValue.lastAirDate.month && formValue.lastAirDate.year) {
+        updateMediaDto.lastAirDate = {
+          day: formValue.lastAirDate.day,
+          month: formValue.lastAirDate.month,
+          year: formValue.lastAirDate.year
+        }
+      } else {
+        updateMediaDto.lastAirDate = null;
       }
     }
     this.mediaService.update(mediaId, updateMediaDto).pipe(takeUntil(this.destroyService)).subscribe(media => {
       this.media = media;
-      this.detectFormChange(this.updateMediaForm, this.updateMediaInitValue, this.updateMediaFormChanged);
+      this.detectUpdateMediaFormChange();
       this.isUpdated = true;
     }).add(() => {
       this.isUpdatingMedia = false;
@@ -285,7 +292,7 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
 
   onUpdateMediaFormReset(): void {
     this.updateMediaForm.reset(this.updateMediaInitValue);
-    this.detectFormChange(this.updateMediaForm, this.updateMediaInitValue, this.updateMediaFormChanged);
+    this.detectUpdateMediaFormChange();
   }
 
   onInputPosterChange(event: Event): void {
@@ -821,19 +828,15 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
       });
     }
     this.updateMediaInitValue = cloneDeep(this.updateMediaForm.value);
-    this.detectFormChange(this.updateMediaForm, this.updateMediaInitValue, this.updateMediaFormChanged);
+    this.detectUpdateMediaFormChange();
   }
 
-  detectFormChange(form: FormGroup, initValue: any, isChanged: boolean): void {
-    isChanged = false;
-    form.valueChanges.pipe(
-      tap(() => {
-        const formChanged = !isEqual(form.value, initValue);
-        isChanged = formChanged;
-      }),
-      takeWhile(() => !isChanged),
-      takeUntil(this.destroyService)
-    ).subscribe();
+  detectUpdateMediaFormChange(): void {
+    detectFormChange(this.updateMediaForm, this.updateMediaInitValue, () => {
+      this.updateMediaFormChanged = false;
+    }, () => {
+      this.updateMediaFormChanged = true;
+    }).pipe(takeUntil(this.destroyService)).subscribe();
   }
 
   blockScroll(): void {

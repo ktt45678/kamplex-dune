@@ -4,8 +4,8 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { TranslocoService } from '@ngneat/transloco';
 import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { addDays } from 'date-fns';
-import { EMPTY, first, Observable, switchMap, takeUntil, takeWhile, tap } from 'rxjs';
-import { cloneDeep, isEqual } from 'lodash';
+import { EMPTY, first, Observable, switchMap, takeUntil } from 'rxjs';
+import { cloneDeep } from 'lodash';
 
 import { AddSubtitleComponent } from '../add-subtitle';
 import { StepperComponent } from '../../../../shared/components/stepper';
@@ -17,7 +17,7 @@ import { DestroyService, ItemDataService, MediaService, QueueUploadService } fro
 import { shortDate } from '../../../../core/validators';
 import { ShortDateForm } from '../../../../core/interfaces/forms';
 import { AppErrorCode } from '../../../../core/enums';
-import { dataURItoBlob, fixNestedDialogFocus, replaceDialogHideMethod } from '../../../../core/utils';
+import { dataURItoBlob, detectFormChange, fixNestedDialogFocus, replaceDialogHideMethod } from '../../../../core/utils';
 import {
   IMAGE_PREVIEW_MIMES, IMAGE_PREVIEW_SIZE, UPLOAD_STILL_ASPECT_HEIGHT, UPLOAD_STILL_ASPECT_WIDTH, UPLOAD_STILL_MIN_HEIGHT,
   UPLOAD_STILL_MIN_WIDTH, UPLOAD_STILL_SIZE, UPLOAD_SUBTITLE_SIZE
@@ -47,19 +47,17 @@ export class CreateEpisodeComponent implements OnInit {
   @ViewChild('stillFileUpload') stillFileUpload?: FileUploadComponent;
   @ViewChild('subtitleFileUpload') subtitleFileUpload?: FileUploadComponent;
   createEpisodeForm: FormGroup<CreateEpisodeForm>;
-  updateEpisodeForm: FormGroup<CreateEpisodeForm>;
+  updateEpisodeForm: FormGroup<UpdateEpisodeForm>;
   episode?: TVEpisodeDetails;
   hasStill: boolean = false;
   isUpdatingStill: boolean = false;
   isUploadingSource: boolean = false;
-  updateEpisodeFormChanged: boolean = false;
+  updateFormChanged: boolean = false;
   subtitleCount: number = 0;
   updateEpisodeInitValue: {} = {};
   days: DropdownOptionDto[] = [];
   months: DropdownOptionDto[] = [];
   years: DropdownOptionDto[] = [];
-  createEpisodeCtx;
-  updateEpisodeCtx;
 
   constructor(@Inject(DOCUMENT) private document: Document, private ref: ChangeDetectorRef, private dialogRef: DynamicDialogRef,
     private dialogService: DialogService, private config: DynamicDialogConfig, private renderer: Renderer2,
@@ -91,14 +89,6 @@ export class CreateEpisodeComponent implements OnInit {
       }, { validators: shortDate('day', 'month', 'year', true) }),
       visibility: new FormControl(1, { nonNullable: true, validators: Validators.required })
     });
-    this.createEpisodeCtx = {
-      action: 'createEpisode', formGroup: this.createEpisodeForm, submitFn: () => this.onCreateEpisodeFormSubmit(),
-      cancelFn: () => this.onCreateEpisodeFormCancel(), submitBtnStyle: 'p-button'
-    };
-    this.updateEpisodeCtx = {
-      action: 'updateEpisode', formGroup: this.updateEpisodeForm, submitFn: () => this.onUpdateEpisodeFormSubmit(),
-      cancelFn: () => this.onUpdateEpisodeFormReset(), submitBtnStyle: 'p-button-success'
-    };
   }
 
   ngOnInit(): void {
@@ -117,7 +107,7 @@ export class CreateEpisodeComponent implements OnInit {
   patchCreateEpisodeForm(): void {
     const media: MediaDetails = this.config.data['media'];
     const episodes: TVEpisode[] = this.config.data['episodes'];
-    let lastAirDate: Date;
+    let lastAirDate: Date | null = null;
     let lastEpisodeNumber: number;
     let lastEpisodeRuntime: number;
     if (episodes.length && episodes.length >= media.tv.episodeCount) {
@@ -129,13 +119,14 @@ export class CreateEpisodeComponent implements OnInit {
       lastEpisodeRuntime = lastEpisode.runtime;
     } else {
       // Based on media general info
-      lastAirDate = new Date(media.tv.lastAirDate.year, media.tv.lastAirDate.month - 1, media.tv.lastAirDate.day);
+      if (media.tv.lastAirDate)
+        lastAirDate = new Date(media.tv.lastAirDate.year, media.tv.lastAirDate.month - 1, media.tv.lastAirDate.day);
       lastEpisodeNumber = media.tv.episodeCount + 1;
       lastEpisodeRuntime = media.runtime;
     }
-    const nextWeekDate = addDays(lastAirDate, 7);
+    const nextWeekDate = lastAirDate ? addDays(lastAirDate, 7) : new Date();
     this.createEpisodeForm.patchValue({
-      episodeNumber: lastEpisodeNumber,
+      episodeNumber: lastEpisodeNumber + 1,
       runtime: lastEpisodeRuntime,
       airDate: {
         day: nextWeekDate.getDate(),
@@ -192,19 +183,15 @@ export class CreateEpisodeComponent implements OnInit {
       visibility: episode.visibility
     });
     this.updateEpisodeInitValue = cloneDeep(this.updateEpisodeForm.value);
-    this.detectFormChange(this.updateEpisodeForm, this.updateEpisodeInitValue, this.updateEpisodeFormChanged);
+    this.detectUpdateEpisodeFormChange();
   }
 
-  detectFormChange(form: FormGroup, initValue: any, isChanged: boolean): void {
-    isChanged = false;
-    form.valueChanges.pipe(
-      tap(() => {
-        const formChanged = !isEqual(form.value, initValue);
-        isChanged = formChanged;
-      }),
-      takeWhile(() => !isChanged),
-      takeUntil(this.destroyService)
-    ).subscribe();
+  detectUpdateEpisodeFormChange(): void {
+    detectFormChange(this.updateEpisodeForm, this.updateEpisodeInitValue, () => {
+      this.updateFormChanged = false;
+    }, () => {
+      this.updateFormChanged = true;
+    }).pipe(takeUntil(this.destroyService)).subscribe();
   }
 
   onUpdateEpisodeFormSubmit(): void {
@@ -228,7 +215,7 @@ export class CreateEpisodeComponent implements OnInit {
       next: (episode) => {
         this.episode = episode;
         this.updateEpisodeInitValue = cloneDeep(this.updateEpisodeForm.value);
-        this.detectFormChange(this.updateEpisodeForm, this.updateEpisodeInitValue, this.updateEpisodeFormChanged);
+        this.detectUpdateEpisodeFormChange();
         this.ref.markForCheck();
       }
     }).add(() => {
@@ -238,7 +225,7 @@ export class CreateEpisodeComponent implements OnInit {
 
   onUpdateEpisodeFormReset(): void {
     this.updateEpisodeForm.reset(this.updateEpisodeInitValue);
-    this.detectFormChange(this.updateEpisodeForm, this.updateEpisodeInitValue, this.updateEpisodeFormChanged);
+    this.detectUpdateEpisodeFormChange();
   }
 
   onInputStillChange(file: File): void {

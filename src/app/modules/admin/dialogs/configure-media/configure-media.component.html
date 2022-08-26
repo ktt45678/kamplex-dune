@@ -159,16 +159,18 @@
               <div id="last-air-date" formGroupName="lastAirDate" class="dropdown-group tw-flex tw-flex-wrap tw-w-full"
                 aria-describedby="last-air-date-error">
                 <p-dropdown class="tw-w-full sm:tw-w-3/12" styleClass="tw-w-full" panelStyleClass="p-dropdown-sm"
-                  [options]="days" formControlName="day" appendTo="body" [placeholder]="t('admin.updateMedia.day')"
-                  scrollHeight="300px" [disabledControl]="isUpdatingMedia">
+                  [options]="days" [showClear]="true" formControlName="day" appendTo="body"
+                  [placeholder]="t('admin.updateMedia.day')" scrollHeight="300px" [disabledControl]="isUpdatingMedia">
                 </p-dropdown>
                 <p-dropdown class="tw-w-full sm:tw-w-5/12 tw-pt-2 sm:tw-pt-0 sm:tw-pl-2" styleClass="tw-w-full"
-                  panelStyleClass="p-dropdown-sm" [options]="months" formControlName="month" appendTo="body"
-                  [placeholder]="t('admin.updateMedia.month')" scrollHeight="300px" [disabledControl]="isUpdatingMedia">
+                  panelStyleClass="p-dropdown-sm" [options]="months" [showClear]="true" formControlName="month"
+                  appendTo="body" [placeholder]="t('admin.updateMedia.month')" scrollHeight="300px"
+                  [disabledControl]="isUpdatingMedia">
                 </p-dropdown>
                 <p-dropdown class="tw-w-full sm:tw-w-4/12 tw-pt-2 sm:tw-pt-0 sm:tw-pl-2" styleClass="tw-w-full"
-                  panelStyleClass="p-dropdown-sm" [options]="years" formControlName="year" appendTo="body"
-                  [placeholder]="t('admin.updateMedia.year')" scrollHeight="300px" [disabledControl]="isUpdatingMedia">
+                  panelStyleClass="p-dropdown-sm" [options]="years" [showClear]="true" formControlName="year"
+                  appendTo="body" [placeholder]="t('admin.updateMedia.year')" scrollHeight="300px"
+                  [disabledControl]="isUpdatingMedia">
                 </p-dropdown>
               </div>
               <small id="last-air-date-error" *ngIf="updateMediaForm.controls['lastAirDate']"

@@ -22,3 +22,6 @@ export const UPLOAD_MEDIA_SOURCE_EXT = ['.mp4', '.mkv', '.webm', '.m2ts'];
 export const EPISODE_LIST_INIT_SIZE = 10;
 export const YOUTUBE_EMBED_URL = 'https://www.youtube.com/embed/';
 export const YOUTUBE_THUMBNAIL_URL = 'https://img.youtube.com/vi/';
+export const QUEUE_UPLOAD_CHUNK_SIZE = 10485760; // 10MiB
+export const QUEUE_UPLOAD_RETRIES = 5;
+export const QUEUE_UPLOAD_RETRY_DELAY = 3000;
