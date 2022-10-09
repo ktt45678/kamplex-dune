@@ -52,7 +52,7 @@ import { AddSourceComponent } from './dialogs/add-source/add-source.component';
 import { ConfigureEpisodeComponent } from './dialogs/configure-episode/configure-episode.component';
 import { AddExtStreamsComponent } from './components/add-ext-streams/add-ext-streams.component';
 import { ConfirmDeactivateGuard, WsActivatorGuard } from '../../core/guards';
-import { GenresService, MediaService, ProductionsService, QueueUploadService } from '../../core/services';
+import { GenresService, ProductionsService, QueueUploadService } from '../../core/services';
 
 @NgModule({
   declarations: [
@@ -112,7 +112,6 @@ import { GenresService, MediaService, ProductionsService, QueueUploadService } f
   providers: [
     DialogService,
     ConfirmationService,
-    MediaService,
     GenresService,
     ProductionsService,
     QueueUploadService,

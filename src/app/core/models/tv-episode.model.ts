@@ -12,5 +12,6 @@ export interface TVEpisode {
   thumbnailStillUrl?: string;
   smallStillUrl?: string;
   stillColor?: number;
+  pStatus?: number;
   status: number;
 }

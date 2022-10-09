@@ -3,9 +3,11 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { LazyLoadImageModule } from 'ng-lazyload-image';
 import { SkeletonModule } from 'primeng/skeleton';
-import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { TranslocoModule } from '@ngneat/transloco';
 
+import { LazyloadImageExtraModule } from '../../directives/lazyload-image-extra';
 import { NumberPipeModule } from '../../pipes/number-pipe';
+import { DateTimePipeModule } from '../../pipes/date-time-pipe';
 import { MediaListComponent } from './media-list.component';
 
 @NgModule({
@@ -15,14 +17,10 @@ import { MediaListComponent } from './media-list.component';
     RouterModule,
     LazyLoadImageModule,
     SkeletonModule,
+    LazyloadImageExtraModule,
     NumberPipeModule,
+    DateTimePipeModule,
     TranslocoModule
-  ],
-  providers: [
-    {
-      provide: TRANSLOCO_SCOPE,
-      useValue: 'home'
-    }
   ],
   exports: [MediaListComponent]
 })

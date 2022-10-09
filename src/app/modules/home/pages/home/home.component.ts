@@ -8,8 +8,7 @@ import { MediaService } from '../../../../core/services';
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [MediaService]
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HomeComponent implements OnInit {
   loadingFeaturedMedia: boolean = false;

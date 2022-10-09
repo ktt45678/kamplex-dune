@@ -3,7 +3,7 @@
     "formHeader": "Sign In",
     "email": "Email",
     "password": "Password",
-    "resetPassword": "Forgot password?",
+    "forgotPassword": "Forgot password?",
     "signUp": "Create account",
     "submit": "Sign in"
   },
@@ -18,7 +18,37 @@
     "birthdateYear": "Year",
     "signIn": "Sign in",
     "submit": "Sign up",
-    "successMessageSummary": "Sign up success",
-    "successMessageDetail": "Check your email to activate your account"
+    "successMessageSummary": "Account created",
+    "successMessageDetail": "To continue, please check your email to activate your account",
+    "resendEmail": "Resend email",
+    "resendEmailCountdown": "Available in"
+  },
+  "confirmEmail": {
+    "header": "Confirm Email",
+    "successMessageSummary": "Success",
+    "successMessageDetail": "Your email has been activated",
+    "failureMessageSummary": "Failed",
+    "failureMessageDetail": "This activation request is invalid or has expired",
+    "returnToHome": "Home"
+  },
+  "forgotPassword": {
+    "formHeader": "Forgot Password",
+    "email": "Enter your email",
+    "signIn": "{{ auth.signUp.signIn }}",
+    "submit": "Submit",
+    "resend": "Resend email",
+    "successMessageDetail": "A password reset request has been sent to the email you've submitted",
+    "successMessageDetail2": "Please also check your spam and promotion folders before resending another email.",
+    "resendEmail": "{{ auth.signUp.resendEmail }}",
+    "resendEmailCountdown": "{{ auth.signUp.resendEmailCountdown }}"
+  },
+  "resetPassword": {
+    "formHeader": "Reset Password",
+    "password": "Enter your new password",
+    "signIn": "{{ auth.signUp.signIn }}",
+    "submit": "{{ auth.forgotPassword.submit }}",
+    "successMessageSummary": "Password reseted",
+    "successMessageDetail": "You can now use this password to sign in to your account",
+    "returnToHome": "{{ auth.confirmEmail.returnToHome }}"
   }
 }

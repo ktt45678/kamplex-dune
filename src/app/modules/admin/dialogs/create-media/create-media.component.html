@@ -316,9 +316,7 @@
                   [ngClass]="(updateMediaForm.controls['originalLanguage'].dirty || updateMediaForm.controls['originalLanguage'].touched)
                     && updateMediaForm.controls['originalLanguage'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
                   {{ updateMediaForm.controls['originalLanguage'].errors |
-                  firstErrorKey:'updateMedia':'originalLanguage'
-                  }}
-                </small>
+                  firstErrorKey:'updateMedia':'originalLanguage' }}</small>
               </div>
             </div>
             <div class="tw-flex tw-flex-wrap">
@@ -335,9 +333,8 @@
                 <small id="genres-error"
                   class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
                   [ngClass]="(updateMediaForm.controls['genres'].dirty || updateMediaForm.controls['genres'].touched)
-                && updateMediaForm.controls['genres'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
-                  {{ updateMediaForm.controls['genres'].errors | firstErrorKey:'updateMedia':'genres' }}
-                </small>
+                && updateMediaForm.controls['genres'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">{{
+                  updateMediaForm.controls['genres'].errors | firstErrorKey:'updateMedia':'genres' }}</small>
               </div>
               <div class="tw-w-full md:tw-w-1/2 md:tw-pl-2">
                 <label for="productions" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
@@ -489,9 +486,10 @@
       <cdk-step [label]="t('admin.createMedia.movieStep3')" [optional]="true" aria-label="Movie source">
         <div *ngIf="media" class="p-scrollbar tw-overflow-y-auto tw-h-[calc(90vh-14rem)] tw-px-6">
           <p class="tw-text-lg tw-font-medium tw-mb-2">{{ t('admin.createMedia.addMovieSourceLabel') }}</p>
-          <app-file-upload accept=".mp4, .mkv, .webm, .m2ts" [label]="t('admin.createMedia.chooseFile')"
-            [desciption]="t('admin.createMedia.addMovieSourceDescription')" ariaLabel="Upload movie source"
-            [disabled]="isUploadingSource" (fileChange)="uploadSource($event)">
+          <app-file-upload accept=".mp4, .mkv, .webm, .m2ts" styleClass="tw-max-w-xl tw-h-40 tw-mx-auto"
+            ariaLabel="Upload movie source" [label]="t('admin.createMedia.chooseFile')"
+            [desciption]="t('admin.createMedia.addMovieSourceDescription')" [disabled]="isUploadingSource"
+            (fileChange)="uploadSource($event)">
           </app-file-upload>
           <p class="tw-text-lg tw-font-medium tw-my-2">{{ t('admin.createMedia.addMovieSourceAltLabel') }}</p>
           <app-add-ext-streams (onSelect)="updateExtStreams($event)"></app-add-ext-streams>
@@ -611,11 +609,19 @@
       </div>
     </ng-template>
     <ng-template #mediaFinalStep let-description="description">
-      <div class="tw-flex">
+      <div class="p-scrollbar tw-overflow-y-auto tw-h-[calc(90vh-14rem)] tw-px-6">
         <div class="tw-mx-auto tw-mt-16 tw-text-center">
           <p class="tw-text-2xl tw-font-medium tw-mb-2">{{ t('admin.createMedia.finishLabel') }}</p>
           <p class="tw-text-lg tw-mb-4">{{ description }}</p>
-          <button pButton type="button" [label]="t('admin.createMedia.close')" (click)="closeDialog()">
+        </div>
+      </div>
+      <div class="tw-flex tw-my-4 tw-px-7">
+        <div class="tw-ml-auto">
+          <button pButton type="button" [label]="t('admin.createMedia.previous')"
+            class="p-button-text p-button-secondary p-button-sm" cdkStepperPrevious>
+          </button>
+          <button pButton type="button" [label]="t('admin.createMedia.close')" class="p-button p-button-sm tw-ml-1"
+            (click)="closeDialog()">
           </button>
         </div>
       </div>

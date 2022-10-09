@@ -49,7 +49,6 @@ export class BlobBuilder {
       URL.revokeObjectURL(this.objectUrl_);
     if (this.blob_)
       this.blob_ = undefined;
-    console.log('Blob builder destroyed');
   }
 
 }

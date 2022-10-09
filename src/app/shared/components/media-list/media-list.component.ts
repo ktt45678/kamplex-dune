@@ -1,4 +1,5 @@
 import { Component, OnInit, ChangeDetectionStrategy, Input } from '@angular/core';
+import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
 
 import { Media, Paginated } from '../../../core/models';
 import { MediaType } from '../../../core/enums';
@@ -7,7 +8,13 @@ import { MediaType } from '../../../core/enums';
   selector: 'app-media-list',
   templateUrl: './media-list.component.html',
   styleUrls: ['./media-list.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [
+    {
+      provide: TRANSLOCO_SCOPE,
+      useValue: 'media'
+    }
+  ]
 })
 export class MediaListComponent implements OnInit {
   MediaType = MediaType;
@@ -15,7 +22,6 @@ export class MediaListComponent implements OnInit {
   @Input() mediaList?: Paginated<Media>;
   @Input() itemLimit: number = 30;
   @Input() viewMode: number = 1;
-
   skeletonArray: Array<any>;
 
   constructor() {

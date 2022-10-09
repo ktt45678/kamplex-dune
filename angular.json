@@ -21,6 +21,11 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "allowedCommonJsDependencies": [
+              "@messageformat/core",
+              "flat",
+              "plyr"
+            ],
             "outputPath": "dist/kamplex-v2",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -46,7 +51,7 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "1mb",
+                  "maximumWarning": "1.5mb",
                   "maximumError": "2mb"
                 },
                 {

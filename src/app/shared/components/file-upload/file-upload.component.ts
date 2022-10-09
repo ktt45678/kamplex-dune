@@ -51,6 +51,7 @@ export class FileUploadComponent implements ControlValueAccessor {
 
   setDisabledState(value: boolean): void {
     this.disabled = value;
+    this.ref.markForCheck();
   }
 
   markAsTouched() {

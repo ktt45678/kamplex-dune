@@ -9,6 +9,7 @@ import { SkeletonModule } from 'primeng/skeleton';
 
 import { HomeRoutingModule } from './home-routing.module';
 import { NumberPipeModule } from '../../shared/pipes/number-pipe';
+import { DateTimePipeModule } from '../../shared/pipes/date-time-pipe';
 import { HomeComponent } from './pages/home/home.component';
 import { MediaListModule } from '../../shared/components/media-list';
 import { MediaTopModule } from '../../shared/components/media-top';
@@ -23,6 +24,7 @@ import { FeaturedMediaComponent } from './components/featured-media';
     CommonModule,
     HomeRoutingModule,
     NumberPipeModule,
+    DateTimePipeModule,
     TranslocoModule,
     LazyLoadImageModule,
     SwiperModule,
@@ -35,7 +37,7 @@ import { FeaturedMediaComponent } from './components/featured-media';
   providers: [
     {
       provide: TRANSLOCO_SCOPE,
-      useValue: 'home'
+      useValue: 'media'
     }
   ]
 })

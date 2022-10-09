@@ -6,7 +6,7 @@ import { ConfirmationService, MenuItem } from 'primeng/api';
 import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { Menu } from 'primeng/menu';
 import { first, map, merge, Observable, switchMap, takeUntil, tap } from 'rxjs';
-import { cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash-es';
 import { SourceInfo, Source, Track } from 'plyr';
 
 import { MediaDetails, MediaVideo, MediaSubtitle, TVEpisode, Genre, Production } from '../../../../core/models';
@@ -68,6 +68,7 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
   @ViewChild('subtitleFileUpload') subtitleFileUpload?: FileUploadComponent;
   MediaType = MediaType;
   MediaStatus = MediaStatus;
+  MediaPStatus = MediaPStatus;
   MediaSourceStatus = MediaSourceStatus;
   loadingMedia: boolean = false;
   loadingVideo: boolean = false;
@@ -79,7 +80,6 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
   isUpdatingBackdrop: boolean = false;
   isUploadingSource: boolean = false;
   isAddingSubtitle: boolean = false;
-  isLoadedAllEpisodes: boolean = false;
   isUpdated: boolean = false;
   updateMediaFormChanged: boolean = false;
   showMoviePlayer: boolean = false;
@@ -203,12 +203,10 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
     if (!this.config.data) return;
     const mediaId = this.config.data['_id'];
     showLoading && (this.loadingMedia = true);
-    this.mediaService.findOne(mediaId).subscribe(media => {
+    this.mediaService.findOne(mediaId, { includeHiddenEps: true, includeUnprocessedEps: true }).subscribe(media => {
       this.media = media;
       if (media.type === MediaType.TV) {
         this.episodes = media.tv.episodes;
-        if (media.tv.episodes.length >= media.tv.episodeCount)
-          this.isLoadedAllEpisodes = true;
       }
       this.patchUpdateMediaForm(media);
     }).add(() => {
@@ -217,15 +215,14 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
     });
   }
 
-  loadEpisodes(showLoading: boolean = true, options: { limited: boolean } = { limited: false }): void {
+  loadEpisodes(showLoading: boolean = true): void {
     const mediaType = this.config.data['type'];
     if (mediaType !== MediaType.TV) return;
     const mediaId = this.config.data['_id'];
     showLoading && (this.loadingEpisodes = true);
     this.mediaService.findAllTVEpisodes(mediaId, {
       includeHidden: true,
-      includeUnprocessed: true,
-      limited: options.limited
+      includeUnprocessed: true
     }).subscribe(episodes => {
       this.episodes = episodes;
       showLoading && (this.loadingEpisodes = false);
@@ -603,6 +600,7 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
     const mediaId = this.config.data['_id'];
     this.queueUploadService.addToQueue(mediaId, file, `media/${mediaId}/movie/source`, `media/${mediaId}/movie/source/:id`);
     this.isUploadingSource = true;
+    this.ref.markForCheck();
   }
 
   showSourcePreview(): void {
@@ -670,7 +668,8 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
   updateExtStreams(event: ExtStreamSelected): void {
     const mediaId = this.config.data['_id'];
     this.mediaService.update(mediaId, { extStreams: event.streams }).subscribe({
-      next: () => event.complete()
+      next: () => event.next(),
+      error: () => event.error()
     });
   }
 
@@ -699,14 +698,16 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
     const dialogRef = this.dialogService.open(ConfigureEpisodeComponent, {
       data: { media: { ...this.media }, episode: { ...episode } },
       width: '1280px',
+      height: '100%',
       modal: true,
       showHeader: false,
       dismissableMask: false,
-      contentStyle: { 'padding': 0, 'overflow-y': 'hidden' }
+      contentStyle: { 'padding': 0, 'overflow-y': 'hidden' },
+      styleClass: '!tw-max-h-full'
     });
     dialogRef.onClose.pipe(first()).subscribe((updated) => {
       if (!updated || !this.media) return;
-      this.loadEpisodes(true, { limited: !this.isLoadedAllEpisodes });
+      this.loadEpisodes(true);
     });
     fixNestedDialogFocus(dialogRef, this.dialogRef, this.dialogService, this.renderer, this.document);
   }
@@ -724,8 +725,10 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
 
   deleteEpisode(episode: TVEpisode): void {
     const mediaId = this.config.data['_id'];
+    this.loadingEpisodes = true;
+    this.ref.markForCheck();
     this.mediaService.deleteTVEpisode(mediaId, episode._id).subscribe({
-      next: () => this.loadEpisodes(true, { limited: !this.isLoadedAllEpisodes })
+      next: () => this.loadEpisodes(true)
     }).add(() => this.ref.markForCheck());
   }
 
@@ -769,11 +772,6 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
       );
       return menuItems;
     }), first());
-  }
-
-  loadAllEpisodes(): void {
-    this.loadEpisodes();
-    this.isLoadedAllEpisodes = true;
   }
 
   loadTranslations(): void {

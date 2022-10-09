@@ -5,14 +5,14 @@ import { TranslocoService } from '@ngneat/transloco';
 import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { addDays } from 'date-fns';
 import { EMPTY, first, Observable, switchMap, takeUntil } from 'rxjs';
-import { cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash-es';
 
 import { AddSubtitleComponent } from '../add-subtitle';
 import { StepperComponent } from '../../../../shared/components/stepper';
 import { FileUploadComponent } from '../../../../shared/components/file-upload';
 import { ImageEditorComponent } from '../../../../shared/dialogs/image-editor';
 import { AddTVEpisodeDto, DropdownOptionDto, UpdateTVEpisodeDto } from '../../../../core/dto/media';
-import { MediaDetails, MediaSubtitle, TVEpisode, TVEpisodeDetails } from '../../../../core/models';
+import { MediaDetails, MediaSubtitle, ShortDate, TVEpisode, TVEpisodeDetails } from '../../../../core/models';
 import { DestroyService, ItemDataService, MediaService, QueueUploadService } from '../../../../core/services';
 import { shortDate } from '../../../../core/validators';
 import { ShortDateForm } from '../../../../core/interfaces/forms';
@@ -107,32 +107,27 @@ export class CreateEpisodeComponent implements OnInit {
   patchCreateEpisodeForm(): void {
     const media: MediaDetails = this.config.data['media'];
     const episodes: TVEpisode[] = this.config.data['episodes'];
-    let lastAirDate: Date | null = null;
-    let lastEpisodeNumber: number;
-    let lastEpisodeRuntime: number;
-    if (episodes.length && episodes.length >= media.tv.episodeCount) {
+    let newAirDate: ShortDate;
+    let newEpisodeNumber;
+    let newEpisodeRuntime;
+    if (episodes?.length) {
       // Based on last created episode
-      //const lastEpisode = episodes.reduce((prev, current) => (prev.episodeNumber > current.episodeNumber) ? prev : current);
-      const lastEpisode = episodes[episodes.length - 1];
-      lastAirDate = new Date(lastEpisode.airDate.year, lastEpisode.airDate.month - 1, lastEpisode.airDate.day);
-      lastEpisodeNumber = lastEpisode.episodeNumber;
-      lastEpisodeRuntime = lastEpisode.runtime;
+      const lastEpisode = episodes.reduce((prev, current) => (prev.episodeNumber > current.episodeNumber) ? prev : current);
+      //const lastEpisode = episodes[episodes.length - 1];
+      const lastAirDate = new Date(lastEpisode.airDate.year, lastEpisode.airDate.month - 1, lastEpisode.airDate.day);
+      const newAirDate_ = addDays(lastAirDate, 7);
+      newAirDate = { day: newAirDate_.getDate(), month: newAirDate_.getMonth() + 1, year: newAirDate_.getFullYear() };
+      newEpisodeNumber = lastEpisode.episodeNumber + 1;
+      newEpisodeRuntime = lastEpisode.runtime;
     } else {
-      // Based on media general info
-      if (media.tv.lastAirDate)
-        lastAirDate = new Date(media.tv.lastAirDate.year, media.tv.lastAirDate.month - 1, media.tv.lastAirDate.day);
-      lastEpisodeNumber = media.tv.episodeCount + 1;
-      lastEpisodeRuntime = media.runtime;
+      newAirDate = { ...media.releaseDate };
+      newEpisodeNumber = 1;
+      newEpisodeRuntime = media.runtime;
     }
-    const nextWeekDate = lastAirDate ? addDays(lastAirDate, 7) : new Date();
     this.createEpisodeForm.patchValue({
-      episodeNumber: lastEpisodeNumber + 1,
-      runtime: lastEpisodeRuntime,
-      airDate: {
-        day: nextWeekDate.getDate(),
-        month: nextWeekDate.getMonth() + 1,
-        year: nextWeekDate.getFullYear()
-      }
+      episodeNumber: newEpisodeNumber,
+      runtime: newEpisodeRuntime,
+      airDate: newAirDate
     });
   }
 
@@ -195,6 +190,8 @@ export class CreateEpisodeComponent implements OnInit {
   }
 
   onUpdateEpisodeFormSubmit(): void {
+    if (!this.updateFormChanged)
+      return this.stepper?.next();
     if (!this.episode || this.updateEpisodeForm.invalid) return;
     this.updateEpisodeForm.disable();
     const mediaId = this.config.data['media']['_id'];
@@ -217,6 +214,7 @@ export class CreateEpisodeComponent implements OnInit {
         this.updateEpisodeInitValue = cloneDeep(this.updateEpisodeForm.value);
         this.detectUpdateEpisodeFormChange();
         this.ref.markForCheck();
+        this.stepper?.next();
       }
     }).add(() => {
       this.updateEpisodeForm.enable();
@@ -294,13 +292,15 @@ export class CreateEpisodeComponent implements OnInit {
     const episodeId = this.config.data['episode']['_id'];
     this.queueUploadService.addToQueue(`${mediaId}:${episodeId}`, file, `media/${mediaId}/tv/episodes/${episodeId}/source`, `media/${mediaId}/tv/episodes/${episodeId}/source/:id`);
     this.isUploadingSource = true;
+    this.ref.markForCheck();
   }
 
   updateExtStreams(event: ExtStreamSelected): void {
     if (!this.episode) return;
     const mediaId = this.config.data['media']['_id'];
     this.mediaService.updateTVEpisode(mediaId, this.episode._id, { extStreams: event.streams }).subscribe({
-      next: () => event.complete()
+      next: () => event.next(),
+      error: () => event.error()
     });
   }
 

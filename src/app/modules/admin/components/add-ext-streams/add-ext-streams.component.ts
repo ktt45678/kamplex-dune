@@ -32,7 +32,7 @@ export class AddExtStreamsComponent implements OnInit {
 
   constructor(private ref: ChangeDetectorRef, private mediaService: MediaService) {
     this.findExtMediaForm = new FormGroup<FindExtMediaForm>({
-      query: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(3)] })
+      query: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(2)] })
     });
   }
 
@@ -97,20 +97,26 @@ export class AddExtStreamsComponent implements OnInit {
     this.isUpdatingStreamObj[providerValue] = true;
     this.ref.markForCheck();
     const onComplete = () => {
-      this.steps[providerValue] = 3;
       this.isUpdatingStreamObj[providerValue] = false;
-      this.selectedStreamIdObj[providerValue] = episode.id;
       this.ref.markForCheck();
+    };
+    const onNext = () => {
+      this.steps[providerValue] = 3;
+      this.selectedStreamIdObj[providerValue] = episode.id;
+      onComplete();
+    };
+    const onError = () => {
+      onComplete();
     };
     switch (providerValue) {
       case ExtMediaProvider.FLIX_HQ:
-        this.onSelect.emit({ streams: { flixHQId: `${episode.id}#${media.id}` }, complete: onComplete });
+        this.onSelect.emit({ streams: { flixHQId: `${episode.id}#${media.id}` }, next: onNext, error: onError });
         break;
       case ExtMediaProvider.ZORO:
-        this.onSelect.emit({ streams: { zoroId: episode.id }, complete: onComplete });
+        this.onSelect.emit({ streams: { zoroId: episode.id }, next: onNext, error: onError });
         break;
       case ExtMediaProvider.GOGOANIME:
-        this.onSelect.emit({ streams: { gogoanimeId: episode.id }, complete: onComplete });
+        this.onSelect.emit({ streams: { gogoanimeId: episode.id }, next: onNext, error: onError });
         break;
     }
   }

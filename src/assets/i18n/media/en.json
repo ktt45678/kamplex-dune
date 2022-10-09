@@ -1,9 +1,19 @@
 {
-  "play": "Play",
-  "playlist": "Playlist",
-  "details": {
+  "actions": {
+    "play": "Play",
+    "details": "Details",
+    "playlist": "Playlist"
+  },
+  "list": {
     "runtimeValue": "{{ runtime }} min",
     "noGenres": "No genres found",
+    "episodeCountValue": "{{ episodeCount }} episodes",
+    "noResults": "No results were found"
+  },
+  "details": {
+    "information": "Information",
+    "runtimeValue": "{{ media.list.runtimeValue }}",
+    "noGenres": "{{ media.list.noGenres }}",
     "overview": "Overview",
     "productions": "Productions",
     "noProductions": "No productions found",
@@ -11,14 +21,16 @@
     "videos": "Videos",
     "noVideos": "No videos found",
     "episodeCountValue": "{{ episodeCount }} episodes",
-    "originalTitle": "Original title"
+    "noEpisodes": "No episodes found",
+    "originalTitle": "Original title",
+    "similarMedia": "Similar shows"
   },
   "video": {
     "name": "Name",
     "untitled": "Untitled"
   },
   "filter": {
-    "search": "Search (3+ characters)",
+    "search": "Search (2 or more characters)",
     "genre": "Genres",
     "sort": "Sort",
     "type": "Type",
@@ -32,12 +44,14 @@
     "tvShow": "TV Show"
   },
   "episode": {
+    "unnamedEpisode": "Episode ",
     "episodeNumber": "Episode number",
     "name": "Name",
     "overview": "Overview",
     "runtimeValue": "{{ runtime }} min",
     "airDate": "Air date",
-    "status": "Status"
+    "status": "Status",
+    "showAllEpisodes": "Show all episodes"
   },
   "sortOptions": {
     "nameAscending": "Name (A-Z)",

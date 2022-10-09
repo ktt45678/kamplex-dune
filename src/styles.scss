@@ -1,5 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
-@import url("https://fonts.sandbox.google.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24..48,300,0..1,0");
+@import url("https://fonts.sandbox.google.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24..48,300,0..1,0");
 @import "./assets/css/material-symbols/style.css";
 @import "../node_modules/plyr/dist/plyr.css";
 @import "../node_modules/primeicons/primeicons.css";
@@ -41,11 +41,10 @@ a:focus {
   outline: none;
 }
 
-/*
-.ng-lazyloaded {
-  transition: opacity 0.2s;
+p {
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
-*/
 
 .ng-lazyloading {
   opacity: 0;
@@ -53,8 +52,6 @@ a:focus {
 
 .ng-lazyloaded + .ng-lazyload-placeholder {
   display: none;
-  //opacity: 0;
-  //transition: opacity 0.2s;
 }
 
 @layer components {

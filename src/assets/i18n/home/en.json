@@ -1,11 +1,1 @@
-{
-  "media": {
-    "runtimeValue": "{{ runtime }} min",
-    "noGenres": "No genres found",
-    "episodeCountValue": "{{ episodeCount }} eps",
-    "play": "Play",
-    "details": "Details",
-    "playlist": "Playlist",
-    "noResults": "No results were found"
-  }
-}
+{}

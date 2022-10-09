@@ -26,10 +26,11 @@
     "tvShows": "TV Shows",
     "signIn": "Sign in",
     "signUp": "Sign up",
-    "search": "Search"
+    "search": "Search",
+    "searchPlaceholder": "Search..."
   },
   "validationErrors": {
-    "general": {
+    "auth": {
       "username": {
         "required": "Username is required",
         "minlength": "Username must be at least 3 characters",
@@ -42,7 +43,8 @@
       "password": {
         "required": "Password is required",
         "minlength": "Password must be at least 8 characters",
-        "maxlength": "Password must not be longer than 128 characters"
+        "maxlength": "Password must not be longer than 128 characters",
+        "pattern": "Password must contain at least 1 uppercase character, 1 lowercase character and 1 number"
       },
       "birthdate": {
         "required": "Date of birth is required",
@@ -52,33 +54,48 @@
     },
     "signIn": {
       "email": {
-        "required": "{{ validationErrors.general.email.required }}",
-        "email": "{{ validationErrors.general.email.email }}"
+        "required": "{{ validationErrors.auth.email.required }}",
+        "email": "{{ validationErrors.auth.email.email }}"
       },
       "password": {
-        "required": "{{ validationErrors.general.password.required }}",
-        "maxlength": "{{ validationErrors.general.password.maxlength }}"
+        "required": "{{ validationErrors.auth.password.required }}",
+        "maxlength": "{{ validationErrors.auth.password.maxlength }}"
       }
     },
     "signUp": {
       "username": {
-        "required": "{{ validationErrors.general.username.required }}",
-        "maxlength": "{{ validationErrors.general.username.maxlength }}",
-        "minlength": "{{ validationErrors.general.username.minlength }}"
+        "required": "{{ validationErrors.auth.username.required }}",
+        "maxlength": "{{ validationErrors.auth.username.maxlength }}",
+        "minlength": "{{ validationErrors.auth.username.minlength }}"
       },
       "email": {
-        "required": "{{ validationErrors.general.email.required }}",
-        "email": "{{ validationErrors.general.email.email }}"
+        "required": "{{ validationErrors.auth.email.required }}",
+        "email": "{{ validationErrors.auth.email.email }}"
       },
       "password": {
-        "required": "{{ validationErrors.general.password.required }}",
-        "maxlength": "{{ validationErrors.general.password.maxlength }}",
-        "minlength": "{{ validationErrors.general.password.minlength }}"
+        "required": "{{ validationErrors.auth.password.required }}",
+        "maxlength": "{{ validationErrors.auth.password.maxlength }}",
+        "minlength": "{{ validationErrors.auth.password.minlength }}",
+        "pattern": "{{ validationErrors.auth.password.pattern }}"
       },
       "birthdate": {
-        "required": "{{ validationErrors.general.birthdate.required }}",
-        "validShortDate": "{{ validationErrors.general.birthdate.validShortDate }}",
-        "shortDateBefore": "{{ validationErrors.general.birthdate.shortDateBefore }}"
+        "required": "{{ validationErrors.auth.birthdate.required }}",
+        "validShortDate": "{{ validationErrors.auth.birthdate.validShortDate }}",
+        "shortDateBefore": "{{ validationErrors.auth.birthdate.shortDateBefore }}"
+      }
+    },
+    "forgotPassword": {
+      "email": {
+        "required": "{{ validationErrors.auth.email.required }}",
+        "email": "{{ validationErrors.auth.email.email }}"
+      }
+    },
+    "resetPassword": {
+      "password": {
+        "required": "{{ validationErrors.auth.password.required }}",
+        "maxlength": "{{ validationErrors.auth.password.maxlength }}",
+        "minlength": "{{ validationErrors.auth.password.minlength }}",
+        "pattern": "{{ validationErrors.auth.password.pattern }}"
       }
     },
     "createGenre": {
@@ -249,6 +266,14 @@
     "uploadStillTooLarge": "{{ errorMessages.uploadPosterTooLarge }}",
     "uploadStillUnsuported": "{{ errorMessages.uploadPosterUnsuported }}",
     "uploadSubtitleTooLarge": "Your file is too large, recommended size is 500KB or less"
+  },
+  "pageTitles": {
+    "home": "Home",
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "confirmEmail": "Confirm Email",
+    "forgotPassword": "Forgot Password",
+    "resetPassword": "Reset Password"
   },
   "window": {
     "leaveSite": "Leave site? Changes you made may not be saved."

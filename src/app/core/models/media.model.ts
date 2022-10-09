@@ -29,7 +29,7 @@ export interface Media {
   smallBackdropUrl?: string;
   fullBackdropUrl?: string;
   backdropColor?: number;
-  pStatus: number;
+  pStatus?: number;
   createdAt: Date;
   updatedAt: Date;
   _translated?: boolean;

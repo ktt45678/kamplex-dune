@@ -9,7 +9,7 @@ module.exports = {
   css: [`dist/${defaultProject}/*.css`],
   defaultExtractor: (content) => content.match(/[\w-/:]+(?<!:)/g) || [],
   safelist: {
-    standard: ['tw-', 'plyr']
+    standard: [/^((?!ms-).)*$/]
   },
   output: `dist/${defaultProject}`
 };

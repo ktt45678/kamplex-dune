@@ -4,8 +4,9 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { TranslocoService, TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { ConfirmationService } from 'primeng/api';
-import { first, tap, takeUntil, takeWhile } from 'rxjs';
-import { cloneDeep, isEqual } from 'lodash';
+import { first, map, switchMap, takeUntil } from 'rxjs';
+import { cloneDeep } from 'lodash-es';
+import { Source, SourceInfo, Track } from 'plyr';
 
 import { DropdownOptionDto, UpdateTVEpisodeDto } from '../../../../core/dto/media';
 import { DestroyService, ItemDataService, MediaService, QueueUploadService } from '../../../../core/services';
@@ -16,11 +17,13 @@ import { FileUploadComponent } from '../../../../shared/components/file-upload';
 import { AddSubtitleComponent } from '../add-subtitle';
 import { ImageEditorComponent } from '../../../../shared/dialogs/image-editor';
 import { AppErrorCode, MediaSourceStatus } from '../../../../core/enums';
-import { dataURItoBlob, translocoEscape, fixNestedDialogFocus, replaceDialogHideMethod } from '../../../../core/utils';
+import { dataURItoBlob, translocoEscape, fixNestedDialogFocus, replaceDialogHideMethod, detectFormChange } from '../../../../core/utils';
 import {
   IMAGE_PREVIEW_SIZE, UPLOAD_STILL_ASPECT_HEIGHT, UPLOAD_STILL_ASPECT_WIDTH, UPLOAD_STILL_MIN_HEIGHT,
   UPLOAD_STILL_MIN_WIDTH, UPLOAD_STILL_SIZE, UPLOAD_SUBTITLE_EXT, UPLOAD_SUBTITLE_SIZE
 } from '../../../../../environments/config';
+import { ExtStreamSelected } from '../../../../core/interfaces/events';
+
 
 interface UpdateEpisodeForm {
   episodeNumber: FormControl<number>;
@@ -57,6 +60,7 @@ export class ConfigureEpisodeComponent implements OnInit, AfterViewInit {
   MediaSourceStatus = MediaSourceStatus;
   loadingEpisode: boolean = false;
   episode?: TVEpisodeDetails;
+  previewSource?: SourceInfo;
   updateEpisodeForm: FormGroup<UpdateEpisodeForm>;
   addSubtitleLanguages?: DropdownOptionDto[];
   addSubtitleForm: FormGroup<AddSubtitleForm>;
@@ -66,6 +70,7 @@ export class ConfigureEpisodeComponent implements OnInit, AfterViewInit {
   isUpdatingStill: boolean = false;
   isUpdated: boolean = false;
   isUploadingSource: boolean = false;
+  showEpisodePlayer: boolean = false;
   stillPreviewName?: string;
   stillPreviewUri?: string;
   days: DropdownOptionDto[] = [];
@@ -149,7 +154,11 @@ export class ConfigureEpisodeComponent implements OnInit, AfterViewInit {
       next: (episode) => {
         this.episode = episode;
         this.updateEpisodeInitValue = cloneDeep(this.updateEpisodeForm.value);
-        this.detectFormChange(this.updateEpisodeForm, this.updateEpisodeInitValue, this.updateEpisodeFormChanged);
+        detectFormChange(this.updateEpisodeForm, this.updateEpisodeInitValue, () => {
+          this.updateEpisodeFormChanged = false;
+        }, () => {
+          this.updateEpisodeFormChanged = true;
+        }).pipe(takeUntil(this.destroyService)).subscribe();
         this.isUpdated = true;
       }
     }).add(() => {
@@ -160,7 +169,11 @@ export class ConfigureEpisodeComponent implements OnInit, AfterViewInit {
 
   onUpdateEpisodeFormReset(): void {
     this.updateEpisodeForm.reset(this.updateEpisodeInitValue);
-    this.detectFormChange(this.updateEpisodeForm, this.updateEpisodeInitValue, this.updateEpisodeFormChanged);
+    detectFormChange(this.updateEpisodeForm, this.updateEpisodeInitValue, () => {
+      this.updateEpisodeFormChanged = false;
+    }, () => {
+      this.updateEpisodeFormChanged = true;
+    }).pipe(takeUntil(this.destroyService)).subscribe();
   }
 
   onInputStillChange(event: Event): void {
@@ -230,19 +243,11 @@ export class ConfigureEpisodeComponent implements OnInit, AfterViewInit {
       visibility: episode.visibility
     });
     this.updateEpisodeInitValue = cloneDeep(this.updateEpisodeForm.value);
-    this.detectFormChange(this.updateEpisodeForm, this.updateEpisodeInitValue, this.updateEpisodeFormChanged);
-  }
-
-  detectFormChange(form: FormGroup, initValue: any, isChanged: boolean): void {
-    isChanged = false;
-    form.valueChanges.pipe(
-      tap(() => {
-        const formChanged = !isEqual(form.value, initValue);
-        isChanged = formChanged;
-      }),
-      takeWhile(() => !isChanged),
-      takeUntil(this.destroyService)
-    ).subscribe();
+    detectFormChange(this.updateEpisodeForm, this.updateEpisodeInitValue, () => {
+      this.updateEpisodeFormChanged = false;
+    }, () => {
+      this.updateEpisodeFormChanged = true;
+    }).pipe(takeUntil(this.destroyService)).subscribe();
   }
 
   loadSubtitleFormData(episode: TVEpisodeDetails): void {
@@ -311,6 +316,43 @@ export class ConfigureEpisodeComponent implements OnInit, AfterViewInit {
     const episodeId = this.config.data['episode']['_id'];
     this.queueUploadService.addToQueue(`${mediaId}:${episodeId}`, file, `media/${mediaId}/tv/episodes/${episodeId}/source`, `media/${mediaId}/tv/episodes/${episodeId}/source/:id`);
     this.isUploadingSource = true;
+    this.ref.markForCheck();
+  }
+
+  showSourcePreview(): void {
+    this.showEpisodePlayer = true;
+    const mediaId = this.config.data['media']['_id'];
+    const episodeNumber = this.config.data['episode']['episodeNumber'];
+    this.translocoService.selectTranslation('languages').pipe(switchMap(t => {
+      return this.mediaService.findTVStreams(mediaId, episodeNumber).pipe(map(movie => ({ movie, t })));
+    })).subscribe(({ movie, t }) => {
+      const sources: Source[] = [];
+      const tracks: Track[] = [];
+      const selectedCodec = 1;
+      movie.streams.forEach(stream => {
+        if (stream.codec === selectedCodec) {
+          sources.push({
+            src: stream.src,
+            type: stream.mimeType,
+            provider: 'html5',
+            size: stream.quality
+          });
+        }
+      });
+      movie.subtitles.forEach(subtitle => {
+        tracks.push({
+          kind: 'subtitles',
+          label: t[subtitle.language],
+          srcLang: subtitle.language,
+          src: subtitle.src
+        });
+      });
+      this.previewSource = {
+        type: 'video',
+        sources: sources,
+        tracks: tracks
+      };
+    });
   }
 
   deleteSource(event: Event): void {
@@ -337,6 +379,15 @@ export class ConfigureEpisodeComponent implements OnInit, AfterViewInit {
           this.ref.markForCheck();
         });
       }
+    });
+  }
+
+  updateExtStreams(event: ExtStreamSelected): void {
+    const mediaId = this.config.data['media']['_id'];
+    const episodeId = this.config.data['episode']['_id'];
+    this.mediaService.updateTVEpisode(mediaId, episodeId, { extStreams: event.streams }).subscribe({
+      next: () => event.next(),
+      error: () => event.error()
     });
   }
 

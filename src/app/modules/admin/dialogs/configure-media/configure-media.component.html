@@ -5,8 +5,7 @@
     </button>
   </div>
   <div *ngIf="media; else loadingSpinner">
-    <app-vertical-tab panelStyleClass="tw-max-w-8xl tw-mx-auto tw-my-8" contentStyleClass="tw-ml-8 tw-mr-24 md:tw-ml-0"
-      [fullContentWidth]="true">
+    <app-vertical-tab panelStyleClass="tw-max-w-8xl tw-mx-auto tw-my-8" contentStyleClass="tw-ml-8 tw-mr-24 md:tw-ml-0">
       <!--General info-->
       <ng-template appTabPanel [label]="t('admin.configureMedia.general')" id="general">
         <p class="tw-text-white tw-font-bold tw-text-2xl">{{ t('admin.configureMedia.general') }}</p>
@@ -237,17 +236,6 @@
                 </div>
               </div>
             </div>
-            <!--div class="tw-flex tw-my-4">
-              <div class="tw-ml-auto">
-                <button pButton type="button" [label]="t('admin.updateMedia.cancel')"
-                  [disabled]="!updateMediaFormChanged" (click)="onUpdateMediaFormReset()"
-                  class="p-button-text p-button-secondary p-button-sm">
-                </button>
-                <button pButton type="submit" [label]="t('admin.updateMedia.submit')"
-                  class="p-button-success p-button-sm tw-ml-1" [disabled]="isUpdatingMedia || !updateMediaFormChanged">
-                </button>
-              </div>
-            </div-->
           </form>
         </div>
         <ng-template appPanelToast tabId="general"
@@ -272,21 +260,21 @@
         <div class="tw-flex tw-flex-wrap tw-mt-3">
           <div class="tw-w-full md:tw-w-1/4">
             <p class="tw-text-white tw-text-base tw-font-medium tw-text-center">{{ t('admin.media.poster') }}</p>
-            <div class="tw-aspect-w-2 tw-aspect-h-3 tw-rounded-xl tw-overflow-hidden tw-mt-2">
+            <div class="tw-aspect-w-2 tw-aspect-h-3 tw-rounded-xl tw-mt-2">
               <ng-container *ngIf="!posterPreviewName; else posterPreview">
-                <img *ngIf="media.thumbnailPosterUrl; else noPoster" class="tw-object-cover"
+                <img *ngIf="media.thumbnailPosterUrl; else noPoster" class="tw-object-cover tw-rounded-xl"
                   [lazyLoad]="media.thumbnailPosterUrl" [alt]="media.title"
                   errorImage="assets/images/media-poster-error-md.png">
-                <div *ngIf="media.posterColor" class="ng-lazyload-placeholder tw-w-full tw-h-full"
+                <div *ngIf="media.posterColor" class="ng-lazyload-placeholder tw-w-full tw-h-full tw-rounded-xl"
                   [ngStyle]="{ 'background-color': media.posterColor | rgbColor }">
                 </div>
                 <ng-template #noPoster>
-                  <img class="tw-object-cover" src="assets/images/media-poster-md.png" loading="lazy"
+                  <img class="tw-object-cover tw-rounded-xl" src="assets/images/media-poster-md.png" loading="lazy"
                     [alt]="media.title">
                 </ng-template>
               </ng-container>
               <ng-template #posterPreview>
-                <img *ngIf="posterPreviewUri" class="tw-object-cover" [src]="posterPreviewUri">
+                <img *ngIf="posterPreviewUri" class="tw-object-cover tw-rounded-xl" [src]="posterPreviewUri">
               </ng-template>
             </div>
             <!--Upload and delete the poster-->
@@ -322,19 +310,19 @@
               t('admin.media.backdrop') }}</p>
             <div class="tw-aspect-w-16 tw-aspect-h-9 tw-rounded-xl tw-overflow-hidden tw-mt-2">
               <ng-container *ngIf="!backdropPreviewName; else backdropPreview">
-                <img *ngIf="media.thumbnailBackdropUrl; else noBackdrop" class="tw-object-cover"
+                <img *ngIf="media.thumbnailBackdropUrl; else noBackdrop" class="tw-object-cover tw-rounded-xl"
                   [lazyLoad]="media.thumbnailBackdropUrl" [alt]="media.title"
                   errorImage="assets/images/media-backdrop-error-md.png">
-                <div *ngIf="media.backdropColor" class="ng-lazyload-placeholder tw-w-full tw-h-full"
+                <div *ngIf="media.backdropColor" class="ng-lazyload-placeholder tw-w-full tw-h-full tw-rounded-xl"
                   [ngStyle]="{ 'background-color': media.backdropColor | rgbColor }">
                 </div>
                 <ng-template #noBackdrop>
-                  <img class="tw-object-cover" src="assets/images/media-backdrop-md.png" loading="lazy"
+                  <img class="tw-object-cover tw-rounded-xl" src="assets/images/media-backdrop-md.png" loading="lazy"
                     [alt]="media.title">
                 </ng-template>
               </ng-container>
               <ng-template #backdropPreview>
-                <img *ngIf="backdropPreviewUri" class="tw-object-cover" [src]="backdropPreviewUri">
+                <img *ngIf="backdropPreviewUri" class="tw-object-cover tw-rounded-xl" [src]="backdropPreviewUri">
               </ng-template>
             </div>
             <!--Upload and delete the backdrop-->
@@ -500,13 +488,13 @@
             }}</p>
           <p class="tw-text-base tw-font-medium tw-mt-3 tw-mb-2">{{ t('admin.configureMedia.addMovieSourceLabel') }}</p>
           <ng-container [ngSwitch]="media.movie.status">
-            <div *ngSwitchCase="MediaSourceStatus.PENDING">
+            <ng-container *ngSwitchCase="MediaSourceStatus.PENDING">
               <app-file-upload accept=".mp4, .mkv, .webm, .m2ts" [label]="t('admin.addMediaSource.chooseFile')"
                 [disabled]="isUploadingSource" [desciption]="t('admin.configureMedia.addMovieSourceDescription')"
                 styleClass="tw-max-w-xl tw-h-40 tw-mx-auto" ariaLabel="Upload movie source"
                 (fileChange)="uploadSource($event)">
               </app-file-upload>
-            </div>
+            </ng-container>
             <div *ngSwitchCase="MediaSourceStatus.PROCESSING" class="tw-text-center">
               <i class="ms ms-hourglass-empty tw-text-5xl"></i>
               <p class="tw-text-lg tw-mt-2">{{ t('admin.media.statusProcessingDescription') }}</p>
@@ -525,7 +513,7 @@
                 <p class="tw-text-base">{{ t('admin.media.statusDoneDescription') }}</p>
                 <div class="tw-ml-auto">
                   <ng-container *ngIf="!showMoviePlayer; then sourcePreviewButton"></ng-container>
-                  <button pButton role=" dialog" type="button" class="p-button-danger p-button-outlined tw-ml-2"
+                  <button pButton type="button" class="p-button-danger p-button-outlined tw-ml-2"
                     [label]="t('admin.configureMedia.deleteSource')" (click)="deleteSource($event)">
                   </button>
                 </div>
@@ -605,16 +593,20 @@
                     t('admin.episode.runtimeValue', { runtime: episode.runtime })
                     }}</td>
                   <td class="tw-w-40 tw-text-sm">{{ episode.airDate | shortDate }}</td>
-                  <td class="tw-w-24 tw-text-sm" [ngSwitch]="episode.status">
-                    <ng-container *ngSwitchCase="MediaSourceStatus.PENDING">{{ t('admin.media.statusPending') }}
-                    </ng-container>
-                    <ng-container *ngSwitchCase="MediaSourceStatus.PROCESSING">{{ t('admin.media.statusProcessing') }}
-                    </ng-container>
-                    <ng-container *ngSwitchCase="MediaSourceStatus.READY">{{ t('admin.media.statusReady') }}
-                    </ng-container>
-                    <ng-container *ngSwitchCase="MediaSourceStatus.DONE">{{ t('admin.media.statusDone') }}
-                    </ng-container>
-                    <ng-container *ngSwitchDefault>{{ t('admin.media.statusUnknown') }}</ng-container>
+                  <td class="tw-w-24 tw-text-sm" [ngSwitch]="episode.pStatus">
+                    <div class="tw-text-center">
+                      <ng-container *ngSwitchCase="MediaPStatus.PENDING">
+                        <i class="ms ms-draft ms-opsz-lg tw-text-4xl" [pTooltip]="t('admin.media.statusPending')"></i>
+                      </ng-container>
+                      <ng-container *ngSwitchCase="MediaPStatus.PROCESSING">
+                        <i class="ms ms-hourglass-empty ms-opsz-lg tw-text-4xl"
+                          [pTooltip]="t('admin.media.statusProcessing')"></i>
+                      </ng-container>
+                      <ng-container *ngSwitchCase="MediaPStatus.DONE">
+                        <i class="ms ms-check-circle ms-opsz-lg tw-text-4xl"
+                          [pTooltip]="t('admin.media.statusDone')"></i>
+                      </ng-container>
+                    </div>
                   </td>
                   <td>
                     <button pButton icon="ms ms-settings"
@@ -629,11 +621,6 @@
                 </tr>
               </ng-template>
             </p-table>
-            <div class="tw-text-center tw-mt-3">
-              <button *ngIf="!isLoadedAllEpisodes" pButton type="button" class="p-button-secondary p-button-sm"
-                [label]="t('admin.configureMedia.showAllEpisodes')" (click)="loadAllEpisodes()">
-              </button>
-            </div>
           </ng-container>
           <ng-template #noEpisodes>
             <p class="tw-text-gray-400 tw-text-base tw-italic">
@@ -654,6 +641,6 @@
 </ng-container>
 <ng-template #loadingSpinner>
   <div class="tw-flex tw-justify-center tw-items-center tw-h-full">
-    <p-progressSpinner></p-progressSpinner>
+    <p-progressSpinner strokeWidth="3px"></p-progressSpinner>
   </div>
 </ng-template>

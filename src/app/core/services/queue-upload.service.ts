@@ -165,8 +165,8 @@ export class QueueUploadService {
                   observer2.complete();
                 }
               }
-            }), finalize(() => console.log('chunk upload done')));
-        })).pipe(finalize(() => console.log('file uploaded'))).subscribe();
+            }));
+        })).subscribe();
         return () => {
           if (queuedUploadFile.status !== QueueUploadStatus.UPLOADING) return;
           chunkUploadSub.unsubscribe();
@@ -174,7 +174,7 @@ export class QueueUploadService {
           this._uploadQueue.next(this._files);
           observer2.complete();
         }
-      }).pipe(finalize(() => console.log('emit session id and fileId done')));
+      });
     }), switchMap(data => {
       const completeUrl = queuedUploadFile.completeUrl.replace(':id', data.sessionId);
       return this.http.post(completeUrl, {

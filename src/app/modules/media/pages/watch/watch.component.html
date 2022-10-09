@@ -1,10 +1,12 @@
 <div class="tw-max-w-8xl tw-mx-auto tw-my-8">
-  <div class="tw-flex tw-flex-wrap">
-    <div class="tw-w-9/12">
+  <div class="tw-flex tw-flex-wrap md:tw-flex-nowrap">
+    <div class="tw-w-full md:tw-w-9/12">
       <app-video-player [source]="playerSource"></app-video-player>
     </div>
-    <div class="tw-w-3/12 tw-pl-6">
-      <app-media-top [loading]="true"></app-media-top>
+    <div class="tw-w-full md:tw-w-3/12 md:tw-ml-4 tw-mt-4 md:tw-mt-0" *ngIf="media">
+      <app-episode-list *ngIf="media.type === MediaType.TV" [media]="media" [episodeList]="media.tv.episodes"
+        stillStyleClass="tw-w-full xs:tw-w-2/5" infoStyleClass="tw-w-full xs:tw-w-3/5 sm:tw-pl-2">
+      </app-episode-list>
     </div>
   </div>
 </div>

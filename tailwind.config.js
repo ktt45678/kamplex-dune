@@ -13,6 +13,7 @@ module.exports = {
   ],
   corePlugins: {
     preflight: false,
+    aspectRatio: false
   },
   darkMode: 'class', // or 'media' or 'class'
   theme: {
@@ -45,6 +46,7 @@ module.exports = {
           '625': '#393939',
           '650': '#424242',
           '675': '#464646',
+          '725': '#303030',
           '850': '#212121',
           '875': '#1e1e1e'
         }
@@ -64,10 +66,14 @@ module.exports = {
         'fill-available': '-webkit-fill-available'
       },
       maxWidth: {
+        '115px': '115px',
+        '32': '128px',
         '8xl': '90rem'
       },
       spacing: {
+        '1.75': '0.4rem',
         '34': '8.5rem',
+        '76': '19rem',
         '30px': '30px'
       },
       transformOrigin: {
@@ -92,7 +98,6 @@ module.exports = {
     require('@tailwindcss/aspect-ratio'),
     require('@tailwindcss/line-clamp'),
     require('@tailwindcss/typography'),
-    require('@vidstack/player/tailwind.cjs'),
     plugin(function ({ addComponents, addUtilities, addVariant, config, e }) {
       addComponents({
         '.vertical-tab-menu': {

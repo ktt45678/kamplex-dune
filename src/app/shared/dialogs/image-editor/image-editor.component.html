@@ -1,7 +1,8 @@
 <ng-container *transloco="let t; loadingTpl: loadingSpinner">
   <ng-container *ngIf="!loadedImage; then loadingSpinner"></ng-container>
-  <div [hidden]="!loadedImage">
-    <image-cropper [maintainAspectRatio]="true" [aspectRatio]="aspectRatio" [cropperMinWidth]="minWidth"
+  <div class="tw-flex" [hidden]="!loadedImage">
+    <image-cropper [style]="{'max-width': '100%', 'max-height': '500px'}" class="tw-mx-auto"
+      [maintainAspectRatio]="true" [aspectRatio]="aspectRatio" [cropperMinWidth]="minWidth"
       [cropperMinHeight]="minHeight" [imageFile]="imageFile" [autoCrop]="false" alignImage="center"
       [transform]="transform" fixAspectRatioBy="width" [fixAspectRatioWidth]="aspectRatioWidth"
       [fixAspectRatioHeight]="aspectRatioHeight" [fixAttempts]="100" [format]="format" backgroundColor="white"
@@ -26,6 +27,6 @@
 </ng-container>
 <ng-template #loadingSpinner>
   <div class="tw-flex tw-justify-center tw-items-center tw-h-32">
-    <p-progressSpinner></p-progressSpinner>
+    <p-progressSpinner strokeWidth="3px"></p-progressSpinner>
   </div>
 </ng-template>

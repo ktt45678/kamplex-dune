@@ -1,3 +1,4 @@
 export interface TVShowEpisodeCount {
-  episodeCount: number;
+  episodeCount?: number;
+  publicEpisodeCount: number;
 }

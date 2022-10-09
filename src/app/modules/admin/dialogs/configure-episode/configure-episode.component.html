@@ -4,9 +4,9 @@
       class="p-button-rounded p-button-secondary p-button-text tw-ml-auto" (click)="closeDialog()">
     </button>
   </div>
-  <div *ngIf="episode; else loadingSpinner" class="tw-my-4">
-    <app-vertical-tab height="80vw" height="85vh" menuWidth="12rem" menuSpacingX="2rem" menuSpacingY="2rem"
-      [fullContentWidth]="true">
+  <div *ngIf="episode; else loadingSpinner">
+    <app-vertical-tab width="80vw" menuWidth="12rem" menuSpacingX="2rem" menuSpacingY="2rem"
+      panelStyleClass="tw-max-w-8xl tw-mx-auto tw-my-8" contentStyleClass="tw-ml-6 tw-mr-6 md:tw-ml-0">
       <!--General info-->
       <ng-template appTabPanel [label]="t('admin.configureEpisode.general')" id="general" [separator]="true">
         <p class="tw-text-white tw-font-semibold tw-text-xl">{{ t('admin.configureEpisode.general') }}</p>
@@ -14,7 +14,7 @@
           <form id="update-episode-form" [formGroup]="updateEpisodeForm" formHandler
             (ngSubmit)="onUpdateEpisodeFormSubmit()">
             <div class="tw-flex tw-flex-wrap">
-              <div class="tw-flex tw-flex-wrap tw-w-full md:tw-w-4/5 md:tw-pl-4">
+              <div class="tw-flex tw-flex-wrap tw-w-full md:tw-w-4/5">
                 <div class="tw-w-full md:tw-w-1/2">
                   <label for="episode-number" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
                     {{ t('admin.updateEpisode.episodeNumber') }}
@@ -65,7 +65,7 @@
                   </small>
                 </div>
               </div>
-              <div class="tw-w-full md:tw-w-1/5">
+              <div class="tw-w-full md:tw-w-1/5 md:tw-pl-4">
                 <p class="tw-text-white tw-text-base tw-font-medium tw-text-center">{{ t('admin.episode.still') }}</p>
                 <div class="tw-aspect-w-16 tw-aspect-h-9 tw-rounded-xl tw-overflow-hidden tw-mt-2">
                   <ng-container *ngIf="!stillPreviewName; else stillPreview">
@@ -101,10 +101,10 @@
                     <!--Save and cancel still upload-->
                     <ng-template #stillPreviewActions>
                       <div class="tw-mx-auto">
-                        <button pButton type="button" [label]="t('admin.configureMedia.saveImage')" class="p-button-sm"
-                          (click)="onUpdateStillSubmit()" [disabled]="isUpdatingStill">
+                        <button pButton type="button" [label]="t('admin.configureEpisode.saveImage')"
+                          class="p-button-sm" (click)="onUpdateStillSubmit()" [disabled]="isUpdatingStill">
                         </button>
-                        <button pButton type="button" [label]="t('admin.configureMedia.cancelUploadImage')"
+                        <button pButton type="button" [label]="t('admin.configureEpisode.cancelUploadImage')"
                           class="p-button-sm p-button-secondary p-button-text tw-ml-1" (click)="onUpdateStillCancel()"
                           [disabled]="isUpdatingStill">
                         </button>
@@ -241,29 +241,52 @@
       <ng-template appTabPanel [label]="t('admin.configureEpisode.source')">
         <p class="tw-text-white tw-font-semibold tw-text-xl">{{ t('admin.configureEpisode.source')
           }}</p>
+        <p class="tw-text-base tw-font-medium tw-mt-3 tw-mb-2">{{ t('admin.configureEpisode.addEpisodeSourceLabel') }}
+        </p>
         <div [ngSwitch]="episode.status" class="tw-mt-3">
-          <div *ngSwitchCase="MediaSourceStatus.PENDING">
+          <ng-container *ngSwitchCase="MediaSourceStatus.PENDING">
             <app-file-upload accept=".mp4, .mkv, .webm, .m2ts" [label]="t('admin.addMediaSource.chooseFile')"
-              ariaLabel="Upload episode source" [showFilename]="false" (fileChange)="uploadSource($event)">
-              [disabled]="isUploadingSource"
+              styleClass="tw-max-w-xl tw-h-40 tw-mx-auto" ariaLabel="Upload episode source"
+              [disabled]="isUploadingSource" [desciption]="t('admin.configureEpisode.addEpisodeSourceDescription')"
+              (fileChange)="uploadSource($event)">
             </app-file-upload>
-          </div>
+          </ng-container>
           <div *ngSwitchCase="MediaSourceStatus.PROCESSING" class="tw-text-center">
             <i class="ms ms-hourglass-empty tw-text-5xl"></i>
             <p class="tw-text-lg tw-mt-2">{{ t('admin.media.statusProcessingDescription') }}</p>
           </div>
-          <div *ngSwitchCase="MediaSourceStatus.READY">
-            <p-message styleClass="tw-w-full" severity="warn" [text]="t('admin.media.statusReadyDescription')">
-            </p-message>
-          </div>
-          <div *ngSwitchCase="MediaSourceStatus.DONE">
-            <div class="tw-text-right tw-mb-3">
-              <button pButton role=" dialog" type="button" class="p-button-danger p-button-outlined tw-ml-2"
-                [label]="t('admin.configureEpisode.deleteSource')" (click)="deleteSource($event)">
-              </button>
+          <ng-container *ngSwitchCase="MediaSourceStatus.READY">
+            <div class="tw-flex tw-mb-4">
+              <p class="tw-text-base">{{ t('admin.media.statusReadyDescription') }}</p>
+              <div class="tw-ml-auto">
+                <ng-container *ngIf="!showEpisodePlayer; then sourcePreviewButton"></ng-container>
+              </div>
             </div>
-          </div>
+          </ng-container>
+          <ng-container *ngSwitchCase="MediaSourceStatus.DONE">
+            <div class="tw-flex tw-mb-4">
+              <p class="tw-text-base">{{ t('admin.media.statusDoneDescription') }}</p>
+              <div class="tw-ml-auto">
+                <ng-container *ngIf="!showEpisodePlayer; then sourcePreviewButton"></ng-container>
+                <button pButton type="button" class="p-button-danger p-button-outlined tw-ml-2"
+                  [label]="t('admin.configureEpisode.deleteSource')" (click)="deleteSource($event)">
+                </button>
+              </div>
+            </div>
+            <ng-container *ngIf="showEpisodePlayer; then sourcePreview"></ng-container>
+          </ng-container>
         </div>
+        <ng-template #sourcePreviewButton>
+          <button *ngIf="!showEpisodePlayer" pButton type="button" class="p-button-secondary"
+            [label]="t('admin.configureEpisode.previewSource')" (click)="showSourcePreview()">
+          </button>
+        </ng-template>
+        <ng-template #sourcePreview>
+          <app-video-player [source]="previewSource"></app-video-player>
+        </ng-template>
+        <p class="tw-text-base tw-font-medium tw-mt-4 tw-mb-2">{{ t('admin.configureEpisode.addEpisodeSourceAltLabel')
+          }}</p>
+        <app-add-ext-streams (onSelect)="updateExtStreams($event)"></app-add-ext-streams>
       </ng-template>
     </app-vertical-tab>
     <p-confirmDialog [blockScroll]="false" key="inModalEpisode" [style]="{width: '500px'}" [baseZIndex]="1000"
@@ -275,6 +298,6 @@
 </ng-container>
 <ng-template #loadingSpinner>
   <div class="tw-flex tw-justify-center tw-items-center tw-h-96">
-    <p-progressSpinner></p-progressSpinner>
+    <p-progressSpinner strokeWidth="3px"></p-progressSpinner>
   </div>
 </ng-template>

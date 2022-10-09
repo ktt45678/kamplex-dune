@@ -38,11 +38,11 @@
           <th class="tw-w-40">
             {{ t('admin.media.episodesOrDuration') }}
           </th>
-          <th class="tw-w-36">
-            {{ t('admin.media.releaseDate') }}
+          <th class="tw-w-36" pSortableColumn="releaseDate.year">
+            {{ t('admin.media.releaseDate') }} <p-sortIcon field="releaseDate.year"></p-sortIcon>
           </th>
-          <th class="tw-w-auto">
-            {{ t('admin.media.rating') }}
+          <th class="tw-w-auto" pSortableColumn="ratingAverage">
+            {{ t('admin.media.rating') }} <p-sortIcon field="ratingAverage"></p-sortIcon>
           </th>
           <th class="tw-w-20">
             {{ t('admin.media.pStatus') }}

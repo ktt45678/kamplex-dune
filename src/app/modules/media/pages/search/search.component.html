@@ -1,6 +1,6 @@
 <div class="tw-max-w-8xl tw-mx-auto tw-my-8">
   <div class="tw-mx-8">
-    <app-media-filter (onChange)="onMediaFilterUpdate($event)"></app-media-filter>
+    <app-media-filter #mediaFilter (onChange)="onMediaFilterUpdate($event)"></app-media-filter>
     <div class="tw-my-8">
       <app-media-list [mediaList]="mediaList" [loading]="loadingMediaList"></app-media-list>
     </div>

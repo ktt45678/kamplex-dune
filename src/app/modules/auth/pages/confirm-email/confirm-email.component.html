@@ -1,0 +1,29 @@
+<ng-container *transloco="let t">
+  <div *ngIf="id && activationCode"
+    class="tw-max-w-lg tw-mx-auto tw-my-14 tw-bg-neutral-875 tw-rounded-md tw-overflow-hidden">
+    <div class="tw-px-10 tw-py-14 tw-shadow-md">
+      <h3 class="tw-text-white tw-text-3xl tw-font-bold tw-text-center tw-mb-8">{{ t('auth.confirmEmail.header') }}</h3>
+      <div *ngIf="loading; else loaded" class="tw-flex tw-justify-center">
+        <p-progressSpinner strokeWidth="3px"></p-progressSpinner>
+      </div>
+      <ng-template #loaded>
+        <div class="tw-text-center tw-text-white">
+          <ng-container *ngIf="success; else activationFailed">
+            <i class="ms ms-check-circle ms-opsz-xl tw-text-6xl"></i>
+            <p class="tw-text-xl tw-font-medium">{{ t('auth.confirmEmail.successMessageSummary') }}</p>
+            <p>{{ t('auth.confirmEmail.successMessageDetail') }}</p>
+          </ng-container>
+          <ng-template #activationFailed>
+            <i class="ms ms-error ms-opsz-xl tw-text-6xl"></i>
+            <p class="tw-text-xl tw-font-medium">{{ t('auth.confirmEmail.failureMessageSummary') }}</p>
+            <p>{{ t('auth.confirmEmail.failureMessageDetail') }}</p>
+          </ng-template>
+          <a routerLink="/">
+            <button pButton class="p-button p-button-shrink tw-px-4 tw-mt-8" icon="ms ms-home"
+              [label]="t('auth.confirmEmail.returnToHome')"></button>
+          </a>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</ng-container>

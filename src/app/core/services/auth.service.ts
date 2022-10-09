@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import jwt_decode from 'jwt-decode';
 
 import { UserDetails, JWTWithPayload } from '../models';
-import { SignInDto, SignUpDto } from '../dto/auth';
+import { ConfirmEmailDto, PasswordRecoveryDto, ResetPasswordDto, SignInDto, SignUpDto } from '../dto/auth';
 
 @Injectable({
   providedIn: 'root'
@@ -53,15 +53,15 @@ export class AuthService {
     return this.http.post('auth/send-confirmation-email', body);
   }
 
-  confirmEmail(body: any = {}) {
-    return this.http.post('auth/confirm-email', body);
+  confirmEmail(body: ConfirmEmailDto) {
+    return this.http.post<void>('auth/confirm-email', body, { headers: { 'x-ng-intercept': 'base-url' } });
   }
 
-  sendRecoveryEmail(body: any = {}) {
-    return this.http.post('auth/send-recovery-email', body);
+  sendRecoveryEmail(body: PasswordRecoveryDto) {
+    return this.http.post('auth/password-recovery', body);
   }
 
-  resetPassword(body: any = {}) {
+  resetPassword(body: ResetPasswordDto) {
     return this.http.post('auth/reset-password', body);
   }
 

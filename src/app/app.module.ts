@@ -3,6 +3,7 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ServiceWorkerModule } from '@angular/service-worker';
+import { RecaptchaSettings, RECAPTCHA_SETTINGS } from 'ng-recaptcha';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 
@@ -57,6 +58,10 @@ import { AuthService } from './core/services';
       provide: HTTP_INTERCEPTORS,
       useClass: HttpErrorInterceptor,
       multi: true
+    },
+    {
+      provide: RECAPTCHA_SETTINGS,
+      useValue: { siteKey: environment.recaptchaSiteKey } as RecaptchaSettings
     }
   ],
   bootstrap: [AppComponent]

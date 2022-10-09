@@ -1,5 +1,5 @@
 import { FormGroup } from '@angular/forms';
-import { isEqual } from 'lodash';
+import { isEqual } from 'lodash-es';
 import { tap, takeWhile } from 'rxjs';
 
 export function detectFormChange(form: FormGroup, initValue: any, setFalse: () => void, setTrue: () => void) {

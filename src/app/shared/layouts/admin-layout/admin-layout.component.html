@@ -1,55 +1,57 @@
 <p-tabMenu [model]="tabMenuItems" [scrollable]="true" class="md:tw-hidden"></p-tabMenu>
-<div class="tw-flex tw-my-4">
-  <div class="tw-w-60 tw-rounded-md tw-min-h-screen tw-hidden md:tw-block">
-    <p-menu [model]="sideBarItems" styleClass="tw-w-full tw-h-full tw-border-0 tw-rounded-md"></p-menu>
+<div class="tw-max-w-8xl tw-mx-auto">
+  <div class="tw-flex tw-my-4">
+    <div class="tw-w-60 tw-rounded-md tw-min-h-screen tw-hidden md:tw-block">
+      <p-menu [model]="sideBarItems" styleClass="tw-w-full tw-h-full tw-border-0 tw-rounded-md"></p-menu>
+    </div>
+    <div class="tw-w-full md:tw-w-[calc(100%-10rem)]">
+      <router-outlet></router-outlet>
+    </div>
   </div>
-  <div class="tw-w-full md:tw-w-[calc(100%-10rem)]">
-    <router-outlet></router-outlet>
-  </div>
-</div>
-<ng-container *transloco="let t">
-  <div [hidden]="!(displayQueue | async)"
-    class="tw-fixed tw-bottom-0 tw-right-0 sm:tw-right-8 tw-w-[28rem] tw-max-w-md tw-z-10">
-    <p-panel [toggleable]="true" expandIcon="pi pi-angle-up" collapseIcon="pi pi-angle-down" iconPos="end"
-      styleClass="p-panel-header-neutral p-panel-content-neutral p-panel-icons-rtl p-panel-content-p-0">
-      <ng-template pTemplate="header">
-        {{ t('admin.uploadQueue.uploading', { fileCount: totalUploading }) }}
-      </ng-template>
-      <ng-template pTemplate="icons">
-        <button pButton class="p-panel-header-icon p-link tw-ml-2" icon="pi pi-times" (click)="hideUploadQueue()">
-        </button>
-      </ng-template>
-      <ng-container *ngIf="totalUploading; else allFilesUploaded">
-        <ng-container *ngIf="(timeRemaining | async) as _timeRemaining; else preparingUpload">
-          <p *ngIf="_timeRemaining | time as durationRemaining; else finishingUpload"
-            class="tw-px-4 tw-py-2 tw-text-base tw-text-right">{{ t('admin.uploadQueue.remaining', { time:
-            durationRemaining }) }}</p>
-          <ng-template #finishingUpload>
-            <p class="tw-px-4 tw-py-2 tw-text-base tw-text-right">{{ t('admin.uploadQueue.finishing') }}</p>
+  <ng-container *transloco="let t">
+    <div [hidden]="!(displayQueue | async)"
+      class="tw-fixed tw-bottom-0 tw-right-0 sm:tw-right-8 tw-w-[28rem] tw-max-w-md tw-z-10">
+      <p-panel [toggleable]="true" expandIcon="ms ms-expand-less" collapseIcon="ms ms-expand-more" iconPos="end"
+        styleClass="p-panel-header-neutral p-panel-content-neutral p-panel-icons-rtl p-panel-content-p-0">
+        <ng-template pTemplate="header">
+          {{ t('admin.uploadQueue.uploading', { fileCount: totalUploading }) }}
+        </ng-template>
+        <ng-template pTemplate="icons">
+          <button pButton class="p-panel-header-icon p-link tw-ml-2" icon="ms ms-close" (click)="hideUploadQueue()">
+          </button>
+        </ng-template>
+        <ng-container *ngIf="totalUploading; else allFilesUploaded">
+          <ng-container *ngIf="(timeRemaining | async) as _timeRemaining; else preparingUpload">
+            <p *ngIf="_timeRemaining | time as durationRemaining; else finishingUpload"
+              class="tw-px-4 tw-py-2 tw-text-base tw-text-right">{{ t('admin.uploadQueue.remaining', { time:
+              durationRemaining }) }}</p>
+            <ng-template #finishingUpload>
+              <p class="tw-px-4 tw-py-2 tw-text-base tw-text-right">{{ t('admin.uploadQueue.finishing') }}</p>
+            </ng-template>
+          </ng-container>
+          <ng-template #preparingUpload>
+            <p class="tw-px-4 tw-py-2 tw-text-base tw-text-right">{{ t('admin.uploadQueue.preparing') }}</p>
           </ng-template>
         </ng-container>
-        <ng-template #preparingUpload>
-          <p class="tw-px-4 tw-py-2 tw-text-base tw-text-right">{{ t('admin.uploadQueue.preparing') }}</p>
+        <ng-template #allFilesUploaded>
+          <p class="tw-px-4 tw-py-2 tw-text-base tw-text-right">{{ t('admin.uploadQueue.allFilesUploaded') }}</p>
         </ng-template>
-      </ng-container>
-      <ng-template #allFilesUploaded>
-        <p class="tw-px-4 tw-py-2 tw-text-base tw-text-right">{{ t('admin.uploadQueue.allFilesUploaded') }}</p>
-      </ng-template>
-      <div class="p-scrollbar tw-max-h-64 tw-overflow-y-auto">
-        <div *ngFor="let upload of uploadQueue; trackBy: trackId"
-          class="tw-flex tw-items-center tw-px-4 tw-py-2 hover:tw-bg-neutral-700 tw-transition-colors tw-duration-200 tw-delay-75 hover:tw-transition-none">
-          <p class="tw-truncate tw-flex-1 tw-text-base tw-mr-2">{{ upload.file.name }}</p>
-          <div class="tw-relative tw-ml-auto tw-w-30px tw-h-30px">
-            <app-circular-progress class="tw-absolute tw-absolute-center" [percent]="upload.progress" [radius]="15"
-              [strokeWidth]="5">
-            </app-circular-progress>
-            <button pButton type="text"
-              class="p-button-success p-button-rounded p-button-xs tw-absolute tw-absolute-center tw-z-20 tw-opacity-0 hover:tw-opacity-100 tw-transition-opacity tw-duration-200"
-              icon="pi pi-times" (click)="cancelUpload(upload)">
-            </button>
+        <div class="p-scrollbar tw-max-h-64 tw-overflow-y-auto">
+          <div *ngFor="let upload of uploadQueue; trackBy: trackId"
+            class="tw-flex tw-items-center tw-px-4 tw-py-2 hover:tw-bg-neutral-700 tw-transition-colors tw-duration-200 tw-delay-75 hover:tw-transition-none">
+            <p class="tw-truncate tw-flex-1 tw-text-base tw-mr-2">{{ upload.file.name }}</p>
+            <div class="tw-relative tw-ml-auto tw-w-30px tw-h-30px">
+              <app-circular-progress class="tw-absolute tw-absolute-center" [percent]="upload.progress" [radius]="15"
+                [strokeWidth]="5">
+              </app-circular-progress>
+              <button pButton type="text"
+                class="p-button-success p-button-rounded p-button-xs tw-absolute tw-absolute-center tw-z-20 tw-opacity-0 hover:tw-opacity-100 tw-transition-opacity tw-duration-200"
+                icon="ms ms-close" (click)="cancelUpload(upload)">
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-    </p-panel>
-  </div>
-</ng-container>
+      </p-panel>
+    </div>
+  </ng-container>
+</div>

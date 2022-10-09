@@ -1,9 +1,8 @@
 <ng-container *transloco="let t; loadingTpl: noMediaList">
   <div class="tw-relative">
-    <swiper [config]="swiperConfig" *ngIf="mediaList?.length; else noMediaList" [ngClass]="swiperClass || ''"
-      (slideChange)="onSwiperSlideChange($event)">
-      <ng-template swiperSlide *ngFor="let media of mediaList; trackBy:trackId">
-        <div class="tw-max-w-8xl tw-mx-auto">
+    <ng-container *ngIf="mediaList?.length; else noMediaList">
+      <swiper [config]="swiperConfig" [ngClass]="swiperClass || ''" (slideChange)="onSwiperSlideChange($event)">
+        <ng-template swiperSlide *ngFor="let media of mediaList; trackBy:trackId">
           <div class="tw-flex tw-flex-wrap">
             <div class="tw-hidden md:tw-block sm:tw-w-1/6">
               <img *ngIf="media.thumbnailPosterUrl; else noPoster" class="tw-object-cover tw-h-full"
@@ -29,8 +28,8 @@
                     tw-line-clamp-2 md:tw-line-clamp-1">{{ media.title }}</h2>
                 </div>
                 <div class="tw-mb-4 tw-h-16 md:tw-h-20 tw-flex tw-items-center">
-                  <p class="tw-text-white tw-w-full tw-text-center md:tw-text-left tw-text-sm md:tw-text-base tw-font-medium
-                    tw-line-clamp-3">{{ media.overview }}</p>
+                  <p class="tw-text-white tw-w-full tw-text-center md:tw-text-left tw-text-sm md:tw-text-base
+                  tw-line-clamp-3">{{ media.overview }}</p>
                 </div>
                 <!--div class="tw-flex tw-justify-center md:tw-justify-start tw-items-center tw-mb-4">
                   <p-badge [value]="media.releaseDate.year + ''" styleClass="tw-text-gray-200 tw-bg-gray-500">
@@ -39,15 +38,13 @@
                     class="tw-ml-1.5">
                   </p-badge>
                 </div-->
-                <div class="tw-flex tw-flex-wrap tw-items-center tw-justify-center md:tw-justify-start">
-                  <i class="tw-text-gray-300 ms ms-calendar-today ms-icon-sm tw-mr-1.5 tw-text-center sm:tw-text-left">
-                  </i>
-                  <p class="tw-text-gray-300 tw-text-sm md:tw-text-base tw-font-semibold tw-text-center sm:tw-text-left
-                  tw-mr-2">{{ media.releaseDate.year }}</p>
-                  <i class="tw-text-gray-300 ms ms-timer ms-icon-sm tw-mr-1.5 tw-text-center sm:tw-text-left">
-                  </i>
-                  <p class="tw-text-gray-300 tw-text-sm md:tw-text-base tw-font-semibold tw-text-center sm:tw-text-left
-                  tw-mr-2">{{ t('home.media.runtimeValue', { runtime: media.runtime }) }}</p>
+                <div class="tw-flex tw-flex-wrap tw-items-center tw-justify-center md:tw-justify-start
+                  tw-text-gray-300 tw-text-sm md:tw-text-base tw-text-center sm:tw-text-left">
+                  <i class="ms ms-calendar-today ms-icon-sm tw-mr-1.5"></i>
+                  <p class="tw-font-semibold tw-mr-2">{{ media.releaseDate.year }}</p>
+                  <i class="ms ms-schedule ms-icon-sm tw-mr-1.5"></i>
+                  <p class="tw-font-semibold tw-mr-2">{{ media.runtime * 60 * 1000 | time:['hours','minutes']:'short'
+                    }}</p>
                 </div>
                 <div
                   class="tw-mb-4 tw-h-12 md:tw-h-8 tw-flex tw-flex-wrap tw-items-center tw-justify-center md:tw-justify-start">
@@ -55,81 +52,79 @@
                   </i>
                   <p *ngIf="media.genres.length; else noGenres" class="tw-text-gray-300 tw-text-sm md:tw-text-base tw-font-semibold
                       tw-text-center sm:tw-text-left tw-space-x-2 tw-line-clamp-2 md:tw-line-clamp-1">
-                    <span class="tw-inline-block" *ngFor="let genre of media.genres; last as isLast; trackBy:trackId">{{
-                      isLast ? genre.name : genre.name + ',' }}</span>
+                    <span class="tw-inline-block"
+                      *ngFor="let genre of media.genres; let last = last; trackBy:trackId">{{
+                      last ? genre.name : genre.name + ',' }}</span>
                   </p>
                   <ng-template #noGenres>
-                    <p
-                      class="tw-text-gray-400 tw-italic tw-text-sm md:tw-text-base tw-font-semibold tw-text-center md:tw-text-left">
-                      No genres found
-                    </p>
+                    <p class="tw-text-gray-400 tw-italic tw-text-sm md:tw-text-base tw-font-semibold
+                      tw-text-center md:tw-text-left">{{ t('media.details.noGenres') }}</p>
                   </ng-template>
                 </div>
                 <div class="tw-text-center md:tw-text-left tw-mt-2">
                   <button tabindex="-1" type="button" role="navigation" aria-label="Play media" pButton
-                    icon="ms ms-play-arrow" iconPos="left" [label]="t('home.media.play')"
+                    icon="ms ms-play-arrow" iconPos="left" [label]="t('media.actions.play')"
                     [routerLink]="['/watch', media._id]"
                     class="p-button-rounded p-button-shrink sm:tw-inline-flex tw-w-full sm:tw-w-auto tw-max-w-xs sm:tw-max-w-none not-disabled:hover:!tw-text-gray-600 tw-text-lg sm:tw-text-xl tw-mt-2 sm:tw-mt-0 tw-mx-auto sm:tw-mx-0 tw-px-8">
                   </button>
                   <button tabindex="-1" type="button" role="navigation" aria-label="View media details"
-                    [routerLink]="['/details', media._id]" pButton icon="ms ms-info" [label]="t('home.media.details')"
+                    [routerLink]="['/details', media._id]" pButton icon="ms ms-info"
+                    [label]="t('media.actions.details')"
                     class="p-button-secondary p-button-rounded p-button-shrink sm:tw-inline-flex tw-w-full sm:tw-w-auto tw-max-w-xs sm:tw-max-w-none not-disabled:hover:!tw-text-gray-600 tw-text-lg sm:tw-text-xl tw-mt-2 sm:tw-mt-0 tw-mx-auto sm:tw-mr-0 sm:tw-ml-2.5 tw-px-8">
                   </button>
                   <button tabindex="-1" type="button" role="button" aria-label="Add media to playlist" routerLink="#"
-                    disabled="true" pButton icon="ms ms-playlist-add" [label]="t('home.media.playlist')"
+                    disabled="true" pButton icon="ms ms-playlist-add" [label]="t('media.actions.playlist')"
                     class="p-button-secondary p-button-rounded p-button-shrink sm:tw-inline-flex tw-w-full sm:tw-w-auto tw-max-w-xs sm:tw-max-w-none not-disabled:hover:!tw-text-gray-600 tw-text-lg sm:tw-text-xl tw-mt-2 sm:tw-mt-0 tw-mx-auto sm:tw-mr-0 sm:tw-ml-2.5 tw-px-8">
                   </button>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </ng-template>
-    </swiper>
-    <div class="tw-absolute tw-right-4 tw-bottom-4 tw-z-2">
-      <button id="swiper-nav-prev" type="button" role="navigation" aria-label="Previous show" pButton
-        icon="ms ms-navigate-before" class="p-button p-button-rounded p-button-text focus-visible:tw-shadow-focus-box">
-      </button>
-      <button id="swiper-nav-next" type="button" role="navigation" aria-label="Previous show" pButton
-        icon="ms ms-navigate-next"
-        class="p-button p-button-rounded p-button-text focus-visible:tw-shadow-focus-box tw-ml-2">
-      </button>
-    </div>
+        </ng-template>
+      </swiper>
+      <div class="tw-absolute tw-right-4 tw-bottom-4 tw-z-2">
+        <button id="swiper-nav-prev" type="button" role="navigation" aria-label="Previous show" pButton
+          icon="ms ms-navigate-before"
+          class="p-button p-button-rounded p-button-text focus-visible:tw-shadow-focus-box">
+        </button>
+        <button id="swiper-nav-next" type="button" role="navigation" aria-label="Previous show" pButton
+          icon="ms ms-navigate-next"
+          class="p-button p-button-rounded p-button-text focus-visible:tw-shadow-focus-box tw-ml-1">
+        </button>
+      </div>
+    </ng-container>
   </div>
 </ng-container>
 <ng-template #noMediaList>
   <div *ngIf="loading" class="tw-bg-neutral-850" [ngClass]="swiperClass || ''">
-    <div class="tw-max-w-8xl tw-mx-auto">
-      <div class="tw-grid tw-items-center tw-mx-5%">
-        <div class="tw-flex tw-flex-col tw-grow tw-my-20">
-          <p-skeleton animation="none" width="70%" height="100%" borderRadius="10px" class="tw-w-full tw-h-9 tw-mb-4"
-            styleClass="tw-mx-auto md:tw-ml-0">
+    <div class="tw-grid tw-items-center tw-mx-5%">
+      <div class="tw-flex tw-flex-col tw-grow tw-my-20">
+        <p-skeleton animation="none" width="70%" height="100%" borderRadius="10px" class="tw-w-full tw-h-9 tw-mb-4"
+          styleClass="tw-mx-auto md:tw-ml-0">
+        </p-skeleton>
+        <div class="tw-flex tw-items-center tw-mx-auto md:tw-ml-0 tw-mb-4">
+          <p-skeleton animation="none" width="80px" height="100%" borderRadius="10px" class="tw-w-full tw-h-6">
           </p-skeleton>
-          <div class="tw-flex tw-items-center tw-mx-auto md:tw-ml-0 tw-mb-4">
-            <p-skeleton animation="none" width="80px" height="100%" borderRadius="10px" class="tw-w-full tw-h-6">
-            </p-skeleton>
-            <p-skeleton animation="none" width="80px" height="100%" borderRadius="10px"
-              class="tw-w-full tw-h-6 tw-ml-2">
-            </p-skeleton>
-          </div>
-          <div class="tw-flex tw-h-5 tw-mx-auto md:tw-ml-0 tw-mb-4">
-            <p-skeleton animation="none" width="75px" height="100%" borderRadius="10px"></p-skeleton>
-            <p-skeleton animation="none" width="75px" height="100%" borderRadius="10px" styleClass="tw-ml-2">
-            </p-skeleton>
-            <p-skeleton animation="none" width="75px" height="100%" borderRadius="10px" styleClass="tw-ml-2">
-            </p-skeleton>
-          </div>
-          <div class="tw-block sm:tw-flex tw-mx-auto md:tw-ml-0 tw-mt-2">
-            <p-skeleton animation="none" width="auto" height="50.83px" borderRadius="1000px"
-              styleClass="!tw-w-80 sm:!tw-w-32">
-            </p-skeleton>
-            <p-skeleton animation="none" width="auto" height="50.83px" borderRadius="1000px"
-              styleClass="!tw-w-80 sm:!tw-w-36 sm:tw-ml-2.5 tw-mt-2 sm:tw-mt-0">
-            </p-skeleton>
-            <p-skeleton animation="none" width="auto" height="50.83px" borderRadius="1000px"
-              styleClass="!tw-w-80 sm:!tw-w-36 sm:tw-ml-2.5 tw-mt-2 sm:tw-mt-0">
-            </p-skeleton>
-          </div>
+          <p-skeleton animation="none" width="80px" height="100%" borderRadius="10px" class="tw-w-full tw-h-6 tw-ml-2">
+          </p-skeleton>
+        </div>
+        <div class="tw-flex tw-h-5 tw-mx-auto md:tw-ml-0 tw-mb-4">
+          <p-skeleton animation="none" width="75px" height="100%" borderRadius="10px"></p-skeleton>
+          <p-skeleton animation="none" width="75px" height="100%" borderRadius="10px" styleClass="tw-ml-2">
+          </p-skeleton>
+          <p-skeleton animation="none" width="75px" height="100%" borderRadius="10px" styleClass="tw-ml-2">
+          </p-skeleton>
+        </div>
+        <div class="tw-block sm:tw-flex tw-mx-auto md:tw-ml-0 tw-mt-2">
+          <p-skeleton animation="none" width="auto" height="50.83px" borderRadius="1000px"
+            styleClass="!tw-w-80 sm:!tw-w-32">
+          </p-skeleton>
+          <p-skeleton animation="none" width="auto" height="50.83px" borderRadius="1000px"
+            styleClass="!tw-w-80 sm:!tw-w-36 sm:tw-ml-2.5 tw-mt-2 sm:tw-mt-0">
+          </p-skeleton>
+          <p-skeleton animation="none" width="auto" height="50.83px" borderRadius="1000px"
+            styleClass="!tw-w-80 sm:!tw-w-36 sm:tw-ml-2.5 tw-mt-2 sm:tw-mt-0">
+          </p-skeleton>
         </div>
       </div>
     </div>

@@ -4,7 +4,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { TranslocoService } from '@ngneat/transloco';
 import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { EMPTY, first, Observable, switchMap, takeUntil } from 'rxjs';
-import { cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash-es';
 
 import { AddVideoComponent } from '../add-video';
 import { AddSubtitleComponent } from '../add-subtitle';
@@ -256,6 +256,8 @@ export class CreateMediaComponent implements OnInit, AfterViewInit {
   }
 
   onUpdateMediaFormSubmit(): void {
+    if (!this.updateFormChanged)
+      return this.stepper?.next();
     if (!this.media || this.updateMediaForm.invalid) return;
     this.updateMediaForm.disable();
     const mediaId = this.media._id;
@@ -291,6 +293,7 @@ export class CreateMediaComponent implements OnInit, AfterViewInit {
       this.updateMediaInitValue = cloneDeep(this.updateMediaForm.value);
       this.detectUpdateMediaFormChange();
       this.ref.markForCheck();
+      this.stepper?.next()
     }).add(() => {
       this.updateMediaForm.enable();
     });
@@ -439,6 +442,7 @@ export class CreateMediaComponent implements OnInit, AfterViewInit {
     const dialogRef = this.dialogService.open(CreateEpisodeComponent, {
       data: { media: { ...this.media }, episodes: [...this.media.tv.episodes] },
       width: '980px',
+      height: '100%',
       modal: true,
       dismissableMask: false,
       styleClass: 'p-dialog-header-sm',
@@ -457,12 +461,14 @@ export class CreateMediaComponent implements OnInit, AfterViewInit {
     if (this.media?.type !== MediaType.MOVIE) return;
     this.queueUploadService.addToQueue(this.media._id, file, `media/${this.media._id}/movie/source`, `media/${this.media._id}/movie/source/:id`);
     this.isUploadingSource = true;
+    this.ref.markForCheck();
   }
 
   updateExtStreams(event: ExtStreamSelected): void {
     if (this.media?.type !== MediaType.MOVIE) return;
     this.mediaService.update(this.media._id, { extStreams: event.streams }).subscribe({
-      next: () => event.complete()
+      next: () => event.next(),
+      error: () => event.error()
     });
   }
 

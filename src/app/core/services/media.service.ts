@@ -2,13 +2,13 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { forkJoin, map, Observable } from 'rxjs';
 
-import { AddMediaSubtitleDto, AddMediaVideoDto, AddTVEpisodeDto, CreateMediaDto, FindTVEpisodesDto, PaginateMediaDto, UpdateMediaDto, UpdateMediaVideoDto, UpdateTVEpisodeDto } from '../dto/media';
+import { AddMediaSubtitleDto, AddMediaVideoDto, AddTVEpisodeDto, CreateMediaDto, FindOneMediaDto, FindTVEpisodesDto, PaginateMediaDto, UpdateMediaDto, UpdateMediaVideoDto, UpdateTVEpisodeDto } from '../dto/media';
 import { ExtMediaSuggestions, FlixHQInfo, FlixHQSearch, GogoanimeInfo, GogoanimeSearch, Media, MediaDetails, MediaStream, MediaSubtitle, MediaVideo, Paginated, TVEpisode, TVEpisodeDetails, ZoroInfo, ZoroSearch } from '../models';
 import { ExtMediaProvider } from '../../core/enums';
 import { getImageName } from '../../core/utils';
 import { environment } from '../../../environments/environment';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class MediaService {
 
   constructor(private http: HttpClient) { }
@@ -36,8 +36,14 @@ export class MediaService {
     return this.http.get<Paginated<Media>>('media', { params });
   }
 
-  findOne(id: string) {
-    return this.http.get<MediaDetails>(`media/${id}`);
+  findOne(id: string, findOneMediaDto?: FindOneMediaDto) {
+    const params: any = {};
+    if (findOneMediaDto) {
+      const { includeHiddenEps, includeUnprocessedEps } = findOneMediaDto;
+      includeHiddenEps !== undefined && (params['includeHiddenEps'] = includeHiddenEps);
+      includeUnprocessedEps !== undefined && (params['includeUnprocessedEps'] = includeUnprocessedEps);
+    }
+    return this.http.get<MediaDetails>(`media/${id}`, { params });
   }
 
   update(id: string, updateMediaDto: UpdateMediaDto) {
@@ -119,10 +125,9 @@ export class MediaService {
 
   findAllTVEpisodes(id: string, findTVEpisodesDto: FindTVEpisodesDto) {
     const params: any = {};
-    const { includeHidden, includeUnprocessed, limited } = findTVEpisodesDto;
+    const { includeHidden, includeUnprocessed } = findTVEpisodesDto;
     includeHidden !== undefined && (params['includeHidden'] = includeHidden);
     includeUnprocessed !== undefined && (params['includeUnprocessed'] = includeUnprocessed);
-    limited !== undefined && (params['limited'] = limited);
     return this.http.get<TVEpisode[]>(`media/${id}/tv/episodes`, { params });
   }
 
@@ -163,6 +168,10 @@ export class MediaService {
 
   deleteTVSubtitle(id: string, episodeId: string, subtitleId: string) {
     return this.http.delete(`media/${id}/tv/episodes/${episodeId}/subtitles/${subtitleId}`);
+  }
+
+  findTVStreams(id: string, episodeNumber: string | number) {
+    return this.http.get<MediaStream>(`media/${id}/tv/episodes/${episodeNumber}/streams`);
   }
 
   deleteTVSource(id: string, episodeId: string) {

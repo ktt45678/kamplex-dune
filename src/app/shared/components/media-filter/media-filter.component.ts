@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, Output, EventEmitter, Input, ElementRef } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { TranslocoService, TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { first } from 'rxjs';
@@ -45,12 +45,12 @@ export class MediaFilterComponent implements OnInit {
   selectedCountry?: DropdownOptionDto;
   filterForm: FormGroup<FilterForm>;
 
-  constructor(private mediaFilterService: MediaFilterService, private translocoService: TranslocoService,
+  constructor(public el: ElementRef, private mediaFilterService: MediaFilterService, private translocoService: TranslocoService,
     private genresService: GenresService) {
     this.filterForm = new FormGroup<FilterForm>({
       genres: new FormControl([], { nonNullable: true }),
       sort: new FormControl(),
-      search: new FormControl('', { nonNullable: true, validators: [Validators.minLength(3), Validators.maxLength(100)] }),
+      search: new FormControl('', { nonNullable: true, validators: [Validators.minLength(2), Validators.maxLength(100)] }),
       type: new FormControl(),
       status: new FormControl(),
       originalLanguage: new FormControl(),
@@ -97,6 +97,10 @@ export class MediaFilterComponent implements OnInit {
     this.genresService.findAll('asc(name)').subscribe({
       next: genres => this.genres = genres
     });
+  }
+
+  patchOptions(options: MediaFilterOptionsDto): void {
+    this.filterForm.patchValue(options);
   }
 
   onFilterFormSubmit(): void {

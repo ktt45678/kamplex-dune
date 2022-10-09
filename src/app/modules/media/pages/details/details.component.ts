@@ -1,8 +1,8 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { Meta } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
+import { BreakpointObserver } from '@angular/cdk/layout';
 import { takeUntil } from 'rxjs';
-import { SwiperOptions } from 'swiper';
 
 import { MediaDetails } from '../../../../core/models';
 import { MediaService } from '../../../../core/services';
@@ -20,38 +20,24 @@ import { YOUTUBE_EMBED_URL, YOUTUBE_THUMBNAIL_URL } from '../../../../../environ
 export class DetailsComponent implements OnInit {
   MediaType = MediaType;
   media?: MediaDetails;
+  isMobile: boolean = false;
   displayVideo: boolean = false;
   activeVideoIndex: number = 0;
   youtubeUrl = YOUTUBE_EMBED_URL;
   youtubeThumbnailUrl = YOUTUBE_THUMBNAIL_URL;
 
-  swiperConfig: SwiperOptions;
-
-  constructor(private ref: ChangeDetectorRef, private meta: Meta, private mediaService: MediaService, private route: ActivatedRoute, private destroyService: DestroyService) {
-    this.swiperConfig = {
-      autoplay: false,
-      loop: false,
-      navigation: true,
-      pagination: false,
-      allowTouchMove: true,
-      slidesPerView: 1,
-      spaceBetween: 6,
-      breakpoints: {
-        640: {
-          slidesPerView: 2
-        },
-        1024: {
-          slidesPerView: 3
-        }
-      }
-    };
-  }
+  constructor(private ref: ChangeDetectorRef, private meta: Meta, private breakpointObserver: BreakpointObserver,
+    private mediaService: MediaService, private route: ActivatedRoute, private destroyService: DestroyService) { }
 
   ngOnInit(): void {
     this.route.params.pipe(takeUntil(this.destroyService)).subscribe(params => {
       const id = params['id'];
       if (!id) return;
       this.loadMedia(id);
+    });
+    this.breakpointObserver.observe('(min-width: 640px)').pipe(takeUntil(this.destroyService)).subscribe(state => {
+      this.isMobile = !state.matches;
+      this.ref.markForCheck();
     });
   }
 

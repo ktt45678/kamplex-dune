@@ -1,3 +1,4 @@
+export const SITE_NAME = 'KamPlex';
 export const IMAGE_PREVIEW_SIZE = 8388608; // 8MiB
 export const IMAGE_PREVIEW_MIMES = ['image/jpeg', 'image/png'];
 export const UPLOAD_POSTER_SIZE = 3145728; // 3MiB
@@ -25,3 +26,7 @@ export const YOUTUBE_THUMBNAIL_URL = 'https://img.youtube.com/vi/';
 export const QUEUE_UPLOAD_CHUNK_SIZE = 10485760; // 10MiB
 export const QUEUE_UPLOAD_RETRIES = 5;
 export const QUEUE_UPLOAD_RETRY_DELAY = 3000;
+export const SIGN_IN_LIMIT_COUNT = 5;
+export const SIGN_IN_LIMIT_TTL = 300;
+export const SEND_CONFIRM_EMAIL_LIMIT_TTL = 120;
+export const SEND_RECOVERY_EMAIL_LIMIT_TTL = 120;

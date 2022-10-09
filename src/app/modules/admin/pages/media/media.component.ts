@@ -95,7 +95,7 @@ export class MediaComponent implements OnInit, OnDestroy {
         params.sort = 'desc(createdAt)';
       }
       if (this.mediaTable.filters['title'] && !Array.isArray(this.mediaTable.filters['title'])
-        && this.mediaTable.filters['title'].value.length >= 3) {
+        && this.mediaTable.filters['title'].value.length >= 2) {
         params.search = this.mediaTable.filters['title'].value;
       }
     } else {
@@ -204,6 +204,7 @@ export class MediaComponent implements OnInit, OnDestroy {
   }
 
   removeMedia(id: string): void {
+    this.loadingMediaList = true;
     this.mediaService.remove(id).subscribe().add(() => {
       this.loadMedia();
     });

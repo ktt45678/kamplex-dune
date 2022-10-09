@@ -1,14 +1,13 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MessageService } from 'primeng/api';
-import { TranslocoService } from '@ngneat/transloco';
+import { finalize, interval, switchMap, takeUntil, takeWhile, tap } from 'rxjs';
 
-import { ToastKey } from '../../../../core/enums';
-import { AuthService, ItemDataService } from '../../../../core/services';
+import { RegexPattern } from '../../../../core/enums';
+import { AuthService, DestroyService, ItemDataService } from '../../../../core/services';
 import { shortDate } from '../../../../core/validators';
 import { DropdownOptionDto } from '../../../../core/dto/media';
 import { ShortDateForm } from '../../../../core/interfaces/forms';
+import { SEND_CONFIRM_EMAIL_LIMIT_TTL } from '../../../../../environments/config';
 
 interface SignUpForm {
   username: FormControl<string>;
@@ -22,21 +21,24 @@ interface SignUpForm {
   templateUrl: './sign-up.component.html',
   styleUrls: ['./sign-up.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [ItemDataService]
+  providers: [ItemDataService, DestroyService]
 })
-export class SignUpComponent implements OnInit {
-  isSigningUp: boolean = false;
+export class SignUpComponent {
   signUpForm: FormGroup<SignUpForm>;
   days: DropdownOptionDto[];
   months: DropdownOptionDto[];
   years: DropdownOptionDto[];
+  showPassword: boolean = false;
+  success: boolean = false;
+  canResendEmail: boolean = true;
+  resendEmailTtl: number = 0;
 
-  constructor(private ref: ChangeDetectorRef, private router: Router, private translocoService: TranslocoService,
-    private messageService: MessageService, private authService: AuthService, private itemDataService: ItemDataService) {
+  constructor(private ref: ChangeDetectorRef, private authService: AuthService, private itemDataService: ItemDataService,
+    private destroyService: DestroyService) {
     this.signUpForm = new FormGroup<SignUpForm>({
       username: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(3), Validators.maxLength(32)] }),
       email: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
-      password: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(8), Validators.maxLength(128)] }),
+      password: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(8), Validators.maxLength(128), Validators.pattern(RegexPattern.ACCOUNT_PASSWORD)] }),
       birthdate: new FormGroup<ShortDateForm>({
         day: new FormControl(null),
         month: new FormControl(null),
@@ -50,13 +52,10 @@ export class SignUpComponent implements OnInit {
     this.years = this.itemDataService.createYearList(1920);
   }
 
-  ngOnInit(): void {
-  }
-
   onsignUpFormSubmit(): void {
     if (this.signUpForm.invalid)
       return;
-    this.isSigningUp = true;
+    this.signUpForm.disable({ emitEvent: false });
     const formValue = this.signUpForm.getRawValue();
     this.authService.signUp({
       username: formValue.username,
@@ -68,15 +67,35 @@ export class SignUpComponent implements OnInit {
         year: formValue.birthdate.year!
       }
     }).subscribe(() => {
-      this.messageService.add({
-        key: ToastKey.APP, severity: 'info', summary: this.translocoService.translate('auth.signUp.successMessageSummary'),
-        detail: this.translocoService.translate('auth.signUp.successMessageDetail')
-      });
-      this.router.navigate(['/']);
+      this.success = true;
     }).add(() => {
-      this.isSigningUp = false;
+      this.signUpForm.enable({ emitEvent: false });
       this.ref.markForCheck();
     });
+  }
+
+  resendEmail(): void {
+    if (!this.authService.accessTokenValue)
+      return;
+    this.signUpForm.disable({ emitEvent: false });
+    this.canResendEmail = false;
+    this.authService.sendConfirmEmail().pipe(
+      switchMap(() => {
+        this.signUpForm.enable({ emitEvent: false });
+        this.resendEmailTtl = SEND_CONFIRM_EMAIL_LIMIT_TTL;
+        return interval(1000);
+      }),
+      tap(() => {
+        this.resendEmailTtl -= 1;
+        this.ref.markForCheck();
+      }),
+      finalize(() => {
+        this.canResendEmail = true;
+        this.ref.markForCheck();
+      }),
+      takeWhile(() => this.resendEmailTtl > 0),
+      takeUntil(this.destroyService)
+    ).subscribe();
   }
 
 }

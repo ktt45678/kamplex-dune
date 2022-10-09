@@ -20,10 +20,9 @@
                 <small id="episode-number-error"
                   class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
                   [ngClass]="(createEpisodeForm.controls['episodeNumber'].dirty || createEpisodeForm.controls['episodeNumber'].touched)
-                      && createEpisodeForm.controls['episodeNumber'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
-                  {{ createEpisodeForm.controls['episodeNumber'].errors | firstErrorKey:'createEpisode':'episodeNumber'
-                  }}
-                </small>
+                      && createEpisodeForm.controls['episodeNumber'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">{{
+                  createEpisodeForm.controls['episodeNumber'].errors | firstErrorKey:'createEpisode':'episodeNumber'
+                  }}</small>
               </div>
               <div class="tw-w-full md:tw-w-1/2 md:tw-pl-2">
                 <label for="runtime" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
@@ -119,7 +118,7 @@
         </form>
       </ng-container>
       <ng-template #showUpdateEpisodeForm>
-        <form [formGroup]="createEpisodeForm" formHandler (ngSubmit)="onUpdateEpisodeFormSubmit()">
+        <form [formGroup]="updateEpisodeForm" formHandler (ngSubmit)="onUpdateEpisodeFormSubmit()">
           <div class="p-scrollbar tw-overflow-y-auto tw-h-[calc(90vh-14rem)] tw-px-6">
             <div class="tw-flex tw-flex-wrap">
               <div class="tw-w-full md:tw-w-1/2">
@@ -224,7 +223,7 @@
             <div class="tw-ml-auto">
               <button pButton type="button" [label]="t('admin.updateEpisode.cancel')"
                 (click)="onUpdateEpisodeFormReset()" class="p-button-text p-button-secondary p-button-sm"
-                [disabled]="updateFormChanged">
+                [disabled]="!updateFormChanged">
               </button>
               <button pButton type="submit" [label]="t('admin.updateEpisode.submit')"
                 class="p-button-success p-button-sm tw-ml-1" [disabled]="updateEpisodeForm.disabled">
@@ -280,9 +279,10 @@
     <cdk-step [label]="t('admin.createEpisode.step3')" [optional]="true" [editable]="true" aria-label="Episode source">
       <div *ngIf="episode" class="p-scrollbar tw-overflow-y-auto tw-h-[calc(90vh-14rem)] tw-px-6">
         <p class="tw-text-lg tw-font-medium tw-mb-2">{{ t('admin.createEpisode.addEpisodeSourceLabel') }}</p>
-        <app-file-upload accept=".mp4, .mkv, .webm, .m2ts" [label]="t('admin.createEpisode.chooseFile')"
-          [desciption]="t('admin.createMedia.addEpisodeSourceDescription')" ariaLabel="Upload movie source"
-          [disabled]="isUploadingSource" (fileChange)="uploadSource($event)">
+        <app-file-upload accept=".mp4, .mkv, .webm, .m2ts" styleClass="tw-max-w-xl tw-h-40 tw-mx-auto"
+          ariaLabel="Upload episode source" [label]="t('admin.createEpisode.chooseFile')"
+          [desciption]="t('admin.createEpisode.addEpisodeSourceDescription')" [disabled]="isUploadingSource"
+          (fileChange)="uploadSource($event)">
         </app-file-upload>
         <p class="tw-text-lg tw-font-medium tw-my-2">{{ t('admin.createEpisode.addEpisodeSourceAltLabel') }}</p>
         <app-add-ext-streams (onSelect)="updateExtStreams($event)"></app-add-ext-streams>
@@ -299,11 +299,19 @@
       </div>
     </cdk-step>
     <cdk-step [label]="t('admin.createEpisode.step4')" [optional]="true" [editable]="true" aria-label="Finish">
-      <div class="tw-flex">
+      <div class="p-scrollbar tw-overflow-y-auto tw-h-[calc(90vh-14rem)] tw-px-6">
         <div class="tw-mx-auto tw-mt-16 tw-text-center">
           <p class="tw-text-2xl tw-font-medium tw-mb-2">{{ t('admin.createEpisode.finishLabel') }}</p>
           <p class="tw-text-lg tw-mb-4">{{ t('admin.createEpisode.finishDescription') }}</p>
-          <button pButton type="button" [label]="t('admin.createEpisode.close')" (click)="closeDialog()">
+        </div>
+      </div>
+      <div class="tw-flex tw-my-4 tw-px-7">
+        <div class="tw-ml-auto">
+          <button pButton type="button" [label]="t('admin.createEpisode.previous')"
+            class="p-button-text p-button-secondary p-button-sm" cdkStepperPrevious>
+          </button>
+          <button pButton type="button" [label]="t('admin.createEpisode.close')" class="p-button p-button-sm tw-ml-1"
+            (click)="closeDialog()">
           </button>
         </div>
       </div>
