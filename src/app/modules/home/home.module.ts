@@ -8,6 +8,7 @@ import { ButtonModule } from 'primeng/button';
 import { SkeletonModule } from 'primeng/skeleton';
 
 import { HomeRoutingModule } from './home-routing.module';
+import { LazyloadImageExtraModule } from '../../shared/directives/lazyload-image-extra';
 import { NumberPipeModule } from '../../shared/pipes/number-pipe';
 import { DateTimePipeModule } from '../../shared/pipes/date-time-pipe';
 import { HomeComponent } from './pages/home/home.component';
@@ -28,6 +29,7 @@ import { FeaturedMediaComponent } from './components/featured-media';
     TranslocoModule,
     LazyLoadImageModule,
     SwiperModule,
+    LazyloadImageExtraModule,
     MediaListModule,
     MediaTopModule,
     ButtonModule,

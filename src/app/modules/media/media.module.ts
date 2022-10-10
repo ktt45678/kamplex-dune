@@ -18,10 +18,10 @@ import { VideoPlayerModule } from '../../shared/components/video-player';
 import { SearchComponent } from './pages/search/search.component';
 import { WatchComponent } from './pages/watch/watch.component';
 import { DetailsComponent } from './pages/details/details.component';
+import { LazyloadImageExtraModule } from '../../shared/directives/lazyload-image-extra';
 import { UrlPipeModule } from '../../shared/pipes/url-pipe';
 import { NumberPipeModule } from '../../shared/pipes/number-pipe';
 import { DateTimePipeModule } from '../../shared/pipes/date-time-pipe';
-import { MediaService } from '../../core/services';
 
 @NgModule({
   declarations: [
@@ -40,6 +40,7 @@ import { MediaService } from '../../core/services';
     VideoPlayerModule,
     TranslocoModule,
     LazyLoadImageModule,
+    LazyloadImageExtraModule,
     NumberPipeModule,
     DateTimePipeModule,
     UrlPipeModule,

@@ -9,11 +9,9 @@
               <a [routerLink]="['/watch', media._id]" [queryParams]="{ ep: episode.episodeNumber}"
                 class="tw-group tw-block tw-aspect-w-16 tw-aspect-h-9 tw-rounded-md focus-visible:tw-shadow-focus-box">
                 <img *ngIf="episode.thumbnailStillUrl; else noStill" class="tw-object-cover tw-rounded-md"
-                  [lazyLoad]="episode.thumbnailStillUrl" [alt]="episode.name"
+                  [lazyLoad]="episode.thumbnailStillUrl" [lazyLoadPlaceholder]="episode.stillColor | rgbColor"
+                  placeholderStyleClass="tw-rounded-md" [alt]="episode.name"
                   errorImage="assets/images/episode-image-md.png">
-                <div *ngIf="episode.stillColor" class="ng-lazyload-placeholder tw-w-full tw-h-full tw-rounded-md"
-                  [ngStyle]="{ 'background-color': episode.stillColor | rgbColor }">
-                </div>
                 <ng-template #noStill>
                   <img class="tw-object-cover tw-rounded-md" src="assets/images/episode-image-md.png" loading="lazy"
                     [alt]="episode.name">

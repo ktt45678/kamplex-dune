@@ -7,6 +7,7 @@ import { ButtonModule } from 'primeng/button';
 import { SkeletonModule } from 'primeng/skeleton';
 
 import { EpisodeListComponent } from './episode-list.component';
+import { LazyloadImageExtraModule } from '../../directives/lazyload-image-extra';
 import { DateTimePipeModule } from '../../pipes/date-time-pipe';
 import { NumberPipeModule } from '../../pipes/number-pipe';
 
@@ -21,6 +22,7 @@ import { NumberPipeModule } from '../../pipes/number-pipe';
     LazyLoadImageModule,
     ButtonModule,
     SkeletonModule,
+    LazyloadImageExtraModule,
     DateTimePipeModule,
     NumberPipeModule
   ],

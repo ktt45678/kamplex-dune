@@ -34,6 +34,7 @@ import { VideoPlayerModule } from '../../shared/components/video-player';
 import { StepperModule } from '../../shared/components/stepper';
 import { ImageEditorModule } from '../../shared/dialogs/image-editor';
 import { FormDirectiveModule } from '../../shared/directives/form-directive';
+import { LazyloadImageExtraModule } from '../../shared/directives/lazyload-image-extra';
 import { ValidationPipeModule } from '../../shared/pipes/validation-pipe';
 import { DateTimePipeModule } from '../../shared/pipes/date-time-pipe';
 import { NumberPipeModule } from '../../shared/pipes/number-pipe';
@@ -86,6 +87,7 @@ import { GenresService, ProductionsService, QueueUploadService } from '../../cor
     StepperModule,
     ImageEditorModule,
     FormDirectiveModule,
+    LazyloadImageExtraModule,
     ValidationPipeModule,
     DateTimePipeModule,
     NumberPipeModule,

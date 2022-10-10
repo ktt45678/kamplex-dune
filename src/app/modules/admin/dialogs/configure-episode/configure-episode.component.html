@@ -70,11 +70,8 @@
                 <div class="tw-aspect-w-16 tw-aspect-h-9 tw-rounded-xl tw-overflow-hidden tw-mt-2">
                   <ng-container *ngIf="!stillPreviewName; else stillPreview">
                     <img *ngIf="episode.thumbnailStillUrl; else noStill" class="tw-object-cover"
-                      [lazyLoad]="episode.thumbnailStillUrl" [alt]="episode.name"
-                      errorImage="assets/images/episode-image-error-md.png">
-                    <div *ngIf="episode.stillColor" class="ng-lazyload-placeholder tw-w-full tw-h-full"
-                      [ngStyle]="{ 'background-color': episode.stillColor | rgbColor }">
-                    </div>
+                      [lazyLoad]="episode.thumbnailStillUrl" [lazyLoadPlaceholder]="episode.stillColor | rgbColor"
+                      [alt]="episode.name" errorImage="assets/images/episode-image-error-md.png">
                     <ng-template #noStill>
                       <img class="tw-object-cover" src="assets/images/media-poster-md.png" loading="lazy"
                         [alt]="episode.name">

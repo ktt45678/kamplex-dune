@@ -9,6 +9,7 @@ import { MenuModule } from 'primeng/menu';
 
 import { HomeHeaderComponent } from './home-header.component';
 import { CommonDirectiveModule } from '../../directives/common-directive';
+import { LazyloadImageExtraModule } from '../../directives/lazyload-image-extra';
 import { PermissionPipeModule } from '../../pipes/permission-pipe';
 import { NumberPipeModule } from '../../pipes/number-pipe';
 import { DateTimePipeModule } from '../../pipes/date-time-pipe';
@@ -21,6 +22,7 @@ import { DateTimePipeModule } from '../../pipes/date-time-pipe';
     TranslocoModule,
     LazyLoadImageModule,
     CommonDirectiveModule,
+    LazyloadImageExtraModule,
     PermissionPipeModule,
     NumberPipeModule,
     DateTimePipeModule,

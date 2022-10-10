@@ -58,10 +58,8 @@
                 <div *ngIf="media.thumbnailPosterUrl; else noPoster"
                   class="tw-aspect-w-2 tw-aspect-h-3 tw-rounded-md tw-overflow-hidden">
                   <img class="tw-object-cover" [lazyLoad]="media.smallPosterUrl"
+                    [lazyLoadPlaceholder]="media.posterColor | rgbColor"
                     errorImage="assets/images/media-poster-error-sm.png" [alt]="media.title">
-                  <div *ngIf="media.posterColor" class="ng-lazyload-placeholder tw-w-full tw-h-full"
-                    [ngStyle]="{ 'background-color': media.posterColor | rgbColor }">
-                  </div>
                 </div>
                 <ng-template #noPoster>
                   <img class="tw-object-cover tw-rounded-md" src="assets/images/media-poster-sm.png" loading="lazy"

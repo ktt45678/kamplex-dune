@@ -6,11 +6,8 @@
           <div class="tw-flex tw-flex-wrap">
             <div class="tw-hidden md:tw-block sm:tw-w-1/6">
               <img *ngIf="media.thumbnailPosterUrl; else noPoster" class="tw-object-cover tw-h-full"
-                [lazyLoad]="media.thumbnailPosterUrl" [alt]="media.title"
-                errorImage="assets/images/media-poster-md.png">
-              <div *ngIf="media.posterColor" class="ng-lazyload-placeholder tw-w-full tw-h-full"
-                [ngStyle]="{ 'background-color': media.posterColor | rgbColor }">
-              </div>
+                [lazyLoad]="media.thumbnailPosterUrl" [lazyLoadPlaceholder]="media.posterColor | rgbColor"
+                [alt]="media.title" errorImage="assets/images/media-poster-md.png">
               <ng-template #noPoster>
                 <img class="tw-object-cover tw-h-full" src="assets/images/media-poster-md.png" loading="lazy"
                   [alt]="media.title">

@@ -263,11 +263,8 @@
             <div class="tw-aspect-w-2 tw-aspect-h-3 tw-rounded-xl tw-mt-2">
               <ng-container *ngIf="!posterPreviewName; else posterPreview">
                 <img *ngIf="media.thumbnailPosterUrl; else noPoster" class="tw-object-cover tw-rounded-xl"
-                  [lazyLoad]="media.thumbnailPosterUrl" [alt]="media.title"
-                  errorImage="assets/images/media-poster-error-md.png">
-                <div *ngIf="media.posterColor" class="ng-lazyload-placeholder tw-w-full tw-h-full tw-rounded-xl"
-                  [ngStyle]="{ 'background-color': media.posterColor | rgbColor }">
-                </div>
+                  [lazyLoad]="media.thumbnailPosterUrl" [lazyLoadPlaceholder]="media.posterColor | rgbColor"
+                  [alt]="media.title" errorImage="assets/images/media-poster-error-md.png">
                 <ng-template #noPoster>
                   <img class="tw-object-cover tw-rounded-xl" src="assets/images/media-poster-md.png" loading="lazy"
                     [alt]="media.title">
@@ -311,11 +308,9 @@
             <div class="tw-aspect-w-16 tw-aspect-h-9 tw-rounded-xl tw-overflow-hidden tw-mt-2">
               <ng-container *ngIf="!backdropPreviewName; else backdropPreview">
                 <img *ngIf="media.thumbnailBackdropUrl; else noBackdrop" class="tw-object-cover tw-rounded-xl"
-                  [lazyLoad]="media.thumbnailBackdropUrl" [alt]="media.title"
+                  [lazyLoad]="media.thumbnailBackdropUrl" [lazyLoadPlaceholder]="media.backdropColor | rgbColor"
+                  placeholderStyleClass="tw-rounded-xl" [alt]="media.title"
                   errorImage="assets/images/media-backdrop-error-md.png">
-                <div *ngIf="media.backdropColor" class="ng-lazyload-placeholder tw-w-full tw-h-full tw-rounded-xl"
-                  [ngStyle]="{ 'background-color': media.backdropColor | rgbColor }">
-                </div>
                 <ng-template #noBackdrop>
                   <img class="tw-object-cover tw-rounded-xl" src="assets/images/media-backdrop-md.png" loading="lazy"
                     [alt]="media.title">
@@ -575,11 +570,8 @@
                       <div class="tw-w-24 tw-flex-shrink-0">
                         <div class="tw-aspect-w-16 tw-aspect-h-9 tw-rounded-md tw-overflow-hidden">
                           <img *ngIf="episode.thumbnailStillUrl; else noStill" class="tw-object-cover"
-                            [lazyLoad]="episode.thumbnailStillUrl" [alt]="episode.name"
-                            errorImage="assets/images/episode-image-error-md.png">
-                          <div *ngIf="episode.stillColor" class="ng-lazyload-placeholder tw-w-full tw-h-full"
-                            [ngStyle]="{ 'background-color': episode.stillColor | rgbColor }">
-                          </div>
+                            [lazyLoad]="episode.thumbnailStillUrl" [lazyLoadPlaceholder]="episode.stillColor | rgbColor"
+                            [alt]="episode.name" errorImage="assets/images/episode-image-error-md.png">
                           <ng-template #noStill>
                             <img class="tw-rounded-md" src="assets/images/episode-image-md.png" loading="lazy"
                               [alt]="episode.name">
