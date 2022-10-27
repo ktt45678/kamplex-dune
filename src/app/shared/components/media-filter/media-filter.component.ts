@@ -25,7 +25,6 @@ interface FilterForm {
   styleUrls: ['./media-filter.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
-    GenresService,
     {
       provide: TRANSLOCO_SCOPE,
       useValue: 'media'

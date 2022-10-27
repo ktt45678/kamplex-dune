@@ -5,9 +5,7 @@ import { CdkStepperModule } from '@angular/cdk/stepper';
 import { StepperComponent } from './stepper.component';
 
 @NgModule({
-  declarations: [
-    StepperComponent
-  ],
+  declarations: [StepperComponent],
   imports: [
     CommonModule,
     CdkStepperModule

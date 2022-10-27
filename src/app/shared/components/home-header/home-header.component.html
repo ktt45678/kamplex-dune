@@ -5,26 +5,43 @@
       <div class="tw-max-w-8xl tw-mx-auto tw-px-4 sm:tw-px-6 lg:tw-px-8">
         <div class="tw-relative tw-flex tw-justify-between tw-h-14">
           <div class="tw-flex tw-items-center tw-flex-initial tw-basis-full">
+            <!-- Desktop menu button -->
+            <button pButton [appMenuTriggerFor]="desktopMenu" icon="ms ms-menu" type="button"
+              aria-label="Toggle desktop menu"
+              [ngClass]="displayMobileSearch ? 'lg:tw-inline-flex' : 'sm:tw-inline-flex'"
+              class="p-button-rounded p-button-text p-button-secondary p-button-sm p-button-sm-icon tw-hidden">
+            </button>
+            <!--p-tieredMenu #browseMenu [popup]="true" [appendTo]="menuZone" [model]="browseMenuItems"
+              showTransitionOptions="0s linear"></p-tieredMenu-->
+            <!-- Mobile menu button -->
+            <button pButton (click)="onOpenMobileMenu()" icon="ms ms-menu" type="button" aria-label="Toggle mobile menu"
+              class="p-button-rounded p-button-text p-button-secondary p-button-sm p-button-sm-icon sm:tw-hidden">
+            </button>
+            <!-- Home page button -->
+            <a routerLink="/" routerLinkActive="ms-fill" [routerLinkActiveOptions]="{exact: true}"
+              [ngClass]="displayMobileSearch ? 'tw-hidden lg:tw-block' : 'tw-block'">
+              <button pButton type="button" role="navigation" icon="ms ms-home tw-text-[#F27649] -tw-mt-px"
+                aria-label="Home page"
+                class="p-button-rounded p-button-text p-button-secondary p-button-sm p-button-sm-icon">
+              </button>
+            </a>
             <a routerLink="/" [ngClass]="displayMobileSearch ? 'tw-hidden lg:tw-block' : 'tw-block'">
               <img class="tw-h-3 md:tw-h-4 tw-w-auto" src="assets/images/logo-text.png" alt="KamPlex">
             </a>
             <div class="sm:tw-ml-2" [ngClass]="{ 'tw-w-full lg:tw-w-auto': displayMobileSearch }">
               <div class="tw-flex tw-items-center">
-                <a routerLink="/" routerLinkActive="ms-fill" [routerLinkActiveOptions]="{exact: true}"
-                  [ngClass]="displayMobileSearch ? 'tw-hidden lg:tw-block' : 'tw-block'">
-                  <button pButton type="button" role="navigation" icon="ms ms-home tw-text-[#F27649] -tw-mt-px"
-                    aria-label="Home page"
-                    class="p-button-rounded p-button-text p-button-secondary p-button-sm p-button-sm-icon">
+                <span class="p-input-button-left tw-ml-4 tw-w-full lg:tw-w-80"
+                  [ngClass]="displayMobileSearch ? 'tw-inline-flex' : 'tw-hidden lg:tw-inline-flex tw-mr-2'">
+                  <button pButton type="button" icon="ms ms-search" aria-label="Search"
+                    class="p-button-rounded p-button-text p-button-secondary p-button-sm p-button-sm-icon tw-ml-0.5"
+                    (click)="loadAdvancedSearch(mediaSearch.inputValue)">
                   </button>
-                </a>
-                <span class="p-input-button-right tw-ml-4 tw-mr-2 lg:tw-inline-flex tw-w-full lg:tw-w-80"
-                  [class.tw-hidden]="!displayMobileSearch">
                   <p-autoComplete #mediaSearch [suggestions]="mediaSuggestions"
                     [placeholder]="t('homeHeader.searchPlaceholder')" [minLength]="2" [maxlength]="250"
                     (completeMethod)="loadMediaSuggestions($event.query)" field="title" dataKey="_id"
                     [completeOnFocus]="false" [showEmptyMessage]="true" scrollHeight="480px" class="p-autocomplete-full"
-                    styleClass="p-inputtext-xs p-autocomplete-no-loader" panelStyleClass="p-autocomplete-xs"
-                    inputId="media" ariaLabel="Find media" dropdownAriaLabel="Media search results"
+                    styleClass="p-inputtext-xs p-inputtext-rounded" panelStyleClass="p-autocomplete-xs" inputId="media"
+                    ariaLabel="Find media" dropdownAriaLabel="Media search results"
                     (onKeyUp)="onMediaSearchKeyUp($event, mediaSearch)">
                     <ng-template let-media pTemplate="item">
                       <a class="tw-flex" [routerLink]="['/details', media._id]">
@@ -52,17 +69,13 @@
                       </a>
                     </ng-template>
                   </p-autoComplete>
-                  <button pButton type="button" icon="ms ms-search" aria-label="Search"
-                    class="p-button-rounded p-button-text p-button-secondary p-button-sm p-button-sm-icon"
-                    (click)="loadAdvancedSearch(mediaSearch.inputValue)">
-                  </button>
                 </span>
-                <a routerLink="/media" routerLinkActive="before:tw-bg-white" class="tw-nav-item tw-hidden"
+                <!--a routerLink="/media" routerLinkActive="before:tw-bg-white" class="tw-nav-item tw-hidden"
                   [ngClass]="displayMobileSearch ? 'lg:tw-block' : 'sm:tw-block'">{{ t('homeHeader.movies')
-                  }}</a>
-                <a routerLink="/media" routerLinkActive="before:tw-bg-white" class="tw-nav-item tw-hidden"
+                  }}</a-->
+                <!--a routerLink="/media" routerLinkActive="before:tw-bg-white" class="tw-nav-item tw-hidden"
                   [ngClass]="displayMobileSearch ? 'lg:tw-block' : 'sm:tw-block'">{{ t('homeHeader.tvShows')
-                  }}</a>
+                  }}</a-->
                 <!--a routerLink="/search" routerLinkActive="before:tw-bg-white" class="tw-nav-item">{{
                   t('homeHeader.search') }}</a-->
               </div>
@@ -87,23 +100,34 @@
                     }}</p>
                 </button>
                 <button pButton type="button" icon="ms ms-more-vert" aria-label="User menu"
-                  (click)="userMenu.toggle($event)"
+                  [appMenuTriggerFor]="userMenu"
                   class="p-button-rounded p-button-text p-button-secondary p-button-sm p-button-sm-icon tw-ml-2">
                 </button>
-                <p-menu #userMenu [popup]="true" [appendTo]="userMenuZone" [model]="userMenuItems"></p-menu>
+                <!--p-menu #userMenu [popup]="true" [appendTo]="menuZone" [model]="userMenuItems"
+                  showTransitionOptions="0s linear"></p-menu-->
+                <ng-template #userMenu>
+                  <div appMenu>
+                    <ng-container *ngIf="currentUser | isGranted:UserPermission.MANAGE_MEDIA">
+                      <a appMenuItem routerLink="/admin/media">
+                        <i class="ms ms-movie"></i>
+                        <span>{{ t('homeHeader.manageMedia') }}</span>
+                      </a>
+                      <a appMenuItem routerLink="/">
+                        <i class="ms ms-settings"></i>
+                        <span>{{ t('homeHeader.settings') }}</span>
+                      </a>
+                    </ng-container>
+                    <button appMenuItem (click)="onSignOut()">
+                      <i class="ms ms-logout"></i>
+                      <span>{{ t('homeHeader.signOut') }}</span>
+                    </button>
+                  </div>
+                </ng-template>
               </ng-container>
               <ng-template #notLoggedIn>
                 <a routerLink="/sign-in" routerLinkActive="before:tw-bg-white" class="tw-nav-item">{{
                   t('homeHeader.signIn') }}</a>
               </ng-template>
-            </div>
-          </div>
-          <div class="tw-flex sm:tw-hidden tw-items-center sm:tw-static sm:tw-inset-auto sm:tw-ml-6 sm:tw-pr-0">
-            <div class="tw-flex tw-items-center sm:tw-hidden">
-              <!-- Mobile menu button-->
-              <button pButton (click)="onOpenMenu()" icon="ms ms-menu" type="button" aria-label="Toggle navbar"
-                class="p-button-rounded p-button-text p-button-secondary p-button-sm p-button-sm-icon">
-              </button>
             </div>
           </div>
         </div>
@@ -124,6 +148,22 @@
         </div>
       </div>
     </nav>
-    <div #userMenuZone></div>
+    <div #menuZone></div>
+    <ng-template #desktopMenu>
+      <div appMenu>
+        <a appMenuItem routerLink="/">{{ t('homeHeader.home') }}</a>
+        <a appMenuItem routerLink="/">{{ t('homeHeader.movies') }}</a>
+        <a appMenuItem routerLink="/">{{ t('homeHeader.tvShows') }}</a>
+        <button appMenuItem [appMenuTriggerFor]="desktopGenresMenu">{{ t('homeHeader.genres') }}</button>
+        <a appMenuItem routerLink="/">{{ t('homeHeader.recently') }}</a>
+        <a appMenuItem routerLink="/">{{ t('homeHeader.updated') }}</a>
+      </div>
+    </ng-template>
+    <ng-template #desktopGenresMenu>
+      <div appMenu class="p-scrollbar tw-flex-wrap tw-flex-row tw-w-[38rem] tw-max-h-96 tw-overflow-y-auto">
+        <a *ngFor="let genre of genres; trackBy: track_Id" class="cdk-menu-item-sm tw-w-1/4 tw-text-sm" appMenuItem
+          [routerLink]="['/genres', genre._id]">{{ genre.name }}</a>
+      </div>
+    </ng-template>
   </ng-container>
 </header>

@@ -7988,8 +7988,17 @@ p-inputnumber.ng-touched.ng-invalid > .p-inputnumber > .p-inputtext {
   --p-spinner-color: #FFFFFF;
 }
 
-.p-input-button-right {
+.p-input-button-left, .p-input-button-right {
   position: relative;
+}
+
+.p-input-button-left > button:first-of-type {
+  left: 0.25rem;
+  z-index: 1;
+}
+
+.p-input-button-left .p-inputtext {
+  padding-left: 3rem;
 }
 
 .p-input-button-right > button:last-of-type {
@@ -8033,4 +8042,9 @@ p-inputnumber.ng-touched.ng-invalid > .p-inputnumber > .p-inputtext {
 p-autocomplete.p-autocomplete-full, p-autocomplete.p-autocomplete-full > .p-autocomplete,
 p-autocomplete.p-autocomplete-full > .p-autocomplete > .p-autocomplete-input {
   width: 100%
+}
+
+.p-inputtext.p-inputtext-rounded,
+.p-inputtext-rounded .p-inputtext {
+  border-radius: 9999px;
 }

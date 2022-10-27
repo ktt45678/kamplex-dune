@@ -1,14 +1,14 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, Inject, Input, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { Router } from '@angular/router';
-import { MenuItem, PrimeIcons } from 'primeng/api';
+import { MenuItem } from 'primeng/api';
 import { AutoComplete } from 'primeng/autocomplete';
 import { takeUntil } from 'rxjs';
 
-import { Media, UserDetails } from '../../../core/models';
-import { AuthService, DestroyService, MediaService } from '../../../core/services';
-import { PermissionPipeService } from '../../pipes/permission-pipe';
+import { Genre, Media, UserDetails } from '../../../core/models';
+import { AuthService, DestroyService, GenresService, MediaService } from '../../../core/services';
 import { MediaType, UserPermission } from '../../../core/enums';
+import { track_Id } from '../../../core/utils';
 
 @Component({
   selector: 'app-home-header',
@@ -20,10 +20,12 @@ import { MediaType, UserPermission } from '../../../core/enums';
 export class HomeHeaderComponent implements OnInit {
   @ViewChild('mediaSearch') mediaSearch?: AutoComplete;
   @Input() isFixedNavbar: boolean = false;
+  track_Id = track_Id;
   MediaType = MediaType;
+  UserPermission = UserPermission;
   currentUser: UserDetails | null;
-  userMenuItems: MenuItem[];
   mediaSuggestions: Media[] = [];
+  genres: Genre[] = [];
   isMobileMenuOpened: boolean = false;
   displayMobileSearch: boolean = false;
   currentPageYOffset: number;
@@ -31,44 +33,19 @@ export class HomeHeaderComponent implements OnInit {
   bgDark: string = 'tw-bg-neutral-900';
 
   constructor(@Inject(DOCUMENT) private document: Document, private ref: ChangeDetectorRef, private renderer: Renderer2,
-    private router: Router, private authService: AuthService, private mediaService: MediaService,
-    private permissionPipeService: PermissionPipeService,
+    private router: Router, private authService: AuthService, private mediaService: MediaService, private genresService: GenresService,
     private destroyService: DestroyService) {
     this.currentPageYOffset = window.pageYOffset;
     this.currentUser = null;
-    this.userMenuItems = [
-      {
-        label: 'Sign out',
-        icon: PrimeIcons.SIGN_OUT,
-        command: () => this.onSignOut()
-      }
-    ];
   }
 
   ngOnInit(): void {
     this.authService.currentUser$.pipe(takeUntil(this.destroyService)).subscribe(user => {
       this.currentUser = user;
-      if (user) {
-        if (this.permissionPipeService.hasPermission(user, [UserPermission.MANAGE_MEDIA])) {
-          this.userMenuItems = [
-            {
-              label: 'Manage media',
-              icon: 'ms ms-movie',
-              routerLink: '/admin/media'
-            },
-            {
-              label: 'Settings',
-              icon: 'ms ms-settings'
-            },
-            {
-              label: 'Sign out',
-              icon: 'ms ms-logout',
-              command: () => this.onSignOut()
-            }
-          ];
-        }
-      }
       this.ref.markForCheck();
+    });
+    this.genresService.findAll('asc(name)').subscribe(genres => {
+      this.genres = genres;
     });
   }
 
@@ -86,7 +63,7 @@ export class HomeHeaderComponent implements OnInit {
     }
   }
 
-  onOpenMenu(): void {
+  onOpenMobileMenu(): void {
     this.isMobileMenuOpened = !this.isMobileMenuOpened;
     if (!this.isFixedNavbar) return;
     const element = this.document.getElementById('navbar');
@@ -138,7 +115,8 @@ export class HomeHeaderComponent implements OnInit {
       if (autoComplete.highlightOption) {
         this.router.navigate(['/details', autoComplete.highlightOption._id]);
         return;
-      }
+      } else if (!autoComplete.inputValue)
+        return;
       autoComplete.overlayVisible = false;
       autoComplete.cd.markForCheck();
       this.loadAdvancedSearch(autoComplete.inputValue);

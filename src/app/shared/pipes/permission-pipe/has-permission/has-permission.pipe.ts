@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { PermissionPipeService } from '..';
 
+import { PermissionPipeService } from '../permission-pipe.service';
 import { User, UserDetails } from '../../../../core/models';
 
 @Pipe({

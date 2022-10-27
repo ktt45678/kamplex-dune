@@ -3,6 +3,7 @@ import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTr
 import { Observable } from 'rxjs';
 
 import { AuthService } from '../services';
+import { UserPermission } from '../enums';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -18,11 +19,20 @@ export class AuthGuard implements CanActivate {
       return false;
     }
     // Logged in
-    const allowedPerms = <number[]>route.data['withPermissions'];
-    if (allowedPerms) {
-      return true;
+    const allowedPerms = <UserPermission[]>route.data['withPermissions'];
+    // No permission required so return true
+    if (!allowedPerms?.length) return true;
+    // Always return true for the owner
+    if (user.owner) return true;
+    // Return false for users with no granted permissions
+    if (!user.granted) return false;
+    // Return true if user has any granted permission
+    for (let i = 0; i < user.granted.length; i++) {
+      if (allowedPerms.includes(user.granted[i]))
+        return true;
     }
-    return true;
+    // No matching granted permission
+    return false;
   }
 
 }

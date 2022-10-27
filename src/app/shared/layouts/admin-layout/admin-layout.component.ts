@@ -5,7 +5,6 @@ import { first, Observable, takeUntil } from 'rxjs';
 
 import { CanComponentDeactivate } from '../../../core/guards';
 import { DestroyService, QueueUploadService } from '../../../core/services';
-import { WsService } from '../../modules/ws';
 import { QueueUploadStatus } from '../../../core/enums';
 import { FileUpload } from '../../../core/utils';
 
@@ -25,7 +24,7 @@ export class AdminLayoutComponent implements OnInit, OnDestroy, CanComponentDeac
   totalUploading: number = 0;
   percent: number = 10;
 
-  constructor(private ref: ChangeDetectorRef, private queueUploadService: QueueUploadService, private wsService: WsService,
+  constructor(private ref: ChangeDetectorRef, private queueUploadService: QueueUploadService,
     private translocoService: TranslocoService, private destroyService: DestroyService) {
     this.displayQueue = this.queueUploadService.displayQueue;
     this.timeRemaining = this.queueUploadService.timeRemaining;
@@ -59,20 +58,6 @@ export class AdminLayoutComponent implements OnInit, OnDestroy, CanComponentDeac
         this.uploadQueue = queue;
         this.totalUploading = queue.filter(u => u.status === QueueUploadStatus.UPLOADING).length;
         this.ref.markForCheck();
-      }
-    });
-    this.initSocket();
-  }
-
-  initSocket(): void {
-    this.wsService.fromEvent('connect').pipe(takeUntil(this.destroyService)).subscribe({
-      next: () => {
-        console.log('connected');
-      }
-    });
-    this.wsService.fromEvent('disconnect').pipe(takeUntil(this.destroyService)).subscribe({
-      next: () => {
-        console.log('disconnected');
       }
     });
   }

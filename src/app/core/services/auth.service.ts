@@ -5,6 +5,7 @@ import jwt_decode from 'jwt-decode';
 
 import { UserDetails, JWTWithPayload } from '../models';
 import { ConfirmEmailDto, PasswordRecoveryDto, ResetPasswordDto, SignInDto, SignUpDto } from '../dto/auth';
+import { UserPermission } from '../enums';
 
 @Injectable({
   providedIn: 'root'
@@ -35,17 +36,13 @@ export class AuthService {
 
   signIn(body: SignInDto) {
     return this.http.post<JWTWithPayload>('auth/sign-in', body, { withCredentials: true }).pipe(tap(data => {
-      this._accessToken = data.accessToken;
-      this.currentUserSubject.next(data.payload);
-      this.startRefreshTokenTimer();
+      this.assignUser(data);
     }));
   }
 
   signUp(body: SignUpDto) {
     return this.http.post<JWTWithPayload>('auth/sign-up', body, { withCredentials: true }).pipe(tap(data => {
-      this._accessToken = data.accessToken;
-      this.currentUserSubject.next(data.payload);
-      this.startRefreshTokenTimer();
+      this.assignUser(data);
     }));
   }
 
@@ -67,9 +64,7 @@ export class AuthService {
 
   refreshToken() {
     return this.http.post<JWTWithPayload>('auth/refresh-token', {}, { withCredentials: true }).pipe(tap(data => {
-      this._accessToken = data.accessToken;
-      this.currentUserSubject.next(data.payload);
-      this.startRefreshTokenTimer();
+      this.assignUser(data);
     }));
   }
 
@@ -95,5 +90,27 @@ export class AuthService {
 
   private stopRefreshTokenTimer() {
     this.refreshTokenTimeout && clearTimeout(this.refreshTokenTimeout);
+  }
+
+  private assignUser(data: JWTWithPayload) {
+    this._accessToken = data.accessToken;
+    data.payload.granted = this.scanPermissions(data.payload);
+    this.currentUserSubject.next(data.payload);
+    this.startRefreshTokenTimer();
+  }
+
+  scanPermissions(user: UserDetails) {
+    const granted: number[] = [];
+    if (!user?.roles?.length)
+      return granted;
+    const permKeys = Object.keys(UserPermission);
+    for (let i = 0; i < permKeys.length; i++) {
+      const permKey = permKeys[i] as keyof typeof UserPermission;
+      if (user.roles.find(role => role.permissions & UserPermission[permKey])) {
+        granted.push(UserPermission[permKey]);
+        continue;
+      }
+    }
+    return granted;
   }
 }

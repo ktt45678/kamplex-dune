@@ -6,7 +6,7 @@ import { map } from 'rxjs';
 import { CreateGenreDto, PaginateGenresDto, UpdateGenreDto } from '../dto/genres';
 import { Genre, GenreDetails, Paginated } from '../models';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class GenresService {
   constructor(private http: HttpClient, private translocoService: TranslocoService) { }
 

@@ -16,4 +16,10 @@ export class PermissionPipeService {
     }
     return false;
   }
+
+  isGranted(user: UserDetails, permission: number): boolean {
+    if (user.owner) return true;
+    if (!user.granted) return false;
+    return user.granted.includes(permission);
+  }
 }

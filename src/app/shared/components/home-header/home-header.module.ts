@@ -5,9 +5,9 @@ import { TranslocoModule } from '@ngneat/transloco';
 import { LazyLoadImageModule } from 'ng-lazyload-image';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { ButtonModule } from 'primeng/button';
-import { MenuModule } from 'primeng/menu';
 
 import { HomeHeaderComponent } from './home-header.component';
+import { CdkMenuCustomModule } from '../../directives/cdk-menu-custom';
 import { CommonDirectiveModule } from '../../directives/common-directive';
 import { LazyloadImageExtraModule } from '../../directives/lazyload-image-extra';
 import { PermissionPipeModule } from '../../pipes/permission-pipe';
@@ -21,14 +21,14 @@ import { DateTimePipeModule } from '../../pipes/date-time-pipe';
     RouterModule,
     TranslocoModule,
     LazyLoadImageModule,
+    CdkMenuCustomModule,
     CommonDirectiveModule,
     LazyloadImageExtraModule,
     PermissionPipeModule,
     NumberPipeModule,
     DateTimePipeModule,
     AutoCompleteModule,
-    ButtonModule,
-    MenuModule
+    ButtonModule
   ],
   exports: [HomeHeaderComponent]
 })

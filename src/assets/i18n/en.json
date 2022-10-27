@@ -24,10 +24,16 @@
     "home": "Home",
     "movies": "Movies",
     "tvShows": "TV Shows",
+    "genres": "Genres",
+    "recently": "Recently",
+    "updated": "Updated",
     "signIn": "Sign in",
     "signUp": "Sign up",
     "search": "Search",
-    "searchPlaceholder": "Search..."
+    "searchPlaceholder": "Search...",
+    "manageMedia": "Manage media",
+    "settings": "Settings",
+    "signOut": "Sign out"
   },
   "validationErrors": {
     "auth": {

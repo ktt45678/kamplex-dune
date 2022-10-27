@@ -3,11 +3,18 @@ import { CommonModule } from '@angular/common';
 
 import { HasPermissionPipe } from './has-permission/has-permission.pipe';
 import { PermissionPipeService } from './permission-pipe.service';
+import { IsGrantedPipe } from './is-granted/is-granted.pipe';
 
 @NgModule({
-  declarations: [HasPermissionPipe],
+  declarations: [
+    HasPermissionPipe,
+    IsGrantedPipe
+  ],
   imports: [CommonModule],
   providers: [PermissionPipeService],
-  exports: [HasPermissionPipe]
+  exports: [
+    HasPermissionPipe,
+    IsGrantedPipe
+  ]
 })
 export class PermissionPipeModule { }
