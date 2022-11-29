@@ -1,7 +1,6 @@
 import { HttpClient, HttpEventType, HttpStatusCode } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import * as UpChunk from '@mux/upchunk';
-import { BehaviorSubject, concatMap, finalize, Observable, retry, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, concatMap, Observable, retry, switchMap, tap } from 'rxjs';
 
 import { QueueUploadStatus } from '../enums';
 import { UploadSession } from '../models';
@@ -131,7 +130,8 @@ export class QueueUploadService {
           return this.http.put<{ id: string }>(session.url, chunk, {
             headers: {
               'Content-Range': `bytes ${startOffset}-${endOffset}/${fileSize}`,
-              'x-ng-intercept': 'ignore'
+              'x-ng-intercept': 'ignore',
+              'ngsw-bypass': 'true'
             },
             reportProgress: true,
             responseType: 'json',

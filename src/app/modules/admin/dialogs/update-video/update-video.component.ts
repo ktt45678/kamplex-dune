@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { first, takeUntil } from 'rxjs';
+import { takeUntil } from 'rxjs';
 
 import { DropdownOptionDto, UpdateMediaVideoDto } from '../../../../core/dto/media';
 import { DestroyService, ItemDataService, MediaService } from '../../../../core/services';
@@ -23,7 +23,6 @@ interface UpdateVideoForm {
 })
 export class UpdateVideoComponent implements OnInit {
   youtubeUrl = YOUTUBE_EMBED_URL;
-  isUpdatingVideo: boolean = false;
   previewVideoKey?: string;
   updateVideoForm: FormGroup<UpdateVideoForm>;
   translateOptions: DropdownOptionDto[] = [];
@@ -40,7 +39,7 @@ export class UpdateVideoComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.itemDataService.createTranslateOptions().pipe(first()).subscribe({
+    this.itemDataService.createTranslateOptions().subscribe({
       next: options => this.translateOptions = options
     });
     this.enableVideoPreview();
@@ -71,7 +70,7 @@ export class UpdateVideoComponent implements OnInit {
 
   onUpdateVideoFormSubmit(): void {
     if (this.updateVideoForm.invalid) return;
-    this.isUpdatingVideo = true;
+    this.updateVideoForm.disable({ emitEvent: false });
     const mediaId = this.config.data['media']['_id'];
     const videoId = this.config.data['video']['_id'];
     const formValue = this.updateVideoForm.getRawValue();
@@ -84,7 +83,7 @@ export class UpdateVideoComponent implements OnInit {
       next: (videos) => {
         this.dialogRef.close(videos);
       }, error: () => {
-        this.isUpdatingVideo = false;
+        this.updateVideoForm.enable({ emitEvent: false });
         this.ref.markForCheck();
       }
     });

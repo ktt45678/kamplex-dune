@@ -66,7 +66,6 @@ export class ConfigureEpisodeComponent implements OnInit, AfterViewInit {
   addSubtitleForm: FormGroup<AddSubtitleForm>;
   updateEpisodeInitValue = {};
   updateEpisodeFormChanged: boolean = false;
-  isUpdatingEpisode: boolean = false;
   isUpdatingStill: boolean = false;
   isUpdated: boolean = false;
   isUploadingSource: boolean = false;
@@ -108,7 +107,7 @@ export class ConfigureEpisodeComponent implements OnInit, AfterViewInit {
     this.days = this.itemDataService.createDateList();
     this.months = this.itemDataService.createMonthList();
     this.years = this.itemDataService.createYearList();
-    this.itemDataService.createLanguageList().pipe(first()).subscribe(languages => this.languages = languages);
+    this.itemDataService.createLanguageList().subscribe(languages => this.languages = languages);
   }
 
   ngAfterViewInit(): void {
@@ -136,7 +135,7 @@ export class ConfigureEpisodeComponent implements OnInit, AfterViewInit {
     if (this.updateEpisodeForm.invalid) return;
     const mediaId = this.config.data['media']['_id'];
     const episodeId = this.config.data['episode']['_id'];
-    this.isUpdatingEpisode = true;
+    this.updateEpisodeForm.disable({ emitEvent: false });
     const formValue = this.updateEpisodeForm.getRawValue();
     const updateTVEpisodeDto: UpdateTVEpisodeDto = ({
       episodeNumber: formValue.episodeNumber,
@@ -162,7 +161,7 @@ export class ConfigureEpisodeComponent implements OnInit, AfterViewInit {
         this.isUpdated = true;
       }
     }).add(() => {
-      this.isUpdatingEpisode = false;
+      this.updateEpisodeForm.enable({ emitEvent: false });
       this.ref.markForCheck();
     });
   }
@@ -252,7 +251,7 @@ export class ConfigureEpisodeComponent implements OnInit, AfterViewInit {
 
   loadSubtitleFormData(episode: TVEpisodeDetails): void {
     const disabledLanguages = episode.subtitles.map((s: MediaSubtitle) => s.language);
-    this.itemDataService.createLanguageList(disabledLanguages).pipe(first()).subscribe({
+    this.itemDataService.createLanguageList(disabledLanguages).subscribe({
       next: languages => this.addSubtitleLanguages = languages
     });
   }
@@ -323,7 +322,7 @@ export class ConfigureEpisodeComponent implements OnInit, AfterViewInit {
     this.showEpisodePlayer = true;
     const mediaId = this.config.data['media']['_id'];
     const episodeNumber = this.config.data['episode']['episodeNumber'];
-    this.translocoService.selectTranslation('languages').pipe(switchMap(t => {
+    this.translocoService.selectTranslation('languages').pipe(first(), switchMap(t => {
       return this.mediaService.findTVStreams(mediaId, episodeNumber).pipe(map(movie => ({ movie, t })));
     })).subscribe(({ movie, t }) => {
       const sources: Source[] = [];

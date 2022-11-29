@@ -1,6 +1,6 @@
 import { FormControl } from '@angular/forms';
 
-export interface ExtStreamsForm {
+export interface ExternalIdsForm {
   imdb: FormControl<string | null>;
   tmdb: FormControl<number | null>;
   aniList: FormControl<number | null>;

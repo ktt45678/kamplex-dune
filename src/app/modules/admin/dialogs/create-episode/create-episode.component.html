@@ -9,62 +9,46 @@
           <div class="p-scrollbar tw-overflow-y-auto tw-h-[calc(90vh-14rem)] tw-px-6">
             <div class="tw-flex tw-flex-wrap">
               <div class="tw-w-full md:tw-w-1/2">
-                <label for="episode-number" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
-                  {{ t('admin.createEpisode.episodeNumber') }}
-                </label>
+                <label for="episode-number" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
+                  t('admin.createEpisode.episodeNumber') }}</label>
                 <p-inputNumber formControlName="episodeNumber" class="tw-w-full" styleClass="tw-w-full"
                   id="episode-number" aria-describedby="episode-number-error" [min]="0" [max]="10000"
                   [showButtons]="true" inputId="minmax-buttons"
-                  [placeholder]="t('admin.createEpisode.episodeNumberPlaceholder')" autofocus>
+                  [placeholder]="t('admin.createEpisode.episodeNumberPlaceholder')" controlAutofocus>
                 </p-inputNumber>
-                <small id="episode-number-error"
-                  class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
-                  [ngClass]="(createEpisodeForm.controls['episodeNumber'].dirty || createEpisodeForm.controls['episodeNumber'].touched)
-                      && createEpisodeForm.controls['episodeNumber'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">{{
-                  createEpisodeForm.controls['episodeNumber'].errors | firstErrorKey:'createEpisode':'episodeNumber'
+                <small id="episode-number-error" class="p-error tw-text-xs tw-block tw-my-2"
+                  [invalidControl]="createEpisodeForm.controls.episodeNumber">{{
+                  createEpisodeForm.controls.episodeNumber.errors | firstErrorKey:'createEpisode':'episodeNumber'
                   }}</small>
               </div>
               <div class="tw-w-full md:tw-w-1/2 md:tw-pl-2">
-                <label for="runtime" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
-                  {{ t('admin.createEpisode.runtime') }}
-                </label>
+                <label for="runtime" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
+                  t('admin.createEpisode.runtime') }}</label>
                 <p-inputNumber formControlName="runtime" class="tw-w-full" styleClass="tw-w-full" id="runtime"
                   suffix=" min" aria-describedby="runtime-error" [useGrouping]="false" [min]="0" [max]="10000"
                   [placeholder]="t('admin.createEpisode.runtimePlaceholder')">
                 </p-inputNumber>
-                <small id="runtime-error"
-                  class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
-                  [ngClass]="(createEpisodeForm.controls['runtime'].dirty || createEpisodeForm.controls['runtime'].touched)
-                      && createEpisodeForm.controls['runtime'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
-                  {{ createEpisodeForm.controls['runtime'].errors | firstErrorKey:'createEpisode':'runtime' }}
-                </small>
+                <small id="runtime-error" class="p-error tw-text-xs tw-block tw-my-2"
+                  [invalidControl]="createEpisodeForm.controls.runtime">{{ createEpisodeForm.controls.runtime.errors
+                  | firstErrorKey:'createEpisode':'runtime' }}</small>
               </div>
             </div>
-            <label for="name" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
-              {{ t('admin.createEpisode.name') }}
-            </label>
+            <label for="name" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
+              t('admin.createEpisode.name') }}</label>
             <input formControlName="name" class="tw-w-full" id="name" type="text" aria-describedby="name-error"
               [placeholder]="t('admin.createEpisode.namePlaceholder')" pInputText>
-            <small id="name-error"
-              class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
-              [ngClass]="(createEpisodeForm.controls['name'].dirty || createEpisodeForm.controls['name'].touched)
-                  && createEpisodeForm.controls['name'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
-              {{ createEpisodeForm.controls['name'].errors | firstErrorKey:'createEpisode':'name' }}
-            </small>
-            <label for="overview" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
-              {{ t('admin.createEpisode.overview') }}
-            </label>
+            <small id="name-error" class="p-error tw-text-xs tw-block tw-my-2"
+              [invalidControl]="createEpisodeForm.controls.name">{{ createEpisodeForm.controls.name.errors
+              | firstErrorKey:'createEpisode':'name' }}</small>
+            <label for="overview" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
+              t('admin.createEpisode.overview') }}</label>
             <textarea formControlName="overview" class="tw-w-full" id="overview" aria-describedby="overview-error"
               [placeholder]="t('admin.createEpisode.overviewPlaceholder')" pInputTextarea [rows]="5"></textarea>
-            <small id="overview-error"
-              class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
-              [ngClass]="(createEpisodeForm.controls['overview'].dirty || createEpisodeForm.controls['overview'].touched)
-                  && createEpisodeForm.controls['overview'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
-              {{ createEpisodeForm.controls['overview'].errors | firstErrorKey:'createEpisode':'overview' }}
-            </small>
-            <label for="air-date" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
-              {{ t('admin.createEpisode.airDate') }}
-            </label>
+            <small id="overview-error" class="p-error tw-text-xs tw-block tw-my-2"
+              [invalidControl]="createEpisodeForm.controls.overview">{{ createEpisodeForm.controls.overview.errors
+              | firstErrorKey:'createEpisode':'overview' }}</small>
+            <label for="air-date" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
+              t('admin.createEpisode.airDate') }}</label>
             <div id="air-date" formGroupName="airDate" class="dropdown-group tw-flex tw-flex-wrap tw-w-full"
               aria-describedby="air-date-error">
               <p-dropdown class="tw-w-full sm:tw-w-3/12" styleClass="tw-w-full" panelStyleClass="p-dropdown-sm"
@@ -80,17 +64,13 @@
                 [placeholder]="t('admin.createEpisode.year')" scrollHeight="300px">
               </p-dropdown>
             </div>
-            <small id="air-date-error"
-              class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
-              [ngClass]="(createEpisodeForm.controls['airDate'].dirty || createEpisodeForm.controls['airDate'].touched)
-                  && createEpisodeForm.controls['airDate'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
-              {{ createEpisodeForm.controls['airDate'].errors | firstErrorKey:'createEpisode':'airDate' }}
-            </small>
+            <small id="air-date-error" class="p-error tw-text-xs tw-block tw-my-2"
+              [invalidControl]="createEpisodeForm.controls.airDate">{{ createEpisodeForm.controls.airDate.errors
+              | firstErrorKey:'createEpisode':'airDate' }}</small>
             <div class="tw-flex tw-flex-wrap">
               <div class="tw-w-full sm:tw-w-1/3">
-                <label for="visibility" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
-                  {{ t('admin.createEpisode.visibility') }}
-                </label>
+                <label for="visibility" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
+                  t('admin.createEpisode.visibility') }}</label>
                 <div id="visibility">
                   <p-radioButton name="visibility" [value]="1" [label]="t('admin.createEpisode.visibilityPublic')"
                     formControlName="visibility" class="tw-block tw-mb-2">
@@ -122,21 +102,17 @@
           <div class="p-scrollbar tw-overflow-y-auto tw-h-[calc(90vh-14rem)] tw-px-6">
             <div class="tw-flex tw-flex-wrap">
               <div class="tw-w-full md:tw-w-1/2">
-                <label for="episode-number" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
-                  {{ t('admin.updateEpisode.episodeNumber') }}
-                </label>
+                <label for="episode-number" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
+                  t('admin.updateEpisode.episodeNumber') }}</label>
                 <p-inputNumber formControlName="episodeNumber" class="tw-w-full" styleClass="tw-w-full"
                   id="episode-number" aria-describedby="episode-number-error" [min]="0" [max]="10000"
                   [showButtons]="true" inputId="minmax-buttons"
                   [placeholder]="t('admin.updateEpisode.episodeNumberPlaceholder')" autofocus>
                 </p-inputNumber>
-                <small id="episode-number-error"
-                  class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
-                  [ngClass]="(updateEpisodeForm.controls['episodeNumber'].dirty || updateEpisodeForm.controls['episodeNumber'].touched)
-                      && updateEpisodeForm.controls['episodeNumber'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
-                  {{ updateEpisodeForm.controls['episodeNumber'].errors | firstErrorKey:'updateEpisode':'episodeNumber'
-                  }}
-                </small>
+                <small id="episode-number-error" class="p-error tw-text-xs tw-block tw-my-2"
+                  [invalidControl]="updateEpisodeForm.controls.episodeNumber">{{
+                  updateEpisodeForm.controls.episodeNumber.errors | firstErrorKey:'updateEpisode':'episodeNumber'
+                  }}</small>
               </div>
               <div class="tw-w-full md:tw-w-1/2 md:tw-pl-2">
                 <label for="runtime" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
@@ -146,39 +122,27 @@
                   suffix=" min" aria-describedby="runtime-error" [useGrouping]="false" [min]="0" [max]="10000"
                   [placeholder]="t('admin.updateEpisode.runtimePlaceholder')">
                 </p-inputNumber>
-                <small id="runtime-error"
-                  class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
-                  [ngClass]="(updateEpisodeForm.controls['runtime'].dirty || updateEpisodeForm.controls['runtime'].touched)
-                      && updateEpisodeForm.controls['runtime'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
-                  {{ updateEpisodeForm.controls['runtime'].errors | firstErrorKey:'updateEpisode':'runtime' }}
-                </small>
+                <small id="runtime-error" class="p-error tw-text-xs tw-block tw-my-2"
+                  [invalidControl]="updateEpisodeForm.controls.runtime">{{ updateEpisodeForm.controls.runtime.errors
+                  | firstErrorKey:'updateEpisode':'runtime' }}</small>
               </div>
             </div>
-            <label for="name" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
-              {{ t('admin.updateEpisode.name') }}
-            </label>
+            <label for="name" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
+              t('admin.updateEpisode.name') }}</label>
             <input formControlName="name" class="tw-w-full" id="name" type="text" aria-describedby="name-error"
               [placeholder]="t('admin.updateEpisode.namePlaceholder')" pInputText>
-            <small id="name-error"
-              class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
-              [ngClass]="(updateEpisodeForm.controls['name'].dirty || updateEpisodeForm.controls['name'].touched)
-                  && updateEpisodeForm.controls['name'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
-              {{ updateEpisodeForm.controls['name'].errors | firstErrorKey:'updateEpisode':'name' }}
-            </small>
-            <label for="overview" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
-              {{ t('admin.updateEpisode.overview') }}
-            </label>
+            <small id="name-error" class="p-error tw-text-xs tw-block tw-my-2"
+              [invalidControl]="updateEpisodeForm.controls.name">{{ updateEpisodeForm.controls.name.errors
+              | firstErrorKey:'updateEpisode':'name' }}</small>
+            <label for="overview" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
+              t('admin.updateEpisode.overview') }}</label>
             <textarea formControlName="overview" class="tw-w-full" id="overview" aria-describedby="overview-error"
               [placeholder]="t('admin.updateEpisode.overviewPlaceholder')" pInputTextarea [rows]="5"></textarea>
-            <small id="overview-error"
-              class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
-              [ngClass]="(updateEpisodeForm.controls['overview'].dirty || updateEpisodeForm.controls['overview'].touched)
-                  && updateEpisodeForm.controls['overview'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
-              {{ updateEpisodeForm.controls['overview'].errors | firstErrorKey:'updateEpisode':'overview' }}
-            </small>
-            <label for="air-date" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
-              {{ t('admin.updateEpisode.airDate') }}
-            </label>
+            <small id="overview-error" class="p-error tw-text-xs tw-block tw-my-2"
+              [invalidControl]="updateEpisodeForm.controls.overview">{{ updateEpisodeForm.controls.overview.errors
+              | firstErrorKey:'updateEpisode':'overview' }}</small>
+            <label for="air-date" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
+              t('admin.updateEpisode.airDate') }}</label>
             <div id="air-date" formGroupName="airDate" class="dropdown-group tw-flex tw-flex-wrap tw-w-full"
               aria-describedby="air-date-error">
               <p-dropdown class="tw-w-full sm:tw-w-3/12" styleClass="tw-w-full" panelStyleClass="p-dropdown-sm"
@@ -194,12 +158,9 @@
                 [placeholder]="t('admin.updateEpisode.year')" scrollHeight="300px">
               </p-dropdown>
             </div>
-            <small id="air-date-error"
-              class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
-              [ngClass]="(updateEpisodeForm.controls['airDate'].dirty || updateEpisodeForm.controls['airDate'].touched)
-                  && updateEpisodeForm.controls['airDate'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
-              {{ updateEpisodeForm.controls['airDate'].errors | firstErrorKey:'updateEpisode':'airDate' }}
-            </small>
+            <small id="air-date-error" class="p-error tw-text-xs tw-block tw-my-2"
+              [invalidControl]="updateEpisodeForm.controls.airDate">{{ updateEpisodeForm.controls.airDate.errors
+              | firstErrorKey:'updateEpisode':'airDate' }}</small>
             <div class="tw-flex tw-flex-wrap">
               <div class="tw-w-full sm:tw-w-1/3">
                 <label for="visibility" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">

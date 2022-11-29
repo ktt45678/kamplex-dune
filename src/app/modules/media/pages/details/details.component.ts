@@ -1,5 +1,5 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { Meta } from '@angular/platform-browser';
+import { Meta, Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { takeUntil } from 'rxjs';
@@ -8,7 +8,7 @@ import { MediaDetails } from '../../../../core/models';
 import { MediaService } from '../../../../core/services';
 import { DestroyService } from '../../../../core/services';
 import { MediaType } from '../../../../core/enums';
-import { YOUTUBE_EMBED_URL, YOUTUBE_THUMBNAIL_URL } from '../../../../../environments/config';
+import { SITE_NAME, YOUTUBE_EMBED_URL, YOUTUBE_THUMBNAIL_URL } from '../../../../../environments/config';
 
 @Component({
   selector: 'app-details',
@@ -26,7 +26,7 @@ export class DetailsComponent implements OnInit {
   youtubeUrl = YOUTUBE_EMBED_URL;
   youtubeThumbnailUrl = YOUTUBE_THUMBNAIL_URL;
 
-  constructor(private ref: ChangeDetectorRef, private meta: Meta, private breakpointObserver: BreakpointObserver,
+  constructor(private ref: ChangeDetectorRef, private title: Title, private meta: Meta, private breakpointObserver: BreakpointObserver,
     private mediaService: MediaService, private route: ActivatedRoute, private destroyService: DestroyService) { }
 
   ngOnInit(): void {
@@ -44,6 +44,7 @@ export class DetailsComponent implements OnInit {
   loadMedia(id: string) {
     this.mediaService.findOne(id).subscribe(media => {
       this.media = media;
+      this.title.setTitle(`${media.title} - ${SITE_NAME}`);
       this.meta.addTags([
         {
           name: 'description',

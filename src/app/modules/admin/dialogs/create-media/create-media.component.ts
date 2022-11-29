@@ -140,7 +140,7 @@ export class CreateMediaComponent implements OnInit, AfterViewInit {
     this.days = this.itemDataService.createDateList();
     this.months = this.itemDataService.createMonthList();
     this.years = this.itemDataService.createYearList();
-    this.itemDataService.createLanguageList().pipe(first()).subscribe(languages => {
+    this.itemDataService.createLanguageList().subscribe(languages => {
       this.languages = languages
     });
   }
@@ -165,7 +165,7 @@ export class CreateMediaComponent implements OnInit, AfterViewInit {
 
   onCreateMediaFormSubmit(): void {
     if (this.createMediaForm.invalid) return;
-    this.createMediaForm.disable();
+    this.createMediaForm.disable({ emitEvent: false });
     const formValue = this.createMediaForm.getRawValue();
     const genreIds = formValue.genres?.map(g => g._id) || [];
     const productionIds = formValue.productions?.map(p => p._id) || [];
@@ -206,7 +206,7 @@ export class CreateMediaComponent implements OnInit, AfterViewInit {
         this.stepper?.next();
       }
     }).add(() => {
-      this.createMediaForm.enable();
+      this.createMediaForm.enable({ emitEvent: false });
     });
   }
 
@@ -259,7 +259,7 @@ export class CreateMediaComponent implements OnInit, AfterViewInit {
     if (!this.updateFormChanged)
       return this.stepper?.next();
     if (!this.media || this.updateMediaForm.invalid) return;
-    this.updateMediaForm.disable();
+    this.updateMediaForm.disable({ emitEvent: false });
     const mediaId = this.media._id;
     const formValue = this.updateMediaForm.getRawValue();
     const genreIds = formValue.genres?.map(g => g._id) || [];
@@ -295,7 +295,7 @@ export class CreateMediaComponent implements OnInit, AfterViewInit {
       this.ref.markForCheck();
       this.stepper?.next()
     }).add(() => {
-      this.updateMediaForm.enable();
+      this.updateMediaForm.enable({ emitEvent: false });
     });
   }
 

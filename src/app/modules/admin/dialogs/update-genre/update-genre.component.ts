@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { first, takeUntil } from 'rxjs';
+import { takeUntil } from 'rxjs';
 
 import { UpdateGenreDto } from '../../../../core/dto/genres';
 import { DropdownOptionDto } from '../../../../core/dto/media';
@@ -21,7 +21,6 @@ interface UpdateGenreForm {
   providers: [ItemDataService, DestroyService]
 })
 export class UpdateGenreComponent implements OnInit {
-  updatingGenre: boolean = false;
   updateGenreForm: FormGroup<UpdateGenreForm>;
   translateOptions: DropdownOptionDto[] = [];
 
@@ -35,14 +34,14 @@ export class UpdateGenreComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.itemDataService.createTranslateOptions().pipe(first()).subscribe({
+    this.itemDataService.createTranslateOptions().subscribe({
       next: options => this.translateOptions = options
     });
   }
 
   onUpdateGenreFormSubmit(): void {
     if (this.updateGenreForm.invalid) return;
-    this.updatingGenre = true;
+    this.updateGenreForm.disable({ emitEvent: false });
     const formValue = this.updateGenreForm.getRawValue();
     const params: UpdateGenreDto = {
       name: formValue.name
@@ -51,7 +50,7 @@ export class UpdateGenreComponent implements OnInit {
     this.genresService.update(this.config.data['_id'], params).pipe(takeUntil(this.destroyService)).subscribe({
       next: () => this.dialogRef.close(true),
       error: () => {
-        this.updatingGenre = false;
+        this.updateGenreForm.enable({ emitEvent: false });
         this.ref.markForCheck();
       }
     });

@@ -4,6 +4,7 @@ import { LayoutModule } from '@angular/cdk/layout';
 import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { LazyLoadImageModule } from 'ng-lazyload-image';
 import { ButtonModule } from 'primeng/button';
+import { ToggleButtonModule } from 'primeng/togglebutton';
 import { DialogModule } from 'primeng/dialog';
 import { PaginatorModule } from 'primeng/paginator';
 import { TabViewModule } from 'primeng/tabview';
@@ -15,6 +16,7 @@ import { MediaListModule } from '../../shared/components/media-list';
 import { MediaTopModule } from '../../shared/components/media-top';
 import { EpisodeListModule } from '../../shared/components/episode-list';
 import { VideoPlayerModule } from '../../shared/components/video-player';
+import { StarRatingModule } from '../../shared/components/star-rating';
 import { SearchComponent } from './pages/search/search.component';
 import { WatchComponent } from './pages/watch/watch.component';
 import { DetailsComponent } from './pages/details/details.component';
@@ -38,6 +40,7 @@ import { DateTimePipeModule } from '../../shared/pipes/date-time-pipe';
     MediaTopModule,
     EpisodeListModule,
     VideoPlayerModule,
+    StarRatingModule,
     TranslocoModule,
     LazyLoadImageModule,
     LazyloadImageExtraModule,
@@ -45,6 +48,7 @@ import { DateTimePipeModule } from '../../shared/pipes/date-time-pipe';
     DateTimePipeModule,
     UrlPipeModule,
     ButtonModule,
+    ToggleButtonModule,
     DialogModule,
     PaginatorModule,
     TabViewModule,

@@ -1,7 +1,5 @@
 <ng-container *transloco="let t">
-  <h3 class="tw-text-white tw-text-2xl tw-font-bold tw-text-center">
-    {{ t('admin.createMedia.formHeader') }}
-  </h3>
+  <h3 class="tw-text-white tw-text-2xl tw-font-bold tw-text-center">{{ t('admin.createMedia.formHeader') }}</h3>
   <app-stepper #stepper [linear]="true" headerStyleClass="tw-mx-5 tw-my-4" aria-label="Create media">
     <cdk-step [label]="t('admin.createMedia.movieStep1')" [stepControl]="createMediaForm" [completed]="!!media"
       [editable]="true" aria-label="Details">
@@ -10,102 +8,76 @@
           <div class="p-scrollbar tw-overflow-y-auto tw-h-[calc(90vh-14rem)] tw-px-6">
             <div class="tw-flex tw-flex-wrap">
               <div class="tw-w-full md:tw-w-1/2">
-                <label for="title" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
-                  {{ t('admin.createMedia.title') }}
-                </label>
+                <label for="title" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
+                  t('admin.createMedia.title') }}</label>
                 <input formControlName="title" class="tw-w-full" id="title" type="text" aria-describedby="title-error"
                   [placeholder]="t('admin.createMedia.titlePlaceholder')" pInputText autofocus>
-                <small id="title-error"
-                  class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
-                  [ngClass]="(createMediaForm.controls['title'].dirty || createMediaForm.controls['title'].touched)
-                    && createMediaForm.controls['title'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
-                  {{ createMediaForm.controls['title'].errors | firstErrorKey:'createMedia':'title' }}
-                </small>
+                <small id="title-error" class="p-error tw-text-xs tw-block tw-my-2"
+                  [invalidControl]="createMediaForm.controls.title">{{ createMediaForm.controls.title.errors
+                  | firstErrorKey:'createMedia':'title' }}</small>
               </div>
               <div class="tw-w-full md:tw-w-1/2 md:tw-pl-2">
-                <label for="original-title" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
-                  {{ t('admin.createMedia.originalTitle') }}
-                </label>
+                <label for="original-title" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
+                  t('admin.createMedia.originalTitle') }}</label>
                 <input formControlName="originalTitle" class="tw-w-full" id="original-title" type="text"
                   aria-describedby="original-title-error"
                   [placeholder]="t('admin.createMedia.originalTitlePlaceholder')" pInputText>
-                <small id="original-title-error"
-                  class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
-                  [ngClass]="(createMediaForm.controls['originalTitle'].dirty || createMediaForm.controls['originalTitle'].touched)
-                    && createMediaForm.controls['originalTitle'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
-                  {{ createMediaForm.controls['originalTitle'].errors | firstErrorKey:'createMedia':'originalTitle' }}
-                </small>
+                <small id="original-title-error" class="p-error tw-text-xs tw-block tw-my-2"
+                  [invalidControl]="createMediaForm.controls.originalTitle">{{
+                  createMediaForm.controls.originalTitle.errors | firstErrorKey:'createMedia':'originalTitle' }}</small>
               </div>
             </div>
-            <label for="overview" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
-              {{ t('admin.createMedia.overview') }}
-            </label>
+            <label for="overview" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
+              t('admin.createMedia.overview') }}</label>
             <textarea formControlName="overview" class="tw-w-full" id="overview" aria-describedby="overview-error"
               [placeholder]="t('admin.createMedia.overviewPlaceholder')" pInputTextarea [rows]="5"></textarea>
-            <small id="overview-error"
-              class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
-              [ngClass]="(createMediaForm.controls['overview'].dirty || createMediaForm.controls['overview'].touched)
-                && createMediaForm.controls['overview'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
-              {{ createMediaForm.controls['overview'].errors | firstErrorKey:'createMedia':'overview' }}
-            </small>
+            <small id="overview-error" class="p-error tw-text-xs tw-block tw-my-2"
+              [invalidControl]="createMediaForm.controls.overview">{{ createMediaForm.controls.overview.errors
+              | firstErrorKey:'createMedia':'overview' }}</small>
             <div class="tw-flex tw-flex-wrap">
               <div class="tw-w-full sm:tw-w-1/2">
-                <label for="runtime" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
-                  {{ t('admin.createMedia.runtime') }}
-                </label>
+                <label for="runtime" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
+                  t('admin.createMedia.runtime') }}</label>
                 <p-inputNumber formControlName="runtime" class="tw-w-full" styleClass="tw-w-full" id="runtime"
                   suffix=" min" aria-describedby="runtime-error" [useGrouping]="false" [min]="0" [max]="10000"
                   [placeholder]="t('admin.createMedia.runtimePlaceholder')">
                 </p-inputNumber>
-                <small id="runtime-error"
-                  class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
-                  [ngClass]="(createMediaForm.controls['runtime'].dirty || createMediaForm.controls['runtime'].touched)
-                    && createMediaForm.controls['runtime'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
-                  {{ createMediaForm.controls['runtime'].errors | firstErrorKey:'createMedia':'runtime' }}
-                </small>
+                <small id="runtime-error" class="p-error tw-text-xs tw-block tw-my-2"
+                  [invalidControl]="createMediaForm.controls.runtime">{{ createMediaForm.controls.runtime.errors
+                  | firstErrorKey:'createMedia':'runtime' }}</small>
               </div>
               <div class="tw-w-full sm:tw-w-1/2 sm:tw-pl-2">
-                <label for="original-language" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
-                  {{ t('admin.createMedia.originalLanguage') }}
-                </label>
+                <label for="original-language" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
+                  t('admin.createMedia.originalLanguage') }}</label>
                 <p-dropdown id="original-language" class="tw-w-full" styleClass="tw-w-full"
                   panelStyleClass="md:tw-dropdown-cols-2 md:tw-max-w-lg p-dropdown-xs"
                   aria-describedby="original-language-error" [options]="languages" formControlName="originalLanguage"
                   appendTo="body" [placeholder]="t('admin.createMedia.originalLanguagePlaceholder')" [showClear]="true"
                   scrollHeight="300px">
                 </p-dropdown>
-                <small id="original-language-error"
-                  class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
-                  [ngClass]="(createMediaForm.controls['originalLanguage'].dirty || createMediaForm.controls['originalLanguage'].touched)
-                    && createMediaForm.controls['originalLanguage'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
-                  {{ createMediaForm.controls['originalLanguage'].errors |
-                  firstErrorKey:'createMedia':'originalLanguage'
-                  }}
-                </small>
+                <small id="original-language-error" class="p-error tw-text-xs tw-block tw-my-2"
+                  [invalidControl]="createMediaForm.controls.originalLanguage">{{
+                  createMediaForm.controls.originalLanguage.errors | firstErrorKey:'createMedia':'originalLanguage'
+                  }}</small>
               </div>
             </div>
             <div class="tw-flex tw-flex-wrap">
               <div class="tw-w-full md:tw-w-1/2">
-                <label for="genres" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
-                  {{ t('admin.createMedia.genres') }}
-                </label>
+                <label for="genres" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
+                  t('admin.createMedia.genres') }}</label>
                 <p-autoComplete formControlName="genres" [suggestions]="genreSuggestions"
                   (completeMethod)="loadGenreSuggestions($event.query)" field="name" dataKey="_id" [multiple]="true"
                   [unique]="true" [completeOnFocus]="true" scrollHeight="300px" appendTo="body" styleClass="tw-w-full"
                   panelStyleClass="p-autocomplete-xs" inputId="genres" ariaLabel="Find genres"
                   dropdownAriaLabel="Genre search results" aria-describedby="genres-error">
                 </p-autoComplete>
-                <small id="genres-error"
-                  class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
-                  [ngClass]="(createMediaForm.controls['genres'].dirty || createMediaForm.controls['genres'].touched)
-                && createMediaForm.controls['genres'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
-                  {{ createMediaForm.controls['genres'].errors | firstErrorKey:'createMedia':'genres' }}
-                </small>
+                <small id="genres-error" class="p-error tw-text-xs tw-block tw-my-2"
+                  [invalidControl]="createMediaForm.controls.genres">{{ createMediaForm.controls.genres.errors |
+                  firstErrorKey:'createMedia':'genres' }}</small>
               </div>
               <div class="tw-w-full md:tw-w-1/2 md:tw-pl-2">
-                <label for="productions" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
-                  {{ t('admin.createMedia.productions') }}
-                </label>
+                <label for="productions" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
+                  t('admin.createMedia.productions') }}</label>
                 <p-autoComplete formControlName="productions" [suggestions]="productionSuggestions"
                   (completeMethod)="loadProductionSuggestions($event.query)" field="name" dataKey="_id"
                   [multiple]="true" [unique]="true" [completeOnFocus]="true" scrollHeight="300px" appendTo="body"
@@ -113,17 +85,13 @@
                   ariaLabel="Find companies" dropdownAriaLabel="Company search results"
                   aria-describedby="productions-error">
                 </p-autoComplete>
-                <small id="productions-error"
-                  class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
-                  [ngClass]="(createMediaForm.controls['productions'].dirty || createMediaForm.controls['productions'].touched)
-                && createMediaForm.controls['productions'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
-                  {{ createMediaForm.controls['productions'].errors | firstErrorKey:'createMedia':'productions' }}
-                </small>
+                <small id="productions-error" class="p-error tw-text-xs tw-block tw-my-2"
+                  [invalidControl]="createMediaForm.controls.productions">{{ createMediaForm.controls.productions.errors
+                  | firstErrorKey:'createMedia':'productions' }}</small>
               </div>
             </div>
-            <label for="release-date" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
-              {{ t('admin.createMedia.releaseDate') }}
-            </label>
+            <label for="release-date" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
+              t('admin.createMedia.releaseDate') }}</label>
             <div id="release-date" formGroupName="releaseDate" class="dropdown-group tw-flex tw-flex-wrap tw-w-full"
               aria-describedby="release-date-error">
               <p-dropdown class="tw-w-full sm:tw-w-3/12" styleClass="tw-w-full" panelStyleClass="p-dropdown-xs"
@@ -139,16 +107,12 @@
                 formControlName="year" appendTo="body" [placeholder]="t('admin.createMedia.year')" scrollHeight="300px">
               </p-dropdown>
             </div>
-            <small id="release-date-error"
-              class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
-              [ngClass]="(createMediaForm.controls['releaseDate'].dirty || createMediaForm.controls['releaseDate'].touched)
-                  && createMediaForm.controls['releaseDate'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
-              {{ createMediaForm.controls['releaseDate'].errors | firstErrorKey:'createMedia':'releaseDate' }}
-            </small>
+            <small id="release-date-error" class="p-error tw-text-xs tw-block tw-my-2"
+              [invalidControl]="createMediaForm.controls.releaseDate">{{ createMediaForm.controls.releaseDate.errors
+              | firstErrorKey:'createMedia':'releaseDate' }}</small>
             <ng-container *ngIf="createMediaForm.value.type === MediaType.TV">
-              <label for="last-air-date" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
-                {{ t('admin.createMedia.lastAirDate') }}
-              </label>
+              <label for="last-air-date" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
+                t('admin.createMedia.lastAirDate') }}</label>
               <div id="last-air-date" formGroupName="lastAirDate" class="dropdown-group tw-flex tw-flex-wrap tw-w-full"
                 aria-describedby="last-air-date-error">
                 <p-dropdown class="tw-w-full sm:tw-w-3/12" styleClass="tw-w-full" panelStyleClass="p-dropdown-xs"
@@ -165,18 +129,14 @@
                   scrollHeight="300px">
                 </p-dropdown>
               </div>
-              <small id="last-air-date-error" *ngIf="createMediaForm.controls['lastAirDate']"
-                class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
-                [ngClass]="(createMediaForm.controls['lastAirDate'].dirty || createMediaForm.controls['lastAirDate'].touched)
-                    && createMediaForm.controls['lastAirDate'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
-                {{ createMediaForm.controls['lastAirDate'].errors | firstErrorKey:'createMedia':'lastAirDate' }}
-              </small>
+              <small id="last-air-date-error" *ngIf="createMediaForm.controls.lastAirDate"
+                class="p-error tw-text-xs tw-block tw-my-2" [invalidControl]="createMediaForm.controls.lastAirDate">{{
+                createMediaForm.controls.lastAirDate.errors | firstErrorKey:'createMedia':'lastAirDate' }}</small>
             </ng-container>
             <div class="tw-flex tw-flex-wrap">
               <div class="tw-w-full sm:tw-w-1/3">
-                <label for="visibility" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
-                  {{ t('admin.createMedia.visibility') }}
-                </label>
+                <label for="visibility" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
+                  t('admin.createMedia.visibility') }}</label>
                 <div id="visibility">
                   <p-radioButton name="visibility" [value]="1" [label]="t('admin.createMedia.visibilityPublic')"
                     formControlName="visibility" class="tw-block tw-mb-2">
@@ -190,9 +150,8 @@
                 </div>
               </div>
               <div class="tw-w-full sm:tw-w-1/3 sm:tw-pl-2">
-                <label for="adult" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
-                  {{ t('admin.createMedia.adult') }}
-                </label>
+                <label for="adult" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
+                  t('admin.createMedia.adult') }}</label>
                 <div id="adult">
                   <p-radioButton name="adult" [value]="true" [label]="t('admin.createMedia.forAdult')"
                     formControlName="adult" class="tw-block tw-mb-2">
@@ -203,9 +162,8 @@
                 </div>
               </div>
               <div class="tw-w-full sm:tw-w-1/3 sm:tw-pl-2">
-                <label for="status" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
-                  {{ t('admin.createMedia.status') }}
-                </label>
+                <label for="status" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
+                  t('admin.createMedia.status') }}</label>
                 <div id="status">
                   <ng-container *ngIf="createMediaForm.value.type === MediaType.TV; else isMovie">
                     <p-radioButton name="status" value="upcoming" [label]="t('media.statusOptions.upcoming')"
@@ -247,99 +205,76 @@
           <div class="p-scrollbar tw-overflow-y-auto tw-h-[calc(90vh-14rem)] tw-px-6">
             <div class="tw-flex tw-flex-wrap">
               <div class="tw-w-full md:tw-w-1/2">
-                <label for="title" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
-                  {{ t('admin.updateMedia.title') }}
-                </label>
+                <label for="title" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
+                  t('admin.updateMedia.title') }}</label>
                 <input formControlName="title" class="tw-w-full" id="title" type="text" aria-describedby="title-error"
                   [placeholder]="t('admin.updateMedia.titlePlaceholder')" pInputText autofocus>
-                <small id="title-error"
-                  class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
-                  [ngClass]="(updateMediaForm.controls['title'].dirty || updateMediaForm.controls['title'].touched)
-                    && updateMediaForm.controls['title'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
-                  {{ updateMediaForm.controls['title'].errors | firstErrorKey:'updateMedia':'title' }}
-                </small>
+                <small id="title-error" class="p-error tw-text-xs tw-block tw-my-2"
+                  [invalidControl]="updateMediaForm.controls.title">{{ updateMediaForm.controls.title.errors |
+                  firstErrorKey:'updateMedia':'title' }}</small>
               </div>
               <div class="tw-w-full md:tw-w-1/2 md:tw-pl-2">
-                <label for="original-title" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
-                  {{ t('admin.updateMedia.originalTitle') }}
-                </label>
+                <label for="original-title" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
+                  t('admin.updateMedia.originalTitle') }}</label>
                 <input formControlName="originalTitle" class="tw-w-full" id="original-title" type="text"
                   aria-describedby="original-title-error"
                   [placeholder]="t('admin.updateMedia.originalTitlePlaceholder')" pInputText>
-                <small id="original-title-error"
-                  class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
-                  [ngClass]="(updateMediaForm.controls['originalTitle'].dirty || updateMediaForm.controls['originalTitle'].touched)
-                    && updateMediaForm.controls['originalTitle'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
-                  {{ updateMediaForm.controls['originalTitle'].errors | firstErrorKey:'updateMedia':'originalTitle' }}
-                </small>
+                <small id="original-title-error" class="p-error tw-text-xs tw-block tw-my-2"
+                  [invalidControl]="updateMediaForm.controls.originalTitle">{{
+                  updateMediaForm.controls.originalTitle.errors | firstErrorKey:'updateMedia':'originalTitle' }}</small>
               </div>
             </div>
-            <label for="overview" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
-              {{ t('admin.updateMedia.overview') }}
-            </label>
+            <label for="overview" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
+              t('admin.updateMedia.overview') }}</label>
             <textarea formControlName="overview" class="tw-w-full" id="overview" aria-describedby="overview-error"
               [placeholder]="t('admin.updateMedia.overviewPlaceholder')" pInputTextarea [rows]="5"></textarea>
-            <small id="overview-error"
-              class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
-              [ngClass]="(updateMediaForm.controls['overview'].dirty || updateMediaForm.controls['overview'].touched)
-                && updateMediaForm.controls['overview'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
-              {{ updateMediaForm.controls['overview'].errors | firstErrorKey:'updateMedia':'overview' }}
-            </small>
+            <small id="overview-error" class="p-error tw-text-xs tw-block tw-my-2"
+              [invalidControl]="updateMediaForm.controls.overview">{{ updateMediaForm.controls.overview.errors
+              | firstErrorKey:'updateMedia':'overview' }}</small>
             <div class="tw-flex tw-flex-wrap">
               <div class="tw-w-full sm:tw-w-1/2">
-                <label for="runtime" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
-                  {{ t('admin.updateMedia.runtime') }}
-                </label>
+                <label for="runtime" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
+                  t('admin.updateMedia.runtime') }}</label>
                 <p-inputNumber formControlName="runtime" class="tw-w-full" styleClass="tw-w-full" id="runtime"
                   suffix=" min" aria-describedby="runtime-error" [useGrouping]="false" [min]="0" [max]="10000"
                   [placeholder]="t('admin.updateMedia.runtimePlaceholder')">
                 </p-inputNumber>
-                <small id="runtime-error"
-                  class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
-                  [ngClass]="(updateMediaForm.controls['runtime'].dirty || updateMediaForm.controls['runtime'].touched)
-                    && updateMediaForm.controls['runtime'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
-                  {{ updateMediaForm.controls['runtime'].errors | firstErrorKey:'updateMedia':'runtime' }}
-                </small>
+                <small id="runtime-error" class="p-error tw-text-xs tw-block tw-my-2"
+                  [invalidControl]="updateMediaForm.controls.runtime">{{ updateMediaForm.controls.runtime.errors
+                  | firstErrorKey:'updateMedia':'runtime' }}</small>
               </div>
               <div class="tw-w-full sm:tw-w-1/2 sm:tw-pl-2">
-                <label for="original-language" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
-                  {{ t('admin.updateMedia.originalLanguage') }}
-                </label>
+                <label for="original-language" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
+                  t('admin.updateMedia.originalLanguage') }}</label>
                 <p-dropdown id="original-language" class="tw-w-full" styleClass="tw-w-full"
                   panelStyleClass="md:tw-dropdown-cols-2 md:tw-max-w-lg p-dropdown-xs"
                   aria-describedby="original-language-error" [options]="languages" formControlName="originalLanguage"
                   appendTo="body" [placeholder]="t('admin.updateMedia.originalLanguagePlaceholder')" [showClear]="true"
                   scrollHeight="300px">
                 </p-dropdown>
-                <small id="original-language-error"
-                  class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
-                  [ngClass]="(updateMediaForm.controls['originalLanguage'].dirty || updateMediaForm.controls['originalLanguage'].touched)
-                    && updateMediaForm.controls['originalLanguage'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
-                  {{ updateMediaForm.controls['originalLanguage'].errors |
-                  firstErrorKey:'updateMedia':'originalLanguage' }}</small>
+                <small id="original-language-error" class="p-error tw-text-xs tw-block tw-my-2"
+                  [invalidControl]="updateMediaForm.controls.originalLanguage">{{
+                  updateMediaForm.controls.originalLanguage.errors | firstErrorKey:'updateMedia':'originalLanguage'
+                  }}</small>
               </div>
             </div>
             <div class="tw-flex tw-flex-wrap">
               <div class="tw-w-full md:tw-w-1/2">
-                <label for="genres" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
-                  {{ t('admin.updateMedia.genres') }}
-                </label>
+                <label for="genres" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
+                  t('admin.updateMedia.genres') }}</label>
                 <p-autoComplete formControlName="genres" [suggestions]="genreSuggestions"
                   (completeMethod)="loadGenreSuggestions($event.query)" field="name" dataKey="_id" [multiple]="true"
                   [unique]="true" [completeOnFocus]="true" scrollHeight="300px" appendTo="body" styleClass="tw-w-full"
                   panelStyleClass="p-autocomplete-xs" inputId="genres" ariaLabel="Find genres"
                   dropdownAriaLabel="Genre search results" aria-describedby="genres-error">
                 </p-autoComplete>
-                <small id="genres-error"
-                  class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
-                  [ngClass]="(updateMediaForm.controls['genres'].dirty || updateMediaForm.controls['genres'].touched)
-                && updateMediaForm.controls['genres'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">{{
-                  updateMediaForm.controls['genres'].errors | firstErrorKey:'updateMedia':'genres' }}</small>
+                <small id="genres-error" class="p-error tw-text-xs tw-block tw-my-2"
+                  [invalidControl]="updateMediaForm.controls.genres">{{
+                  updateMediaForm.controls.genres.errors | firstErrorKey:'updateMedia':'genres' }}</small>
               </div>
               <div class="tw-w-full md:tw-w-1/2 md:tw-pl-2">
-                <label for="productions" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
-                  {{ t('admin.updateMedia.productions') }}
-                </label>
+                <label for="productions" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
+                  t('admin.updateMedia.productions') }}</label>
                 <p-autoComplete formControlName="productions" [suggestions]="productionSuggestions"
                   (completeMethod)="loadProductionSuggestions($event.query)" field="name" dataKey="_id"
                   [multiple]="true" [unique]="true" [completeOnFocus]="true" scrollHeight="300px" appendTo="body"
@@ -347,17 +282,13 @@
                   ariaLabel="Find companies" dropdownAriaLabel="Company search results"
                   aria-describedby="productions-error">
                 </p-autoComplete>
-                <small id="productions-error"
-                  class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
-                  [ngClass]="(updateMediaForm.controls['productions'].dirty || updateMediaForm.controls['productions'].touched)
-                && updateMediaForm.controls['productions'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
-                  {{ updateMediaForm.controls['productions'].errors | firstErrorKey:'updateMedia':'productions' }}
-                </small>
+                <small id="productions-error" class="p-error tw-text-xs tw-block tw-my-2"
+                  [invalidControl]="updateMediaForm.controls.productions">{{ updateMediaForm.controls.productions.errors
+                  | firstErrorKey:'updateMedia':'productions' }}</small>
               </div>
             </div>
-            <label for="release-date" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
-              {{ t('admin.updateMedia.releaseDate') }}
-            </label>
+            <label for="release-date" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
+              t('admin.updateMedia.releaseDate') }}</label>
             <div id="release-date" formGroupName="releaseDate" class="dropdown-group tw-flex tw-flex-wrap tw-w-full"
               aria-describedby="release-date-error">
               <p-dropdown class="tw-w-full sm:tw-w-3/12" styleClass="tw-w-full" panelStyleClass="p-dropdown-xs"
@@ -373,16 +304,12 @@
                 formControlName="year" appendTo="body" [placeholder]="t('admin.updateMedia.year')" scrollHeight="300px">
               </p-dropdown>
             </div>
-            <small id="release-date-error"
-              class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
-              [ngClass]="(updateMediaForm.controls['releaseDate'].dirty || updateMediaForm.controls['releaseDate'].touched)
-                  && updateMediaForm.controls['releaseDate'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
-              {{ updateMediaForm.controls['releaseDate'].errors | firstErrorKey:'updateMedia':'releaseDate' }}
-            </small>
+            <small id="release-date-error" class="p-error tw-text-xs tw-block tw-my-2"
+              [invalidControl]="updateMediaForm.controls.releaseDate">{{ updateMediaForm.controls.releaseDate.errors
+              | firstErrorKey:'updateMedia':'releaseDate' }}</small>
             <ng-container *ngIf="createMediaForm.value.type === MediaType.TV">
-              <label for="last-air-date" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
-                {{ t('admin.updateMedia.lastAirDate') }}
-              </label>
+              <label for="last-air-date" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
+                t('admin.updateMedia.lastAirDate') }}</label>
               <div id="last-air-date" formGroupName="lastAirDate" class="dropdown-group tw-flex tw-flex-wrap tw-w-full"
                 aria-describedby="last-air-date-error">
                 <p-dropdown class="tw-w-full sm:tw-w-3/12" styleClass="tw-w-full" panelStyleClass="p-dropdown-xs"
@@ -399,18 +326,14 @@
                   scrollHeight="300px">
                 </p-dropdown>
               </div>
-              <small id="last-air-date-error" *ngIf="updateMediaForm.controls['lastAirDate']"
-                class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
-                [ngClass]="(updateMediaForm.controls['lastAirDate'].dirty || updateMediaForm.controls['lastAirDate'].touched)
-                    && updateMediaForm.controls['lastAirDate'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
-                {{ updateMediaForm.controls['lastAirDate'].errors | firstErrorKey:'updateMedia':'lastAirDate' }}
-              </small>
+              <small id="last-air-date-error" *ngIf="updateMediaForm.controls.lastAirDate"
+                class="p-error tw-text-xs tw-block tw-my-2" [invalidControl]="updateMediaForm.controls.lastAirDate">{{
+                updateMediaForm.controls.lastAirDate.errors | firstErrorKey:'updateMedia':'lastAirDate' }}</small>
             </ng-container>
             <div class="tw-flex tw-flex-wrap">
               <div class="tw-w-full sm:tw-w-1/3">
-                <label for="visibility" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
-                  {{ t('admin.updateMedia.visibility') }}
-                </label>
+                <label for="visibility" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
+                  t('admin.updateMedia.visibility') }}</label>
                 <div id="visibility">
                   <p-radioButton name="visibility" [value]="1" [label]="t('admin.updateMedia.visibilityPublic')"
                     formControlName="visibility" class="tw-block tw-mb-2">
@@ -424,9 +347,8 @@
                 </div>
               </div>
               <div class="tw-w-full sm:tw-w-1/3 sm:tw-pl-2">
-                <label for="adult" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
-                  {{ t('admin.updateMedia.adult') }}
-                </label>
+                <label for="adult" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
+                  t('admin.updateMedia.adult') }}</label>
                 <div id="adult">
                   <p-radioButton name="adult" [value]="true" [label]="t('admin.updateMedia.forAdult')"
                     formControlName="adult" class="tw-block tw-mb-2">
@@ -437,9 +359,8 @@
                 </div>
               </div>
               <div class="tw-w-full sm:tw-w-1/3 sm:tw-pl-2">
-                <label for="status" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
-                  {{ t('admin.updateMedia.status') }}
-                </label>
+                <label for="status" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
+                  t('admin.updateMedia.status') }}</label>
                 <div id="status">
                   <ng-container *ngIf="createMediaForm.value.type === MediaType.TV; else isMovie">
                     <p-radioButton name="status" value="upcoming" [label]="t('media.statusOptions.upcoming')"

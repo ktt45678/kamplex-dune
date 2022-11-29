@@ -39,7 +39,7 @@ import { FeaturedMediaComponent } from './components/featured-media';
   providers: [
     {
       provide: TRANSLOCO_SCOPE,
-      useValue: 'media'
+      useValue: ['home', 'media']
     }
   ]
 })

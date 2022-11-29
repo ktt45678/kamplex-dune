@@ -24,7 +24,7 @@
     "@angular/router": "^14.2.6",
     "@angular/service-worker": "^14.2.6",
     "@ktt45678/ngx-image-cropper": "^6.2.2",
-    "@mux/upchunk": "^2.6.0",
+    "@ngneat/cashew": "^3.1.0",
     "@ngneat/tailwind": "^7.0.3",
     "@ngneat/transloco": "^4.1.1",
     "@ngneat/transloco-messageformat": "^4.0.0",

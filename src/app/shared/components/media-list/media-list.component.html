@@ -25,7 +25,7 @@
               time:['hours','minutes']:'short' }}</small>
             <ng-template #notMovie>
               <small class="tw-text-white tw-text-xs tw-font-semibold tw-ml-auto" *ngIf="media.type === MediaType.TV">
-                {{ t('media.list.episodeCountValue', { episodeCount: media.tv.publicEpisodeCount }) }}
+                {{ t('media.list.episodeCountValue', { episodeCount: media.tv.pEpisodeCount }) }}
               </small>
             </ng-template>
           </p>

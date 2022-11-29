@@ -1,17 +1,21 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { HttpCacheManager, withCache } from '@ngneat/cashew';
 import { TranslocoService } from '@ngneat/transloco';
-import { map } from 'rxjs';
+import { map, tap } from 'rxjs';
 
 import { CreateGenreDto, PaginateGenresDto, UpdateGenreDto } from '../dto/genres';
 import { Genre, GenreDetails, Paginated } from '../models';
+import { CacheKey } from '../enums';
 
 @Injectable({ providedIn: 'root' })
 export class GenresService {
-  constructor(private http: HttpClient, private translocoService: TranslocoService) { }
+  constructor(private http: HttpClient, private translocoService: TranslocoService, private httpCacheManager: HttpCacheManager) { }
 
   create(createGenreDto: CreateGenreDto) {
-    return this.http.post<GenreDetails>('genres', createGenreDto);
+    return this.http.post<GenreDetails>('genres', createGenreDto).pipe(tap(() => {
+      this.invalidateAllGenresCache();
+    }));
   }
 
   findPage(paginateGenresDto: PaginateGenresDto) {
@@ -27,7 +31,12 @@ export class GenresService {
   findAll(sort?: string) {
     const params: any = {};
     sort && (params['sort'] = sort);
-    return this.http.get<Genre[]>('genres/all', { params });
+    return this.http.get<Genre[]>('genres/all', {
+      params,
+      context: withCache({
+        key: CacheKey.ALL_GENRES
+      })
+    });
   }
 
   findOne(id: string) {
@@ -35,11 +44,15 @@ export class GenresService {
   }
 
   update(id: string, updateGenreDto: UpdateGenreDto) {
-    return this.http.patch<GenreDetails>(`genres/${id}`, updateGenreDto);
+    return this.http.patch<GenreDetails>(`genres/${id}`, updateGenreDto).pipe(tap(() => {
+      this.invalidateAllGenresCache();
+    }));
   }
 
   remove(id: string) {
-    return this.http.delete(`genres/${id}`);
+    return this.http.delete(`genres/${id}`).pipe(tap(() => {
+      this.invalidateAllGenresCache();
+    }));
   }
 
   findGenreSuggestions(search?: string, limit = 10) {
@@ -55,5 +68,9 @@ export class GenresService {
       }
       return genreSuggestions;
     }));
+  }
+
+  invalidateAllGenresCache() {
+    this.httpCacheManager.delete(CacheKey.ALL_GENRES);
   }
 }

@@ -25,6 +25,18 @@
   font-size: 18px;
 }
 
+.ms-icon-lg {
+  font-size: 28px;
+}
+
+.ms-icon-xl {
+  font-size: 30px;
+}
+
+.ms-icon-2xl {
+  font-size: 32px;
+}
+
 .ms-fill {
   --FILL: 1;
 }

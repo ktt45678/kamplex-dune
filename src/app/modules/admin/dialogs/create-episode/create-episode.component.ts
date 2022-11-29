@@ -133,7 +133,7 @@ export class CreateEpisodeComponent implements OnInit {
 
   onCreateEpisodeFormSubmit(): void {
     if (this.createEpisodeForm.invalid) return;
-    this.createEpisodeForm.disable();
+    this.createEpisodeForm.disable({ emitEvent: false });
     const mediaId = this.config.data['media']['_id'];
     const formValue = this.createEpisodeForm.getRawValue();
     const addTVEpisodeDto: AddTVEpisodeDto = ({
@@ -156,7 +156,7 @@ export class CreateEpisodeComponent implements OnInit {
         this.stepper?.next();
       }
     }).add(() => {
-      this.createEpisodeForm.enable();
+      this.createEpisodeForm.enable({ emitEvent: false });
     });
   }
 
@@ -193,7 +193,7 @@ export class CreateEpisodeComponent implements OnInit {
     if (!this.updateFormChanged)
       return this.stepper?.next();
     if (!this.episode || this.updateEpisodeForm.invalid) return;
-    this.updateEpisodeForm.disable();
+    this.updateEpisodeForm.disable({ emitEvent: false });
     const mediaId = this.config.data['media']['_id'];
     const formValue = this.updateEpisodeForm.getRawValue();
     const updateTVEpisodeDto: UpdateTVEpisodeDto = ({
@@ -217,7 +217,7 @@ export class CreateEpisodeComponent implements OnInit {
         this.stepper?.next();
       }
     }).add(() => {
-      this.updateEpisodeForm.enable();
+      this.updateEpisodeForm.enable({ emitEvent: false });
     });
   }
 

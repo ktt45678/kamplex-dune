@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
-import { RouterModule, Routes, TitleStrategy } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 
-import { KamPlexTitleStrategy } from './core/strategies';
 import { HomeLayoutComponent } from './shared/layouts/home-layout';
 
 const routes: Routes = [
@@ -39,12 +38,6 @@ const routes: Routes = [
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule],
-  providers: [
-    {
-      provide: TitleStrategy,
-      useClass: KamPlexTitleStrategy
-    }
-  ]
+  exports: [RouterModule]
 })
 export class AppRoutingModule { }

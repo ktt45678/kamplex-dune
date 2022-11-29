@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
-import { first, takeUntil } from 'rxjs';
+import { takeUntil } from 'rxjs';
 
 import { DropdownOptionDto } from '../../../../core/dto/media';
 import { DestroyService, ItemDataService, ProductionsService } from '../../../../core/services';
@@ -19,7 +19,6 @@ interface CreateProductionForm {
   providers: [ItemDataService, DestroyService]
 })
 export class CreateProductionComponent implements OnInit {
-  isCreatingProduction: boolean = false;
   createProductionForm: FormGroup<CreateProductionForm>;
   countryOptions?: DropdownOptionDto[];
 
@@ -32,14 +31,14 @@ export class CreateProductionComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.itemDataService.createCountryList().pipe(first()).subscribe({
+    this.itemDataService.createCountryList().subscribe({
       next: countries => this.countryOptions = countries
     });
   }
 
   onCreateProductionFormSubmit(): void {
     if (this.createProductionForm.invalid) return;
-    this.isCreatingProduction = true;
+    this.createProductionForm.disable({ emitEvent: false });
     const formValue = this.createProductionForm.getRawValue();
     this.productionsService.create({
       name: formValue.name,
@@ -47,7 +46,7 @@ export class CreateProductionComponent implements OnInit {
     }).pipe(takeUntil(this.destroyService)).subscribe({
       next: () => this.dialogRef.close(true),
       error: () => {
-        this.isCreatingProduction = false;
+        this.createProductionForm.enable({ emitEvent: false });
         this.ref.markForCheck();
       }
     });

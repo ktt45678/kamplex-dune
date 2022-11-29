@@ -30,3 +30,4 @@ export const SIGN_IN_LIMIT_COUNT = 5;
 export const SIGN_IN_LIMIT_TTL = 300;
 export const SEND_CONFIRM_EMAIL_LIMIT_TTL = 120;
 export const SEND_RECOVERY_EMAIL_LIMIT_TTL = 120;
+export const HTTP_CACHE_TTL = 300000;

@@ -5,4 +5,5 @@ export * from './item-data.service';
 export * from './media.service';
 export * from './productions.service';
 export * from './queue-upload.service';
+export * from './ratings.service';
 export * from './users.service';

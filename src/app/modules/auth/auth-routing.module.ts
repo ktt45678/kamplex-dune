@@ -9,29 +9,39 @@ import { ResetPasswordComponent } from './pages/reset-password/reset-password.co
 
 const routes: Routes = [
   {
-    title: 'signIn',
     path: 'sign-in',
-    component: SignInComponent
+    component: SignInComponent,
+    data: {
+      title: 'signIn'
+    }
   },
   {
-    title: 'signUp',
     path: 'sign-up',
-    component: SignUpComponent
+    component: SignUpComponent,
+    data: {
+      title: 'signUp'
+    }
   },
   {
-    title: 'confirmEmail',
     path: 'confirm-email',
-    component: ConfirmEmailComponent
+    component: ConfirmEmailComponent,
+    data: {
+      title: 'confirmEmail'
+    }
   },
   {
-    title: 'forgotPassword',
     path: 'forgot-password',
-    component: ForgotPasswordComponent
+    component: ForgotPasswordComponent,
+    data: {
+      title: 'forgotPassword'
+    }
   },
   {
-    title: 'resetPassword',
     path: 'reset-password',
-    component: ResetPasswordComponent
+    component: ResetPasswordComponent,
+    data: {
+      title: 'resetPassword'
+    }
   }
 ];
 

@@ -16,53 +16,38 @@
             <div class="tw-flex tw-flex-wrap">
               <div class="tw-flex tw-flex-wrap tw-w-full md:tw-w-4/5">
                 <div class="tw-w-full md:tw-w-1/2">
-                  <label for="episode-number" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
-                    {{ t('admin.updateEpisode.episodeNumber') }}
-                  </label>
+                  <label for="episode-number" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
+                    t('admin.updateEpisode.episodeNumber') }}</label>
                   <p-inputNumber formControlName="episodeNumber" form="update-episode-form" class="tw-w-full"
                     styleClass="tw-w-full" id="episode-number" aria-describedby="episode-number-error" [min]="0"
                     [max]="10000" [showButtons]="true" inputId="minmax-buttons"
-                    [placeholder]="t('admin.updateEpisode.episodeNumberPlaceholder')"
-                    [disabledControl]="isUpdatingEpisode" autofocus>
+                    [placeholder]="t('admin.updateEpisode.episodeNumberPlaceholder')" autofocus>
                   </p-inputNumber>
-                  <small id="episode-number-error"
-                    class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
-                    [ngClass]="(updateEpisodeForm.controls['episodeNumber'].dirty || updateEpisodeForm.controls['episodeNumber'].touched)
-                        && updateEpisodeForm.controls['episodeNumber'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
-                    {{ updateEpisodeForm.controls['episodeNumber'].errors |
-                    firstErrorKey:'updateEpisode':'episodeNumber'
-                    }}
-                  </small>
+                  <small id="episode-number-error" class="p-error tw-text-xs tw-block tw-my-2"
+                    [invalidControl]="updateEpisodeForm.controls.episodeNumber">{{
+                    updateEpisodeForm.controls.episodeNumber.errors | firstErrorKey:'updateEpisode':'episodeNumber'
+                    }}</small>
                 </div>
                 <div class="tw-w-full md:tw-w-1/2 md:tw-pl-2">
-                  <label for="runtime" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
-                    {{ t('admin.updateEpisode.runtime') }}
-                  </label>
+                  <label for="runtime" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
+                    t('admin.updateEpisode.runtime') }}</label>
                   <p-inputNumber formControlName="runtime" form="update-episode-form" class="tw-w-full"
                     styleClass="tw-w-full" id="runtime" suffix=" min" aria-describedby="runtime-error"
                     [useGrouping]="false" [min]="0" [max]="10000"
-                    [placeholder]="t('admin.updateEpisode.runtimePlaceholder')" [disabledControl]="isUpdatingEpisode">
+                    [placeholder]="t('admin.updateEpisode.runtimePlaceholder')">
                   </p-inputNumber>
-                  <small id="runtime-error"
-                    class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
-                    [ngClass]="(updateEpisodeForm.controls['runtime'].dirty || updateEpisodeForm.controls['runtime'].touched)
-                        && updateEpisodeForm.controls['runtime'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
-                    {{ updateEpisodeForm.controls['runtime'].errors | firstErrorKey:'updateEpisode':'runtime' }}
-                  </small>
+                  <small id="runtime-error" class="p-error tw-text-xs tw-block tw-my-2"
+                    [invalidControl]="updateEpisodeForm.controls.runtime">{{ updateEpisodeForm.controls.runtime.errors |
+                    firstErrorKey:'updateEpisode':'runtime' }}</small>
                 </div>
                 <div class="tw-w-full">
-                  <label for="name" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
-                    {{ t('admin.updateEpisode.name') }}
-                  </label>
+                  <label for="name" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
+                    t('admin.updateEpisode.name') }}</label>
                   <input formControlName="name" class="tw-w-full" id="name" type="text" aria-describedby="name-error"
-                    [placeholder]="t('admin.updateEpisode.namePlaceholder')" pInputText
-                    [disabledControl]="isUpdatingEpisode">
-                  <small id="name-error"
-                    class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
-                    [ngClass]="(updateEpisodeForm.controls['name'].dirty || updateEpisodeForm.controls['name'].touched)
-                        && updateEpisodeForm.controls['name'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
-                    {{ updateEpisodeForm.controls['name'].errors | firstErrorKey:'updateEpisode':'name' }}
-                  </small>
+                    [placeholder]="t('admin.updateEpisode.namePlaceholder')" pInputText>
+                  <small id="name-error" class="p-error tw-text-xs tw-block tw-my-2"
+                    [invalidControl]="updateEpisodeForm.controls.name">{{ updateEpisodeForm.controls.name.errors |
+                    firstErrorKey:'updateEpisode':'name' }}</small>
                 </div>
               </div>
               <div class="tw-w-full md:tw-w-1/5 md:tw-pl-4">
@@ -111,58 +96,47 @@
                 </div>
               </div>
             </div>
-            <label for="overview" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
-              {{ t('admin.updateEpisode.overview') }}
-            </label>
+            <label for="overview" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
+              t('admin.updateEpisode.overview') }}</label>
             <textarea formControlName="overview" class="tw-w-full" id="overview" aria-describedby="overview-error"
-              [placeholder]="t('admin.updateEpisode.overviewPlaceholder')" pInputTextarea [rows]="5"
-              [disabledControl]="isUpdatingEpisode"></textarea>
-            <small id="overview-error"
-              class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
-              [ngClass]="(updateEpisodeForm.controls['overview'].dirty || updateEpisodeForm.controls['overview'].touched)
-                  && updateEpisodeForm.controls['overview'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
-              {{ updateEpisodeForm.controls['overview'].errors | firstErrorKey:'updateEpisode':'overview' }}
+              [placeholder]="t('admin.updateEpisode.overviewPlaceholder')" pInputTextarea [rows]="5"></textarea>
+            <small id="overview-error" class="p-error tw-text-xs tw-block tw-my-2"
+              [invalidControl]="updateEpisodeForm.controls.overview">
+              {{ updateEpisodeForm.controls.overview.errors | firstErrorKey:'updateEpisode':'overview' }}
             </small>
-            <label for="air-date" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
-              {{ t('admin.updateEpisode.airDate') }}
-            </label>
+            <label for="air-date" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
+              t('admin.updateEpisode.airDate') }}</label>
             <div id="air-date" formGroupName="airDate" class="dropdown-group tw-flex tw-flex-wrap tw-w-full"
               aria-describedby="air-date-error">
               <p-dropdown class="tw-w-full sm:tw-w-3/12" styleClass="tw-w-full" panelStyleClass="p-dropdown-sm"
                 [options]="days" formControlName="day" appendTo="body" [placeholder]="t('admin.updateEpisode.day')"
-                scrollHeight="300px" [disabledControl]="isUpdatingEpisode">
+                scrollHeight="300px">
               </p-dropdown>
               <p-dropdown class="tw-w-full sm:tw-w-5/12 tw-pt-2 sm:tw-pt-0 sm:tw-pl-2" styleClass="tw-w-full"
                 panelStyleClass="p-dropdown-sm" [options]="months" formControlName="month" appendTo="body"
-                [placeholder]="t('admin.updateEpisode.month')" scrollHeight="300px"
-                [disabledControl]="isUpdatingEpisode">
+                [placeholder]="t('admin.updateEpisode.month')" scrollHeight="300px">
               </p-dropdown>
               <p-dropdown class="tw-w-full sm:tw-w-4/12 tw-pt-2 sm:tw-pt-0 sm:tw-pl-2" styleClass="tw-w-full"
                 panelStyleClass="p-dropdown-sm" [options]="years" formControlName="year" appendTo="body"
-                [placeholder]="t('admin.updateEpisode.year')" scrollHeight="300px"
-                [disabledControl]="isUpdatingEpisode">
+                [placeholder]="t('admin.updateEpisode.year')" scrollHeight="300px">
               </p-dropdown>
             </div>
-            <small id="air-date-error"
-              class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
-              [ngClass]="(updateEpisodeForm.controls['airDate'].dirty || updateEpisodeForm.controls['airDate'].touched)
-                  && updateEpisodeForm.controls['airDate'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
-              {{ updateEpisodeForm.controls['airDate'].errors | firstErrorKey:'updateEpisode':'airDate' }}
-            </small>
+            <small id="air-date-error" class="p-error tw-text-xs tw-block tw-my-2"
+              [invalidControl]="updateEpisodeForm.controls.airDate">{{ updateEpisodeForm.controls.airDate.errors |
+              firstErrorKey:'updateEpisode':'airDate' }}</small>
             <div class="tw-flex tw-flex-wrap">
               <div class="tw-w-full sm:tw-w-1/3">
-                <label for="visibility" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
-                  {{ t('admin.updateEpisode.visibility') }}
-                </label>
+                <label for="visibility" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
+                  t('admin.updateEpisode.visibility') }}</label>
                 <div id="visibility">
                   <p-radioButton name="visibility" [value]="1" [label]="t('admin.updateEpisode.visibilityPublic')"
-                    formControlName="visibility" class="tw-block tw-mb-2" [disabledControl]="isUpdatingEpisode">
+                    formControlName="visibility" class="tw-block tw-mb-2">
                   </p-radioButton>
                   <p-radioButton name="visibility" [value]="2" [label]="t('admin.updateEpisode.visibilityUnlisted')"
-                    formControlName="visibility" class="tw-block tw-mb-2" [disabledControl]="isUpdatingEpisode">
+                    formControlName="visibility" class="tw-block tw-mb-2">
                   </p-radioButton>
                   <p-radioButton name="visibility" [value]="3" [label]="t('admin.updateEpisode.visibilityPrivate')"
-                    formControlName="visibility" class="tw-block" [disabledControl]="isUpdatingEpisode">
+                    formControlName="visibility" class="tw-block">
                   </p-radioButton>
                 </div>
               </div>
@@ -177,10 +151,10 @@
           <p class="tw-text-white tw-font-medium">{{ t('admin.configureEpisode.unsavedChanges') }}</p>
           <div class="tw-ml-auto">
             <button pButton type="button" [label]="t('admin.updateEpisode.cancel')" (click)="onUpdateEpisodeFormReset()"
-              class="p-button-text p-button-secondary p-button-sm" [disabled]="isUpdatingEpisode">
+              class="p-button-text p-button-secondary p-button-sm" [disabled]="updateEpisodeForm.disabled">
             </button>
             <button pButton type="submit" [label]="t('admin.updateEpisode.submit')" form="update-episode-form"
-              class="p-button-success p-button-sm tw-ml-1" [disabled]="isUpdatingEpisode">
+              class="p-button-success p-button-sm tw-ml-1" [disabled]="updateEpisodeForm.disabled">
             </button>
           </div>
         </div>
@@ -204,8 +178,8 @@
                 <th class="tw-w-12">
                   <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
                 </th>
-                <th pSortableColumn="language">
-                  {{ t('admin.configureEpisode.language') }} <p-sortIcon field="language"></p-sortIcon>
+                <th pSortableColumn="language">{{ t('admin.configureEpisode.language') }} <p-sortIcon field="language">
+                  </p-sortIcon>
                 </th>
                 <th class="tw-w-16"></th>
               </tr>
@@ -215,9 +189,7 @@
                 <td>
                   <p-tableCheckbox [value]="subtitle"></p-tableCheckbox>
                 </td>
-                <td>
-                  {{ t('languages.' + subtitle.language) }}
-                </td>
+                <td>{{ t('languages.' + subtitle.language) }}</td>
                 <td>
                   <button pButton icon="ms ms-delete"
                     class="p-button-outlined p-button-rounded p-button-danger p-button-sm p-button-sm-icon"
@@ -229,9 +201,7 @@
           </p-table>
         </ng-container>
         <ng-template #noSubtitles>
-          <p class="tw-text-gray-400 tw-text-base tw-italic">
-            {{ t('admin.configureEpisode.noSubtitles') }}
-          </p>
+          <p class="tw-text-gray-400 tw-text-base tw-italic">{{ t('admin.configureEpisode.noSubtitles') }}</p>
         </ng-template>
       </ng-template>
       <!--Source-->

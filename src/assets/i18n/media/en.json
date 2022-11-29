@@ -7,7 +7,7 @@
   "list": {
     "runtimeValue": "{{ runtime }} min",
     "noGenres": "No genres found",
-    "episodeCountValue": "{{ episodeCount }} episodes",
+    "episodeCountValue": "{{ episodeCount }} ep",
     "noResults": "No results were found"
   },
   "details": {
@@ -44,7 +44,7 @@
     "tvShow": "TV Show"
   },
   "episode": {
-    "unnamedEpisode": "Episode ",
+    "unnamedEpisode": "Episode",
     "episodeNumber": "Episode number",
     "name": "Name",
     "overview": "Overview",
@@ -59,7 +59,7 @@
     "releaseDateAscending": "Release date (Ascending)",
     "releaseDateDescending": "Release date (Descending)",
     "dateAddedAscending": "Date added (Ascending)",
-    "dateAddedDescending": "Date added (Ascending)",
+    "dateAddedDescending": "Date added (Descending)",
     "dateUpdatedAscending": "Date updated (Ascending)",
     "dateUpdatedDescending": "Date updated (Descending)",
     "viewsAscending": "Views (Ascending)",
@@ -72,5 +72,16 @@
     "released": "Released",
     "airing": "Airing",
     "aired": "Aired"
+  },
+  "watch": {
+    "prevEpisode": "Prev",
+    "nextEpisode": "Next",
+    "autoNextEpisode": "Auto next",
+    "showMore": "Show More"
+  },
+  "rating": {
+    "anonUsers": "Sign in to rate",
+    "youRated": "You rated: {{ score }}",
+    "clearVote": "clear"
   }
 }

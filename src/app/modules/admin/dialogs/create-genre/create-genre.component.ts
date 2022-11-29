@@ -17,7 +17,6 @@ interface CreateGenreForm {
   providers: [DestroyService]
 })
 export class CreateGenreComponent implements OnInit {
-  creatingGenre: boolean = false;
   createGenreForm: FormGroup<CreateGenreForm>;
 
   constructor(private ref: ChangeDetectorRef, private dialogRef: DynamicDialogRef, private genresService: GenresService,
@@ -32,14 +31,14 @@ export class CreateGenreComponent implements OnInit {
 
   onCreateGenreFormSubmit(): void {
     if (this.createGenreForm.invalid) return;
-    this.creatingGenre = true;
+    this.createGenreForm.disable({ emitEvent: false });
     const formValue = this.createGenreForm.getRawValue();
     this.genresService.create({
       name: formValue.name
     }).pipe(takeUntil(this.destroyService)).subscribe({
       next: () => this.dialogRef.close(true),
       error: () => {
-        this.creatingGenre = false;
+        this.createGenreForm.enable({ emitEvent: false });
         this.ref.markForCheck();
       }
     });

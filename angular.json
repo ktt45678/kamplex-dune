@@ -24,7 +24,8 @@
             "allowedCommonJsDependencies": [
               "@messageformat/core",
               "flat",
-              "plyr"
+              "plyr",
+              "hls.js"
             ],
             "outputPath": "dist/kamplex-v2",
             "index": "src/index.html",

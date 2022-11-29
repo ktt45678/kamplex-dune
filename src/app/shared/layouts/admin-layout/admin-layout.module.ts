@@ -18,6 +18,7 @@ import { CommonDirectiveModule } from '../../directives/common-directive';
   imports: [
     CommonModule,
     RouterModule,
+    TranslocoModule,
     DateTimePipeModule,
     CommonDirectiveModule,
     TabMenuModule,
@@ -25,8 +26,7 @@ import { CommonDirectiveModule } from '../../directives/common-directive';
     OverlayPanelModule,
     PanelModule,
     ButtonModule,
-    CircularProgressModule,
-    TranslocoModule
+    CircularProgressModule
   ],
   exports: [AdminLayoutComponent]
 })

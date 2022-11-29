@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { map, Observable } from 'rxjs';
+import { first, map, Observable } from 'rxjs';
 import { TranslocoService } from '@ngneat/transloco';
 
 import { LANGUAGE_CODES } from '../../../core/data';
@@ -24,7 +24,7 @@ export class MediaFilterService {
   }
 
   createLanguageList(): Observable<DropdownOptionDto[]> {
-    return this.translocoService.selectTranslation('languages').pipe(map(t => {
+    return this.translocoService.selectTranslation('languages').pipe(first(), map(t => {
       const languageOptions: DropdownOptionDto[] = [];
       LANGUAGE_CODES.forEach((code) => {
         languageOptions.push({

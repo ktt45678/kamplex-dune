@@ -54,6 +54,9 @@
     "tvStep2": "TV Show Elements",
     "tvStep3": "Finish",
     "formHeader": "Create Media",
+    "basic": "Basic",
+    "advanced": "Advanced",
+    "scanner": "Metadata Scanner",
     "title": "Title",
     "titlePlaceholder": "Primary title of the show",
     "originalTitle": "Original title (optional)",
@@ -148,6 +151,9 @@
     "unsavedChanges": "You have unsaved changes!"
   },
   "updateMedia": {
+    "basic": "{{ admin.createMedia.basic }}",
+    "scanner": "{{ admin.createMedia.scanner }}",
+    "advanced": "{{ admin.createMedia.advanced }}",
     "title": "{{ admin.createMedia.title }}",
     "titlePlaceholder": "{{ admin.createMedia.titlePlaceholder }}",
     "originalTitle": "{{ admin.createMedia.originalTitle }}",
@@ -380,5 +386,15 @@
     "runtimeValue": "{{ runtime }} min",
     "airDate": "Air date",
     "status": "Status"
+  },
+  "externalIds": {
+    "tmdb": "TBDb ID",
+    "imdb": "IMDb ID",
+    "aniList": "AniList ID",
+    "mal": "MyAnimeList ID"
+  },
+  "mediaScanner": {
+    "enabled": "Enable metadata scanner",
+    "tvSeason": "TV Show's season number"
   }
 }

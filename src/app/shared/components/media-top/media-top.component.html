@@ -2,7 +2,7 @@
 <ng-template #mediaLoaded>
   <ng-container *ngIf="mediaList">
     <p *ngIf="!mediaList.results.length" class="tw-text-center">No results were found</p>
-    <ul class="tw-bg-neutral-850 tw-overflow-hidden tw-rounded-sm tw-list-none">
+    <ul class="tw-bg-neutral-850 tw-overflow-hidden tw-rounded-md tw-list-none">
       <li *ngFor="let media of mediaList.results; trackBy: trackId">
         <a [routerLink]="['/details', media._id]" class="tw-bg-neutral-850 hover:tw-bg-neutral-725 focus-visible:tw-bg-neutral-725
           tw-transition-colors tw-duration-200 tw-delay-75 hover:tw-transition-none tw-p-1 tw-block">

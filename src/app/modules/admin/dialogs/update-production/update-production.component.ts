@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { first, takeUntil } from 'rxjs';
+import { takeUntil } from 'rxjs';
 
 import { DropdownOptionDto } from '../../../../core/dto/media';
 import { DestroyService, ItemDataService, ProductionsService } from '../../../../core/services';
@@ -33,7 +33,7 @@ export class UpdateProductionComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.itemDataService.createCountryList().pipe(first()).subscribe({
+    this.itemDataService.createCountryList().subscribe({
       next: countries => this.countryOptions = countries
     });
   }

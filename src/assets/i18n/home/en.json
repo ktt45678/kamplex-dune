@@ -1,1 +1,7 @@
-{}
+{
+  "mediaList": {
+    "lastUpdated": "Last Updated",
+    "mostViewed": "Most Viewed",
+    "topRated": "Top Rated"
+  }
+}

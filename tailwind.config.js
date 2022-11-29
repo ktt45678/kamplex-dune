@@ -25,7 +25,12 @@ module.exports = {
     }),
     screens: {
       'xs': '360px',
-      ...defaultTheme.screens,
+      'sm': '640px',
+      'md': '768px',
+      '2md': '1018px',
+      'lg': '1024px',
+      'xl': '1280px',
+      '2xl': '1536px',
       '3xl': '1600px',
       '4xl': '2000px'
     },
@@ -43,6 +48,7 @@ module.exports = {
       },
       colors: {
         neutral: {
+          '620': '#575757',
           '625': '#393939',
           '650': '#424242',
           '675': '#464646',
@@ -50,6 +56,9 @@ module.exports = {
           '850': '#212121',
           '875': '#1e1e1e'
         }
+      },
+      content: {
+        'invisible': '\'\\200b\''
       },
       lineHeight: {
         '5xl': '1.1'

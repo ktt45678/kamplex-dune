@@ -1,33 +1,27 @@
 <ng-container *transloco="let t">
-  <h3 class="tw-text-white tw-text-2xl tw-font-bold tw-text-center tw-mb-4">
-    {{ t('admin.createProduction.formHeader') }}
-  </h3>
+  <h3 class="tw-text-white tw-text-2xl tw-font-bold tw-text-center tw-mb-4">{{ t('admin.createProduction.formHeader')
+    }}</h3>
   <form [formGroup]="createProductionForm" formHandler (ngSubmit)="onCreateProductionFormSubmit()">
-    <label for="name" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
-      {{ t('admin.createProduction.name') }}
-    </label>
+    <label for="name" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{ t('admin.createProduction.name')
+      }}</label>
     <input formControlName="name" class="tw-w-full" id="name" type="text" aria-describedby="name-error" pInputText
-      [disabledControl]="isCreatingProduction" autofocus>
-    <small id="name-error"
-      class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
-      [ngClass]="(createProductionForm.controls['name'].dirty || createProductionForm.controls['name'].touched)
-          && createProductionForm.controls['name'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
-      {{ createProductionForm.controls['name'].errors | firstErrorKey:'createProduction':'name' }}
-    </small>
-    <label for="country" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
-      {{ t('admin.createProduction.country') }}
-    </label>
+      autofocus>
+    <small id="name-error" class="p-error tw-text-xs tw-block tw-my-2"
+      [invalidControl]="createProductionForm.controls.name">{{ createProductionForm.controls.name.errors
+      | firstErrorKey:'createProduction':'name' }}</small>
+    <label for="country" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
+      t('admin.createProduction.country') }}</label>
     <p-dropdown id="country" formControlName="country" [options]="countryOptions || []" scrollHeight="250px"
       [placeholder]="t('admin.createProduction.countryPlaceholder')" [showClear]="true" appendTo="body"
-      panelStyleClass="p-dropdown-sm" styleClass="tw-w-full tw-mb-4" [disabledControl]="isCreatingProduction">
+      panelStyleClass="p-dropdown-sm" styleClass="tw-w-full tw-mb-4">
     </p-dropdown>
     <div class="tw-flex tw-mt-4">
       <div class="tw-ml-auto">
-        <button pButton type="button" [label]="t('admin.createProduction.cancel')" (click)="onCreateProductionFormCancel()"
-          class="p-button-text p-button-secondary p-button-sm">
+        <button pButton type="button" [label]="t('admin.createProduction.cancel')"
+          (click)="onCreateProductionFormCancel()" class="p-button-text p-button-secondary p-button-sm">
         </button>
         <button pButton type="submit" [label]="t('admin.createProduction.submit')" class="p-button p-button-sm tw-ml-1"
-          [disabled]="isCreatingProduction">
+          [disabled]="createProductionForm.disabled">
         </button>
       </div>
     </div>

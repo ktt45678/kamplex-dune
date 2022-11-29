@@ -23,7 +23,7 @@ import { ConfigureEpisodeComponent } from '../configure-episode';
 import { AddSourceComponent } from '../add-source';
 import { FileUploadComponent } from '../../../../shared/components/file-upload';
 import { fileExtension, maxFileSize, shortDate } from '../../../../core/validators';
-import { AddSubtitleForm, ShortDateForm } from '../../../../core/interfaces/forms';
+import { AddSubtitleForm, ExternalIdsForm, MediaScannerForm, ShortDateForm } from '../../../../core/interfaces/forms';
 import { ExtStreamSelected } from '../../../../core/interfaces/events';
 import { ImageEditorComponent } from '../../../../shared/dialogs/image-editor';
 import { dataURItoBlob, detectFormChange, translocoEscape, fixNestedDialogFocus, replaceDialogHideMethod } from '../../../../core/utils';
@@ -48,6 +48,8 @@ interface UpdateMediaForm {
   lastAirDate?: FormGroup<ShortDateForm>;
   visibility: FormControl<number>;
   status: FormControl<string>;
+  externalIds: FormGroup<ExternalIdsForm>;
+  scanner: FormGroup<MediaScannerForm>;
 }
 
 @Component({
@@ -75,7 +77,6 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
   loadingEpisodes: boolean = false;
   displayVideo: boolean = false;
   isDeletingVideo: boolean = false;
-  isUpdatingMedia: boolean = false;
   isUpdatingPoster: boolean = false;
   isUpdatingBackdrop: boolean = false;
   isUploadingSource: boolean = false;
@@ -128,7 +129,16 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
         year: new FormControl(null)
       }, { validators: shortDate('day', 'month', 'year', true) }),
       visibility: new FormControl(1, { nonNullable: true, validators: Validators.required }),
-      status: new FormControl(MediaStatus.RELEASED, { nonNullable: true, validators: Validators.required })
+      status: new FormControl(MediaStatus.RELEASED, { nonNullable: true, validators: Validators.required }),
+      externalIds: new FormGroup<ExternalIdsForm>({
+        tmdb: new FormControl(null, { validators: [Validators.min(0), Validators.maxLength(10)] }),
+        imdb: new FormControl(null, { validators: Validators.maxLength(10) }),
+        aniList: new FormControl(null, { validators: [Validators.min(0), Validators.maxLength(10)] }),
+        mal: new FormControl(null, { validators: [Validators.min(0), Validators.maxLength(10)] })
+      }),
+      scanner: new FormGroup<MediaScannerForm>({
+        enabled: new FormControl(false, { nonNullable: true })
+      })
     });
     if (mediaType === MediaType.TV) {
       this.updateMediaForm.addControl('lastAirDate', new FormGroup<ShortDateForm>({
@@ -136,6 +146,7 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
         month: new FormControl(null),
         year: new FormControl(null)
       }, { validators: shortDate('day', 'month', 'year', false) }));
+      this.updateMediaForm.controls.scanner.addControl('tvSeason', new FormControl(null));
     }
     this.addSubtitleForm = new FormGroup<AddSubtitleForm>({
       language: new FormControl(lang, Validators.required),
@@ -151,7 +162,7 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
     this.days = this.itemDataService.createDateList();
     this.months = this.itemDataService.createMonthList();
     this.years = this.itemDataService.createYearList();
-    this.itemDataService.createLanguageList().pipe(first()).subscribe(languages => this.languages = languages);
+    this.itemDataService.createLanguageList().subscribe(languages => this.languages = languages);
   }
 
   initSocket(): void {
@@ -244,7 +255,7 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
 
   onUpdateMediaFormSubmit(): void {
     if (!this.media || this.updateMediaForm.invalid) return;
-    this.isUpdatingMedia = true;
+    this.updateMediaForm.disable({ emitEvent: false });
     const mediaId = this.config.data['_id'];
     const formValue = this.updateMediaForm.getRawValue();
     const genreIds = formValue.genres?.map(g => g._id) || [];
@@ -264,17 +275,26 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
         year: formValue.releaseDate.year!
       },
       visibility: formValue.visibility,
-      status: formValue.status
+      status: formValue.status,
+      externalIds: formValue.externalIds,
+      scanner: {
+        enabled: formValue.scanner.enabled
+      }
     };
-    if (this.media.type === MediaType.TV && formValue.lastAirDate) {
-      if (formValue.lastAirDate.day && formValue.lastAirDate.month && formValue.lastAirDate.year) {
-        updateMediaDto.lastAirDate = {
-          day: formValue.lastAirDate.day,
-          month: formValue.lastAirDate.month,
-          year: formValue.lastAirDate.year
+    if (this.media.type === MediaType.TV) {
+      if (formValue.lastAirDate) {
+        if (formValue.lastAirDate.day && formValue.lastAirDate.month && formValue.lastAirDate.year) {
+          updateMediaDto.lastAirDate = {
+            day: formValue.lastAirDate.day,
+            month: formValue.lastAirDate.month,
+            year: formValue.lastAirDate.year
+          }
+        } else {
+          updateMediaDto.lastAirDate = null;
         }
-      } else {
-        updateMediaDto.lastAirDate = null;
+      }
+      if (formValue.scanner.tvSeason) {
+        updateMediaDto.scanner!.tvSeason = formValue.scanner.tvSeason;
       }
     }
     this.mediaService.update(mediaId, updateMediaDto).pipe(takeUntil(this.destroyService)).subscribe(media => {
@@ -282,7 +302,7 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
       this.detectUpdateMediaFormChange();
       this.isUpdated = true;
     }).add(() => {
-      this.isUpdatingMedia = false;
+      this.updateMediaForm.enable({ emitEvent: false });
       this.ref.markForCheck();
     });
   }
@@ -606,7 +626,7 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
   showSourcePreview(): void {
     this.showMoviePlayer = true;
     const mediaId = this.config.data['_id'];
-    this.translocoService.selectTranslation('languages').pipe(switchMap(t => {
+    this.translocoService.selectTranslation('languages').pipe(first(), switchMap(t => {
       return this.mediaService.findMovieStreams(mediaId).pipe(map(movie => ({ movie, t })));
     })).subscribe(({ movie, t }) => {
       const sources: Source[] = [];
@@ -747,7 +767,7 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
 
   createEpisodeMenuItem(episode: TVEpisode): Observable<DataMenuItem<TVEpisode>[]> {
     const mediaId = this.config.data['_id'];
-    return this.translocoService.selectTranslation('admin').pipe(map(t => {
+    return this.translocoService.selectTranslation('admin').pipe(first(), map(t => {
       const menuItems: DataMenuItem<TVEpisode>[] = [];
       menuItems.push(
         {
@@ -775,8 +795,8 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   loadTranslations(): void {
-    this.translocoService.selectTranslation('media').pipe(switchMap(t2 => {
-      return this.translocoService.selectTranslation('admin').pipe(map(t1 => ({ t1, t2 })));
+    this.translocoService.selectTranslation('media').pipe(first(), switchMap(t2 => {
+      return this.translocoService.selectTranslation('admin').pipe(first(), map(t1 => ({ t1, t2 })));
     }), first()).subscribe(({ t1, t2 }) => {
       this.sideBarItems = [
         {
@@ -814,7 +834,11 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
         year: media.releaseDate.year
       },
       visibility: media.visibility,
-      status: media.status
+      status: media.status,
+      externalIds: media.externalIds,
+      scanner: {
+        enabled: media.scanner?.enabled || false
+      }
     });
     if (media.type === MediaType.TV) {
       this.updateMediaForm.patchValue({
@@ -822,6 +846,9 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
           day: media.tv.lastAirDate?.day,
           month: media.tv.lastAirDate?.month,
           year: media.tv.lastAirDate?.year
+        },
+        scanner: {
+          tvSeason: media.scanner?.tvSeason
         }
       });
     }

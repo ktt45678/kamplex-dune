@@ -9,21 +9,17 @@
             pInputText controlAutofocus>
           <label for="email">{{ t('auth.signIn.email') }}</label>
         </span>
-        <small id="email-error"
-          class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
-          [ngClass]="(signInForm.controls['email'].dirty || signInForm.controls['email'].touched)
-          && signInForm.controls['email'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">{{
-          signInForm.controls['email'].errors | firstErrorKey:'signIn':'email' }}</small>
+        <small id="email-error" class="p-error tw-text-xs tw-block tw-my-2"
+          [invalidControl]="signInForm.controls.email">{{
+          signInForm.controls.email.errors | firstErrorKey:'signIn':'email' }}</small>
         <span class="p-float-label">
           <input formControlName="password" class="tw-w-full" id="password" type="password"
             aria-describedby="password-error" pInputText>
           <label for="password">{{ t('auth.signIn.password') }}</label>
         </span>
-        <small id="password-error"
-          class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
-          [ngClass]="(signInForm.controls['password'].dirty || signInForm.controls['password'].touched)
-          && signInForm.controls['password'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">{{
-          signInForm.controls['password'].errors | firstErrorKey:'signIn':'password' }}</small>
+        <small id="password-error" class="p-error tw-text-xs tw-block tw-my-2"
+          [invalidControl]="signInForm.controls.password">{{
+          signInForm.controls.password.errors | firstErrorKey:'signIn':'password' }}</small>
         <div *ngIf="failureCount >= maxFailureCount" class="tw-flex">
           <re-captcha #reCaptcha class="tw-mx-auto" theme="dark" formControlName="captcha"></re-captcha>
         </div>

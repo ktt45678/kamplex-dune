@@ -7,15 +7,24 @@ import { ProfileComponent } from './pages/profile/profile.component';
 
 const routes: Routes = [
   {
-    path: '',
+    path: ':id',
     component: UsersLayoutComponent,
     children: [
       {
-        path: ':id/profile',
-        component: ProfileComponent
+        path: '',
+        component: ProfileComponent,
+        pathMatch: 'full'
       },
       {
-        path: ':id/playlists',
+        path: 'history',
+        component: PlaylistsComponent
+      },
+      {
+        path: 'rated',
+        component: PlaylistsComponent
+      },
+      {
+        path: 'playlists',
         component: PlaylistsComponent
       }
     ]

@@ -288,7 +288,7 @@ export class MediaComponent implements OnInit, OnDestroy {
   }
 
   createMediaMenuItem(media: Media): Observable<DataMenuItem<Media>[]> {
-    return this.translocoService.selectTranslation('admin').pipe(map(t => {
+    return this.translocoService.selectTranslation('admin').pipe(first(), map(t => {
       const menuItems: DataMenuItem<Media>[] = [];
       menuItems.push({
         label: t['configureMedia.addVideo'],

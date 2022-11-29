@@ -37,7 +37,7 @@ export class MenuDirective extends MenuBase implements AfterContentInit, OnDestr
   setAnimation() {
     const factory = this.animationBuilder.build([
       style({ opacity: 0 }),
-      animate('150ms ease-in', style({ opacity: 1 })),
+      animate('100ms ease-in', style({ opacity: 1 })),
     ]);
     const player = factory.create(this.el.nativeElement);
     player.play();

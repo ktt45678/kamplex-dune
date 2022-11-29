@@ -1,7 +1,11 @@
 import { ViewportScroller } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { Event, Router, Scroll } from '@angular/router';
-import { filter, pairwise } from 'rxjs';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { Title } from '@angular/platform-browser';
+import { ActivatedRoute, Event, NavigationEnd, Router, Scroll } from '@angular/router';
+import { TranslocoService } from '@ngneat/transloco';
+import { catchError, EMPTY, filter, first, map, of, pairwise, switchMap } from 'rxjs';
+
+import { SITE_NAME } from '../environments/config';
 
 @Component({
   selector: 'app-root',
@@ -9,11 +13,15 @@ import { filter, pairwise } from 'rxjs';
   styleUrls: ['./app.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AppComponent {
-  constructor(private router: Router, private viewportScroller: ViewportScroller) {
+export class AppComponent implements OnInit {
+  constructor(private router: Router, private title: Title, private viewportScroller: ViewportScroller,
+    private translocoService: TranslocoService) { }
+
+  ngOnInit(): void {
     // Disable automatic scroll restoration to avoid race conditions
     this.viewportScroller.setHistoryScrollRestoration('manual');
     this.handleScrollOnNavigation();
+    this.handlePageTitle();
   }
 
   private handleScrollOnNavigation(): void {
@@ -37,6 +45,30 @@ export class AppComponent {
           this.viewportScroller.scrollToPosition([0, 0]);
         }
       }
+    });
+  }
+
+  private handlePageTitle(): void {
+    this.router.events.pipe(
+      filter((event) => event instanceof NavigationEnd),
+      map(() => {
+        let route: ActivatedRoute = this.router.routerState.root;
+        while (route.firstChild)
+          route = route.firstChild;
+        return route.snapshot.data;
+      }),
+      switchMap(routeData => {
+        if (routeData['disableTitleStrategy'])
+          return EMPTY;
+        const title = routeData['title'];
+        if (!title) {
+          this.title.setTitle(SITE_NAME);
+          return EMPTY;
+        }
+        return this.translocoService.selectTranslate(`pageTitles.${title}`).pipe(first());
+      })
+    ).subscribe(title => {
+      this.title.setTitle(`${title} - ${SITE_NAME}`);
     });
   }
 

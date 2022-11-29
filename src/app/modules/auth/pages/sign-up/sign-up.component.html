@@ -9,21 +9,17 @@
             aria-describedby="username-error" pInputText controlAutofocus>
           <label for="username">{{ t('auth.signUp.username') }}</label>
         </span>
-        <small id="username-error"
-          class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
-          [ngClass]="(signUpForm.controls['username'].dirty || signUpForm.controls['username'].touched) && signUpForm.controls['username'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
-          {{ signUpForm.controls['username'].errors | firstErrorKey:'signUp':'username' }}
-        </small>
+        <small id="username-error" class="p-error tw-text-xs tw-block tw-my-2"
+          [invalidControl]="signUpForm.controls.username">{{ signUpForm.controls.username.errors |
+          firstErrorKey:'signUp':'username' }}</small>
         <span class="p-float-label">
           <input formControlName="email" class="tw-w-full" id="email" type="text" aria-describedby="email-error"
             pInputText>
           <label for="email">{{ t('auth.signUp.email') }}</label>
         </span>
-        <small id="email-error"
-          class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
-          [ngClass]="(signUpForm.controls['email'].dirty || signUpForm.controls['email'].touched) && signUpForm.controls['email'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
-          {{ signUpForm.controls['email'].errors | firstErrorKey:'signUp':'email' }}
-        </small>
+        <small id="email-error" class="p-error tw-text-xs tw-block tw-my-2"
+          [invalidControl]="signUpForm.controls.email">{{ signUpForm.controls.email.errors |
+          firstErrorKey:'signUp':'email' }}</small>
         <span class="p-float-label p-input-button-right">
           <input formControlName="password" class="tw-w-full" id="password" [type]="showPassword ? 'text' : 'password'"
             aria-describedby="password-error" pInputText>
@@ -32,11 +28,9 @@
             class="p-button-rounded p-button-secondary p-button-text" (click)="showPassword = !showPassword">
           </button>
         </span>
-        <small id="password-error"
-          class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
-          [ngClass]="(signUpForm.controls['password'].dirty || signUpForm.controls['password'].touched) && signUpForm.controls['password'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
-          {{ signUpForm.controls['password'].errors | firstErrorKey:'signUp':'password' }}
-        </small>
+        <small id="password-error" class="p-error tw-text-xs tw-block tw-my-2"
+          [invalidControl]="signUpForm.controls.password">{{ signUpForm.controls.password.errors |
+          firstErrorKey:'signUp':'password' }}</small>
         <label for="birthdate" class="tw-text-white tw-inline-block tw-text-base tw-font-medium tw-mb-2">{{
           t('auth.signUp.birthdate') }}</label>
         <div id="birthdate" formGroupName="birthdate" class="dropdown-group tw-flex tw-flex-wrap tw-w-full"
@@ -54,12 +48,9 @@
             [placeholder]="t('auth.signUp.birthdateYear')" scrollHeight="300px">
           </p-dropdown>
         </div>
-        <small id="birthdate-error"
-          class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
-          [ngClass]="(signUpForm.controls['birthdate'].dirty || signUpForm.controls['birthdate'].touched)
-            && signUpForm.controls['birthdate'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
-          {{ signUpForm.controls['birthdate'].errors | firstErrorKey:'signUp':'birthdate' }}
-        </small>
+        <small id="birthdate-error" class="p-error tw-text-xs tw-block tw-my-2"
+          [invalidControl]="signUpForm.controls.birthdate">{{ signUpForm.controls.birthdate.errors |
+          firstErrorKey:'signUp':'birthdate' }}</small>
         <div class="tw-flex tw-flex-wrap-reverse tw-mt-4">
           <div class="tw-mr-auto">
             <button pButton type="button" routerLink="/sign-in" [label]="t('auth.signUp.signIn')"

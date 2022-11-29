@@ -1,24 +1,24 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { forkJoin, map, Observable } from 'rxjs';
+import { forkJoin, map, Observable, tap } from 'rxjs';
+import { HttpCacheManager } from '@ngneat/cashew';
 
 import { AddMediaSubtitleDto, AddMediaVideoDto, AddTVEpisodeDto, CreateMediaDto, FindOneMediaDto, FindTVEpisodesDto, PaginateMediaDto, UpdateMediaDto, UpdateMediaVideoDto, UpdateTVEpisodeDto } from '../dto/media';
 import { ExtMediaSuggestions, FlixHQInfo, FlixHQSearch, GogoanimeInfo, GogoanimeSearch, Media, MediaDetails, MediaStream, MediaSubtitle, MediaVideo, Paginated, TVEpisode, TVEpisodeDetails, ZoroInfo, ZoroSearch } from '../models';
-import { ExtMediaProvider } from '../../core/enums';
+import { CacheKey, ExtMediaProvider } from '../../core/enums';
 import { getImageName } from '../../core/utils';
 import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class MediaService {
-
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private httpCacheManager: HttpCacheManager) { }
 
   create(createMediaDto: CreateMediaDto) {
-    return this.http.post<MediaDetails>('media', createMediaDto);
+    return this.http.post<MediaDetails>('media', createMediaDto).pipe(tap(() => this.invalidateHomeMediaCache()));
   }
 
-  findPage(paginateMediaDto?: PaginateMediaDto) {
-    const params: any = {};
+  findPage(paginateMediaDto?: PaginateMediaDto, context?: HttpContext) {
+    const params: { [key: string]: any } = {};
     if (paginateMediaDto) {
       const { page, limit, search, sort, genres, type, status, originalLanguage, year, includeHidden, includeUnprocessed } = paginateMediaDto;
       page && (params['page'] = page);
@@ -33,11 +33,11 @@ export class MediaService {
       includeHidden && (params['includeHidden'] = includeHidden);
       includeUnprocessed && (params['includeUnprocessed'] = includeUnprocessed);
     }
-    return this.http.get<Paginated<Media>>('media', { params });
+    return this.http.get<Paginated<Media>>('media', { params, context });
   }
 
   findOne(id: string, findOneMediaDto?: FindOneMediaDto) {
-    const params: any = {};
+    const params: { [key: string]: any } = {};
     if (findOneMediaDto) {
       const { includeHiddenEps, includeUnprocessedEps } = findOneMediaDto;
       includeHiddenEps !== undefined && (params['includeHiddenEps'] = includeHiddenEps);
@@ -47,7 +47,7 @@ export class MediaService {
   }
 
   update(id: string, updateMediaDto: UpdateMediaDto) {
-    return this.http.patch<MediaDetails>(`media/${id}`, updateMediaDto);
+    return this.http.patch<MediaDetails>(`media/${id}`, updateMediaDto).pipe(tap(() => this.invalidateHomeMediaCache()));
   }
 
   findMovieStreams(id: string) {
@@ -55,7 +55,7 @@ export class MediaService {
   }
 
   remove(id: string) {
-    return this.http.delete<MediaDetails>(`media/${id}`);
+    return this.http.delete<MediaDetails>(`media/${id}`).pipe(tap(() => this.invalidateHomeMediaCache()));
   }
 
   uploadPoster(id: string, poster: File | Blob, name?: string) {
@@ -63,7 +63,7 @@ export class MediaService {
       name = getImageName(poster);
     const data = new FormData();
     data.set('file', poster, name);
-    return this.http.patch<MediaDetails>(`media/${id}/poster`, data);
+    return this.http.patch<MediaDetails>(`media/${id}/poster`, data).pipe(tap(() => this.invalidateHomeMediaCache()));
   }
 
   deletePoster(id: string) {
@@ -75,7 +75,7 @@ export class MediaService {
       name = getImageName(backdrop);
     const data = new FormData();
     data.set('file', backdrop, name);
-    return this.http.patch<MediaDetails>(`media/${id}/backdrop`, data);
+    return this.http.patch<MediaDetails>(`media/${id}/backdrop`, data).pipe(tap(() => this.invalidateHomeMediaCache()));
   }
 
   deleteBackdrop(id: string) {
@@ -124,7 +124,7 @@ export class MediaService {
   }
 
   findAllTVEpisodes(id: string, findTVEpisodesDto: FindTVEpisodesDto) {
-    const params: any = {};
+    const params: { [key: string]: any } = {};
     const { includeHidden, includeUnprocessed } = findTVEpisodesDto;
     includeHidden !== undefined && (params['includeHidden'] = includeHidden);
     includeUnprocessed !== undefined && (params['includeUnprocessed'] = includeUnprocessed);
@@ -244,5 +244,10 @@ export class MediaService {
         headers: { 'x-ng-intercept': 'http-error' }
       }
     );
+  }
+
+  invalidateHomeMediaCache() {
+    this.httpCacheManager.delete(CacheKey.FEATURED_MEDIA);
+    this.httpCacheManager.delete(CacheKey.LATEST_MEDIA);
   }
 }

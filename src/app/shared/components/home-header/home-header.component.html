@@ -82,15 +82,20 @@
             </div>
           </div>
           <div class="tw-flex tw-items-center tw-ml-auto tw-pr-2 sm:tw-pr-0 tw-flex-shrink-0 tw-basis-auto">
-            <button pButton type="button" [icon]="displayMobileSearch ? 'ms ms-close' : 'ms ms-search'"
+            <button *ngIf="displayMobileSearch" pButton type="button" icon="ms ms-close" aria-label="Clear search input"
+              class="p-button-rounded p-button-text p-button-secondary p-button-sm p-button-sm-icon lg:tw-hidden"
+              (click)="clearSearchInput()" [disabled]="!mediaSearch.inputValue">
+            </button>
+            <button pButton type="button" [icon]="displayMobileSearch ? 'ms ms-arrow-back' : 'ms ms-search'"
               aria-label="Toggle mobile search"
               class="p-button-rounded p-button-text p-button-secondary p-button-sm p-button-sm-icon lg:tw-hidden"
               (click)="toggleMobileSearch()">
             </button>
             <div class="tw-hidden tw-items-center" [ngClass]="displayMobileSearch ? 'lg:tw-flex' : 'sm:tw-flex'">
               <ng-container *ngIf="currentUser; else notLoggedIn">
-                <button type="button" role="navigation" aria-label="User profile" class="tw-flex tw-items-center tw-rounded-3xl tw-bg-transparent tw-p-1 hover:tw-bg-neutral-650
-                  focus-visible:tw-outline-none focus-visible:tw-shadow-focus-box tw-ml-2">
+                <a type="button" role="navigation" aria-label="User profile" class="tw-flex tw-items-center tw-rounded-3xl tw-bg-transparent tw-p-1 hover:tw-bg-neutral-650
+                  focus-visible:tw-outline-none focus-visible:tw-shadow-focus-box tw-ml-2"
+                  [routerLink]="['/users', currentUser._id]">
                   <img *ngIf="currentUser.avatarUrl; else noAvatar" class="tw-block tw-w-9 tw-rounded-full"
                     [src]="currentUser.avatarUrl" [alt]="currentUser.username">
                   <ng-template #noAvatar>
@@ -98,7 +103,7 @@
                   </ng-template>
                   <p class="tw-text-white tw-font-medium tw-mx-2 tw-max-w-[6rem] tw-truncate">{{ currentUser.username
                     }}</p>
-                </button>
+                </a>
                 <button pButton type="button" icon="ms ms-more-vert" aria-label="User menu"
                   [appMenuTriggerFor]="userMenu"
                   class="p-button-rounded p-button-text p-button-secondary p-button-sm p-button-sm-icon tw-ml-2">
@@ -150,11 +155,12 @@
     </nav>
     <div #menuZone></div>
     <ng-template #desktopMenu>
-      <div appMenu>
+      <div appMenu class="tw-font-medium">
         <a appMenuItem routerLink="/">{{ t('homeHeader.home') }}</a>
         <a appMenuItem routerLink="/">{{ t('homeHeader.movies') }}</a>
         <a appMenuItem routerLink="/">{{ t('homeHeader.tvShows') }}</a>
-        <button appMenuItem [appMenuTriggerFor]="desktopGenresMenu">{{ t('homeHeader.genres') }}</button>
+        <button appMenuItem [appMenuTriggerFor]="desktopGenresMenu" class="tw-font-medium">{{ t('homeHeader.genres')
+          }}</button>
         <a appMenuItem routerLink="/">{{ t('homeHeader.recently') }}</a>
         <a appMenuItem routerLink="/">{{ t('homeHeader.updated') }}</a>
       </div>

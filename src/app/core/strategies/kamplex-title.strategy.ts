@@ -13,10 +13,11 @@ export class KamPlexTitleStrategy extends TitleStrategy {
   }
 
   override updateTitle(routerState: RouterStateSnapshot) {
+    console.log(routerState);
     const title = this.buildTitle(routerState);
     if (title !== undefined) {
       this.translocoService.selectTranslate(`pageTitles.${title}`).pipe(first()).subscribe(translatedTitle => {
-        this.title.setTitle(`${translatedTitle} | ${SITE_NAME}`);
+        this.title.setTitle(`${translatedTitle} - ${SITE_NAME}`);
       });
     } else {
       this.title.setTitle(SITE_NAME);

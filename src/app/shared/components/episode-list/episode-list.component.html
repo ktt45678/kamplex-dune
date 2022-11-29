@@ -3,8 +3,8 @@
   <ng-template #episodeListLoaded>
     <ng-container *ngIf="episodeList?.length && media">
       <ul class="tw-overflow-hidden tw-rounded-sm tw-list-none">
-        <li class="tw-p-1" *ngFor="let episode of episodeList; trackBy: trackId">
-          <div class="tw-flex tw-flex-wrap sm:tw-flex-nowrap">
+        <li routerLinkActive="tw-bg-neutral-725" *ngFor="let episode of episodeList; trackBy: trackId">
+          <div class="tw-flex tw-flex-wrap sm:tw-flex-nowrap tw-p-1">
             <div [ngClass]="stillStyleClass">
               <a [routerLink]="['/watch', media._id]" [queryParams]="{ ep: episode.episodeNumber}"
                 class="tw-group tw-block tw-aspect-w-16 tw-aspect-h-9 tw-rounded-md focus-visible:tw-shadow-focus-box">
@@ -24,12 +24,13 @@
             </div>
             <div [ngClass]="infoStyleClass">
               <a [routerLink]="['/watch', media._id]" [queryParams]="{ ep: episode.episodeNumber}" class="tw-text-white
-                tw-text-base tw-font-bold tw-line-clamp-1 hover:tw-underline focus-visible:tw-shadow-focus-box
-                focus-visible:tw-rounded-md">{{ episode.name ? episode.episodeNumber + '. ' + episode.name :
-                t('media.episode.unnamedEpisode') + episode.episodeNumber }}</a>
-              <p class="tw-text-gray-400 tw-text-sm tw-font-medium">{{ episode.runtime * 60 * 1000 |
-                time:['hours','minutes']:'short' }}</p>
-              <p class="tw-text-gray-400 tw-text-sm tw-font-medium">{{ episode.airDate | shortDate }}</p>
+                tw-text-sm md:tw-text-base tw-leading-5 tw-font-bold tw-line-clamp-2 hover:tw-underline
+                focus-visible:tw-shadow-focus-box focus-visible:tw-rounded-md">{{ episode.name ? episode.episodeNumber
+                + '. ' + episode.name : t('media.episode.unnamedEpisode') + ' ' + episode.episodeNumber }}</a>
+              <!--p class="tw-text-gray-400 tw-text-sm tw-font-medium">{{ episode.runtime * 60 * 1000 |
+                time:['hours','minutes']:'short' }}</p-->
+              <p class="tw-text-gray-400 tw-font-medium" [ngClass]="dateAiredStyleClass">{{ episode.airDate | shortDate
+                }}</p>
             </div>
           </div>
         </li>

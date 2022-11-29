@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { TranslocoService } from '@ngneat/transloco';
-import { map, Observable } from 'rxjs';
+import { first, map, Observable } from 'rxjs';
 
 import { COUNTRY_CODES, LANGUAGE_CODES, TRANSLATE_CODES } from '../data';
 import { DropdownOptionDto } from '../dto/media';
@@ -48,7 +48,7 @@ export class ItemDataService {
   }
 
   createCountryList(): Observable<DropdownOptionDto[]> {
-    return this.translocoService.selectTranslation('countries').pipe(map(t => {
+    return this.translocoService.selectTranslation('countries').pipe(first(), map(t => {
       const countryOptions: DropdownOptionDto[] = [];
       COUNTRY_CODES.forEach(code => {
         countryOptions.push({
@@ -61,7 +61,7 @@ export class ItemDataService {
   }
 
   createLanguageList(disabledValues?: string[]): Observable<DropdownOptionDto[]> {
-    return this.translocoService.selectTranslation('languages').pipe(map(t => {
+    return this.translocoService.selectTranslation('languages').pipe(first(), map(t => {
       const languageOptions: DropdownOptionDto[] = [];
       if (!disabledValues) {
         LANGUAGE_CODES.forEach((code) => {
@@ -91,7 +91,7 @@ export class ItemDataService {
   }
 
   createTranslateOptions(): Observable<DropdownOptionDto[]> {
-    return this.translocoService.selectTranslation('languages').pipe(map(t => {
+    return this.translocoService.selectTranslation('languages').pipe(first(), map(t => {
       const translateOptions: DropdownOptionDto[] = [];
       TRANSLATE_CODES.forEach(code => {
         translateOptions.push({

@@ -2,7 +2,7 @@ import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { TranslocoService } from '@ngneat/transloco';
-import { first, takeUntil } from 'rxjs';
+import { takeUntil } from 'rxjs';
 
 import { DropdownOptionDto } from '../../../../core/dto/media';
 import { MediaSubtitle } from '../../../../core/models';
@@ -40,7 +40,7 @@ export class AddSubtitleComponent implements OnInit {
       ? this.config.data['media']['movie']['subtitles']
       : this.config.data['episode']['subtitles'];
     const disabledLanguages = subtitles.map(s => s.language);
-    this.itemDataService.createLanguageList(disabledLanguages).pipe(first()).subscribe({
+    this.itemDataService.createLanguageList(disabledLanguages).subscribe({
       next: languages => this.languages = languages
     });
   }

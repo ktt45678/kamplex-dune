@@ -1,5 +1,16 @@
-<div>
-  <span class="tw-text-base tw-ml-2 first:tw-ml-0 tw-text-yellow-500" *ngFor="let x repeat 5">
-    <i class="pi mi-star"></i>
-  </span>
+<div class="tw-relative tw-flex tw-items-center" (mouseleave)="!readonly && onStarsUnhover()" role="img"
+  [attr.aria-label]="'Rating: ' + rating + '/' + maxStars"
+  [ngStyle]="{ '--star-width': 15 * size + 'px', '--star-height': 16 * size + 'px' }">
+
+  <span class="tw-absolute tw-text-transparent -tw-left-4 tw-inline-block tw-cursor-pointer"
+    [ngStyle]="{ width: 'var(--star-width)', height: 'var(--star-height)' }" aria-hidden="true"
+    (click)="!readonly && onZeroStarClick()" (mousemove)="!readonly && onZeroStarHover()"></span>
+
+  <div *ngFor="let star of editableStars;" class="tw-z-1 tw-cursor-pointer" aria-hidden="true"
+    (click)="!readonly && onStarClick($event, star)" (mousemove)="!readonly && onStarHover($event, star)">
+
+    <span class="tw-inline-block" [ngClass]="star.classname" [ngStyle]="{ width: 'var(--star-width)', height: 'var(--star-height)',
+      'color': color || 'yellow', 'font-size': 'var(--star-width)' }" aria-hidden="true"></span>
+
+  </div>
 </div>

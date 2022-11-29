@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, Inject, Input, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { Router } from '@angular/router';
-import { MenuItem } from 'primeng/api';
 import { AutoComplete } from 'primeng/autocomplete';
 import { takeUntil } from 'rxjs';
 
@@ -23,7 +22,7 @@ export class HomeHeaderComponent implements OnInit {
   track_Id = track_Id;
   MediaType = MediaType;
   UserPermission = UserPermission;
-  currentUser: UserDetails | null;
+  currentUser!: UserDetails | null;
   mediaSuggestions: Media[] = [];
   genres: Genre[] = [];
   isMobileMenuOpened: boolean = false;
@@ -36,7 +35,6 @@ export class HomeHeaderComponent implements OnInit {
     private router: Router, private authService: AuthService, private mediaService: MediaService, private genresService: GenresService,
     private destroyService: DestroyService) {
     this.currentPageYOffset = window.pageYOffset;
-    this.currentUser = null;
   }
 
   ngOnInit(): void {
@@ -91,8 +89,15 @@ export class HomeHeaderComponent implements OnInit {
     if (this.displayMobileSearch) {
       setTimeout(() => {
         this.mediaSearch?.inputEL.nativeElement.focus();
-      }, 0)
+      }, 0);
     }
+  }
+
+  clearSearchInput(): void {
+    this.mediaSearch?.clear();
+    setTimeout(() => {
+      this.mediaSearch?.inputEL.nativeElement.focus();
+    }, 0);
   }
 
   loadMediaSuggestions(query: string): void {

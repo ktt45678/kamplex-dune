@@ -6,12 +6,9 @@
     <app-file-upload formControlName="file" accept=".mp4, .mkv, .webm, .m2ts" ariaDescribedby="file-error"
       [label]="t('admin.addMediaSource.chooseFile')" [disabledControl]="isAddingSource">
     </app-file-upload>
-    <small id="file-error"
-      class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
-      [ngClass]="(addSourceForm.controls['file'].dirty || addSourceForm.controls['file'].touched)
-            && addSourceForm.controls['file'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
-      {{ addSourceForm.controls['file'].errors | firstErrorKey:'addMediaSource':'file' }}
-    </small>
+    <small id="file-error" class="p-error tw-text-xs tw-block tw-my-2"
+      [invalidControl]="addSourceForm.controls.file">{{ addSourceForm.controls.file.errors |
+      firstErrorKey:'addMediaSource':'file' }}</small>
     <div class="tw-flex tw-mt-4">
       <div class="tw-ml-auto">
         <button pButton type="button" [label]="t('admin.addMediaSubtitle.cancel')" (click)="onAddSourceFormCancel()"

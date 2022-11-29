@@ -1,26 +1,20 @@
 <ng-container *transloco="let t">
-  <h3 class="tw-text-white tw-text-2xl tw-font-bold tw-text-center tw-mb-4">
-    {{ t('admin.createGenre.formHeader') }}
-  </h3>
+  <h3 class="tw-text-white tw-text-2xl tw-font-bold tw-text-center tw-mb-4">{{ t('admin.createGenre.formHeader') }}</h3>
   <form [formGroup]="createGenreForm" formHandler (ngSubmit)="onCreateGenreFormSubmit()">
-    <label for="name" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
-      {{ t('admin.createGenre.name') }}
-    </label>
+    <label for="name" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{ t('admin.createGenre.name')
+      }}</label>
     <input formControlName="name" class="tw-w-full" id="name" type="text" aria-describedby="name-error" pInputText
-      [disabledControl]="creatingGenre" autofocus>
-    <small id="name-error"
-      class="p-error tw-text-xs tw-block tw-my-2 tw-transition-opacity tw-duration-200 before:tw-content-['\200b']"
-      [ngClass]="(createGenreForm.controls['name'].dirty || createGenreForm.controls['name'].touched)
-          && createGenreForm.controls['name'].invalid ? 'tw-opacity-100' : 'tw-opacity-0'">
-      {{ createGenreForm.controls['name'].errors | firstErrorKey:'createGenre':'name' }}
-    </small>
+      autofocus>
+    <small id="name-error" class="p-error tw-text-xs tw-block tw-my-2"
+      [invalidControl]="createGenreForm.controls.name">{{ createGenreForm.controls.name.errors
+      | firstErrorKey:'createGenre':'name' }}</small>
     <div class="tw-flex tw-mt-4">
       <div class="tw-ml-auto">
         <button pButton type="button" [label]="t('admin.createGenre.cancel')" (click)="onCreateGenreFormCancel()"
           class="p-button-text p-button-secondary p-button-sm">
         </button>
         <button pButton type="submit" [label]="t('admin.createGenre.submit')" class="p-button p-button-sm tw-ml-1"
-          [disabled]="creatingGenre">
+          [disabled]="createGenreForm.disabled">
         </button>
       </div>
     </div>

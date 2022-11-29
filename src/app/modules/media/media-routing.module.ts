@@ -8,15 +8,24 @@ import { WatchComponent } from './pages/watch/watch.component';
 const routes: Routes = [
   {
     path: 'search',
-    component: SearchComponent
+    component: SearchComponent,
+    data: {
+      title: 'search'
+    }
   },
   {
     path: 'details/:id',
-    component: DetailsComponent
+    component: DetailsComponent,
+    data: {
+      disableTitleStrategy: true
+    }
   },
   {
     path: 'watch/:id',
-    component: WatchComponent
+    component: WatchComponent,
+    data: {
+      disableTitleStrategy: true
+    }
   }
 ];
 

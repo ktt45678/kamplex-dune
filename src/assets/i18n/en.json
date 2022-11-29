@@ -151,6 +151,21 @@
       },
       "lastAirDate": {
         "validShortDate": "Last air date must be a valid date"
+      },
+      "externalIds.tmdb": {
+        "min": "TMDb id must be a non-negative number",
+        "maxlength": "TMDb id must not be longer than 10 characters"
+      },
+      "externalIds.imdb": {
+        "maxlength": "IMDb id must not be longer than 10 characters"
+      },
+      "externalIds.aniList": {
+        "min": "AniList id must be a non-negative number",
+        "maxlength": "AniList id must not be longer than 10 characters"
+      },
+      "externalIds.mal": {
+        "min": "My Anime List id must be a non-negative number",
+        "maxlength": "My Anime List id must not be longer than 10 characters"
       }
     },
     "updateMedia": {
@@ -177,6 +192,21 @@
       },
       "lastAirDate": {
         "validShortDate": "{{ validationErrors.createMedia.lastAirDate.validShortDate }}"
+      },
+      "externalIds.tmdb": {
+        "min": "{{ validationErrors.createMedia.externalIds.tmdb.min }}",
+        "maxlength": "{{ validationErrors.createMedia.externalIds.tmdb.maxlength }}"
+      },
+      "externalIds.imdb": {
+        "maxlength": "{{ validationErrors.createMedia.externalIds.imdb.maxlength }}"
+      },
+      "externalIds.aniList": {
+        "min": "{{ validationErrors.createMedia.externalIds.aniList.min }}",
+        "maxlength": "{{ validationErrors.createMedia.externalIds.aniList.maxlength }}"
+      },
+      "externalIds.mal": {
+        "min": "{{ validationErrors.createMedia.externalIds.mal.min }}",
+        "maxlength": "{{ validationErrors.createMedia.externalIds.mal.maxlength }}"
       }
     },
     "addMediaVideo": {
@@ -277,6 +307,7 @@
     "home": "Home",
     "signIn": "Sign In",
     "signUp": "Sign Up",
+    "search": "Search",
     "confirmEmail": "Confirm Email",
     "forgotPassword": "Forgot Password",
     "resetPassword": "Reset Password"
