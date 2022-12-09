@@ -136,7 +136,7 @@
         "maxlength": "Original title must not be longer than 500 characters"
       },
       "overview": {
-        "required": "Overview time is required",
+        "required": "Overview is required",
         "minlength": "Overview must be at least 10 characters",
         "maxlength": "Overview must not be longer than 2000 characters"
       },

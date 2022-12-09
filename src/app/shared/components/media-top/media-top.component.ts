@@ -25,7 +25,7 @@ export class MediaTopComponent implements OnInit {
   skeletonArray: Array<any>;
 
   constructor() {
-    this.skeletonArray = [].constructor(this.itemLimit);
+    this.skeletonArray = new Array(this.itemLimit);
   }
 
   ngOnInit(): void {

@@ -4,9 +4,9 @@
     <ng-container *ngIf="mediaList">
       <p *ngIf="!mediaList.results.length" class="tw-text-center">{{ t('media.list.noResults') }}</p>
       <div class="tw-grid tw-grid-cols-2 xs:tw-grid-cols-3 md:tw-grid-cols-4 lg:tw-grid-cols-5 xl:tw-grid-cols-6">
-        <a class="tw-bg-transparent hover:tw-bg-neutral-725 focus-visible:tw-bg-neutral-725 tw-transition-colors tw-duration-200
-        tw-rounded-sm tw-px-1.5 tw-py-2" *ngFor="let media of mediaList.results; trackBy: trackId"
-          [routerLink]="['/details', media._id]">
+        <a class="tw-bg-transparent tw-text-white hover:tw-bg-neutral-725 focus-visible:tw-bg-neutral-725
+          tw-transition-colors tw-duration-200 tw-rounded-sm tw-px-1.5 tw-py-2"
+          *ngFor="let media of mediaList.results; trackBy: trackId" [routerLink]="['/details', media._id]">
           <div class="tw-aspect-w-2 tw-aspect-h-3 tw-rounded-t-md tw-overflow-hidden">
             <img *ngIf="media.thumbnailPosterUrl; else noPoster" class="tw-object-cover"
               [lazyLoad]="media.thumbnailPosterUrl" [lazyLoadPlaceholder]="media.posterColor | rgbColor"
@@ -17,27 +17,27 @@
           </div>
           <p
             class="tw-left-0 tw-bottom-0 tw-right-0 tw-bg-indigo-700 tw-flex tw-content-between tw-py-1 tw-px-2 tw-rounded-b-md">
-            <small class="tw-text-white tw-text-xs tw-font-semibold">
+            <small class="tw-text-xs tw-font-semibold">
               {{ media.releaseDate.year }}
             </small>
-            <small class="tw-text-white tw-text-xs tw-font-semibold tw-ml-auto"
+            <small class="tw-text-xs tw-font-semibold tw-ml-auto"
               *ngIf="media.type === MediaType.MOVIE; else notMovie">{{ media.runtime * 60 * 1000 |
               time:['hours','minutes']:'short' }}</small>
             <ng-template #notMovie>
-              <small class="tw-text-white tw-text-xs tw-font-semibold tw-ml-auto" *ngIf="media.type === MediaType.TV">
+              <small class="tw-text-xs tw-font-semibold tw-ml-auto" *ngIf="media.type === MediaType.TV">
                 {{ t('media.list.episodeCountValue', { episodeCount: media.tv.pEpisodeCount }) }}
               </small>
             </ng-template>
           </p>
-          <p class="tw-text-white tw-text-xs sm:tw-text-sm tw-font-bold tw-mt-2">{{ media.title }}</p>
+          <p class="tw-text-xs sm:tw-text-sm md:tw-text-base tw-font-bold tw-mt-2">{{ media.title }}</p>
         </a>
       </div>
     </ng-container>
   </ng-template>
 </ng-container>
 <ng-template #skeletonLoading>
-  <div class="tw-grid tw-grid-cols-2 md:tw-grid-cols-3 lg:tw-grid-cols-4 xl:tw-grid-cols-6 tw-gap-4">
-    <div *ngFor="let item of skeletonArray">
+  <div class="tw-grid tw-grid-cols-2 xs:tw-grid-cols-3 md:tw-grid-cols-4 lg:tw-grid-cols-5 xl:tw-grid-cols-6">
+    <div class="tw-px-1.5 tw-py-2" *ngFor="let item of skeletonArray">
       <div class="tw-aspect-w-2 tw-aspect-h-3 tw-mb-2">
         <p-skeleton animation="none" width="100%" height="100%" borderRadius="6px"></p-skeleton>
       </div>

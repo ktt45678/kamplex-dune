@@ -33,7 +33,7 @@ export class SignInComponent {
       email: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
       password: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(128)] }),
       captcha: new FormControl(undefined)
-    });
+    }, { updateOn: 'change' });
     this.continueUrl = this.route.snapshot.queryParams['continue'] || '/';
   }
 

@@ -44,9 +44,10 @@ export class SignUpComponent {
         month: new FormControl(null),
         year: new FormControl(null)
       }, {
-        validators: shortDate('day', 'month', 'year', true, new Date())
+        validators: shortDate('day', 'month', 'year', true, new Date()),
+        updateOn: 'change'
       })
-    });
+    }, { updateOn: 'change' });
     this.days = this.itemDataService.createDateList();
     this.months = this.itemDataService.createMonthList();
     this.years = this.itemDataService.createYearList(1920);

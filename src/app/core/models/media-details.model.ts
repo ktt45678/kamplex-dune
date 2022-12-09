@@ -5,6 +5,7 @@ export interface MediaDetails extends Media {
   movie: Movie;
   tv: TVShow;
   videos: MediaVideo[];
+  ratingScore: number;
   visibility: number;
   status: string;
   externalIds: MediaExternalIds;

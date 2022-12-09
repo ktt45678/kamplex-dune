@@ -29,7 +29,7 @@ export class ForgotPasswordComponent {
     this.recoverPasswordForm = new FormGroup<RecoverPasswordForm>({
       email: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
       captcha: new FormControl('', { nonNullable: true, validators: Validators.required })
-    });
+    }, { updateOn: 'change' });
   }
 
   onRecoverPasswordFormSubmit(): void {

@@ -5,5 +5,5 @@ export * from './device-helper';
 export * from './file-upload.model';
 export * from './form-helper';
 export * from './ng-track-by';
-export * from './p-dialog-helper';
+export * from './primeng-helper';
 export * from './transloco-escape';

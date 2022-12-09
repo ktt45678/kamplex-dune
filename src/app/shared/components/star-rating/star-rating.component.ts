@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, Input, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, Input, EventEmitter, Output, ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-star-rating',
@@ -16,6 +16,9 @@ export class StarRatingComponent implements OnInit, OnDestroy {
 
   @Input()
   readonly!: boolean;
+
+  @Input()
+  disabled!: boolean;
 
   @Input()
   size: number = 1;
@@ -52,6 +55,8 @@ export class StarRatingComponent implements OnInit, OnDestroy {
 
   private customCssClasses!: HTMLStyleElement[];
   private customClassIdentifier = Math.random().toString(36).substring(2);
+
+  constructor(private ref: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.setupStarImages();
@@ -117,6 +122,7 @@ export class StarRatingComponent implements OnInit, OnDestroy {
   setRating(rating: number) {
     this.rating = Math.round(rating * 2) / 2;
     this.onStarsUnhover();
+    this.ref.markForCheck();
   }
 
   setHoverRating(rating: number) {

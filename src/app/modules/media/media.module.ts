@@ -8,6 +8,8 @@ import { ToggleButtonModule } from 'primeng/togglebutton';
 import { DialogModule } from 'primeng/dialog';
 import { PaginatorModule } from 'primeng/paginator';
 import { TabViewModule } from 'primeng/tabview';
+import { TooltipModule } from 'primeng/tooltip';
+import { SkeletonModule } from 'primeng/skeleton';
 import { TagModule } from 'primeng/tag';
 
 import { MediaRoutingModule } from './media-routing.module';
@@ -20,6 +22,7 @@ import { StarRatingModule } from '../../shared/components/star-rating';
 import { SearchComponent } from './pages/search/search.component';
 import { WatchComponent } from './pages/watch/watch.component';
 import { DetailsComponent } from './pages/details/details.component';
+import { PlaylistsComponent } from './pages/playlists/playlists.component';
 import { LazyloadImageExtraModule } from '../../shared/directives/lazyload-image-extra';
 import { UrlPipeModule } from '../../shared/pipes/url-pipe';
 import { NumberPipeModule } from '../../shared/pipes/number-pipe';
@@ -29,7 +32,8 @@ import { DateTimePipeModule } from '../../shared/pipes/date-time-pipe';
   declarations: [
     WatchComponent,
     DetailsComponent,
-    SearchComponent
+    SearchComponent,
+    PlaylistsComponent
   ],
   imports: [
     CommonModule,
@@ -52,6 +56,8 @@ import { DateTimePipeModule } from '../../shared/pipes/date-time-pipe';
     DialogModule,
     PaginatorModule,
     TabViewModule,
+    TooltipModule,
+    SkeletonModule,
     TagModule
   ],
   providers: [

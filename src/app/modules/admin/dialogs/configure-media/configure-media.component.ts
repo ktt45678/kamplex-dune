@@ -127,7 +127,7 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
         day: new FormControl(null),
         month: new FormControl(null),
         year: new FormControl(null)
-      }, { validators: shortDate('day', 'month', 'year', true) }),
+      }, { validators: shortDate('day', 'month', 'year', true), updateOn: 'change' }),
       visibility: new FormControl(1, { nonNullable: true, validators: Validators.required }),
       status: new FormControl(MediaStatus.RELEASED, { nonNullable: true, validators: Validators.required }),
       externalIds: new FormGroup<ExternalIdsForm>({
@@ -135,23 +135,23 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
         imdb: new FormControl(null, { validators: Validators.maxLength(10) }),
         aniList: new FormControl(null, { validators: [Validators.min(0), Validators.maxLength(10)] }),
         mal: new FormControl(null, { validators: [Validators.min(0), Validators.maxLength(10)] })
-      }),
+      }, { updateOn: 'change' }),
       scanner: new FormGroup<MediaScannerForm>({
         enabled: new FormControl(false, { nonNullable: true })
-      })
-    });
+      }, { updateOn: 'change' })
+    }, { updateOn: 'change' });
     if (mediaType === MediaType.TV) {
       this.updateMediaForm.addControl('lastAirDate', new FormGroup<ShortDateForm>({
         day: new FormControl(null),
         month: new FormControl(null),
         year: new FormControl(null)
-      }, { validators: shortDate('day', 'month', 'year', false) }));
+      }, { validators: shortDate('day', 'month', 'year', false), updateOn: 'change' }));
       this.updateMediaForm.controls.scanner.addControl('tvSeason', new FormControl(null));
     }
     this.addSubtitleForm = new FormGroup<AddSubtitleForm>({
       language: new FormControl(lang, Validators.required),
       file: new FormControl(null, [Validators.required, maxFileSize(UPLOAD_SUBTITLE_SIZE), fileExtension(UPLOAD_SUBTITLE_EXT)])
-    });
+    }, { updateOn: 'change' });
   }
 
   ngOnInit(): void {

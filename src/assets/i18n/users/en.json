@@ -4,5 +4,8 @@
     "history": "History",
     "playlists": "Playlists",
     "rated": "Rated"
+  },
+  "history": {
+    "emptyHistory": "Nothing was recorded"
   }
 }

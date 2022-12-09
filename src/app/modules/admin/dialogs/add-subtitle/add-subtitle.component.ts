@@ -32,7 +32,7 @@ export class AddSubtitleComponent implements OnInit {
     this.addSubtitleForm = new FormGroup<AddSubtitleForm>({
       language: new FormControl(lang, Validators.required),
       file: new FormControl(file, [Validators.required, maxFileSize(UPLOAD_SUBTITLE_SIZE), fileExtension(UPLOAD_SUBTITLE_EXT)])
-    });
+    }, { updateOn: 'change' });
   }
 
   ngOnInit(): void {

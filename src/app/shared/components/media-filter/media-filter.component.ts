@@ -55,7 +55,7 @@ export class MediaFilterComponent implements OnInit {
       originalLanguage: new FormControl(),
       year: new FormControl(),
       showAdvanced: new FormControl(this.showAdvanced, { nonNullable: true })
-    });
+    }, { updateOn: 'change' });
   }
 
   ngOnInit(): void {

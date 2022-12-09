@@ -27,7 +27,7 @@ export class EpisodeListComponent implements OnInit {
   trackId = trackId;
 
   constructor() {
-    this.skeletonArray = [].constructor(5);
+    this.skeletonArray = new Array(5);
   }
 
   ngOnInit(): void {

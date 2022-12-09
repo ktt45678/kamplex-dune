@@ -23,7 +23,7 @@ export class CreateGenreComponent implements OnInit {
     private destroyService: DestroyService) {
     this.createGenreForm = new FormGroup<CreateGenreForm>({
       name: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(32)] })
-    });
+    }, { updateOn: 'change' });
   }
 
   ngOnInit(): void {

@@ -29,7 +29,7 @@ export class UpdateProductionComponent implements OnInit {
     this.updateProductionForm = new FormGroup<UpdateProductionForm>({
       name: new FormControl(this.config.data['name'] || '', { nonNullable: true, validators: [Validators.required, Validators.maxLength(150)] }),
       country: new FormControl(this.config.data['country'] || null)
-    });
+    }, { updateOn: 'change' });
   }
 
   ngOnInit(): void {

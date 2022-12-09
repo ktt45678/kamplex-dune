@@ -72,50 +72,6 @@ export class QueueUploadService {
       mimeType: queuedUploadFile.file.type,
       size: queuedUploadFile.file.size
     }).pipe(switchMap((session: UploadSession) => {
-      /*
-      return new Observable<{ sessionId: string, fileId: string }>(observer => {
-        let lastUploadedBytes = 0;
-        const upload = UpChunk.createUpload({
-          endpoint: session.url,
-          chunkSize: 10240,
-          file: queuedUploadFile.file,
-          delayBeforeAttempt: 3
-        });
-        upload.on('progress', (event) => {
-          if (queuedUploadFile.status !== QueueUploadStatus.UPLOADING) return;
-          queuedUploadFile.updateProgress(Math.round(event.detail));
-          this._uploadQueue.next(this._files);
-          const uploadedBytes = queuedUploadFile.file.size * (event.detail / 100);
-          this._uploadedBytes += uploadedBytes - lastUploadedBytes;
-          lastUploadedBytes = uploadedBytes;
-          const timeElapsed = Date.now() - this._timeStarted;
-          const uploadSpeed = this._uploadedBytes / timeElapsed;
-          this._timeRemaining.next((this._totalBytes - this._uploadedBytes) / uploadSpeed);
-          //console.log(`total: ${this._totalBytes}, uploaded: ${this._uploadedBytes}, percent: ${event.detail}, time started: ${this._timeStarted}, time elapsed: ${timeElapsed}, upload speed: ${uploadSpeed}, time remaining: ${this._timeRemaining.value}`);
-        });
-        upload.on('chunkSuccess', (event) => {
-          const response = event.detail.response;
-          if (response.statusCode === 201 || response.statusCode === 200) {
-            const body = JSON.parse(response.body);
-            queuedUploadFile.completed();
-            this._uploadQueue.next(this._files);
-            observer.next({ sessionId: session._id, fileId: body.id });
-            observer.complete();
-          }
-        });
-        upload.on('error', (event) => {
-          observer.error(event.detail);
-          observer.complete();
-        });
-        return () => {
-          if (queuedUploadFile.status !== QueueUploadStatus.UPLOADING) return;
-          queuedUploadFile.cancel();
-          this._uploadQueue.next(this._files);
-          upload.abort();
-          observer.complete();
-        };
-      });
-      */
       return new Observable<{ sessionId: string, fileId: string }>(observer2 => {
         let allChunkUploadedBytes = 0;
         let lastUploadedBytes = 0;

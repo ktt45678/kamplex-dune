@@ -1,5 +1,5 @@
 // https://github.com/angular/components/blob/main/src/cdk/menu/menu-item.ts
-import { Directive, ElementRef, EventEmitter, inject, InjectFlags, Input, NgZone, OnDestroy, Output } from '@angular/core';
+import { Directive, ElementRef, EventEmitter, inject, Input, NgZone, OnDestroy, Output } from '@angular/core';
 import { CDK_MENU, FocusNext, MENU_STACK, FocusableElement, MENU_AIM, Toggler, Menu } from '@angular/cdk/menu';
 import { BooleanInput, coerceBooleanProperty } from '@angular/cdk/coercion';
 import { FocusableOption } from '@angular/cdk/a11y';
@@ -30,7 +30,7 @@ import { MenuTriggerDirective } from '../menu-trigger/menu-trigger.directive';
 })
 export class MenuItemDirective implements FocusableOption, FocusableElement, Toggler, OnDestroy {
   /** The directionality (text direction) of the current page. */
-  protected readonly _dir = inject(Directionality, InjectFlags.Optional);
+  protected readonly _dir = inject(Directionality, { optional: true });
 
   /** The menu's native DOM host element. */
   readonly _elementRef: ElementRef<HTMLElement> = inject(ElementRef);
@@ -39,16 +39,16 @@ export class MenuItemDirective implements FocusableOption, FocusableElement, Tog
   protected _ngZone = inject(NgZone);
 
   /** The menu aim service used by this menu. */
-  private readonly _menuAim = inject(MENU_AIM, InjectFlags.Optional);
+  private readonly _menuAim = inject(MENU_AIM, { optional: true });
 
   /** The stack of menus this menu belongs to. */
   private readonly _menuStack = inject(MENU_STACK);
 
   /** The parent menu in which this menuitem resides. */
-  private readonly _parentMenu = inject(CDK_MENU, InjectFlags.Optional);
+  private readonly _parentMenu = inject(CDK_MENU, { optional: true });
 
   /** Reference to the CdkMenuItemTrigger directive if one is added to the same element */
-  private readonly _menuTrigger = inject(MenuTriggerDirective, InjectFlags.Optional | InjectFlags.Self);
+  private readonly _menuTrigger = inject(MenuTriggerDirective, { optional: true, self: true });
 
   /**  Whether the CdkMenuItem is disabled - defaults to false */
   @Input('cdkMenuItemDisabled')
@@ -73,7 +73,9 @@ export class MenuItemDirective implements FocusableOption, FocusableElement, Tog
   @Output('cdkMenuItemTriggered') readonly triggered: EventEmitter<void> = new EventEmitter();
 
   /** Whether the menu item opens a menu. */
-  readonly hasMenu = !!this._menuTrigger;
+  get hasMenu() {
+    return this._menuTrigger?.menuTemplateRef != null;
+  }
 
   /**
    * The tabindex for this menu item managed internally and used for implementing roving a

@@ -30,7 +30,7 @@ export class AddSourceComponent implements OnInit {
       file: new FormControl(null,
         [Validators.required, maxFileSize(UPLOAD_MEDIA_SOURCE_MAX_SIZE), fileExtension(UPLOAD_MEDIA_SOURCE_EXT)]
       )
-    });
+    }, { updateOn: 'change' });
   }
 
   ngOnInit(): void {

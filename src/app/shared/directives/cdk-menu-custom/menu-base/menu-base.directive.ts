@@ -1,5 +1,5 @@
 // https://github.com/angular/components/blob/main/src/cdk/menu/menu-base.ts
-import { AfterContentInit, ContentChildren, Directive, ElementRef, inject, InjectFlags, Input, NgZone, OnDestroy, QueryList } from '@angular/core';
+import { AfterContentInit, ContentChildren, Directive, ElementRef, inject, Input, NgZone, OnDestroy, QueryList } from '@angular/core';
 import { FocusKeyManager, FocusOrigin } from '@angular/cdk/a11y';
 import { Directionality } from '@angular/cdk/bidi';
 import { CdkMenuGroup, Menu, MENU_AIM, MENU_STACK, MenuStack, MenuStackItem, PointerFocusTracker } from '@angular/cdk/menu';
@@ -40,10 +40,10 @@ export abstract class MenuBase
   readonly menuStack: MenuStack = inject(MENU_STACK);
 
   /** The menu aim service used by this menu. */
-  protected readonly menuAim = inject(MENU_AIM, InjectFlags.Optional | InjectFlags.Self);
+  protected readonly menuAim = inject(MENU_AIM, { optional: true, self: true });
 
   /** The directionality (text direction) of the current page. */
-  protected readonly dir = inject(Directionality, InjectFlags.Optional);
+  protected readonly dir = inject(Directionality, { optional: true });
 
   /** The id of the menu's host element. */
   @Input() id = `cdk-menu-${nextId++}`;
@@ -88,6 +88,7 @@ export abstract class MenuBase
   }
 
   ngOnDestroy() {
+    this.keyManager?.destroy();
     this.destroyed.next();
     this.destroyed.complete();
     this.pointerTracker?.destroy();

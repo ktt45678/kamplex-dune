@@ -54,7 +54,8 @@ module.exports = {
           '675': '#464646',
           '725': '#303030',
           '850': '#212121',
-          '875': '#1e1e1e'
+          '875': '#1e1e1e',
+          '925': '#1c1c1c'
         }
       },
       content: {
@@ -92,7 +93,15 @@ module.exports = {
         'width': 'width',
         'height': 'height',
         'width-height': 'width, height',
-        'left': 'left'
+        'left': 'left',
+        'top': 'top',
+        'left': 'left',
+        'right': 'right',
+        'bottom': 'bottom'
+      },
+      transitionDelay: {
+        '25': '25ms',
+        '50': '50ms'
       },
       zIndex: {
         '1': '1',

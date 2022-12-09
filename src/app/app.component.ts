@@ -3,9 +3,10 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Event, NavigationEnd, Router, Scroll } from '@angular/router';
 import { TranslocoService } from '@ngneat/transloco';
-import { catchError, EMPTY, filter, first, map, of, pairwise, switchMap } from 'rxjs';
+import { EMPTY, filter, first, map, pairwise, switchMap } from 'rxjs';
 
 import { SITE_NAME } from '../environments/config';
+import { applyPrimeNGPatches } from './core/utils/primeng-helper';
 
 @Component({
   selector: 'app-root',
@@ -22,6 +23,7 @@ export class AppComponent implements OnInit {
     this.viewportScroller.setHistoryScrollRestoration('manual');
     this.handleScrollOnNavigation();
     this.handlePageTitle();
+    applyPrimeNGPatches();
   }
 
   private handleScrollOnNavigation(): void {

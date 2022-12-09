@@ -1,16 +1,20 @@
-<div class="tw-relative tw-flex tw-items-center" (mouseleave)="!readonly && onStarsUnhover()" role="img"
+<div class="tw-relative tw-flex tw-items-center" (mouseleave)="!readonly && !disabled && onStarsUnhover()" role="img"
   [attr.aria-label]="'Rating: ' + rating + '/' + maxStars"
   [ngStyle]="{ '--star-width': 15 * size + 'px', '--star-height': 16 * size + 'px' }">
 
-  <span class="tw-absolute tw-text-transparent -tw-left-4 tw-inline-block tw-cursor-pointer"
+  <span class="tw-absolute tw-text-transparent -tw-left-4 tw-inline-block"
+    [ngClass]="{ 'tw-cursor-pointer': !readonly && !disabled }"
     [ngStyle]="{ width: 'var(--star-width)', height: 'var(--star-height)' }" aria-hidden="true"
-    (click)="!readonly && onZeroStarClick()" (mousemove)="!readonly && onZeroStarHover()"></span>
+    (click)="!readonly && !disabled && onZeroStarClick()"
+    (mousemove)="!readonly && !disabled && onZeroStarHover()"></span>
 
-  <div *ngFor="let star of editableStars;" class="tw-z-1 tw-cursor-pointer" aria-hidden="true"
-    (click)="!readonly && onStarClick($event, star)" (mousemove)="!readonly && onStarHover($event, star)">
+  <div *ngFor="let star of editableStars;" class="tw-z-1" [ngClass]="{ 'tw-cursor-pointer': !readonly && !disabled }"
+    aria-hidden="true" (click)="!readonly && !disabled && onStarClick($event, star)"
+    (mousemove)="!readonly && !disabled && onStarHover($event, star)">
 
-    <span class="tw-inline-block" [ngClass]="star.classname" [ngStyle]="{ width: 'var(--star-width)', height: 'var(--star-height)',
-      'color': color || 'yellow', 'font-size': 'var(--star-width)' }" aria-hidden="true"></span>
+    <span class="tw-inline-block tw-transition-colors tw-duration-200" [ngClass]="star.classname"
+      [ngStyle]="{ width: 'var(--star-width)', height: 'var(--star-height)', 'color': disabled ? '#464646' : color || 'yellow', 'font-size': 'var(--star-width)' }"
+      aria-hidden="true"></span>
 
   </div>
 </div>

@@ -35,7 +35,7 @@ export class UpdateVideoComponent implements OnInit {
       url: new FormControl(videoUrl, [Validators.required, Validators.maxLength(1000)]),
       isTranslation: new FormControl(false, { nonNullable: true }),
       translate: new FormControl({ value: 'vi', disabled: true }, { nonNullable: true })
-    });
+    }, { updateOn: 'change' });
   }
 
   ngOnInit(): void {

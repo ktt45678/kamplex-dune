@@ -17,3 +17,7 @@ export function trackLabel(_: number, item: any): any {
 export function trackCreateUrl(_: number, item: any): any {
   return item?.createUrl;
 }
+
+export function trackHistoryGroup(_: number, item: any): any {
+  return item ? item.groupByDate + item.historyList.length : undefined;
+}

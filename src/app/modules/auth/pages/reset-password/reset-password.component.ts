@@ -25,7 +25,7 @@ export class ResetPasswordComponent {
   constructor(private ref: ChangeDetectorRef, private route: ActivatedRoute, private authService: AuthService) {
     this.resetPasswordForm = new FormGroup<ResetPasswordForm>({
       password: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(8), Validators.maxLength(128), Validators.pattern(RegexPattern.ACCOUNT_PASSWORD)] })
-    });
+    }, { updateOn: 'change' });
     this.id = this.route.snapshot.queryParamMap.get('id');
     this.recoveryCode = this.route.snapshot.queryParamMap.get('code');
   }

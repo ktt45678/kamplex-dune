@@ -1,7 +1,7 @@
 <header>
   <ng-container *transloco="let t">
-    <nav id="navbar" class="tw-z-10"
-      [ngClass]="isFixedNavbar ? 'tw-fixed tw-top-0 tw-left-0 tw-right-0 tw-bg-transparent tw-transition-colors tw-duration-200' : 'tw-bg-neutral-900'">
+    <nav id="navbar" class="tw-z-10 tw-bg-neutral-900 tw-bg-opacity-60"
+      [ngClass]="{ 'tw-fixed tw-top-0 tw-left-0 tw-right-0 tw-transition-top': isFixedNavbar }">
       <div class="tw-max-w-8xl tw-mx-auto tw-px-4 sm:tw-px-6 lg:tw-px-8">
         <div class="tw-relative tw-flex tw-justify-between tw-h-14">
           <div class="tw-flex tw-items-center tw-flex-initial tw-basis-full">
@@ -15,7 +15,8 @@
               showTransitionOptions="0s linear"></p-tieredMenu-->
             <!-- Mobile menu button -->
             <button pButton (click)="onOpenMobileMenu()" icon="ms ms-menu" type="button" aria-label="Toggle mobile menu"
-              class="p-button-rounded p-button-text p-button-secondary p-button-sm p-button-sm-icon sm:tw-hidden">
+              class="p-button-rounded p-button-text p-button-secondary p-button-sm p-button-sm-icon sm:tw-hidden"
+              [ngClass]="displayMobileSearch ? 'tw-hidden lg:tw-inline-flex' : 'tw-inline-flex'">
             </button>
             <!-- Home page button -->
             <a routerLink="/" routerLinkActive="ms-fill" [routerLinkActiveOptions]="{exact: true}"
@@ -28,9 +29,14 @@
             <a routerLink="/" [ngClass]="displayMobileSearch ? 'tw-hidden lg:tw-block' : 'tw-block'">
               <img class="tw-h-3 md:tw-h-4 tw-w-auto" src="assets/images/logo-text.png" alt="KamPlex">
             </a>
-            <div class="sm:tw-ml-2" [ngClass]="{ 'tw-w-full lg:tw-w-auto': displayMobileSearch }">
+            <button *ngIf="displayMobileSearch" pButton type="button" icon="ms ms-arrow-back"
+              aria-label="Hide mobile search"
+              class="p-button-rounded p-button-text p-button-secondary p-button-sm p-button-sm-icon lg:tw-hidden"
+              (click)="toggleMobileSearch()">
+            </button>
+            <div class="lg:tw-ml-4" [ngClass]="{ 'tw-w-full lg:tw-w-auto': displayMobileSearch }">
               <div class="tw-flex tw-items-center">
-                <span class="p-input-button-left tw-ml-4 tw-w-full lg:tw-w-80"
+                <span class="p-input-button-left tw-w-full lg:tw-w-80"
                   [ngClass]="displayMobileSearch ? 'tw-inline-flex' : 'tw-hidden lg:tw-inline-flex tw-mr-2'">
                   <button pButton type="button" icon="ms ms-search" aria-label="Search"
                     class="p-button-rounded p-button-text p-button-secondary p-button-sm p-button-sm-icon tw-ml-0.5"
@@ -86,8 +92,8 @@
               class="p-button-rounded p-button-text p-button-secondary p-button-sm p-button-sm-icon lg:tw-hidden"
               (click)="clearSearchInput()" [disabled]="!mediaSearch.inputValue">
             </button>
-            <button pButton type="button" [icon]="displayMobileSearch ? 'ms ms-arrow-back' : 'ms ms-search'"
-              aria-label="Toggle mobile search"
+            <button *ngIf="!displayMobileSearch" pButton type="button" icon="ms ms-search"
+              aria-label="Show mobile search"
               class="p-button-rounded p-button-text p-button-secondary p-button-sm p-button-sm-icon lg:tw-hidden"
               (click)="toggleMobileSearch()">
             </button>
@@ -96,11 +102,17 @@
                 <a type="button" role="navigation" aria-label="User profile" class="tw-flex tw-items-center tw-rounded-3xl tw-bg-transparent tw-p-1 hover:tw-bg-neutral-650
                   focus-visible:tw-outline-none focus-visible:tw-shadow-focus-box tw-ml-2"
                   [routerLink]="['/users', currentUser._id]">
-                  <img *ngIf="currentUser.avatarUrl; else noAvatar" class="tw-block tw-w-9 tw-rounded-full"
-                    [src]="currentUser.avatarUrl" [alt]="currentUser.username">
-                  <ng-template #noAvatar>
-                    <span class="tw-text-white ms ms-account-circle ms-opsz-lg tw-text-4xl tw-leading-9"></span>
-                  </ng-template>
+                  <div class="tw-w-9">
+                    <div class="tw-aspect-w-1 tw-aspect-h-1 tw-rounded-full [&>*]:tw-rounded-full tw-overflow-hidden
+                        tw-flex-shrink-0">
+                      <img *ngIf="currentUser.smallAvatarUrl; else noAvatar" class="tw-object-cover"
+                        [lazyLoad]="currentUser.smallAvatarUrl"
+                        [lazyLoadPlaceholder]="currentUser.avatarColor | rgbColor" [alt]="currentUser.username">
+                      <ng-template #noAvatar>
+                        <span class="tw-text-white ms ms-account-circle ms-opsz-lg tw-text-4xl tw-leading-9"></span>
+                      </ng-template>
+                    </div>
+                  </div>
                   <p class="tw-text-white tw-font-medium tw-mx-2 tw-max-w-[6rem] tw-truncate">{{ currentUser.username
                     }}</p>
                 </a>

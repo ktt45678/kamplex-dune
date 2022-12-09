@@ -1,5 +1,7 @@
 import { Renderer2 } from '@angular/core';
+import { MenuItem } from 'primeng/api';
 import { DialogService, DynamicDialogComponent, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { TabMenu } from 'primeng/tabmenu';
 import { ZIndexUtils } from 'primeng/utils';
 import { first } from 'rxjs';
 
@@ -39,4 +41,16 @@ export function replaceDialogHideMethod(dialogService: DialogService, replaceTo:
     dialogComponent = dialogService.dialogComponentRefMap.get(parent)?.instance;
   if (!dialogComponent) return;
   dialogComponent.hide = replaceTo;
+}
+
+export function applyPrimeNGPatches() {
+  TabMenu.prototype.isActive = function (item: MenuItem): boolean {
+    if (item.routerLink) {
+      const routerLink = Array.isArray(item.routerLink) ? item.routerLink : [item.routerLink];
+      const router = (this as any).router;
+      return router.isActive(router.createUrlTree(routerLink, { relativeTo: (this as any).route }).toString(),
+        item.routerLinkActiveOptions?.exact ?? item.routerLinkActiveOptions ?? false);
+    }
+    return item === this.activeItem;
+  };
 }

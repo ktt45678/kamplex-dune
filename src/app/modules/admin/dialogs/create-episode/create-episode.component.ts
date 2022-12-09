@@ -73,9 +73,9 @@ export class CreateEpisodeComponent implements OnInit {
         day: new FormControl(null),
         month: new FormControl(null),
         year: new FormControl(null)
-      }, { validators: shortDate('day', 'month', 'year', true) }),
+      }, { validators: shortDate('day', 'month', 'year', true), updateOn: 'change' }),
       visibility: new FormControl(1, { nonNullable: true, validators: Validators.required })
-    });
+    }, { updateOn: 'change' });
     // Update episode form
     this.updateEpisodeForm = new FormGroup<UpdateEpisodeForm>({
       episodeNumber: new FormControl(1, { nonNullable: true, validators: [Validators.required, Validators.min(0), Validators.max(10000)] }),
@@ -86,9 +86,9 @@ export class CreateEpisodeComponent implements OnInit {
         day: new FormControl(null),
         month: new FormControl(null),
         year: new FormControl(null)
-      }, { validators: shortDate('day', 'month', 'year', true) }),
+      }, { validators: shortDate('day', 'month', 'year', true), updateOn: 'change' }),
       visibility: new FormControl(1, { nonNullable: true, validators: Validators.required })
-    });
+    }, { updateOn: 'change' });
   }
 
   ngOnInit(): void {

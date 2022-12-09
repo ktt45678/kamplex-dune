@@ -33,7 +33,7 @@ export class AddExtStreamsComponent implements OnInit {
   constructor(private ref: ChangeDetectorRef, private mediaService: MediaService) {
     this.findExtMediaForm = new FormGroup<FindExtMediaForm>({
       query: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(2)] })
-    });
+    }, { updateOn: 'change' });
   }
 
   ngOnInit(): void {

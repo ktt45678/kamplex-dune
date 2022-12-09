@@ -86,7 +86,7 @@ export class ConfigureEpisodeComponent implements OnInit, AfterViewInit {
     this.addSubtitleForm = new FormGroup<AddSubtitleForm>({
       language: new FormControl(lang, Validators.required),
       file: new FormControl(null, [Validators.required, maxFileSize(UPLOAD_SUBTITLE_SIZE), fileExtension(UPLOAD_SUBTITLE_EXT)])
-    });
+    }, { updateOn: 'change' });
     this.updateEpisodeForm = new FormGroup<UpdateEpisodeForm>({
       episodeNumber: new FormControl(1, { nonNullable: true, validators: [Validators.required, Validators.min(0), Validators.max(10000)] }),
       name: new FormControl('', { nonNullable: true, validators: Validators.maxLength(500) }),
@@ -96,10 +96,10 @@ export class ConfigureEpisodeComponent implements OnInit, AfterViewInit {
         day: new FormControl(null),
         month: new FormControl(null),
         year: new FormControl(null)
-      }, { validators: shortDate('day', 'month', 'year', true) }),
+      }, { validators: shortDate('day', 'month', 'year', true), updateOn: 'change' }),
       visibility: new FormControl(1, { nonNullable: true, validators: Validators.required }),
       translate: new FormControl(lang, { nonNullable: true })
-    });
+    }, { updateOn: 'change' });
   }
 
   ngOnInit(): void {

@@ -30,7 +30,7 @@ export class UpdateGenreComponent implements OnInit {
       name: new FormControl(this.config.data['name'] || '', { nonNullable: true, validators: [Validators.required, Validators.maxLength(32)] }),
       isTranslation: new FormControl(false, { nonNullable: true }),
       translate: new FormControl({ value: 'vi', disabled: true }, { nonNullable: true })
-    });
+    }, { updateOn: 'change' });
   }
 
   ngOnInit(): void {

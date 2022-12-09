@@ -26,7 +26,7 @@
               <a [routerLink]="['/watch', media._id]" [queryParams]="{ ep: episode.episodeNumber}" class="tw-text-white
                 tw-text-sm md:tw-text-base tw-leading-5 tw-font-bold tw-line-clamp-2 hover:tw-underline
                 focus-visible:tw-shadow-focus-box focus-visible:tw-rounded-md">{{ episode.name ? episode.episodeNumber
-                + '. ' + episode.name : t('media.episode.unnamedEpisode') + ' ' + episode.episodeNumber }}</a>
+                + '. ' + episode.name : t('media.episode.episodePrefix') + ' ' + episode.episodeNumber }}</a>
               <!--p class="tw-text-gray-400 tw-text-sm tw-font-medium">{{ episode.runtime * 60 * 1000 |
                 time:['hours','minutes']:'short' }}</p-->
               <p class="tw-text-gray-400 tw-font-medium" [ngClass]="dateAiredStyleClass">{{ episode.airDate | shortDate

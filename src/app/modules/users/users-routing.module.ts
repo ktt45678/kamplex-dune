@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { UsersLayoutComponent } from '../../shared/layouts/users-layout';
+import { HistoryComponent } from './pages/history/history.component';
 import { PlaylistsComponent } from './pages/playlists/playlists.component';
 import { ProfileComponent } from './pages/profile/profile.component';
 
@@ -17,7 +18,7 @@ const routes: Routes = [
       },
       {
         path: 'history',
-        component: PlaylistsComponent
+        component: HistoryComponent
       },
       {
         path: 'rated',

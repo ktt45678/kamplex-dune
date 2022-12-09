@@ -27,7 +27,7 @@ export class CreateProductionComponent implements OnInit {
     this.createProductionForm = new FormGroup<CreateProductionForm>({
       name: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(150)] }),
       country: new FormControl(null)
-    });
+    }, { updateOn: 'change' });
   }
 
   ngOnInit(): void {

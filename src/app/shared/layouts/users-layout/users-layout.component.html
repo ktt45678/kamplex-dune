@@ -1,21 +1,27 @@
 <ng-container *transloco="let t">
-  <div class="tw-bg-[#2b2b2b]">
-    <div class="tw-flex" *ngIf="user">
-      <div class="tw-block tw-w-32 tw-rounded-full tw-flex-shrink-0">
-        <img *ngIf="user.avatarUrl; else noAvatar" class="tw-object-cover" [lazyLoad]="user.avatarUrl"
-          [lazyLoadPlaceholder]="user.avatarColor | rgbColor" [alt]="user.username">
-        <ng-template #noAvatar>
-          <span class="tw-text-white ms ms-account-circle ms-opsz-lg tw-text-4xl tw-leading-9"></span>
-        </ng-template>
-      </div>
-      <div class="tw-flex-1 tw-py-4 tw-mx-4 tw-text-white tw-self-end">
-        <p class="tw-text-2xl tw-font-semibold">{{ user.username }}</p>
-        <p>{{ user.displayName }}</p>
+  <div class="tw-max-w-8xl tw-mx-auto">
+    <div class="tw-bg-[#2b2b2b] tw-h-64 tw-rounded-b-md">
+      <div class="tw-flex tw-py-4 tw-px-8 tw-h-full tw-items-end" *ngIf="user">
+        <div class="tw-w-32">
+          <div class="tw-aspect-w-1 tw-aspect-h-1 tw-rounded-full [&>*]:tw-rounded-full tw-overflow-hidden
+            tw-flex-shrink-0">
+            <img *ngIf="user.thumbnailAvatarUrl; else noAvatar" class="tw-object-cover"
+              [lazyLoad]="user.thumbnailAvatarUrl" [lazyLoadPlaceholder]="user.avatarColor | rgbColor"
+              [alt]="user.username">
+            <ng-template #noAvatar>
+              <span class="tw-text-white ms ms-account-circle ms-opsz-lg tw-text-4xl tw-leading-9"></span>
+            </ng-template>
+          </div>
+        </div>
+        <div class="tw-flex-1 tw-py-4 tw-mx-4 tw-text-white tw-self-end">
+          <p class="tw-text-2xl tw-font-semibold">{{ user.username }}</p>
+          <p>{{ user.displayName }}</p>
+        </div>
       </div>
     </div>
-  </div>
-  <p-tabMenu [model]="userMenuItems" styleClass="tw-text-white"></p-tabMenu>
-  <div>
-    <router-outlet></router-outlet>
+    <p-tabMenu [model]="userMenuItems" styleClass="tw-text-white"></p-tabMenu>
+    <div>
+      <router-outlet></router-outlet>
+    </div>
   </div>
 </ng-container>

@@ -1,6 +1,6 @@
 // https://github.com/angular/components/blob/main/src/cdk/menu/menu.ts
-import { AfterContentInit, Directive, ElementRef, EventEmitter, inject, InjectFlags, Input, OnDestroy, Output } from '@angular/core';
-import { animate, AnimationBuilder, AnimationMetadata, AnimationPlayer, style } from '@angular/animations';
+import { AfterContentInit, Directive, ElementRef, EventEmitter, inject, OnDestroy, Output } from '@angular/core';
+import { animate, AnimationBuilder, style } from '@angular/animations';
 import { hasModifierKey } from '@angular/cdk/keycodes';
 import { CdkMenuGroup, CDK_MENU, FocusNext, PARENT_OR_NEW_INLINE_MENU_STACK_PROVIDER, MENU_TRIGGER } from '@angular/cdk/menu';
 import { takeUntil } from 'rxjs';
@@ -23,7 +23,7 @@ import { MenuBase } from '../menu-base/menu-base.directive';
   ]
 })
 export class MenuDirective extends MenuBase implements AfterContentInit, OnDestroy {
-  private _parentTrigger = inject(MENU_TRIGGER, InjectFlags.Optional);
+  private _parentTrigger = inject(MENU_TRIGGER, { optional: true });
 
   /** Event emitted when the menu is closed. */
   @Output() readonly closed: EventEmitter<void> = new EventEmitter();

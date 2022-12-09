@@ -1,14 +1,15 @@
 <ng-container *transloco="let t">
   <div class="tw-max-w-8xl tw-mx-auto tw-my-8">
+    <div class="tw-h-14"></div> <!-- Fixed navbar space -->
     <ng-container *ngIf="media">
       <div class="tw-flex tw-flex-wrap 2md:tw-flex-nowrap">
         <div class="tw-w-full 2md:tw-w-9/12">
-          <app-video-player [source]="playerSource" [hlsSource]="playerHlsSource"
+          <app-video-player #videoPlayer [source]="playerSource" [hlsSource]="playerHlsSource"
             (onEnded)="autoNext && changeEpisode(nextEpIndex)"></app-video-player>
           <ng-container *ngIf="media.type === MediaType.TV && streams?.episode as episode">
             <div class="tw-bg-neutral-900 tw-text-white tw-flex tw-flex-wrap 2md:tw-flex-nowrap tw-items-center">
               <p class="tw-text-sm sm:tw-text-base md:tw-text-lg tw-font-bold tw-truncate tw-w-full
-                2md:tw-w-auto 2md:tw-max-w-[calc(100%-320px)] tw-mx-2">{{ t('media.episode.unnamedEpisode') + ' ' +
+                2md:tw-w-auto 2md:tw-max-w-[calc(100%-320px)] tw-mx-2">{{ t('media.episode.episodePrefix') + ' ' +
                 episode.episodeNumber }}{{ episode.name ? ': ' + episode.name : '' }}</p>
               <div class="tw-flex tw-flex-wrap tw-ml-auto tw-w-full xs:tw-w-auto">
                 <button pButton type="button" icon="ms ms-skip-previous" [label]="t('media.watch.prevEpisode')"
@@ -63,21 +64,23 @@
             <div class="tw-flex-shrink-0">
               <p class="tw-text-xl xs:tw-text-2xl 2md:tw-text-3xl 2md:tw-leading-6 tw-text-right [&>*]:tw-align-middle">
                 <i class="ms ms-star ms-fill tw-text-3xl 2md:tw-text-4xl tw-text-yellow-500 -tw-mt-0.5"></i>
-                <span class="tw-text-white tw-font-medium tw-ml-1.5">{{ media.ratingAverage }}</span>
+                <span class="tw-text-white tw-font-medium tw-ml-1.5">{{ ratingAverage }}</span>
                 <i class="ms ms-people ms-fill tw-text-3xl 2md:tw-text-4xl tw-text-yellow-500 tw-ml-2"></i>
-                <span class="tw-text-white tw-font-medium tw-ml-1.5">{{ media.ratingCount }}</span>
+                <span class="tw-text-white tw-font-medium tw-ml-1.5">{{ ratingCount }}</span>
               </p>
               <ng-container *ngIf="currentUser; else notLoggedIn">
                 <div class="tw-flex tw-items-center tw-justify-end tw-mt-2">
-                  <app-star-rating #starRating [maxStars]="5" [size]="2.5" (ratingOutput)="onRating($event)">
+                  <app-star-rating #starRating [maxStars]="5" [size]="2.5" [disabled]="loadingRating"
+                    (ratingOutput)="onRating($event)">
                   </app-star-rating>
-                  <p class="tw-text-white tw-text-2xl tw-text-right tw-font-medium tw-w-8">{{ starRating.hoverRating * 2
-                    }}</p>
+                  <!--p class="tw-text-white tw-text-2xl tw-text-right tw-font-medium tw-w-8">{{ starRating.hoverRating * 2
+                    }}</p-->
                 </div>
                 <p *ngIf="userRating" class="tw-text-xs tw-text-right tw-font-medium">
                   <span>{{ t('media.rating.youRated', { score: userRating.score}) }}</span>
-                  <button pButton [label]="t('media.rating.clearVote')" (click)="onRating(null)"
-                    class="p-button-link p-button-shrink tw-p-0 tw-text-xs tw-font-medium tw-min-w-0 tw-ml-1">
+                  <button pButton [label]="t('media.rating.clearVote')" [disabled]="loadingRating"
+                    (click)="deleteRating()" class="p-button-link p-button-shrink tw-p-0 tw-text-xs tw-font-medium
+                      tw-min-w-0 tw-ml-1 disabled:!tw-bg-transparent">
                   </button>
                 </p>
               </ng-container>

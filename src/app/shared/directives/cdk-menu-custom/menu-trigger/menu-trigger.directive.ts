@@ -1,10 +1,12 @@
 // https://github.com/angular/components/blob/main/src/cdk/menu/menu-trigger.ts
-import { Directive, ElementRef, inject, InjectFlags, NgZone, OnDestroy } from '@angular/core';
+import { Directive, ElementRef, inject, NgZone, OnDestroy } from '@angular/core';
 import { Directionality } from '@angular/cdk/bidi';
+import { _getEventTarget } from '@angular/cdk/platform';
 import { CDK_MENU, PARENT_OR_NEW_MENU_STACK_PROVIDER, MENU_AIM, CdkMenuTriggerBase, MENU_TRIGGER, Menu } from '@angular/cdk/menu';
 import { ConnectedPosition, FlexibleConnectedPositionStrategy, Overlay, OverlayConfig, STANDARD_DROPDOWN_ADJACENT_POSITIONS, STANDARD_DROPDOWN_BELOW_POSITIONS } from '@angular/cdk/overlay';
 import { hasModifierKey } from '@angular/cdk/keycodes';
 import { fromEvent, filter, takeUntil } from 'rxjs';
+
 import { MenuDirective } from '../menu/menu.directive';
 
 @Directive({
@@ -12,8 +14,8 @@ import { MenuDirective } from '../menu/menu.directive';
   exportAs: 'appMenuTriggerFor',
   host: {
     'class': 'cdk-menu-trigger',
-    'aria-haspopup': 'menu',
-    '[attr.aria-expanded]': 'isOpen()',
+    '[attr.aria-haspopup]': 'menuTemplateRef ? "menu" : null',
+    '[attr.aria-expanded]': 'menuTemplateRef == null ? null : isOpen()',
     '(focusin)': '_setHasFocus(true)',
     '(focusout)': '_setHasFocus(false)',
     '(keydown)': '_toggleOnKeydown($event)',
@@ -41,13 +43,13 @@ export class MenuTriggerDirective extends CdkMenuTriggerBase implements OnDestro
   private readonly _ngZone = inject(NgZone);
 
   /** The parent menu this trigger belongs to. */
-  private readonly _parentMenu = inject(CDK_MENU, InjectFlags.Optional);
+  private readonly _parentMenu = inject(CDK_MENU, { optional: true });
 
   /** The menu aim service used by this menu. */
-  private readonly _menuAim = inject(MENU_AIM, InjectFlags.Optional);
+  private readonly _menuAim = inject(MENU_AIM, { optional: true });
 
   /** The directionality of the page. */
-  private readonly _directionality = inject(Directionality, InjectFlags.Optional);
+  private readonly _directionality = inject(Directionality, { optional: true });
 
   constructor() {
     super();
@@ -71,7 +73,7 @@ export class MenuTriggerDirective extends CdkMenuTriggerBase implements OnDestro
 
   /** Open the attached menu. */
   open() {
-    if (!this.isOpen()) {
+    if (!this.isOpen() && this.menuTemplateRef != null) {
       this.opened.next();
 
       this.overlayRef = this.overlayRef || this._overlay.create(this._getOverlayConfig());
@@ -163,13 +165,6 @@ export class MenuTriggerDirective extends CdkMenuTriggerBase implements OnDestro
    * into.
    */
   private _subscribeToMouseEnter() {
-    // Closes any sibling menu items and opens the menu associated with this trigger.
-    const toggleMenus = () =>
-      this._ngZone.run(() => {
-        this._closeSiblingTriggers();
-        this.open();
-      });
-
     this._ngZone.runOutsideAngular(() => {
       fromEvent(this._elementRef.nativeElement, 'mouseenter')
         .pipe(
@@ -177,6 +172,13 @@ export class MenuTriggerDirective extends CdkMenuTriggerBase implements OnDestro
           takeUntil(this.destroyed),
         )
         .subscribe(() => {
+          // Closes any sibling menu items and opens the menu associated with this trigger.
+          const toggleMenus = () =>
+            this._ngZone.run(() => {
+              this._closeSiblingTriggers();
+              this.open();
+            });
+
           if (this._menuAim) {
             this._menuAim.toggle(toggleMenus);
           } else {
@@ -255,19 +257,17 @@ export class MenuTriggerDirective extends CdkMenuTriggerBase implements OnDestro
     if (this.overlayRef) {
       this.overlayRef
         .outsidePointerEvents()
-        .pipe(
-          filter(
-            e =>
-              e.target != this._elementRef.nativeElement &&
-              !this._elementRef.nativeElement.contains(e.target as Element),
-          ),
-          takeUntil(this.stopOutsideClicksListener),
-        )
+        .pipe(takeUntil(this.stopOutsideClicksListener))
         .subscribe(event => {
-          if (!this.isElementInsideMenuStack(event.target as Element)) {
-            this.menuStack.closeAll();
-          } else {
-            this._closeSiblingTriggers();
+          const target = _getEventTarget(event) as Element;
+          const element = this._elementRef.nativeElement;
+
+          if (target !== element && !element.contains(target)) {
+            if (!this.isElementInsideMenuStack(target)) {
+              this.menuStack.closeAll();
+            } else {
+              this._closeSiblingTriggers();
+            }
           }
         });
     }

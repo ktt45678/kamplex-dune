@@ -7,7 +7,7 @@
   "list": {
     "runtimeValue": "{{ runtime }} min",
     "noGenres": "No genres found",
-    "episodeCountValue": "{{ episodeCount }} ep",
+    "episodeCountValue": "{{ episodeCount }} Ep",
     "noResults": "No results were found"
   },
   "details": {
@@ -44,7 +44,8 @@
     "tvShow": "TV Show"
   },
   "episode": {
-    "unnamedEpisode": "Episode",
+    "episodePrefix": "Episode",
+    "epPrefix": "E",
     "episodeNumber": "Episode number",
     "name": "Name",
     "overview": "Overview",
@@ -83,5 +84,11 @@
     "anonUsers": "Sign in to rate",
     "youRated": "You rated: {{ score }}",
     "clearVote": "clear"
+  },
+  "playlists": {
+    "playlistItemCount": "{{ itemCount }} items",
+    "noPlaylists": "No playlists were created",
+    "noPlaylist": "Playlist not found",
+    "playlistItemUnavailable": "Unavailable"
   }
 }

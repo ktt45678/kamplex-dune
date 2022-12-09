@@ -28,13 +28,16 @@ export class HomeHeaderComponent implements OnInit {
   isMobileMenuOpened: boolean = false;
   displayMobileSearch: boolean = false;
   currentPageYOffset: number;
-  bgTransparent: string = 'tw-bg-transparent';
-  bgDark: string = 'tw-bg-neutral-900';
+  //bgTransparent: string = 'tw-bg-opacity-80';
+  //bgDark: string = 'tw-bg-opacity-100';
+  showTop: string = 'tw-top-0';
+  hideTop: string = '-tw-top-14';
+  headerHeight: number = 56;
 
   constructor(@Inject(DOCUMENT) private document: Document, private ref: ChangeDetectorRef, private renderer: Renderer2,
     private router: Router, private authService: AuthService, private mediaService: MediaService, private genresService: GenresService,
     private destroyService: DestroyService) {
-    this.currentPageYOffset = window.pageYOffset;
+    this.currentPageYOffset = window.pageYOffset + this.headerHeight;
   }
 
   ngOnInit(): void {
@@ -49,38 +52,40 @@ export class HomeHeaderComponent implements OnInit {
 
   @HostListener('window:scroll')
   onWindowScroll(): void {
-    if (this.isMobileMenuOpened || !this.isFixedNavbar) return;
+    if (this.isMobileMenuOpened || this.displayMobileSearch || !this.isFixedNavbar) return;
     const element = this.document.getElementById('navbar');
     if (!element) return;
     if (window.pageYOffset > this.currentPageYOffset) {
-      this.renderer.removeClass(element, this.bgTransparent);
-      this.renderer.addClass(element, this.bgDark);
+      this.renderer.removeClass(element, this.showTop);
+      this.renderer.addClass(element, this.hideTop);
     } else if (!this.isMobileMenuOpened) {
-      this.renderer.removeClass(element, this.bgDark);
-      this.renderer.addClass(element, this.bgTransparent);
+      this.renderer.removeClass(element, this.hideTop);
+      this.renderer.addClass(element, this.showTop);
     }
   }
 
   onOpenMobileMenu(): void {
     this.isMobileMenuOpened = !this.isMobileMenuOpened;
+    /*
     if (!this.isFixedNavbar) return;
     const element = this.document.getElementById('navbar');
     if (!element) return;
     if (this.isMobileMenuOpened) {
-      this.renderer.removeClass(element, this.bgTransparent);
-      this.renderer.addClass(element, this.bgDark);
+      this.renderer.removeClass(element, this.showTop);
+      this.renderer.addClass(element, this.hideTop);
     } else {
-      this.renderer.removeClass(element, this.bgDark);
-      this.renderer.addClass(element, this.bgTransparent);
+      this.renderer.removeClass(element, this.hideTop);
+      this.renderer.addClass(element, this.showTop);
       if (!this.isFixedNavbar) return;
       if (window.pageYOffset > this.currentPageYOffset) {
-        this.renderer.removeClass(element, this.bgTransparent);
-        this.renderer.addClass(element, this.bgDark);
+        this.renderer.removeClass(element, this.showTop);
+        this.renderer.addClass(element, this.hideTop);
       } else {
-        this.renderer.removeClass(element, this.bgDark);
-        this.renderer.addClass(element, this.bgTransparent);
+        this.renderer.removeClass(element, this.hideTop);
+        this.renderer.addClass(element, this.showTop);
       }
     }
+    */
   }
 
   toggleMobileSearch(): void {

@@ -11,6 +11,7 @@ export interface User {
   createdAt: string;
   avatarUrl?: string;
   thumbnailAvatarUrl?: string;
+  smallAvatarUrl?: string;
   fullAvatarUrl?: string;
   avatarColor?: number;
 }

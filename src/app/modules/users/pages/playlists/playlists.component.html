@@ -1,1 +1,46 @@
-<p>playlists works!</p>
+<ng-container *transloco="let t">
+  <div class="tw-my-4">
+    <ng-container *ngIf="loadingPlaylists; then skeletonLoading; else playlistListLoaded"></ng-container>
+    <ng-template #playlistListLoaded>
+      <ng-container *ngIf="playlistList && playlistList.results?.length; else noPlaylists">
+        <div
+          class="tw-grid tw-grid-cols-2 xs:tw-grid-cols-3 md:tw-grid-cols-4 lg:tw-grid-cols-5 xl:tw-grid-cols-6 tw-my-2">
+          <a [routerLink]="['/playlists', playlist._id]" class="tw-bg-transparent tw-text-white hover:tw-bg-neutral-725
+            focus-visible:tw-bg-neutral-725 tw-transition-colors tw-duration-200 tw-rounded-sm tw-px-1.5 tw-py-2"
+            *ngFor="let playlist of playlistList.results; trackBy: track_Id">
+            <div class="tw-relative">
+              <div class="tw-aspect-w-16 tw-aspect-h-9 [&>*]:tw-rounded-md">
+                <img *ngIf="playlist.thumbnailMedia && playlist.thumbnailMedia.smallBackdropUrl; else noBackdrop"
+                  class="tw-object-cover" [lazyLoad]="playlist.thumbnailMedia.smallBackdropUrl"
+                  [lazyLoadPlaceholder]="playlist.thumbnailMedia.backdropColor | rgbColor" [alt]="playlist.name"
+                  errorImage="assets/images/media-backdrop-md.png">
+                <ng-template #noBackdrop>
+                  <img class="tw-object-cover" src="assets/images/media-backdrop-md.png" loading="lazy"
+                    [alt]="playlist.name">
+                </ng-template>
+              </div>
+              <div class="tw-bg-black tw-bg-opacity-80 tw-text-white tw-flex tw-absolute tw-top-0 tw-right-0 tw-bottom-0
+                tw-px-4 sm:tw-px-8 tw-rounded-r-md">
+                <div class="tw-m-auto tw-text-center">
+                  <p class="tw-text-sm sm:tw-text-base">{{ playlist.itemCount }}</p>
+                  <i class="ms ms-playlist-play ms-opsz-xl tw-text-xl sm:tw-text-3xl"></i>
+                </div>
+              </div>
+            </div>
+            <p class="tw-text-xs sm:tw-text-sm md:tw-text-base tw-font-bold tw-mt-2">{{ playlist.name }}</p>
+          </a>
+        </div>
+        <button *ngIf="playlistList.nextPageToken" type="button" role="navigation" aria-label="Play media" pButton
+          icon="ms ms-expand-more" iconPos="left" label="Load more" class="p-button-shrink tw-w-full"
+          (click)="loadPlaylists(playlistList.nextPageToken)">
+        </button>
+      </ng-container>
+      <ng-template #noPlaylists>
+        <p class="tw-text-gray-400 tw-text-base tw-italic">{{ t('media.playlists.noPlaylists') }}</p>
+      </ng-template>
+    </ng-template>
+  </div>
+</ng-container>
+<ng-template #skeletonLoading>
+  <p>Loading...</p>
+</ng-template>

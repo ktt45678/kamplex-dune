@@ -29,7 +29,7 @@ export class AddVideoComponent implements OnInit {
     this.addVideoForm = new FormGroup<AddVideoForm>({
       name: new FormControl('', Validators.maxLength(50)),
       url: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(1000)] })
-    });
+    }, { updateOn: 'change' });
   }
 
   ngOnInit(): void {
