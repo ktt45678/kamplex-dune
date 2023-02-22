@@ -16,8 +16,8 @@ import { CreateMediaDto, DropdownOptionDto, UpdateMediaDto } from '../../../../c
 import { AppErrorCode, MediaStatus, MediaType } from '../../../../core/enums';
 import { ShortDateForm } from '../../../../core/interfaces/forms';
 import { ExtStreamSelected } from '../../../../core/interfaces/events';
-import { Genre, MediaDetails, MediaSubtitle, MediaVideo, Production } from '../../../../core/models';
-import { DestroyService, GenresService, ItemDataService, MediaService, ProductionsService, QueueUploadService } from '../../../../core/services';
+import { Genre, MediaDetails, MediaSubtitle, MediaVideo, Production, Tag } from '../../../../core/models';
+import { DestroyService, GenresService, ItemDataService, MediaService, ProductionsService, QueueUploadService, TagsService } from '../../../../core/services';
 import { shortDate } from '../../../../core/validators';
 import { dataURItoBlob, detectFormChange, fixNestedDialogFocus, replaceDialogHideMethod } from '../../../../core/utils';
 import {
@@ -34,6 +34,7 @@ interface CreateMediaForm {
   originalLanguage: FormControl<string | null>;
   genres: FormControl<Genre[] | null>;
   productions: FormControl<Production[] | null>;
+  tags: FormControl<Tag[] | null>;
   runtime: FormControl<number | null>;
   adult: FormControl<boolean>;
   releaseDate: FormGroup<ShortDateForm>;
@@ -76,22 +77,25 @@ export class CreateMediaComponent implements OnInit, AfterViewInit {
   languages: DropdownOptionDto[] = [];
   genreSuggestions: Genre[] = [];
   productionSuggestions: Production[] = [];
+  tagSuggestions: Tag[] = [];
 
   constructor(@Inject(DOCUMENT) private document: Document, private ref: ChangeDetectorRef,
-    private dialogRef: DynamicDialogRef, private dialogService: DialogService, private config: DynamicDialogConfig,
+    private dialogRef: DynamicDialogRef, private dialogService: DialogService, private config: DynamicDialogConfig<{ type: string }>,
     private renderer: Renderer2, private translocoService: TranslocoService,
-    private mediaService: MediaService, private genresService: GenresService, private queueUploadService: QueueUploadService,
-    private productionsService: ProductionsService, private itemDataService: ItemDataService, private destroyService: DestroyService) {
-    const mediaType = this.config.data['type'] || MediaType.MOVIE;
+    private mediaService: MediaService, private genresService: GenresService, private productionsService: ProductionsService,
+    private tagsService: TagsService, private queueUploadService: QueueUploadService, private itemDataService: ItemDataService,
+    private destroyService: DestroyService) {
+    const mediaType = this.config.data!.type || MediaType.MOVIE;
     // Create media form
     this.createMediaForm = new FormGroup<CreateMediaForm>({
-      type: new FormControl(mediaType),
+      type: new FormControl(mediaType, { nonNullable: true }),
       title: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(500)] }),
       originalTitle: new FormControl(null, [Validators.maxLength(500)]),
       overview: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(10), Validators.maxLength(2000)] }),
       originalLanguage: new FormControl(null),
       genres: new FormControl(null),
       productions: new FormControl(null),
+      tags: new FormControl(null),
       runtime: new FormControl(null, [Validators.required, Validators.min(0), Validators.max(10000)]),
       adult: new FormControl(false, { nonNullable: true, validators: Validators.required }),
       releaseDate: new FormGroup<ShortDateForm>({
@@ -110,6 +114,7 @@ export class CreateMediaComponent implements OnInit, AfterViewInit {
       originalLanguage: new FormControl(''),
       genres: new FormControl(null),
       productions: new FormControl(null),
+      tags: new FormControl(null),
       runtime: new FormControl(null, [Validators.required, Validators.min(0), Validators.max(10000)]),
       adult: new FormControl(false, { nonNullable: true, validators: Validators.required }),
       releaseDate: new FormGroup<ShortDateForm>({
@@ -163,12 +168,19 @@ export class CreateMediaComponent implements OnInit, AfterViewInit {
     }).add(() => this.ref.markForCheck());
   }
 
+  loadTagSuggestions(search?: string): void {
+    this.tagsService.findTagSuggestions(search).subscribe({
+      next: tags => this.tagSuggestions = tags
+    }).add(() => this.ref.markForCheck());
+  }
+
   onCreateMediaFormSubmit(): void {
     if (this.createMediaForm.invalid) return;
     this.createMediaForm.disable({ emitEvent: false });
     const formValue = this.createMediaForm.getRawValue();
     const genreIds = formValue.genres?.map(g => g._id) || [];
     const productionIds = formValue.productions?.map(p => p._id) || [];
+    const tagIds = formValue.tags?.map(p => p._id) || [];
     const createMediaDto: CreateMediaDto = {
       type: formValue.type,
       title: formValue.title,
@@ -177,6 +189,7 @@ export class CreateMediaComponent implements OnInit, AfterViewInit {
       genres: genreIds,
       originalLanguage: formValue.originalLanguage,
       productions: productionIds,
+      tags: tagIds,
       runtime: formValue.runtime!,
       adult: formValue.adult,
       releaseDate: {
@@ -222,6 +235,7 @@ export class CreateMediaComponent implements OnInit, AfterViewInit {
       originalLanguage: media.originalLanguage || null,
       genres: media.genres,
       productions: media.productions,
+      tags: media.tags,
       runtime: media.runtime,
       adult: media.adult,
       releaseDate: {

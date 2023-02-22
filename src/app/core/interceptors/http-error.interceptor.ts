@@ -38,8 +38,9 @@ export class HttpErrorInterceptor implements HttpInterceptor {
               // Check if the authenticated flag exist in the cookie
               const authenticated = document.cookie.indexOf('authenticated=true') > -1;
               if (authenticated) {
-                this.authService.signOut();
-                location.reload();
+                this.authService.signOut().subscribe().add(() => {
+                  location.reload();
+                });
               }
               this.zone.run(() => this.messageService.add({ key, severity, summary, detail, life }));
               break;

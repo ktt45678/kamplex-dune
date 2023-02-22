@@ -6,6 +6,7 @@ export * from './media-pstatus.enum';
 export * from './media-source-status.enum';
 export * from './media-status.enum';
 export * from './media-type.enum';
+export * from './media-visibility.enum';
 export * from './queue-upload-status.enum';
 export * from './regex-pattern.enum';
 export * from './socket-message.enum';

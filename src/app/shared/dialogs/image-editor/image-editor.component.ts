@@ -3,6 +3,7 @@ import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { ImageCroppedEvent, ImageCropperComponent, ImageTransform, LoadedImage, OutputFormat } from '@ktt45678/ngx-image-cropper';
 import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
 
+import { ImageEditorConfig } from './image-editor-config.interface';
 import { getImageFormat } from '../../../core/utils';
 
 @Component({
@@ -30,13 +31,13 @@ export class ImageEditorComponent {
   imageBase64?: string;
   loadedImage: boolean = false;
 
-  constructor(private dialogRef: DynamicDialogRef, private config: DynamicDialogConfig) {
-    this.aspectRatioWidth = this.config.data['aspectRatioWidth'];
-    this.aspectRatioHeight = this.config.data['aspectRatioHeight'];
-    this.minWidth = this.config.data['minWidth'];
-    this.minHeight = this.config.data['minHeight'];
-    this.imageFile = this.config.data['imageFile'];
-    const maxSize = this.config.data['maxSize'] || 5242880; //5 MiB
+  constructor(private dialogRef: DynamicDialogRef, private config: DynamicDialogConfig<ImageEditorConfig>) {
+    this.aspectRatioWidth = this.config.data!.aspectRatioWidth;
+    this.aspectRatioHeight = this.config.data!.aspectRatioHeight;
+    this.minWidth = this.config.data!.minWidth;
+    this.minHeight = this.config.data!.minHeight;
+    this.imageFile = this.config.data!.imageFile;
+    const maxSize = this.config.data!.maxSize || 5242880; //5 MiB
     this.format = this.imageFile.size <= maxSize ? getImageFormat(this.imageFile.type) : 'jpeg';
     this.transform = {};
     this.aspectRatio = this.aspectRatioWidth / this.aspectRatioHeight;

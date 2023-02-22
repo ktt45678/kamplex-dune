@@ -9,8 +9,8 @@ import { first, map, merge, Observable, switchMap, takeUntil, tap } from 'rxjs';
 import { cloneDeep } from 'lodash-es';
 import { SourceInfo, Source, Track } from 'plyr';
 
-import { MediaDetails, MediaVideo, MediaSubtitle, TVEpisode, Genre, Production } from '../../../../core/models';
-import { DestroyService, GenresService, ItemDataService, MediaService, ProductionsService, QueueUploadService } from '../../../../core/services';
+import { MediaDetails, MediaVideo, MediaSubtitle, TVEpisode, Genre, Production, Tag } from '../../../../core/models';
+import { DestroyService, GenresService, ItemDataService, MediaService, ProductionsService, QueueUploadService, TagsService } from '../../../../core/services';
 import { WsService } from '../../../../shared/modules/ws';
 import { DropdownOptionDto, UpdateMediaDto } from '../../../../core/dto/media';
 import { MediaChange, MediaVideoChange } from '../../../../core/interfaces/ws';
@@ -42,6 +42,7 @@ interface UpdateMediaForm {
   originalLanguage: FormControl<string | null>;
   genres: FormControl<Genre[] | null>;
   productions: FormControl<Production[] | null>;
+  tags: FormControl<Tag[] | null>;
   runtime: FormControl<number | null>;
   adult: FormControl<boolean>;
   releaseDate: FormGroup<ShortDateForm>;
@@ -56,7 +57,7 @@ interface UpdateMediaForm {
   selector: 'app-configure-media',
   templateUrl: './configure-media.component.html',
   styleUrls: ['./configure-media.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Default,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     ItemDataService,
     DestroyService,
@@ -103,16 +104,17 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
   languages: DropdownOptionDto[] = [];
   genreSuggestions: Genre[] = [];
   productionSuggestions: Production[] = [];
+  tagSuggestions: Tag[] = [];
   sideBarItems: MenuItem[] = [];
   episodeMenuItems: DataMenuItem<TVEpisode>[] = [];
 
   constructor(@Inject(DOCUMENT) private document: Document, private ref: ChangeDetectorRef, private renderer: Renderer2,
-    private dialogRef: DynamicDialogRef, private config: DynamicDialogConfig, private dialogService: DialogService,
+    private dialogRef: DynamicDialogRef, private config: DynamicDialogConfig<MediaDetails>, private dialogService: DialogService,
     private confirmationService: ConfirmationService, private mediaService: MediaService,
     private itemDataService: ItemDataService, private genresService: GenresService, private productionsService: ProductionsService,
-    private queueUploadService: QueueUploadService, private wsService: WsService, private translocoService: TranslocoService,
-    private destroyService: DestroyService) {
-    const mediaType = this.config.data['type'] || MediaType.MOVIE;
+    private tagsService: TagsService, private queueUploadService: QueueUploadService,
+    private wsService: WsService, private translocoService: TranslocoService, private destroyService: DestroyService) {
+    const mediaType = this.config.data!.type || MediaType.MOVIE;
     const lang = this.translocoService.getActiveLang();
     this.updateMediaForm = new FormGroup<UpdateMediaForm>({
       title: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(500)] }),
@@ -121,6 +123,7 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
       originalLanguage: new FormControl(''),
       genres: new FormControl(null),
       productions: new FormControl(null),
+      tags: new FormControl(null),
       runtime: new FormControl(null, [Validators.required, Validators.min(0), Validators.max(10000)]),
       adult: new FormControl(false, { nonNullable: true, validators: Validators.required }),
       releaseDate: new FormGroup<ShortDateForm>({
@@ -166,7 +169,7 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   initSocket(): void {
-    const mediaId = this.config.data['_id'];
+    const mediaId = this.config.data!._id;
     const connect$ = this.wsService.fromEvent('connect').pipe(tap(() => {
       this.wsService.joinRoom(`${SocketRoom.ADMIN_MEDIA_DETAILS}:${mediaId}`);
     }));
@@ -212,7 +215,7 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
 
   loadMedia(showLoading: boolean = true): void {
     if (!this.config.data) return;
-    const mediaId = this.config.data['_id'];
+    const mediaId = this.config.data!._id;
     showLoading && (this.loadingMedia = true);
     this.mediaService.findOne(mediaId, { includeHiddenEps: true, includeUnprocessedEps: true }).subscribe(media => {
       this.media = media;
@@ -227,9 +230,9 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   loadEpisodes(showLoading: boolean = true): void {
-    const mediaType = this.config.data['type'];
+    const mediaType = this.config.data!.type;
     if (mediaType !== MediaType.TV) return;
-    const mediaId = this.config.data['_id'];
+    const mediaId = this.config.data!._id;
     showLoading && (this.loadingEpisodes = true);
     this.mediaService.findAllTVEpisodes(mediaId, {
       includeHidden: true,
@@ -253,13 +256,20 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
     }).add(() => this.ref.markForCheck());
   }
 
+  loadTagSuggestions(search?: string): void {
+    this.tagsService.findTagSuggestions(search).subscribe({
+      next: tags => this.tagSuggestions = tags
+    }).add(() => this.ref.markForCheck());
+  }
+
   onUpdateMediaFormSubmit(): void {
     if (!this.media || this.updateMediaForm.invalid) return;
     this.updateMediaForm.disable({ emitEvent: false });
-    const mediaId = this.config.data['_id'];
+    const mediaId = this.config.data!._id;
     const formValue = this.updateMediaForm.getRawValue();
     const genreIds = formValue.genres?.map(g => g._id) || [];
     const productionIds = formValue.productions?.map(p => p._id) || [];
+    const tagIds = formValue.tags?.map(p => p._id) || [];
     const updateMediaDto: UpdateMediaDto = {
       title: formValue.title,
       originalTitle: formValue.originalTitle || null,
@@ -267,6 +277,7 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
       genres: genreIds,
       originalLanguage: formValue.originalLanguage,
       productions: productionIds,
+      tags: tagIds,
       runtime: formValue.runtime!,
       adult: formValue.adult,
       releaseDate: {
@@ -364,7 +375,7 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
   onUpdatePosterSubmit(): void {
     if (!this.posterPreviewName) return;
     this.isUpdatingPoster = true;
-    const mediaId = this.config.data['_id'];
+    const mediaId = this.config.data!._id;
     const posterBlob = dataURItoBlob(this.posterPreviewUri!);
     this.mediaService.uploadPoster(mediaId, posterBlob, this.posterPreviewName).subscribe({
       next: (paritalMedia) => {
@@ -383,7 +394,7 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
   onUpdateBackdropSubmit(): void {
     if (!this.backdropPreviewName) return;
     this.isUpdatingBackdrop = true;
-    const mediaId = this.config.data['_id'];
+    const mediaId = this.config.data!._id;
     const backdropBlob = dataURItoBlob(this.backdropPreviewUri!);
     this.mediaService.uploadBackdrop(mediaId, backdropBlob, this.backdropPreviewName).subscribe({
       next: (paritalMedia) => {
@@ -411,8 +422,8 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   deletePoster(event: Event): void {
-    const mediaId = this.config.data['_id'];
-    const safeMediaTitle = translocoEscape(this.config.data['title']);
+    const mediaId = this.config.data!._id;
+    const safeMediaTitle = translocoEscape(this.config.data!.title);
     this.confirmationService.confirm({
       key: 'inModal',
       message: this.translocoService.translate('admin.media.deletePosterConfirmation', { name: safeMediaTitle }),
@@ -440,8 +451,8 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   deleteBackdrop(event: Event): void {
-    const mediaId = this.config.data['_id'];
-    const safeMediaTitle = translocoEscape(this.config.data['title']);
+    const mediaId = this.config.data!._id;
+    const safeMediaTitle = translocoEscape(this.config.data!.title);
     this.confirmationService.confirm({
       key: 'inModal',
       message: this.translocoService.translate('admin.media.deleteBackdropConfirmation', { name: safeMediaTitle }),
@@ -468,7 +479,7 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   loadVideos(): void {
-    const mediaId = this.config.data['_id'];
+    const mediaId = this.config.data!._id;
     this.loadingVideo = true;
     this.mediaService.findAllVideos(mediaId).subscribe(videos => {
       if (!this.media) return;
@@ -522,7 +533,7 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   deleteVideo(video: MediaVideo, event: Event): void {
-    const mediaId = this.config.data['_id'];
+    const mediaId = this.config.data!._id;
     this.confirmationService.confirm({
       key: 'inModal',
       message: this.translocoService.translate('admin.media.deleteVideoConfirmation'),
@@ -572,7 +583,7 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   deleteSubtitle(subtitle: MediaSubtitle, event: Event): void {
-    const mediaId = this.config.data['_id'];
+    const mediaId = this.config.data!._id;
     this.confirmationService.confirm({
       key: 'inModal',
       message: this.translocoService.translate('admin.media.deleteSubtitleConfirmation'),
@@ -612,12 +623,12 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   checkUploadInQueue(): void {
-    const mediaId = this.config.data['_id'];
+    const mediaId = this.config.data!._id;
     this.isUploadingSource = this.queueUploadService.isMediaInQueue(mediaId);
   }
 
   uploadSource(file: File): void {
-    const mediaId = this.config.data['_id'];
+    const mediaId = this.config.data!._id;
     this.queueUploadService.addToQueue(mediaId, file, `media/${mediaId}/movie/source`, `media/${mediaId}/movie/source/:id`);
     this.isUploadingSource = true;
     this.ref.markForCheck();
@@ -625,7 +636,7 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
 
   showSourcePreview(): void {
     this.showMoviePlayer = true;
-    const mediaId = this.config.data['_id'];
+    const mediaId = this.config.data!._id;
     this.translocoService.selectTranslation('languages').pipe(first(), switchMap(t => {
       return this.mediaService.findMovieStreams(mediaId).pipe(map(movie => ({ movie, t })));
     })).subscribe(({ movie, t }) => {
@@ -659,8 +670,8 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   deleteSource(event: Event): void {
-    const mediaId = this.config.data['_id'];
-    const safeMediaTitle = translocoEscape(this.config.data['title']);
+    const mediaId = this.config.data!._id;
+    const safeMediaTitle = translocoEscape(this.config.data!.title);
     this.confirmationService.confirm({
       key: 'inModal',
       message: this.translocoService.translate('admin.media.deleteSourceConfirmation', { name: safeMediaTitle }),
@@ -686,7 +697,7 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   updateExtStreams(event: ExtStreamSelected): void {
-    const mediaId = this.config.data['_id'];
+    const mediaId = this.config.data!._id;
     this.mediaService.update(mediaId, { extStreams: event.streams }).subscribe({
       next: () => event.next(),
       error: () => event.error()
@@ -744,7 +755,7 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   deleteEpisode(episode: TVEpisode): void {
-    const mediaId = this.config.data['_id'];
+    const mediaId = this.config.data!._id;
     this.loadingEpisodes = true;
     this.ref.markForCheck();
     this.mediaService.deleteTVEpisode(mediaId, episode._id).subscribe({
@@ -766,7 +777,7 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   createEpisodeMenuItem(episode: TVEpisode): Observable<DataMenuItem<TVEpisode>[]> {
-    const mediaId = this.config.data['_id'];
+    const mediaId = this.config.data!._id;
     return this.translocoService.selectTranslation('admin').pipe(first(), map(t => {
       const menuItems: DataMenuItem<TVEpisode>[] = [];
       menuItems.push(
@@ -826,6 +837,7 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
       originalLanguage: media.originalLanguage || null,
       genres: media.genres,
       productions: media.productions,
+      tags: media.tags,
       runtime: media.runtime,
       adult: media.adult,
       releaseDate: {
@@ -877,7 +889,7 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   ngOnDestroy(): void {
-    const mediaId = this.config.data['_id'];
+    const mediaId = this.config.data!._id;
     this.wsService.leaveRoom(`${SocketRoom.ADMIN_MEDIA_DETAILS}:${mediaId}`);
   }
 

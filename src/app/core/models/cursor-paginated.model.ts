@@ -1,5 +1,7 @@
 export interface CursorPaginated<T> {
-  nextPageToken: string | null;
-  prevPageToken: string | null;
+  hasNextPage: boolean;
+  nextPageToken?: string;
+  prevPageToken?: string;
+  totalResults: number;
   results: T[];
 }

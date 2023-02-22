@@ -45,7 +45,7 @@
                 <label for="runtime" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
                   t('admin.updateMedia.runtime') }}</label>
                 <p-inputNumber formControlName="runtime" class="tw-w-full" styleClass="tw-w-full" id="runtime"
-                  suffix=" min" aria-describedby="runtime-error" [useGrouping]="false" [min]="0" [max]="10000"
+                  suffix=" sec" aria-describedby="runtime-error" [useGrouping]="false" [min]="0" [max]="10000"
                   [placeholder]="t('admin.updateMedia.runtimePlaceholder')">
                 </p-inputNumber>
                 <small id="runtime-error" class="p-error tw-text-xs tw-block tw-my-2"
@@ -68,32 +68,45 @@
               </div>
             </div>
             <div class="tw-flex tw-flex-wrap">
-              <div class="tw-w-full md:tw-w-1/2">
+              <div class="tw-w-full md:tw-w-1/3">
                 <label for="genres" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
                   t('admin.updateMedia.genres') }}</label>
-                <p-autoComplete formControlName="genres" [suggestions]="genreSuggestions"
+                <p-altAutoComplete formControlName="genres" [suggestions]="genreSuggestions"
                   (completeMethod)="loadGenreSuggestions($event.query)" field="name" dataKey="_id" [multiple]="true"
                   [unique]="true" [completeOnFocus]="true" scrollHeight="300px" appendTo="body" styleClass="tw-w-full"
                   panelStyleClass="p-autocomplete-xs" inputId="genres" ariaLabel="Find genres"
                   dropdownAriaLabel="Genre search results" aria-describedby="genres-error">
-                </p-autoComplete>
+                </p-altAutoComplete>
                 <small id="genres-error" class="p-error tw-text-xs tw-block tw-my-2"
                   [invalidControl]="updateMediaForm.controls.genres">{{ updateMediaForm.controls.genres.errors |
                   firstErrorKey:'updateMedia':'genres' }}</small>
               </div>
-              <div class="tw-w-full md:tw-w-1/2 md:tw-pl-2">
+              <div class="tw-w-full md:tw-w-1/3 md:tw-pl-2">
                 <label for="productions" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
                   t('admin.updateMedia.productions') }}</label>
-                <p-autoComplete formControlName="productions" [suggestions]="productionSuggestions"
+                <p-altAutoComplete formControlName="productions" [suggestions]="productionSuggestions"
                   (completeMethod)="loadProductionSuggestions($event.query)" field="name" dataKey="_id"
                   [multiple]="true" [unique]="true" [completeOnFocus]="true" scrollHeight="300px" appendTo="body"
                   styleClass="tw-w-full" panelStyleClass="p-autocomplete-xs" inputId="productions"
                   ariaLabel="Find companies" dropdownAriaLabel="Company search results"
                   aria-describedby="productions-error">
-                </p-autoComplete>
+                </p-altAutoComplete>
                 <small id="productions-error" class="p-error tw-text-xs tw-block tw-my-2"
                   [invalidControl]="updateMediaForm.controls.productions">{{ updateMediaForm.controls.productions.errors
                   | firstErrorKey:'updateMedia':'productions' }}</small>
+              </div>
+              <div class="tw-w-full md:tw-w-1/3 md:tw-pl-2">
+                <label for="tags" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
+                  t('admin.updateMedia.tags') }}</label>
+                <p-altAutoComplete formControlName="tags" [suggestions]="tagSuggestions"
+                  (completeMethod)="loadTagSuggestions($event.query)" field="name" dataKey="_id" [multiple]="true"
+                  [unique]="true" [completeOnFocus]="true" scrollHeight="300px" appendTo="body" styleClass="tw-w-full"
+                  panelStyleClass="p-autocomplete-xs" inputId="tags" ariaLabel="Find tags"
+                  dropdownAriaLabel="Tag search results" aria-describedby="tags-error">
+                </p-altAutoComplete>
+                <small id="tags-error" class="p-error tw-text-xs tw-block tw-my-2"
+                  [invalidControl]="updateMediaForm.controls.tags">{{ updateMediaForm.controls.tags.errors
+                  | firstErrorKey:'updateMedia':'tags' }}</small>
               </div>
             </div>
             <label for="release-date" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
@@ -109,8 +122,8 @@
                 [placeholder]="t('admin.updateMedia.month')" scrollHeight="300px">
               </p-dropdown>
               <p-dropdown class="tw-w-full sm:tw-w-4/12 tw-pt-2 sm:tw-pt-0 sm:tw-pl-2" styleClass="tw-w-full"
-                panelStyleClass="p-dropdown-sm" [options]="years" formControlName="year" appendTo="body"
-                [placeholder]="t('admin.updateMedia.year')" scrollHeight="300px">
+                panelStyleClass="p-dropdown-xs md:tw-dropdown-cols-4 md:tw-max-w-sm" [options]="years"
+                formControlName="year" appendTo="body" [placeholder]="t('admin.updateMedia.year')" scrollHeight="300px">
               </p-dropdown>
             </div>
             <small id="release-date-error" class="p-error tw-text-xs tw-block tw-my-2"
@@ -122,16 +135,17 @@
               <div id="last-air-date" formGroupName="lastAirDate" class="dropdown-group tw-flex tw-flex-wrap tw-w-full"
                 aria-describedby="last-air-date-error">
                 <p-dropdown class="tw-w-full sm:tw-w-3/12" styleClass="tw-w-full" panelStyleClass="p-dropdown-sm"
-                  [options]="days" [showClear]="true" formControlName="day" appendTo="body"
-                  [placeholder]="t('admin.updateMedia.day')" scrollHeight="300px">
+                  [options]="days" [showClear]="true" formControlName="day" appendTo="body" [virtualScroll]="true"
+                  [virtualScrollItemSize]="40" [placeholder]="t('admin.updateMedia.day')" scrollHeight="300px">
                 </p-dropdown>
                 <p-dropdown class="tw-w-full sm:tw-w-5/12 tw-pt-2 sm:tw-pt-0 sm:tw-pl-2" styleClass="tw-w-full"
                   panelStyleClass="p-dropdown-sm" [options]="months" [showClear]="true" formControlName="month"
                   appendTo="body" [placeholder]="t('admin.updateMedia.month')" scrollHeight="300px">
                 </p-dropdown>
                 <p-dropdown class="tw-w-full sm:tw-w-4/12 tw-pt-2 sm:tw-pt-0 sm:tw-pl-2" styleClass="tw-w-full"
-                  panelStyleClass="p-dropdown-sm" [options]="years" [showClear]="true" formControlName="year"
-                  appendTo="body" [placeholder]="t('admin.updateMedia.year')" scrollHeight="300px">
+                  panelStyleClass="p-dropdown-xs md:tw-dropdown-cols-4 md:tw-max-w-sm" [options]="years"
+                  [showClear]="true" formControlName="year" appendTo="body" [placeholder]="t('admin.updateMedia.year')"
+                  scrollHeight="300px">
                 </p-dropdown>
               </div>
               <small id="last-air-date-error" *ngIf="updateMediaForm.controls.lastAirDate"
@@ -597,9 +611,7 @@
                       <p class="tw-ml-2 tw-text-base tw-font-medium tw-line-clamp-4">{{ episode.name }}</p>
                     </div>
                   </td>
-                  <td class="tw-w-32 tw-text-sm">{{
-                    t('admin.episode.runtimeValue', { runtime: episode.runtime })
-                    }}</td>
+                  <td class="tw-w-32 tw-text-sm">{{ episode.runtime * 1000 | time }}</td>
                   <td class="tw-w-40 tw-text-sm">{{ episode.airDate | shortDate }}</td>
                   <td class="tw-w-24 tw-text-sm" [ngSwitch]="episode.pStatus">
                     <div class="tw-text-center">

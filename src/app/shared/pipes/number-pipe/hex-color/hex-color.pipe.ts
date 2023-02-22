@@ -1,13 +1,14 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
+import { toHexColor } from '../../../../core/utils';
+
 @Pipe({
   name: 'hexColor'
 })
 export class HexColorPipe implements PipeTransform {
 
   transform(value: number): string {
-    const hex = value.toString(16);
-    return '#' + ('000000' + hex).slice(-6);
+    return toHexColor(value);
   }
 
 }

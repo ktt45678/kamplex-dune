@@ -1,0 +1,28 @@
+<ng-container *transloco="let t; loadingTpl: loadingSpinner">
+  <input #inputSearchPlaylists class="p-inputtext-sm tw-w-full" id="search" type="text" aria-label="Search playlists"
+    [placeholder]="t('media.playlists.search')" pInputText>
+  <ng-container *ngIf="loadingPlaylist; then loadingSpinner; else loadedPlaylists"></ng-container>
+  <ng-template #loadedPlaylists>
+    <form id="add-all-items-form" [formGroup]="addAllItemsForm" formHandler (ngSubmit)="onAddAllItemsFormSubmit()">
+      <p *ngIf="!playlistsToAdd?.length; else playlistList"
+        class="tw-text-gray-400 tw-font-medium tw-my-4 tw-text-center">
+        {{ t('media.playlists.noPlaylists') }}</p>
+      <ng-template #playlistList>
+        <p-altRadioButton *ngFor="let playlist of playlistsToAdd" formControlName="playlistId"
+          class="tw-flex tw-items-center tw-w-full tw-my-4" labelStyleClass="tw-w-full tw-truncate" name="playlistId"
+          [label]="playlist.name" [value]="playlist._id" [icon]="'ms tw-flex-1 tw-ml-2 tw-text-right ' +
+              (playlist.visibility === MediaVisibility.PUBLIC ? 'ms-public' :
+              playlist.visibility === MediaVisibility.UNLISTED ? 'ms-link' : 'ms-lock')"
+          [ariaLabel]="playlist.name"></p-altRadioButton>
+      </ng-template>
+    </form>
+  </ng-template>
+  <button pButton type="submit" form="add-all-items-form" class="p-button p-button-sm p-button-shrink tw-w-full"
+    [label]="t('media.playlists.add')" icon="ms ms-playlist-add" [disabled]="addAllItemsForm.disabled">
+  </button>
+</ng-container>
+<ng-template #loadingSpinner>
+  <div class="tw-flex tw-justify-center tw-items-center tw-h-96">
+    <p-progressSpinner strokeWidth="3px"></p-progressSpinner>
+  </div>
+</ng-template>

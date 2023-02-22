@@ -105,6 +105,10 @@ export class ProductionsComponent implements OnInit, OnDestroy {
     this.productionsService.remove(id).subscribe().add(() => this.loadProductions());
   }
 
+  onPage() {
+    this.productionTable?.el.nativeElement.scrollIntoView();
+  }
+
   trackId(index: number, item: any): any {
     return item?._id;
   }

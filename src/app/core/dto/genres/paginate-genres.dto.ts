@@ -1,6 +1,3 @@
-export interface PaginateGenresDto {
-  page?: number;
-  limit?: number;
-  search?: string;
-  sort?: string;
-}
+import { OffsetPaginateDto } from '../common';
+
+export interface PaginateGenresDto extends OffsetPaginateDto { }

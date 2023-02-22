@@ -1,10 +1,10 @@
 <ng-container *transloco="let t">
   <div class="tw-max-w-8xl tw-mx-auto tw-my-8">
-    <div class="tw-h-14"></div> <!-- Fixed navbar space -->
     <ng-container *ngIf="media">
       <div class="tw-flex tw-flex-wrap 2md:tw-flex-nowrap">
         <div class="tw-w-full 2md:tw-w-9/12">
           <app-video-player #videoPlayer [source]="playerSource" [hlsSource]="playerHlsSource"
+            [previewThumbnail]="playerPreviewThumbnail"
             (onEnded)="autoNext && changeEpisode(nextEpIndex)"></app-video-player>
           <ng-container *ngIf="media.type === MediaType.TV && streams?.episode as episode">
             <div class="tw-bg-neutral-900 tw-text-white tw-flex tw-flex-wrap 2md:tw-flex-nowrap tw-items-center">
@@ -20,12 +20,12 @@
                   class="p-button-dark p-button-sm p-button-shrink tw-rounded-none tw-w-1/2 xs:tw-w-auto"
                   [disabled]="nextEpIndex === -1" (click)="changeEpisode(nextEpIndex)">
                 </button>
-                <p-toggleButton class="tw-w-full xs:tw-w-auto"
+                <p-altToggleButton class="tw-w-full xs:tw-w-auto"
                   styleClass="p-button-sm p-togglebutton-dark p-button-shrink tw-rounded-none !tw-border-none tw-w-full xs:tw-w-auto"
                   [onIcon]="'ms ms-check-box'" offIcon="ms ms-check-box-outline-blank"
                   [onLabel]="t('media.watch.autoNextEpisode')" [offLabel]="t('media.watch.autoNextEpisode')"
                   (onChange)="autoNext = $event.checked">
-                </p-toggleButton>
+                </p-altToggleButton>
               </div>
             </div>
             <div class="tw-bg-neutral-850 tw-text-white tw-p-4 tw-rounded-b-md">
@@ -37,8 +37,7 @@
         <div class="tw-w-full 2md:tw-w-3/12 2md:tw-pl-4 tw-mt-4 2md:tw-mt-0">
           <div class="p-scrollbar tw-bg-neutral-850 tw-max-h-[600px] tw-overflow-y-auto tw-rounded-md">
             <app-episode-list *ngIf="media.type === MediaType.TV" [media]="media" [episodeList]="media.tv.episodes"
-              stillStyleClass="tw-w-28 tw-flex-shrink-0" infoStyleClass="tw-w-full xs:tw-w-3/5 tw-pl-2"
-              dateAiredStyleClass="tw-text-xs">
+              stillStyleClass="tw-w-28 tw-flex-shrink-0" infoStyleClass="tw-w-full xs:tw-w-3/5 tw-pl-2">
             </app-episode-list>
           </div>
         </div>
@@ -78,7 +77,7 @@
                 </div>
                 <p *ngIf="userRating" class="tw-text-xs tw-text-right tw-font-medium">
                   <span>{{ t('media.rating.youRated', { score: userRating.score}) }}</span>
-                  <button pButton [label]="t('media.rating.clearVote')" [disabled]="loadingRating"
+                  <button pButton [label]="t('media.rating.clear')" [disabled]="loadingRating"
                     (click)="deleteRating()" class="p-button-link p-button-shrink tw-p-0 tw-text-xs tw-font-medium
                       tw-min-w-0 tw-ml-1 disabled:!tw-bg-transparent">
                   </button>

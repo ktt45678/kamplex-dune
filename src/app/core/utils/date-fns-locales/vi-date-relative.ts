@@ -6,7 +6,7 @@ const formatRelativeLocale = {
   today: "'Hôm nay'",
   tomorrow: "'Ngày mai'",
   nextWeek: "eeee 'tới'",
-  other: 'P',
+  other: 'PP',
 }
 
 export const viDateRelative = {

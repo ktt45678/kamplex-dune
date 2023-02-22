@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
-import { CursorPageHistoryDto, UpdateHistoryDto } from '../dto/history';
-import { HistoryGroup, CursorPaginated } from '../models';
+import { CursorPageHistoryDto, FindWatchTimeDto, UpdateHistoryDto, UpdateWatchTimeDto } from '../dto/history';
+import { History, HistoryGroupable, HistoryWatchTime, CursorPaginated } from '../models';
 
 @Injectable()
 export class HistoryService {
@@ -13,18 +13,40 @@ export class HistoryService {
   findPage(cursorPageHistoryDto?: CursorPageHistoryDto) {
     const params: { [key: string]: any } = {};
     if (cursorPageHistoryDto) {
-      const { pageToken, limit } = cursorPageHistoryDto;
+      const { pageToken, limit, startDate, endDate, mediaIds, mediaType, mediaOriginalLanguage, mediaYear, mediaAdult, mediaGenres } = cursorPageHistoryDto;
       pageToken && (params['pageToken'] = pageToken);
       limit && (params['limit'] = limit);
+      startDate && (params['startDate'] = startDate);
+      endDate && (params['endDate'] = endDate);
+      mediaIds && (params['mediaIds'] = mediaIds);
+      mediaType && (params['mediaType'] = mediaType);
+      mediaOriginalLanguage && (params['mediaOriginalLanguage'] = mediaOriginalLanguage);
+      mediaYear && (params['mediaYear'] = mediaYear);
+      mediaAdult && (params['mediaAdult'] = mediaAdult);
+      mediaGenres && (params['mediaGenres'] = mediaGenres);
     }
-    return this.http.get<CursorPaginated<HistoryGroup>>('history', { params });
+    return this.http.get<CursorPaginated<HistoryGroupable>>('history', { params });
   }
 
-  update(updateHistoryDto: UpdateHistoryDto) {
-    return this.http.put<History>('history', updateHistoryDto);
+  update(id: string, updateHistoryDto: UpdateHistoryDto) {
+    return this.http.patch<History>(`history/${id}`, updateHistoryDto);
   }
 
-  updateLocal(updateHistoryDto: UpdateHistoryDto) {
+  findWatchTime(findWatchTimeDto: FindWatchTimeDto) {
+    const params: { [key: string]: any } = { media: findWatchTimeDto.media };
+    findWatchTimeDto.episode && (params['episode'] = findWatchTimeDto.episode);
+    return this.http.get<HistoryWatchTime>('history/watch_time', { params });
+  }
+
+  updateWatchTime(updateWatchTimeDto: UpdateWatchTimeDto) {
+    return this.http.patch<History>('history/watch_time', updateWatchTimeDto);
+  }
+
+  remove(id: string) {
+    return this.http.delete(`history/${id}`);
+  }
+
+  updateLocal(updateHistoryDto: UpdateWatchTimeDto) {
     const historyList = this.getLocalHistory();
     const media = historyList.find(h => {
       return updateHistoryDto.episode ?
@@ -43,7 +65,7 @@ export class HistoryService {
   updateToServer() {
     const historyList = this.getLocalHistory();
     for (let i = 0; i < historyList.length; i++) {
-      this.update(historyList[i]).subscribe();
+      this.updateWatchTime(historyList[i]).subscribe();
       historyList.splice(i, 1);
     }
     localStorage.setItem(this.localStorageKey, JSON.stringify(historyList));
@@ -51,7 +73,7 @@ export class HistoryService {
 
   private getLocalHistory() {
     const historyJson = localStorage.getItem(this.localStorageKey);
-    let historyList: UpdateHistoryDto[] = [];
+    let historyList: UpdateWatchTimeDto[] = [];
     if (historyJson) {
       try {
         historyList = JSON.parse(historyJson);
@@ -59,5 +81,4 @@ export class HistoryService {
     }
     return historyList;
   }
-
 }

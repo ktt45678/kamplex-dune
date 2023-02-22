@@ -4,8 +4,9 @@
   --plyr-menu-color: #ffffff;
   --plyr-tooltip-color: #ffffff;
   --plyr-tooltip-background: rgba(28, 28, 28, 0.9);
-  --plyr-font-size-large: 1.5rem;
-  --plyr-font-size-xlarge: 2rem;
+  --plyr-font-size-large: 2rem;
+  --plyr-font-size-xlarge: 3rem;
+  --plyr-captions-background: transparent;
 }
 
 :host::ng-deep {
@@ -26,6 +27,13 @@
       -webkit-animation: rotate 1s infinite linear;
       animation: rotate 1s infinite linear;
     }
+  }
+
+  .plyr__caption {
+    text-shadow: 0 0 3px #000, 0 0 3px #000, 0 0 3px #000, 0 0 3px #000;
+    font-weight: 500;
+    line-height: normal;
+    padding: 0;
   }
 }
 

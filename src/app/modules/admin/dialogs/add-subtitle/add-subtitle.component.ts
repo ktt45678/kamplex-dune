@@ -5,7 +5,7 @@ import { TranslocoService } from '@ngneat/transloco';
 import { takeUntil } from 'rxjs';
 
 import { DropdownOptionDto } from '../../../../core/dto/media';
-import { MediaSubtitle } from '../../../../core/models';
+import { MediaDetails, MediaSubtitle, TVEpisodeDetails } from '../../../../core/models';
 import { DestroyService, ItemDataService, MediaService } from '../../../../core/services';
 import { fileExtension, maxFileSize } from '../../../../core/validators';
 import { UPLOAD_SUBTITLE_EXT, UPLOAD_SUBTITLE_SIZE } from '../../../../../environments/config';
@@ -24,11 +24,12 @@ export class AddSubtitleComponent implements OnInit {
   isAddingSubtitle: boolean = false;
   addSubtitleForm: FormGroup<AddSubtitleForm>;
 
-  constructor(private ref: ChangeDetectorRef, private dialogRef: DynamicDialogRef, private config: DynamicDialogConfig,
+  constructor(private ref: ChangeDetectorRef, private dialogRef: DynamicDialogRef,
+    private config: DynamicDialogConfig<{ media: MediaDetails, episode: TVEpisodeDetails, file: File }>,
     private translocoService: TranslocoService, private itemDataService: ItemDataService, private mediaService: MediaService,
     private destroyService: DestroyService) {
     const lang = this.translocoService.getActiveLang();
-    const file = this.config.data['file'] || null;
+    const file = this.config.data!.file || null;
     this.addSubtitleForm = new FormGroup<AddSubtitleForm>({
       language: new FormControl(lang, Validators.required),
       file: new FormControl(file, [Validators.required, maxFileSize(UPLOAD_SUBTITLE_SIZE), fileExtension(UPLOAD_SUBTITLE_EXT)])
@@ -36,9 +37,9 @@ export class AddSubtitleComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const subtitles: MediaSubtitle[] = this.config.data['media']['type'] === MediaType.MOVIE
-      ? this.config.data['media']['movie']['subtitles']
-      : this.config.data['episode']['subtitles'];
+    const subtitles: MediaSubtitle[] = this.config.data!.media.type === MediaType.MOVIE
+      ? this.config.data!.media.movie.subtitles
+      : this.config.data!.episode.subtitles;
     const disabledLanguages = subtitles.map(s => s.language);
     this.itemDataService.createLanguageList(disabledLanguages).subscribe({
       next: languages => this.languages = languages
@@ -48,8 +49,8 @@ export class AddSubtitleComponent implements OnInit {
   onAddSubtitleFormSubmit(): void {
     if (this.addSubtitleForm.invalid) return;
     this.isAddingSubtitle = true;
-    const mediaType = this.config.data['media']['type'];
-    const mediaId = this.config.data['media']['_id'];
+    const mediaType = this.config.data!.media.type;
+    const mediaId = this.config.data!.media._id;
     const formValue = this.addSubtitleForm.getRawValue();
     if (mediaType === MediaType.MOVIE) {
       this.mediaService.addMovieSubtitle(mediaId, {
@@ -66,7 +67,7 @@ export class AddSubtitleComponent implements OnInit {
       });
       return;
     }
-    const episodeId = this.config.data['episode']['_id'];
+    const episodeId = this.config.data!.episode._id;
     this.mediaService.addTVSubtitle(mediaId, episodeId, {
       language: formValue.language!,
       file: formValue.file!

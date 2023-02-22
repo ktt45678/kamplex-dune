@@ -24,6 +24,10 @@ export function getImageExt(type: string) {
       return 'jpg';
     case 'image/png':
       return 'png';
+    case 'image/gif':
+      return 'gif';
+    case 'image/webp':
+      return 'webp';
   }
   return 'unknown';
 }
@@ -34,6 +38,10 @@ export function getImageFormat(type: string) {
       return 'jpeg';
     case 'image/png':
       return 'png';
+    // case 'image/gif':
+    //   return 'gif';
+    case 'image/webp':
+      return 'webp';
   }
   return 'jpeg';
 }

@@ -4,7 +4,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { LazyLoadImageModule } from 'ng-lazyload-image';
 import { ConfirmationService } from 'primeng/api';
-import { AutoCompleteModule } from 'primeng/autocomplete';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputTextareaModule } from 'primeng/inputtextarea';
@@ -46,14 +45,14 @@ import { CreateMediaComponent } from './dialogs/create-media/create-media.compon
 import { AddVideoComponent } from './dialogs/add-video/add-video.component';
 import { UpdateVideoComponent } from './dialogs/update-video/update-video.component';
 import { CreateEpisodeComponent } from './dialogs/create-episode/create-episode.component';
-import { UpdateEpisodeComponent } from './dialogs/update-episode/update-episode.component';
 import { AddSubtitleComponent } from './dialogs/add-subtitle/add-subtitle.component';
 import { ConfigureMediaComponent } from './dialogs/configure-media/configure-media.component';
 import { AddSourceComponent } from './dialogs/add-source/add-source.component';
 import { ConfigureEpisodeComponent } from './dialogs/configure-episode/configure-episode.component';
 import { AddExtStreamsComponent } from './components/add-ext-streams/add-ext-streams.component';
 import { AuthGuard, ConfirmDeactivateGuard, WsActivatorGuard } from '../../core/guards';
-import { ProductionsService, QueueUploadService } from '../../core/services';
+import { QueueUploadService } from '../../core/services';
+import { AltAutoCompleteModule } from '../../core/utils/primeng';
 
 @NgModule({
   declarations: [
@@ -69,7 +68,6 @@ import { ProductionsService, QueueUploadService } from '../../core/services';
     AddVideoComponent,
     UpdateVideoComponent,
     CreateEpisodeComponent,
-    UpdateEpisodeComponent,
     AddSubtitleComponent,
     AddSourceComponent,
     ConfigureEpisodeComponent,
@@ -92,7 +90,7 @@ import { ProductionsService, QueueUploadService } from '../../core/services';
     DateTimePipeModule,
     NumberPipeModule,
     UrlPipeModule,
-    AutoCompleteModule,
+    AltAutoCompleteModule,
     LazyLoadImageModule,
     ButtonModule,
     InputTextModule,
@@ -114,20 +112,13 @@ import { ProductionsService, QueueUploadService } from '../../core/services';
   providers: [
     DialogService,
     ConfirmationService,
-    ProductionsService,
     QueueUploadService,
     AuthGuard,
     ConfirmDeactivateGuard,
     WsActivatorGuard,
     {
       provide: TRANSLOCO_SCOPE,
-      useValue: 'admin',
-      multi: true
-    },
-    {
-      provide: TRANSLOCO_SCOPE,
-      useValue: 'media',
-      multi: true
+      useValue: ['admin', 'media']
     },
     {
       provide: WS_NAMESPACE,

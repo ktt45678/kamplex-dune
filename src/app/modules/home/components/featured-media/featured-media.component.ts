@@ -2,6 +2,7 @@ import { Component, OnInit, ChangeDetectionStrategy, Input } from '@angular/core
 import SwiperCore, { Autoplay, Navigation, Pagination, Swiper, SwiperOptions } from 'swiper';
 
 import { Media } from '../../../../core/models';
+import { track_Id } from '../../../../core/utils';
 
 SwiperCore.use([Autoplay, Navigation, Pagination]);
 
@@ -12,6 +13,7 @@ SwiperCore.use([Autoplay, Navigation, Pagination]);
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FeaturedMediaComponent implements OnInit {
+  track_Id = track_Id;
   @Input() loading: boolean = false;
   @Input() swiperClass?: string;
   @Input() mediaList?: Media[];
@@ -42,21 +44,16 @@ export class FeaturedMediaComponent implements OnInit {
 
   onSwiperSlideChange([swiper]: [Swiper]): void {
     if (this.previousSlide) {
-      const buttons = this.previousSlide.querySelectorAll('button');
+      const buttons = this.previousSlide.querySelectorAll<HTMLButtonElement | HTMLAnchorElement>('button, a');
       buttons.forEach(button => {
         button.tabIndex = -1;
       });
     }
     const slide = swiper.slides[swiper.activeIndex];
-    const buttons = slide.querySelectorAll('button');
+    const buttons = slide.querySelectorAll<HTMLButtonElement | HTMLAnchorElement>('button, a');
     buttons.forEach(button => {
       button.tabIndex = 0;
     });
     this.previousSlide = slide;
   }
-
-  trackId(index: number, item: any): any {
-    return item?._id || null;
-  }
-
 }

@@ -25,7 +25,7 @@ export class PlaylistsComponent implements OnInit, OnDestroy {
   skeletonArray: Array<any>;
   track_Id = track_Id;
 
-  constructor(@Inject(DOCUMENT) private document: Document, private ref: ChangeDetectorRef, private renderer: Renderer2,
+  constructor(private ref: ChangeDetectorRef, private renderer: Renderer2,
     private title: Title, private meta: Meta, private playlistsService: PlaylistsService, private route: ActivatedRoute,
     private destroyService: DestroyService) {
     this.skeletonArray = new Array(this.playlistItemLimit);
@@ -72,7 +72,7 @@ export class PlaylistsComponent implements OnInit, OnDestroy {
 
   loadPlaylistItems(id: string, pageToken?: string): void {
     this.loadingPlaylistItems = true;
-    const sort = 'desc(addedAt)';
+    const sort = 'desc(_id)';
     this.playlistsService.findPageItems(id, {
       pageToken: pageToken,
       sort: sort,
@@ -90,11 +90,38 @@ export class PlaylistsComponent implements OnInit, OnDestroy {
       this.playlistItems = newList;
       return;
     }
-    if (this.playlistItems.nextPageToken === newList.nextPageToken && this.playlistItems.prevPageToken === newList.prevPageToken)
-      return;
+    this.playlistItems = {
+      hasNextPage: newList.hasNextPage,
+      nextPageToken: newList.nextPageToken,
+      prevPageToken: newList.prevPageToken,
+      totalResults: newList.totalResults,
+      results: [...this.playlistItems.results, ...newList.results],
+      mediaList: [...this.playlistItems.mediaList, ...newList.mediaList]
+    };
     this.playlistItems.nextPageToken = newList.nextPageToken;
     this.playlistItems.prevPageToken = newList.prevPageToken;
     this.playlistItems.results.push(...newList.results);
+  }
+
+  onPlaylistMenuClick(button: HTMLButtonElement, opened: boolean): void {
+    this.renderer[opened ? 'removeClass' : 'addClass'](button, 'tw-invisible');
+    this.renderer[opened ? 'addClass' : 'removeClass'](button, 'tw-visible');
+  }
+
+  addToPlaylist(): void {
+    alert('Add to playlist');
+  }
+
+  removeFromPlaylist(index: number): void {
+    if (!this.playlist) return;
+    const playlistItem = this.playlistItems?.results[index];
+    if (!playlistItem) return;
+    const itemId = typeof playlistItem === 'string' ? <string>playlistItem : playlistItem._id;
+    this.playlistsService.removePlaylistItem(this.playlist._id, { itemId }).subscribe(() => {
+      this.playlistItems!.results.splice(index, 1);
+    }).add(() => {
+      this.ref.markForCheck();
+    });
   }
 
   ngOnDestroy(): void {

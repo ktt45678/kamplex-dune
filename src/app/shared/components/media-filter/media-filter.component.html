@@ -6,42 +6,141 @@
         <input type="text" pInputText [placeholder]="t('media.filter.search')" formControlName="search"
           class="tw-w-full p-inputtext-xs" />
       </span>
-      <p-multiSelect formControlName="genres" [options]="genres || []" optionLabel="name" optionValue="_id"
-        [baseZIndex]="100" scrollHeight="400px" [appendTo]="multiSelectZone" [showHeader]="false"
+      <!-- <p-multiSelect formControlName="genres" [options]="genres || []" optionLabel="name" optionValue="_id"
+        [overlayOptions]="{ baseZIndex: 100 }" scrollHeight="400px" [appendTo]="multiSelectZone" [showHeader]="false"
         [placeholder]="t('media.filter.genre')" styleClass="tw-w-full p-multiselect-xs"
-        panelStyleClass="md:tw-dropdown-cols-4 md:tw-max-w-xl">
-      </p-multiSelect>
-      <p-dropdown formControlName="sort" [options]="sortOptions || []" [baseZIndex]="100" scrollHeight="400px"
-        [showClear]="true" [appendTo]="dropdownZone" [placeholder]="t('media.filter.sort')"
-        styleClass="tw-w-full p-dropdown-xs" panelStyleClass="md:tw-dropdown-cols-2 md:tw-max-w-lg">
-      </p-dropdown>
-      <p-dropdown [hidden]="!showAdvanced" formControlName="type" [options]="typeOptions || []" [baseZIndex]="100"
+        panelStyleClass="md:tw-dropdown-cols-4 md:tw-w-full md:tw-max-w-xl">
+      </p-multiSelect> -->
+      <p-altAutoComplete #genreAutoComplete formControlName="genres" [suggestions]="genreSuggestions"
+        (completeMethod)="loadGenreSuggestions($event.query)" field="name" dataKey="_id" [multiple]="true"
+        [unique]="true" [placeholder]="t('media.filter.genre')" [completeOnFocus]="true" scrollHeight="300px"
+        appendTo="body" class="p-autocomplete-full" styleClass="p-autocomplete-xs" panelStyleClass="p-autocomplete-xs"
+        inputId="genres" ariaLabel="Find genres" dropdownAriaLabel="Genre search results">
+        <ng-template let-values pTemplate="selectedItem">{{ t('media.filter.selectedGenres', { genreCount:
+          values.length }) }}</ng-template>
+        <ng-template let-item pTemplate="item">
+          <div class="tw-max-w-32 lg:tw-max-w-none tw-truncate">
+            <span>{{ item.name }}</span>
+          </div>
+        </ng-template>
+      </p-altAutoComplete>
+      <!-- <p-dropdown formControlName="sort" [options]="sortOptions || []" [overlayOptions]="{ baseZIndex: 100 }"
+        scrollHeight="400px" [showClear]="true" [appendTo]="dropdownZone" [placeholder]="t('media.filter.sort')"
+        styleClass="tw-w-full p-dropdown-xs" panelStyleClass="md:tw-dropdown-cols-2 md:tw-w-full md:tw-max-w-lg">
+      </p-dropdown> -->
+      <p-dropdown formControlName="type" [options]="typeOptions || []" [overlayOptions]="{ baseZIndex: 100 }"
         [showClear]="true" [appendTo]="dropdownZone" [placeholder]="t('media.filter.type')"
         styleClass="tw-w-full p-dropdown-xs">
       </p-dropdown>
-      <p-dropdown [hidden]="!showAdvanced" formControlName="status" [options]="statusOptions || []" [baseZIndex]="100"
-        scrollHeight="400px" [showClear]="true" [appendTo]="dropdownZone" [placeholder]="t('media.filter.status')"
-        styleClass="tw-w-full p-dropdown-xs">
+      <p-dropdown [hidden]="!showAdvanced" formControlName="status" [options]="statusOptions || []"
+        [overlayOptions]="{ baseZIndex: 100 }" scrollHeight="400px" [showClear]="true" [appendTo]="dropdownZone"
+        [placeholder]="t('media.filter.status')" styleClass="tw-w-full p-dropdown-xs">
       </p-dropdown>
       <p-dropdown [hidden]="!showAdvanced" formControlName="originalLanguage" [options]="languages || []"
-        [baseZIndex]="100" scrollHeight="400px" [showClear]="true" [appendTo]="dropdownZone"
+        [overlayOptions]="{ baseZIndex: 100 }" scrollHeight="400px" [showClear]="true" [appendTo]="dropdownZone"
         [placeholder]="t('media.filter.language')" styleClass="tw-w-full p-dropdown-xs"
-        panelStyleClass="md:tw-dropdown-cols-4 md:tw-max-w-2xl">
+        panelStyleClass="md:tw-dropdown-cols-4 md:tw-w-full md:tw-max-w-2xl">
       </p-dropdown>
-      <p-dropdown [hidden]="!showAdvanced" formControlName="year" [options]="yearOptions || []" [baseZIndex]="100"
-        scrollHeight="400px" [showClear]="true" [appendTo]="dropdownZone" [placeholder]="t('media.filter.year')"
-        styleClass="tw-w-full p-dropdown-xs" panelStyleClass="md:tw-dropdown-cols-4 md:tw-max-w-xl">
+      <p-dropdown [hidden]="!showAdvanced" formControlName="year" [options]="yearOptions || []"
+        [overlayOptions]="{ baseZIndex: 100 }" scrollHeight="400px" [showClear]="true" [appendTo]="dropdownZone"
+        [placeholder]="t('media.filter.year')" styleClass="tw-w-full p-dropdown-xs"
+        panelStyleClass="md:tw-dropdown-cols-4 md:tw-w-full md:tw-max-w-xl">
       </p-dropdown>
+      <p-altAutoComplete [hidden]="!showAdvanced" #tagAutoComplete formControlName="tags" [suggestions]="tagSuggestions"
+        (completeMethod)="loadTagSuggestions($event.query)" field="name" dataKey="_id" [multiple]="true" [unique]="true"
+        [placeholder]="t('media.filter.tag')" [completeOnFocus]="true" scrollHeight="300px" appendTo="body"
+        class="p-autocomplete-full" styleClass="p-autocomplete-xs" panelStyleClass="p-autocomplete-xs" inputId="tags"
+        ariaLabel="Find tags" dropdownAriaLabel="Tag search results">
+        <ng-template let-values pTemplate="selectedItem">{{ t('media.filter.selectedTags', { tagCount:
+          values.length }) }}</ng-template>
+        <ng-template let-item pTemplate="item">
+          <div class="tw-max-w-32 lg:tw-max-w-none tw-truncate">
+            <span>{{ item.name }}</span>
+          </div>
+        </ng-template>
+      </p-altAutoComplete>
       <button pButton type="submit" [label]="t('media.filter.beginFilter')" class="p-button-sm p-button-shrink"
         icon="ms ms-filter-alt"></button>
     </div>
     <div class="tw-flex tw-mt-4">
-      <p-toggleButton formControlName="showAdvanced" class="tw-ml-auto" styleClass="p-button-sm"
-        onIcon="ms ms-expand-less" offIcon="ms ms-expand-more" pTooltip="Toggle advanced options"
-        [showDelay]="1000" tooltipPosition="bottom" (onChange)="showAdvanced = $event.checked">
-      </p-toggleButton>
+      <div class="tw-ml-auto">
+        <button pButton type="button" icon="ms ms-sort" aria-label="Sort media menu" [appMenuTriggerFor]="sortMenu"
+          class="p-button-secondary p-button-sm p-button-sm-icon" [pAltTooltip]="t('media.filter.sort')">
+        </button>
+        <p-altToggleButton formControlName="showAdvanced" class="tw-inline-block tw-ml-2"
+          styleClass="p-button-sm p-togglebutton-dark !tw-border-none" [onIcon]="'ms ms-expand-less'"
+          offIcon="ms ms-expand-more" [pAltTooltip]="t('media.filter.toggleAdvanced')"
+          (onChange)="showAdvanced = $event.checked">
+        </p-altToggleButton>
+      </div>
     </div>
+    <div class="tw-flex tw-flex-wrap tw-items-center tw-mt-4 tw-gap-y-2">
+      <i class="ms ms-label tw-mr-2 tw-text-white only:tw-hidden"></i>
+      <p-altChip *ngIf="filterForm.value.search" [label]="t('media.filter.enteredSearch') + filterForm.value.search"
+        [removable]="true" styleClass="p-chip-sm tw-rounded-full tw-mr-2"
+        textStyleClass="tw-max-w-sm tw-truncate tw-capitalize"
+        (onRemove)="filterForm.controls.search.setValue(null)"></p-altChip>
+      <ng-container *ngFor="let genre of filterForm.value.genres">
+        <p-altChip [label]="genre.name" [removable]="true" styleClass="p-chip-sm tw-rounded-full tw-mr-2"
+          (onRemove)="genreAutoComplete.removeItemByObject(genre); genreAutoComplete.cd.markForCheck()"></p-altChip>
+      </ng-container>
+      <p-altChip *ngIf="filterForm.value.type"
+        [label]="t('media.mediaTypes.' + (filterForm.value.type === 'movie' ? 'movie' : 'tvShow'))" [removable]="true"
+        styleClass="p-chip-sm tw-rounded-full tw-mr-2" (onRemove)="filterForm.controls.type.setValue(null)"></p-altChip>
+      <p-altChip *ngIf="filterForm.value.status" [label]="t('media.statusOptions.' + filterForm.value.status)"
+        [removable]="true" styleClass="p-chip-sm tw-rounded-full tw-mr-2"
+        (onRemove)="filterForm.controls.status.setValue(null)"></p-altChip>
+      <p-altChip *ngIf="filterForm.value.originalLanguage" [label]="t('languages.' + filterForm.value.originalLanguage)"
+        [removable]="true" styleClass="p-chip-sm tw-rounded-full tw-mr-2"
+        (onRemove)="filterForm.controls.originalLanguage.setValue(null)"></p-altChip>
+      <p-altChip *ngIf="filterForm.value.year" [label]="filterForm.value.year + ''" [removable]="true"
+        styleClass="p-chip-sm tw-rounded-full tw-mr-2" (onRemove)="filterForm.controls.year.setValue(null)"></p-altChip>
+      <ng-container *ngFor="let tag of filterForm.value.tags">
+        <p-altChip [label]="tag.name" [removable]="true" styleClass="p-chip-sm tw-rounded-full tw-mr-2"
+          (onRemove)="tagAutoComplete.removeItemByObject(tag); tagAutoComplete.cd.markForCheck()"></p-altChip>
+      </ng-container>
+    </div>
+    <!-- <div class="tw-flex tw-mt-4 tw-items-center">
+      <i class="ms ms-sell tw-mr-2 tw-text-white"></i>
+      <div class="tw-mr-2" *ngFor="let tag of tagAutoComplete.value">
+        <p-altChip [label]="tag.name" [removable]="true" styleClass="p-chip-sm"
+          (onRemove)="tagAutoComplete.removeItemByObject(tag); tagAutoComplete.cd.markForCheck()"></p-altChip>
+      </div>
+    </div> -->
   </form>
   <div #dropdownZone class="p-dropdown-xs"></div>
   <div #multiSelectZone class="p-multiselect-xs"></div>
+  <ng-template #sortMenu>
+    <div appMenu
+      class="p-scrollbar tw-flex tw-max-h-screen tw-overflow-y-auto cdk-menu-item-sm tw-text-sm [&>a]:!tw-overflow-visible">
+      <p class="tw-px-4 tw-py-2 tw-text-lg tw-font-semibold">{{ t('media.sortOptions.ascending') }}</p>
+      <a appMenuItem routerLink="." [queryParams]="{ sort:'asc(name)' }" queryParamsHandling="merge"
+        routerLinkActive="cdk-menu-item-active" class="cdk-menu-item-sm">{{ t('media.sortOptions.name') }}</a>
+      <a appMenuItem routerLink="." [queryParams]="{ sort:'asc(releaseDate.year,releaseDate.month,releaseDate.day)' }"
+        queryParamsHandling="merge" routerLinkActive="cdk-menu-item-active" class="cdk-menu-item-sm">{{
+        t('media.sortOptions.releaseDate') }}</a>
+      <a appMenuItem routerLink="." [queryParams]="{ sort:'asc(views)' }" queryParamsHandling="merge"
+        routerLinkActive="cdk-menu-item-active" class="cdk-menu-item-sm">{{ t('media.sortOptions.views') }}</a>
+      <a appMenuItem routerLink="." [queryParams]="{ sort:'asc(ratingAverage)' }" queryParamsHandling="merge"
+        routerLinkActive="cdk-menu-item-active" class="cdk-menu-item-sm">{{ t('media.sortOptions.score') }}</a>
+      <a appMenuItem routerLink="." [queryParams]="{ sort:'asc(createdAt)' }" queryParamsHandling="merge"
+        routerLinkActive="cdk-menu-item-active" class="cdk-menu-item-sm">{{ t('media.sortOptions.dateAdded') }}</a>
+      <a appMenuItem routerLink="." [queryParams]="{ sort:'asc(updatedAt)' }" queryParamsHandling="merge"
+        routerLinkActive="cdk-menu-item-active" class="cdk-menu-item-sm">{{ t('media.sortOptions.dateUpdated') }}</a>
+      <p class="tw-px-4 tw-py-2 tw-text-lg tw-font-semibold">{{ t('media.sortOptions.descending') }}</p>
+      <a appMenuItem routerLink="." [queryParams]="{ sort:'desc(name)' }" queryParamsHandling="merge"
+        routerLinkActive="cdk-menu-item-active" class="cdk-menu-item-sm">{{ t('media.sortOptions.name') }}</a>
+      <a appMenuItem routerLink="." [queryParams]="{ sort:'desc(releaseDate.year,releaseDate.month,releaseDate.day)' }"
+        queryParamsHandling="merge" routerLinkActive="cdk-menu-item-active" class="cdk-menu-item-sm">{{
+        t('media.sortOptions.releaseDate') }}</a>
+      <a appMenuItem routerLink="." [queryParams]="{ sort:'desc(views)' }" queryParamsHandling="merge"
+        routerLinkActive="cdk-menu-item-active" class="cdk-menu-item-sm">{{ t('media.sortOptions.views') }}</a>
+      <a appMenuItem routerLink="." [queryParams]="{ sort:'desc(ratingAverage)' }" queryParamsHandling="merge"
+        routerLinkActive="cdk-menu-item-active" class="cdk-menu-item-sm">{{ t('media.sortOptions.score') }}</a>
+      <a appMenuItem routerLink="." [queryParams]="{ sort:'desc(createdAt)' }" queryParamsHandling="merge"
+        routerLinkActive="cdk-menu-item-active" class="cdk-menu-item-sm">{{ t('media.sortOptions.dateAdded') }}</a>
+      <a appMenuItem routerLink="." [queryParams]="{ sort:'desc(updatedAt)' }" queryParamsHandling="merge"
+        routerLinkActive="cdk-menu-item-active" class="cdk-menu-item-sm">{{ t('media.sortOptions.dateUpdated') }}</a>
+    </div>
+  </ng-template>
 </ng-container>

@@ -1,5 +1,5 @@
-<ng-container *transloco="let t; loadingTpl: skeletonLoading">
-  <ng-container *ngIf="loading; then skeletonLoading; else episodeListLoaded"></ng-container>
+<ng-container *transloco="let t; loadingTpl: episodeLoadingTpl">
+  <ng-container *ngIf="loading; then episodeLoadingTpl; else episodeListLoaded"></ng-container>
   <ng-template #episodeListLoaded>
     <ng-container *ngIf="episodeList?.length && media">
       <ul class="tw-overflow-hidden tw-rounded-sm tw-list-none">
@@ -25,12 +25,20 @@
             <div [ngClass]="infoStyleClass">
               <a [routerLink]="['/watch', media._id]" [queryParams]="{ ep: episode.episodeNumber}" class="tw-text-white
                 tw-text-sm md:tw-text-base tw-leading-5 tw-font-bold tw-line-clamp-2 hover:tw-underline
-                focus-visible:tw-shadow-focus-box focus-visible:tw-rounded-md">{{ episode.name ? episode.episodeNumber
-                + '. ' + episode.name : t('media.episode.episodePrefix') + ' ' + episode.episodeNumber }}</a>
-              <!--p class="tw-text-gray-400 tw-text-sm tw-font-medium">{{ episode.runtime * 60 * 1000 |
-                time:['hours','minutes']:'short' }}</p-->
-              <p class="tw-text-gray-400 tw-font-medium" [ngClass]="dateAiredStyleClass">{{ episode.airDate | shortDate
-                }}</p>
+                focus-visible:tw-shadow-focus-box focus-visible:tw-rounded-md">
+                <span *ngIf="episode.name; else noEpisodeName">{{ episode.episodeNumber }}. {{ episode.name }}</span>
+                <ng-template #noEpisodeName>
+                  <span>{{ t('media.episode.episodePrefix') }} {{ episode.episodeNumber }}</span>
+                </ng-template>
+              </a>
+              <p class="tw-text-gray-400 tw-flex tw-items-center tw-font-medium tw-mt-0.5"
+                [ngClass]="dateAiredStyleClass">
+                <i class="ms ms-calendar-today ms-icon-xs tw-mr-1.5"></i>
+                <span class="tw-font-semibold tw-mr-2">{{ episode.airDate | shortDate }}</span>
+                <i class="ms ms-schedule ms-icon-xs tw-mr-1.5"></i>
+                <span class="tw-font-semibold">{{ episode.runtime * 1000 | time:{ format:['hours', 'minutes'],
+                  display:'short' } }}</span>
+              </p>
             </div>
           </div>
         </li>
@@ -41,18 +49,17 @@
     </ng-template>
   </ng-template>
 </ng-container>
-<ng-template #skeletonLoading>
+<ng-template #episodeLoadingTpl>
   <ul class="tw-bg-neutral-850 tw-overflow-hidden tw-rounded-sm tw-list-none">
     <li *ngFor="let item of skeletonArray" class="tw-bg-neutral-850 tw-p-1">
       <div class="tw-flex">
         <div class="tw-w-1/5">
-          <p-skeleton animation="none" width="100%" height="100%" borderRadius="0.125rem"
-            styleClass="tw-aspect-w-2 tw-aspect-h-3">
-          </p-skeleton>
+          <app-skeleton width="100%" height="100%" shape="none" styleClass="tw-aspect-w-2 tw-aspect-h-3 tw-rounded-sm">
+          </app-skeleton>
         </div>
         <div class="tw-w-4/5 tw-px-2 tw-py-1">
-          <p-skeleton animation="none" width="100%" height="20px"></p-skeleton>
-          <p-skeleton animation="none" width="40%" height="20px" styleClass="tw-mt-2"></p-skeleton>
+          <app-skeleton width="100%" height="20px"></app-skeleton>
+          <app-skeleton width="40%" height="20px" styleClass="tw-mt-2"></app-skeleton>
         </div>
       </div>
     </li>

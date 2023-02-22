@@ -2,7 +2,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { TranslocoService } from '@ngneat/transloco';
 import { formatRelative } from 'date-fns';
 
-import { enUSDateRelative, viDateRelative } from '../../../../core/utils';
+import { enUSDateRelative, viDateRelative } from '../../../../core/utils/date-fns-locales';
 
 const locales: { [key: string]: Locale } = { en: enUSDateRelative, vi: viDateRelative };
 

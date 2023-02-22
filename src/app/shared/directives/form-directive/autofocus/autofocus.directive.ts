@@ -17,8 +17,17 @@ export class AutofocusDirective implements AfterViewInit {
       this.element.nativeElement.setAttribute('autofocus', '');
       return;
     }
+    const oldReadonly = this.element.nativeElement.getAttribute('readonly');
     setTimeout(() => {
+      this.element.nativeElement.setAttribute('readonly', '');
       this.element.nativeElement.focus();
     }, 0);
+    setTimeout(() => {
+      if (oldReadonly != null) {
+        this.element.nativeElement.setAttribute('readonly', oldReadonly);
+      } else {
+        this.element.nativeElement.removeAttribute('readonly');
+      }
+    }, 100);
   }
 }

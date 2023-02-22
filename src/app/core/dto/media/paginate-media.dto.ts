@@ -1,9 +1,6 @@
 export interface PaginateMediaDto {
-  page?: number;
-  limit?: number;
-  search?: string;
-  sort?: string;
   genres?: string[];
+  tags?: string[];
   type?: string;
   status?: string;
   originalLanguage?: string;

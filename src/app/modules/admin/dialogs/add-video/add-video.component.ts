@@ -5,6 +5,7 @@ import { takeUntil } from 'rxjs';
 
 import { DestroyService, MediaService } from '../../../../core/services';
 import { YOUTUBE_EMBED_URL } from '../../../../../environments/config';
+import { MediaDetails } from '../../../../core/models';
 
 interface AddVideoForm {
   name: FormControl<string | null>;
@@ -24,7 +25,7 @@ export class AddVideoComponent implements OnInit {
   previewVideoKey?: string;
   addVideoForm: FormGroup<AddVideoForm>;
 
-  constructor(private ref: ChangeDetectorRef, private dialogRef: DynamicDialogRef, private config: DynamicDialogConfig,
+  constructor(private ref: ChangeDetectorRef, private dialogRef: DynamicDialogRef, private config: DynamicDialogConfig<MediaDetails>,
     private mediaService: MediaService, private destroyService: DestroyService) {
     this.addVideoForm = new FormGroup<AddVideoForm>({
       name: new FormControl('', Validators.maxLength(50)),
@@ -54,7 +55,7 @@ export class AddVideoComponent implements OnInit {
   onAddVideoFormSubmit(): void {
     if (this.addVideoForm.invalid) return;
     this.isAddingVideo = true;
-    const mediaId = this.config.data['_id'];
+    const mediaId = this.config.data!._id;
     const formValue = this.addVideoForm.getRawValue();
     this.mediaService.addVideo(mediaId, {
       name: formValue.name,

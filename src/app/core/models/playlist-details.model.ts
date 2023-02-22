@@ -1,6 +1,7 @@
 import { Playlist, User } from '.';
 
 export interface PlaylistDetails extends Playlist {
+  description: string;
   author: Pick<User, AuthorProps>;
 }
 

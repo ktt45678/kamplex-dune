@@ -11,7 +11,7 @@ import { first, map, merge, Observable, of, takeUntil, tap } from 'rxjs';
 import { DestroyService, MediaService, QueueUploadService } from '../../../../core/services';
 import { WsService } from '../../../../shared/modules/ws';
 import { Media, MediaDetails, Paginated } from '../../../../core/models';
-import { PaginateMediaDto } from '../../../../core/dto/media';
+import { OffsetPageMediaDto } from '../../../../core/dto/media';
 import { DataMenuItem } from '../../../../core/interfaces/primeng';
 import { MediaChange } from '../../../../core/interfaces/ws';
 import { CreateMediaComponent } from '../../dialogs/create-media';
@@ -82,7 +82,7 @@ export class MediaComponent implements OnInit, OnDestroy {
   }
 
   loadMedia(showLoading: boolean = true): void {
-    const params: PaginateMediaDto = {};
+    const params: OffsetPageMediaDto = {};
     params.includeHidden = true;
     params.includeUnprocessed = true;
     if (this.mediaTable) {
@@ -332,6 +332,10 @@ export class MediaComponent implements OnInit, OnDestroy {
       );
       return menuItems;
     }), first());
+  }
+
+  onPage() {
+    this.mediaTable?.el.nativeElement.scrollIntoView();
   }
 
   trackId(index: number, item: any): any {

@@ -4,9 +4,9 @@ import { RouterModule } from '@angular/router';
 import { TranslocoModule } from '@ngneat/transloco';
 import { LazyLoadImageModule } from 'ng-lazyload-image';
 import { ButtonModule } from 'primeng/button';
-import { SkeletonModule } from 'primeng/skeleton';
 
 import { EpisodeListComponent } from './episode-list.component';
+import { SkeletonModule } from '../skeleton';
 import { LazyloadImageExtraModule } from '../../directives/lazyload-image-extra';
 import { DateTimePipeModule } from '../../pipes/date-time-pipe';
 import { NumberPipeModule } from '../../pipes/number-pipe';

@@ -18,8 +18,9 @@ export class BaseUrlInterceptor implements HttpInterceptor {
     }
     const canInsertBaseUrl = request.url.indexOf('http://') !== 0 && request.url.indexOf('https://') !== 0 && request.url.indexOf('/assets/i18n/') !== 0;
     const language = this.translocoService.getActiveLang();
-    const headers: { 'Accept-Language'?: string, Authorization?: string } = { 'Accept-Language': language };
-    this.authService.accessTokenValue && (headers.Authorization = this.authService.accessTokenValue);
+    const headers: { [key: string]: string | string[] } = { 'Accept-Language': language };
+    this.authService.accessTokenValue && (headers['Authorization'] = this.authService.accessTokenValue);
+    this.authService.socketId && (headers['X-Socket-ID'] = this.authService.socketId);
     const apiReq = request.clone({
       url: canInsertBaseUrl ? `${environment.apiUrl}/${request.url}` : request.url,
       setHeaders: headers

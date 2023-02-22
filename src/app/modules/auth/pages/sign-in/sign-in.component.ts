@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { finalize, takeUntil, timer } from 'rxjs';
@@ -20,7 +20,7 @@ interface SignInForm {
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [DestroyService]
 })
-export class SignInComponent {
+export class SignInComponent implements OnInit {
   @ViewChild('reCaptcha') reCaptcha?: RecaptchaComponent;
   maxFailureCount: number = SIGN_IN_LIMIT_COUNT;
   continueUrl: string;
@@ -35,6 +35,12 @@ export class SignInComponent {
       captcha: new FormControl(undefined)
     }, { updateOn: 'change' });
     this.continueUrl = this.route.snapshot.queryParams['continue'] || '/';
+  }
+
+  ngOnInit(): void {
+    if (this.authService.currentUser) {
+      this.router.navigate([this.continueUrl]);
+    }
   }
 
   onSignInFormSubmit(): void {

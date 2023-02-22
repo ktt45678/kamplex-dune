@@ -4,6 +4,7 @@ import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { takeUntil } from 'rxjs';
 
 import { DropdownOptionDto } from '../../../../core/dto/media';
+import { Production } from '../../../../core/models';
 import { DestroyService, ItemDataService, ProductionsService } from '../../../../core/services';
 
 interface UpdateProductionForm {
@@ -23,12 +24,12 @@ export class UpdateProductionComponent implements OnInit {
   updateProductionForm: FormGroup<UpdateProductionForm>;
   countryOptions?: DropdownOptionDto[];
 
-  constructor(private ref: ChangeDetectorRef, private dialogRef: DynamicDialogRef, private config: DynamicDialogConfig,
+  constructor(private ref: ChangeDetectorRef, private dialogRef: DynamicDialogRef, private config: DynamicDialogConfig<Production>,
     private productionsService: ProductionsService, private itemDataService: ItemDataService,
     private destroyService: DestroyService) {
     this.updateProductionForm = new FormGroup<UpdateProductionForm>({
-      name: new FormControl(this.config.data['name'] || '', { nonNullable: true, validators: [Validators.required, Validators.maxLength(150)] }),
-      country: new FormControl(this.config.data['country'] || null)
+      name: new FormControl(this.config.data!.name || '', { nonNullable: true, validators: [Validators.required, Validators.maxLength(150)] }),
+      country: new FormControl(this.config.data!.country || null)
     }, { updateOn: 'change' });
   }
 
@@ -42,7 +43,7 @@ export class UpdateProductionComponent implements OnInit {
     if (this.updateProductionForm.invalid) return;
     this.isUpdatingProduction = true;
     const formValue = this.updateProductionForm.getRawValue();
-    this.productionsService.update(this.config.data['_id'], {
+    this.productionsService.update(this.config.data!._id, {
       name: formValue.name,
       country: formValue.country
     }).pipe(takeUntil(this.destroyService)).subscribe({

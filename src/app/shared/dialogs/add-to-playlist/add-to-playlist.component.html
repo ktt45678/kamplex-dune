@@ -1,0 +1,63 @@
+<ng-container *transloco="let t; loadingTpl: loadingSpinner">
+  <input #inputSearchPlaylists class="p-inputtext-sm tw-w-full" id="search" type="text" aria-label="Search playlists"
+    [placeholder]="t('media.playlists.search')" pInputText>
+  <ng-container *ngIf="loadingPlaylist; then loadingSpinner; else loadedPlaylists"></ng-container>
+  <ng-template #loadedPlaylists>
+    <p *ngIf="!playlistsToAdd?.length; else playlistList"
+      class="tw-text-gray-400 tw-font-medium tw-my-4 tw-text-center">
+      {{ t('media.playlists.noPlaylists') }}</p>
+    <ng-template #playlistList>
+      <p-altCheckbox #cbPlaylist *ngFor="let playlist of playlistsToAdd" name="playlists" styleClass="p-checkbox-md"
+        labelStyleClass="tw-truncate" class="tw-flex tw-items-center tw-w-full tw-my-4" [label]="playlist.name" [icon]="'ms tw-flex-1 tw-ml-2 tw-text-right ' + (playlist.visibility === MediaVisibility.PUBLIC ? 'ms-public' :
+            playlist.visibility === MediaVisibility.UNLISTED ? 'ms-link' : 'ms-lock')" [ariaLabel]="playlist.name"
+        [value]="playlist.hasMedia" [binary]="true" (onChange)="addOrRemoveMedia(playlist, cbPlaylist)"></p-altCheckbox>
+    </ng-template>
+  </ng-template>
+  <button *ngIf="!showCreatePlaylistForm; else createPlaylistFormTpl" pButton type="button"
+    class="p-button-secondary p-button-text p-button-sm p-button-shrink tw-w-full"
+    [label]="t('media.playlists.createPlaylist')" icon="ms ms-add" (click)="showCreatePlaylistForm = true">
+  </button>
+  <ng-template #createPlaylistFormTpl>
+    <form #createPlaylistFormRef [formGroup]="createPlaylistForm" formHandler (ngSubmit)="onCreatePlaylistFormSubmit()">
+      <div class="tw-w-full">
+        <label for="name" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
+          t('media.createPlaylist.name') }}</label>
+        <input formControlName="name" class="p-inputtext-sm tw-w-full" id="name" type="text"
+          aria-describedby="name-error" [placeholder]="t('media.createPlaylist.namePlaceholder')" pInputText
+          controlAutofocus>
+        <small id="name-error" class="p-error tw-text-xs tw-block tw-my-2"
+          [invalidControl]="createPlaylistForm.controls.name">{{ createPlaylistForm.controls.name.errors
+          | firstErrorKey:'createPlaylist':'name' }}</small>
+      </div>
+      <div class="tw-w-full">
+        <label for="visibility" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
+          t('media.createPlaylist.visibility') }}</label>
+        <div id="visibility">
+          <p-radioButton name="visibility" [value]="1" [label]="t('media.createPlaylist.visibilityPublic')"
+            formControlName="visibility" class="tw-block tw-mb-2">
+          </p-radioButton>
+          <p-radioButton name="visibility" [value]="2" [label]="t('media.createPlaylist.visibilityUnlisted')"
+            formControlName="visibility" class="tw-block tw-mb-2">
+          </p-radioButton>
+          <p-radioButton name="visibility" [value]="3" [label]="t('media.createPlaylist.visibilityPrivate')"
+            formControlName="visibility" class="tw-block">
+          </p-radioButton>
+        </div>
+      </div>
+      <div class="tw-flex tw-mt-4">
+        <button pButton type="button" class="p-button-secondary p-button-text p-button-sm tw-w-1/2"
+          [label]="t('media.createPlaylist.cancel')" [disabled]="createPlaylistForm.disabled"
+          (click)="showCreatePlaylistForm = false">
+        </button>
+        <button pButton type="submit" class="p-button p-button-text p-button-sm tw-w-1/2"
+          [label]="t('media.createPlaylist.submit')" [disabled]="createPlaylistForm.disabled">
+        </button>
+      </div>
+    </form>
+  </ng-template>
+</ng-container>
+<ng-template #loadingSpinner>
+  <div class="tw-flex tw-justify-center tw-items-center tw-h-96">
+    <p-progressSpinner strokeWidth="3px"></p-progressSpinner>
+  </div>
+</ng-template>

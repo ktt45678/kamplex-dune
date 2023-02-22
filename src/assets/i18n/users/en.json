@@ -6,6 +6,42 @@
     "rated": "Rated"
   },
   "history": {
-    "emptyHistory": "Nothing was recorded"
+    "emptyHistory": "Nothing was recorded",
+    "pauseHistory": "Pause updating",
+    "unpauseHistory": "Resume updating",
+    "delete": "Delete"
+  },
+  "historyTable": {
+    "title": "Title",
+    "progress": "Progress",
+    "pauseOrResume": "Pause",
+    "time": "Time"
+  },
+  "playlistTable": {
+    "name": "Name",
+    "itemCount": "Items",
+    "visibility": "Visibility",
+    "createdAt": "Created at"
+  },
+  "rating": {
+    "editableScore": "Editable score"
+  },
+  "ratingTable": {
+    "title": "Title",
+    "score": "Score",
+    "date": "Rated at"
+  },
+  "filterHistory": {
+    "toggleButton": "Show/hide filter panel",
+    "range": "Range",
+    "startDate": "Start",
+    "endDate": "End",
+    "mediaFilters": "Filters",
+    "mediaIds": "Filter by show",
+    "mediaType": "Type",
+    "mediaOriginalLanguage": "Language",
+    "mediaGenres": "Genres",
+    "mediaYear": "Year",
+    "filter": "Filter"
   }
 }

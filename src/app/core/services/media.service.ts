@@ -3,8 +3,8 @@ import { Injectable } from '@angular/core';
 import { forkJoin, map, Observable, tap } from 'rxjs';
 import { HttpCacheManager } from '@ngneat/cashew';
 
-import { AddMediaSubtitleDto, AddMediaVideoDto, AddTVEpisodeDto, CreateMediaDto, FindOneMediaDto, FindTVEpisodesDto, PaginateMediaDto, UpdateMediaDto, UpdateMediaVideoDto, UpdateTVEpisodeDto } from '../dto/media';
-import { ExtMediaSuggestions, FlixHQInfo, FlixHQSearch, GogoanimeInfo, GogoanimeSearch, Media, MediaDetails, MediaStream, MediaSubtitle, MediaVideo, Paginated, TVEpisode, TVEpisodeDetails, ZoroInfo, ZoroSearch } from '../models';
+import { AddMediaSubtitleDto, AddMediaVideoDto, AddTVEpisodeDto, CreateMediaDto, CursorPageMediaDto, FindOneMediaDto, FindTVEpisodesDto, OffsetPageMediaDto, PaginateMediaDto, UpdateMediaDto, UpdateMediaVideoDto, UpdateTVEpisodeDto } from '../dto/media';
+import { CursorPaginated, ExtMediaSuggestions, FlixHQInfo, FlixHQSearch, GogoanimeInfo, GogoanimeSearch, Media, MediaDetails, MediaStream, MediaSubtitle, MediaVideo, Paginated, TVEpisode, TVEpisodeDetails, ZoroInfo, ZoroSearch } from '../models';
 import { CacheKey, ExtMediaProvider } from '../../core/enums';
 import { getImageName } from '../../core/utils';
 import { environment } from '../../../environments/environment';
@@ -17,15 +17,16 @@ export class MediaService {
     return this.http.post<MediaDetails>('media', createMediaDto).pipe(tap(() => this.invalidateHomeMediaCache()));
   }
 
-  findPage(paginateMediaDto?: PaginateMediaDto, context?: HttpContext) {
+  findPage(paginateMediaDto?: OffsetPageMediaDto, context?: HttpContext) {
     const params: { [key: string]: any } = {};
     if (paginateMediaDto) {
-      const { page, limit, search, sort, genres, type, status, originalLanguage, year, includeHidden, includeUnprocessed } = paginateMediaDto;
+      const { page, limit, search, sort, genres, tags, type, status, originalLanguage, year, includeHidden, includeUnprocessed } = paginateMediaDto;
       page && (params['page'] = page);
       limit && (params['limit'] = limit);
       search && (params['search'] = search);
       sort && (params['sort'] = sort);
       genres?.length && (params['genres'] = genres);
+      tags?.length && (params['tags'] = tags);
       type && (params['type'] = type);
       status && (params['status'] = status);
       originalLanguage && (params['originalLanguage'] = originalLanguage);
@@ -34,6 +35,26 @@ export class MediaService {
       includeUnprocessed && (params['includeUnprocessed'] = includeUnprocessed);
     }
     return this.http.get<Paginated<Media>>('media', { params, context });
+  }
+
+  findPageCursor(paginateMediaDto?: CursorPageMediaDto, context?: HttpContext) {
+    const params: { [key: string]: any } = {};
+    if (paginateMediaDto) {
+      const { pageToken, limit, search, sort, genres, tags, type, status, originalLanguage, year, includeHidden, includeUnprocessed } = paginateMediaDto;
+      pageToken && (params['page'] = pageToken);
+      limit && (params['limit'] = limit);
+      search && (params['search'] = search);
+      sort && (params['sort'] = sort);
+      genres?.length && (params['genres'] = genres);
+      tags?.length && (params['tags'] = tags);
+      type && (params['type'] = type);
+      status && (params['status'] = status);
+      originalLanguage && (params['originalLanguage'] = originalLanguage);
+      year && (params['year'] = year);
+      includeHidden && (params['includeHidden'] = includeHidden);
+      includeUnprocessed && (params['includeUnprocessed'] = includeUnprocessed);
+    }
+    return this.http.get<CursorPaginated<Media>>('media/cursor', { params, context });
   }
 
   findOne(id: string, findOneMediaDto?: FindOneMediaDto) {

@@ -1,9 +1,13 @@
 import { Renderer2 } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { DialogService, DynamicDialogComponent, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { AutoComplete } from 'primeng/autocomplete';
+import { InputNumber } from 'primeng/inputnumber';
 import { TabMenu } from 'primeng/tabmenu';
+import { Tooltip } from 'primeng/tooltip';
 import { ZIndexUtils } from 'primeng/utils';
 import { first } from 'rxjs';
+import { InputSwitch } from 'primeng/inputswitch';
 
 export function fixNestedDialogFocus(dialogRef: DynamicDialogRef, parent: DynamicDialogRef, dialogService: DialogService, renderer: Renderer2, document: Document) {
   const dialogComponent = dialogService.dialogComponentRefMap.get(parent)?.instance;
@@ -53,4 +57,57 @@ export function applyPrimeNGPatches() {
     }
     return item === this.activeItem;
   };
+  InputNumber.prototype.validateValue = function (value: any) {
+    if (value === '-' || value == null) {
+      return null;
+    }
+    if (this.min != null && value < this.min) {
+      if (this.max)
+        return this.max;
+      return this.min;
+    }
+    if (this.max != null && value > this.max) {
+      if (this.min)
+        return this.min;
+      return this.max;
+    }
+    return value;
+  }
+  AutoComplete.prototype.selectItem = function (option: any, focus: boolean = true) {
+    if (this.forceSelectionUpdateModelTimeout) {
+      clearTimeout(this.forceSelectionUpdateModelTimeout);
+      this.forceSelectionUpdateModelTimeout = null;
+    }
+
+    if (this.multiple) {
+      this.multiInputEL.nativeElement.value = '';
+      this.value = this.value || [];
+      if (!this.isSelected(option) || !this.unique) {
+        this.value = [...this.value, option];
+        this.onModelChange(this.value);
+      }
+    } else {
+      this.inputEL.nativeElement.value = this.resolveFieldData(option);
+      this.value = option;
+      this.onModelChange(this.value);
+    }
+
+    this.onSelect.emit(option);
+    this.updateFilledState();
+
+    //if (focus) {
+    //this.itemClicked = true;
+    //this.focusInput();
+    //}
+
+    //this.hide();
+  }
+  InputSwitch.prototype.onClick = function (event: Event, cb: HTMLInputElement) {
+    if (!this.disabled && !this.readonly) {
+      event.preventDefault();
+      this.toggle(event);
+      // Prevent focus visible
+      //cb.focus();
+    }
+  }
 }

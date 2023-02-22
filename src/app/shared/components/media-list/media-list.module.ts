@@ -2,13 +2,16 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { LazyLoadImageModule } from 'ng-lazyload-image';
-import { SkeletonModule } from 'primeng/skeleton';
 import { TranslocoModule } from '@ngneat/transloco';
+import { ButtonModule } from 'primeng/button';
+import { DynamicDialogModule } from 'primeng/dynamicdialog';
 
+import { MediaListComponent } from './media-list.component';
+import { SkeletonModule } from '../skeleton';
 import { LazyloadImageExtraModule } from '../../directives/lazyload-image-extra';
+import { CdkMenuCustomModule } from '../../directives/cdk-menu-custom';
 import { NumberPipeModule } from '../../pipes/number-pipe';
 import { DateTimePipeModule } from '../../pipes/date-time-pipe';
-import { MediaListComponent } from './media-list.component';
 
 @NgModule({
   declarations: [MediaListComponent],
@@ -18,9 +21,12 @@ import { MediaListComponent } from './media-list.component';
     LazyLoadImageModule,
     SkeletonModule,
     LazyloadImageExtraModule,
+    TranslocoModule,
     NumberPipeModule,
     DateTimePipeModule,
-    TranslocoModule
+    CdkMenuCustomModule,
+    ButtonModule,
+    DynamicDialogModule
   ],
   exports: [MediaListComponent]
 })

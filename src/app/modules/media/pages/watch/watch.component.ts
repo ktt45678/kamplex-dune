@@ -5,13 +5,14 @@ import { Translation, TranslocoService } from '@ngneat/transloco';
 import { combineLatest, filter, first, interval, map, of, switchMap, takeUntil, timer } from 'rxjs';
 import { SourceInfo, Source, Track } from 'plyr';
 
+import { UpdateWatchTimeDto } from '../../../../core/dto/history';
 import { AuthService, MediaService, HistoryService, RatingsService, DestroyService } from '../../../../core/services';
 import { ExtStreamList, MediaDetails, MediaStream, Rating, TVEpisode, UserDetails } from '../../../../core/models';
 import { VideoPlayerComponent } from '../../../../shared/components/video-player';
 import { StarRatingComponent } from '../../../../shared/components/star-rating';
 import { MediaType } from '../../../../core/enums';
+import { toHexColor } from '../../../../core/utils';
 import { SITE_NAME } from '../../../../../environments/config';
-import { UpdateHistoryDto } from '../../../../core/dto/history';
 
 @Component({
   selector: 'app-watch',
@@ -33,6 +34,7 @@ export class WatchComponent implements OnInit, OnDestroy {
   currentUser!: UserDetails | null;
   playerSource?: SourceInfo;
   playerHlsSource?: ExtStreamList;
+  playerPreviewThumbnail?: string;
   selectedCodec: number = 1;
   media?: MediaDetails;
   episodes?: TVEpisode[];
@@ -104,20 +106,22 @@ export class WatchComponent implements OnInit, OnDestroy {
     interval(3000).pipe(takeUntil(this.destroyService)).subscribe(() => {
       this.updateLocalWatchTime();
     });
-    timer(5000, 60000).pipe(takeUntil(this.destroyService)).subscribe(() => {
-      this.updateWatchTimeToServer();
-    });
+    if (this.currentUser) {
+      timer(5000, 60000).pipe(takeUntil(this.destroyService)).subscribe(() => {
+        this.updateWatchTimeToServer();
+      });
+    }
   }
 
   updateLocalWatchTime() {
     if (this.media && this.videoPlayer?.player) {
-      const updateHistoryDto: UpdateHistoryDto = {
+      const updateWatchTimeDto: UpdateWatchTimeDto = {
         media: this.media._id,
         watchTime: ~~this.videoPlayer.player.currentTime
       };
       if (this.streams?.episode)
-        updateHistoryDto.episode = this.streams.episode._id;
-      this.historyService.updateLocal(updateHistoryDto);
+        updateWatchTimeDto.episode = this.streams.episode._id;
+      this.historyService.updateLocal(updateWatchTimeDto);
     }
   }
 
@@ -128,7 +132,7 @@ export class WatchComponent implements OnInit, OnDestroy {
 
   watchMovie(media: MediaDetails): void {
     this.title.setTitle(`${media.title} - ${SITE_NAME}`);
-    this.setMediaMeta(media.title);
+    this.setMediaMeta(media);
     this.translocoService.selectTranslation('languages').pipe(first(), switchMap(languages => {
       return this.mediaService.findMovieStreams(media._id).pipe(map(movieStreams => ({ movieStreams, languages })));
     })).subscribe(({ movieStreams, languages }) => {
@@ -145,7 +149,7 @@ export class WatchComponent implements OnInit, OnDestroy {
     this.translocoService.selectTranslation('media').pipe(first()).subscribe(t => {
       this.title.setTitle(`${t['episode.episodePrefix']} ${episodeNumber} - ${media.title} - ${SITE_NAME}`);
     });
-    this.setMediaMeta(media.title);
+    this.setMediaMeta(media);
     this.findPrevAndNextEpisodes(media.tv.episodes, episodeNumber);
     this.translocoService.selectTranslation('languages').pipe(first(), switchMap(languages => {
       return this.mediaService.findTVStreams(media._id, episodeNumber).pipe(map(episodeStreams => ({ episodeStreams, languages })));
@@ -167,21 +171,13 @@ export class WatchComponent implements OnInit, OnDestroy {
     this.router.navigate([], { queryParams: { ep } });
   }
 
-  setMediaMeta(title: string): void {
-    this.meta.addTags([
-      {
-        name: 'description',
-        content: 'Watch on KamPlex'
-      },
-      {
-        property: 'og:title',
-        content: title
-      },
-      {
-        property: 'og:description',
-        content: 'Watch on KamPlex'
-      }
-    ], true);
+  setMediaMeta(media: MediaDetails): void {
+    this.meta.updateTag({ name: 'description', content: media.overview });
+    this.meta.updateTag({ property: 'og:site_name', content: SITE_NAME });
+    this.meta.updateTag({ property: 'og:title', content: media.title });
+    this.meta.updateTag({ property: 'og:description', content: media.overview });
+    media.posterColor && this.meta.updateTag({ name: 'theme-color', content: toHexColor(media.posterColor) });
+    media.thumbnailBackdropUrl && this.meta.updateTag({ property: 'og:description', content: media.thumbnailBackdropUrl });
   }
 
   setPlayerSource(data: MediaStream, languages: Translation): void {
@@ -211,6 +207,7 @@ export class WatchComponent implements OnInit, OnDestroy {
       tracks: tracks
     };
     this.playerHlsSource = data.extStreamList;
+    this.playerPreviewThumbnail = data.previewThumbnail;
     this.ref.markForCheck();
   }
 
@@ -267,9 +264,11 @@ export class WatchComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.title.setTitle(SITE_NAME);
     this.meta.removeTag('name="description"');
+    this.meta.removeTag('property="og:site_name"');
     this.meta.removeTag('property="og:title"');
     this.meta.removeTag('property="og:description"');
-    this.updateWatchTimeToServer();
+    this.currentUser && this.updateWatchTimeToServer();
   }
 }

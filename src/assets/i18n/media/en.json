@@ -10,6 +10,19 @@
     "episodeCountValue": "{{ episodeCount }} Ep",
     "noResults": "No results were found"
   },
+  "listPaths": {
+    "genre": "Genre",
+    "producer": "Producer",
+    "studio": "Studio",
+    "tag": "Tag",
+    "movie": "Movies",
+    "tv": "TV Shows",
+    "added": "Recently Added",
+    "updated": "Recently Updated",
+    "newReleases": "New Releases",
+    "mostViewed": "Most Viewed",
+    "topRated": "Top Rated"
+  },
   "details": {
     "information": "Information",
     "runtimeValue": "{{ media.list.runtimeValue }}",
@@ -31,21 +44,28 @@
   },
   "filter": {
     "search": "Search (2 or more characters)",
+    "enteredSearch": "Search: ",
     "genre": "Genres",
+    "selectedGenres": "{ genreCount, plural, one {1 Genre Selected} other {# Genres Selected} }",
+    "tag": "Tags",
+    "selectedTags": "{ tagCount, plural, one {1 Tag Selected} other {# Tags Selected} }",
     "sort": "Sort",
     "type": "Type",
     "status": "Status",
     "language": "Language",
     "year": "Year",
+    "toggleAdvanced": "Advanced",
     "beginFilter": "Filter"
   },
   "mediaTypes": {
+    "all": "All",
     "movie": "Movie",
     "tvShow": "TV Show"
   },
   "episode": {
     "episodePrefix": "Episode",
-    "epPrefix": "E",
+    "epPrefix": "Ep",
+    "ePrefix": "E",
     "episodeNumber": "Episode number",
     "name": "Name",
     "overview": "Overview",
@@ -66,7 +86,15 @@
     "viewsAscending": "Views (Ascending)",
     "viewsDescending": "Views (Descending)",
     "scoreAscending": "Score (Ascending)",
-    "scoreDescending": "Score (Descending)"
+    "scoreDescending": "Score (Descending)",
+    "ascending": "Ascending",
+    "descending": "Descending",
+    "name": "Name",
+    "releaseDate": "Release date",
+    "dateAdded": "Date added",
+    "dateUpdated": "Date updated",
+    "views": "Views",
+    "score": "Score"
   },
   "statusOptions": {
     "upcoming": "Upcoming",
@@ -83,12 +111,44 @@
   "rating": {
     "anonUsers": "Sign in to rate",
     "youRated": "You rated: {{ score }}",
-    "clearVote": "clear"
+    "clear": "clear",
+    "delete": "Delete rating",
+    "noRatings": "No ratings found"
   },
   "playlists": {
+    "search": "Search",
+    "noPlaylistsWithCreateOption": "No playlists found, please create one.",
+    "create": "Create",
+    "createPlaylist": "Create playlist",
+    "uploadCustomThumbnail": "Upload custom thumbnail",
+    "settings": "Playlist settings",
+    "delete": "Delete playlist",
     "playlistItemCount": "{{ itemCount }} items",
-    "noPlaylists": "No playlists were created",
+    "noPlaylists": "No playlists found",
     "noPlaylist": "Playlist not found",
-    "playlistItemUnavailable": "Unavailable"
+    "playlistItemUnavailable": "Unavailable",
+    "addToPlaylist": "Add to playlist",
+    "addToPlaylists": "Add to playlists",
+    "addToRecentPlaylist": "Add to recent playlist",
+    "addAllToPlaylists": "Add all to playlists",
+    "add": "Add",
+    "removeFromPlaylist": "Remove"
+  },
+  "createPlaylist": {
+    "name": "Name",
+    "namePlaceholder": "Enter playlist name",
+    "description": "Description (optional)",
+    "descriptionPlaceholder": "Some information about this playlist",
+    "visibility": "Visibility",
+    "visibilityPublic": "Public",
+    "visibilityUnlisted": "Unlisted",
+    "visibilityPrivate": "Private",
+    "cancel": "Cancel",
+    "submit": "Create"
+  },
+  "visibility": {
+    "public": "Public",
+    "unlisted": "Unlisted",
+    "private": "Private"
   }
 }

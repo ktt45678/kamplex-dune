@@ -6,4 +6,5 @@ export interface History {
   episode?: TVEpisode;
   watchTime: number;
   date: string;
+  paused: boolean;
 }

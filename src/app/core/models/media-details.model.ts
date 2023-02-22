@@ -1,7 +1,8 @@
-import { User, Media, Movie, TVShow, MediaVideo, Production, MediaExternalIds, MediaExternalStreams, MediaScannerData } from '.';
+import { User, Media, Movie, TVShow, MediaVideo, Production, MediaExternalIds, MediaExternalStreams, MediaScannerData, Tag } from '.';
 
 export interface MediaDetails extends Media {
   productions: Production[];
+  tags: Tag[];
   movie: Movie;
   tv: TVShow;
   videos: MediaVideo[];

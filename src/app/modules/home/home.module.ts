@@ -5,7 +5,6 @@ import { LazyLoadImageModule } from 'ng-lazyload-image';
 import { SwiperModule } from 'swiper/angular';
 import { BadgeModule } from 'primeng/badge';
 import { ButtonModule } from 'primeng/button';
-import { SkeletonModule } from 'primeng/skeleton';
 
 import { HomeRoutingModule } from './home-routing.module';
 import { LazyloadImageExtraModule } from '../../shared/directives/lazyload-image-extra';
@@ -14,6 +13,7 @@ import { DateTimePipeModule } from '../../shared/pipes/date-time-pipe';
 import { HomeComponent } from './pages/home/home.component';
 import { MediaListModule } from '../../shared/components/media-list';
 import { MediaTopModule } from '../../shared/components/media-top';
+import { SkeletonModule } from '../../shared/components/skeleton';
 import { FeaturedMediaComponent } from './components/featured-media';
 
 @NgModule({

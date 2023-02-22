@@ -1,3 +1,4 @@
 export interface FindAddToPlaylistDto {
-  mediaId: string;
+  search?: string;
+  mediaId?: string;
 }

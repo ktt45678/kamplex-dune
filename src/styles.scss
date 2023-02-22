@@ -18,8 +18,8 @@
 
 html {
   &::-webkit-scrollbar {
-    width: 6.5px;
-    height: 6.5px;
+    width: 4px;
+    height: 4px;
   }
   &::-webkit-scrollbar-track {
     background: #424242;
@@ -40,7 +40,8 @@ body {
 
 img:focus,
 a:focus,
-button:focus {
+button:focus,
+div:focus {
   outline: none;
 }
 

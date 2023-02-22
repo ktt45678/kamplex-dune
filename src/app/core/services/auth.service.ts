@@ -11,10 +11,11 @@ import { UserPermission } from '../enums';
   providedIn: 'root'
 })
 export class AuthService {
-  private refreshTokenTimeout?: any;
+  private refreshTokenTimeout?: number;
   private _accessToken: string | null;
   private currentUserSubject: BehaviorSubject<UserDetails | null>;
   public currentUser$: Observable<UserDetails | null>;
+  public socketId?: string;
 
   constructor(private http: HttpClient) {
     this._accessToken = null;
@@ -69,11 +70,11 @@ export class AuthService {
   }
 
   signOut() {
-    this.http.post('auth/revoke-token', {}, { withCredentials: true }).subscribe().add(() => {
+    return this.http.post('auth/revoke-token', {}, { withCredentials: true }).pipe(tap(() => {
       this.currentUserSubject.next(null);
       this._accessToken = null;
       this.stopRefreshTokenTimer();
-    });
+    }));
   }
 
   private startRefreshTokenTimer() {
@@ -84,12 +85,12 @@ export class AuthService {
       // Set a timeout to refresh the token a minute before it expires
       const expires = new Date(jwtToken.exp * 1000);
       const timeout = expires.getTime() - Date.now() - (60 * 1000);
-      this.refreshTokenTimeout = setTimeout(() => this.refreshToken().subscribe(), timeout);
+      this.refreshTokenTimeout = window.setTimeout(() => this.refreshToken().subscribe(), timeout);
     }
   }
 
   private stopRefreshTokenTimer() {
-    this.refreshTokenTimeout && clearTimeout(this.refreshTokenTimeout);
+    this.refreshTokenTimeout && window.clearTimeout(this.refreshTokenTimeout);
   }
 
   private assignUser(data: JWTWithPayload) {

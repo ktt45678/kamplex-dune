@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { finalize, interval, switchMap, takeUntil, takeWhile, tap } from 'rxjs';
 
@@ -23,7 +24,7 @@ interface SignUpForm {
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [ItemDataService, DestroyService]
 })
-export class SignUpComponent {
+export class SignUpComponent implements OnInit {
   signUpForm: FormGroup<SignUpForm>;
   days: DropdownOptionDto[];
   months: DropdownOptionDto[];
@@ -32,9 +33,10 @@ export class SignUpComponent {
   success: boolean = false;
   canResendEmail: boolean = true;
   resendEmailTtl: number = 0;
+  continueUrl: string;
 
-  constructor(private ref: ChangeDetectorRef, private authService: AuthService, private itemDataService: ItemDataService,
-    private destroyService: DestroyService) {
+  constructor(private ref: ChangeDetectorRef, private authService: AuthService, private route: ActivatedRoute, private router: Router,
+    private itemDataService: ItemDataService, private destroyService: DestroyService) {
     this.signUpForm = new FormGroup<SignUpForm>({
       username: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(3), Validators.maxLength(32)] }),
       email: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
@@ -51,6 +53,13 @@ export class SignUpComponent {
     this.days = this.itemDataService.createDateList();
     this.months = this.itemDataService.createMonthList();
     this.years = this.itemDataService.createYearList(1920);
+    this.continueUrl = this.route.snapshot.queryParams['continue'] || '/';
+  }
+
+  ngOnInit(): void {
+    if (this.authService.currentUser) {
+      this.router.navigate([this.continueUrl]);
+    }
   }
 
   onsignUpFormSubmit(): void {

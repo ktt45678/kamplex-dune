@@ -28,7 +28,7 @@ export class WsService {
   }
 
   fromEventOnce<T>(eventName: string) {
-    return new Observable(observer => {
+    return new Observable<T>(observer => {
       this.socket.once(eventName, (data: T) => {
         observer.next(data);
         observer.complete();

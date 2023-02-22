@@ -4,7 +4,7 @@
 }
 
 .ms {
-  font-family: 'Material Symbols Outlined';
+  font-family: "Material Symbols Outlined";
   font-weight: normal;
   font-style: normal;
   line-height: 1;
@@ -15,14 +15,26 @@
   white-space: nowrap;
   word-wrap: normal;
   direction: ltr;
-  font-feature-settings: 'liga';
-  -webkit-font-feature-settings: 'liga';
+  font-feature-settings: "liga";
+  -webkit-font-feature-settings: "liga";
   -webkit-font-smoothing: antialiased;
-  font-variation-settings: 'FILL' var(--FILL), 'opsz' var(--opsz);
+  font-variation-settings: "FILL" var(--FILL), "opsz" var(--opsz);
+}
+
+.ms-icon-xxs {
+  font-size: 14px;
+}
+
+.ms-icon-xs {
+  font-size: 16px;
 }
 
 .ms-icon-sm {
   font-size: 18px;
+}
+
+.ms-icon-md {
+  font-size: 20px;
 }
 
 .ms-icon-lg {
@@ -4982,7 +4994,7 @@
 }
 
 .ms-lock:before {
-  content: "\e899";
+  content: "lock";
 }
 
 .ms-lock-clock:before {
@@ -9539,4 +9551,8 @@
 
 .ms-zoom-out-map:before {
   content: "\e56b";
+}
+
+.ms-resume:before {
+  content: "\f7d0";
 }

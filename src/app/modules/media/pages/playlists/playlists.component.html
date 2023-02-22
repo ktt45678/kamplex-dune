@@ -1,20 +1,20 @@
 <div class="tw-max-w-8xl tw-mx-auto tw-my-8">
   <ng-container *transloco="let t">
-    <div class="tw-h-14"></div> <!-- Fixed navbar space -->
     <div class="tw-mx-4 tw-my-1">
       <div class="tw-bg-neutral-725 tw-relative tw-p-4 tw-rounded-md tw-overflow-hidden">
         <ng-container *ngIf="loadingPlaylist; then playlistLoadingTpl; else playlistLoaded"></ng-container>
         <ng-template #playlistLoaded>
           <ng-container *ngIf="playlist; else noPlaylist">
-            <div aria-label="Media backdrop blur" *ngIf="playlist.thumbnailMedia.thumbnailBackdropUrl"
+            <div aria-label="Media backdrop"
+              *ngIf="playlist.thumbnailMedia && playlist.thumbnailMedia.thumbnailBackdropUrl"
               class="tw-absolute tw-bg-cover tw-bg-no-repeat tw-bg-center tw-brightness-40 tw-blur-xl -tw-inset-8 tw-z-1"
               [lazyLoad]="playlist.thumbnailMedia.thumbnailBackdropUrl"
               [ngStyle]="{ 'background-color':
                 playlist.thumbnailMedia.backdropColor ? (playlist.thumbnailMedia.backdropColor | rgbColor) : 'transparent' }">
             </div>
-            <div class="tw-relative tw-z-2">
-              <p class="tw-text-white tw-text-base md:tw-text-3xl tw-font-bold">{{ playlist.name }}</p>
-              <p *ngIf="playlist.description" class="tw-text-white tw-text-sm md:tw-text-base tw-mt-2">{{
+            <div class="tw-text-white tw-relative tw-z-2">
+              <p class="tw-text-base md:tw-text-3xl tw-font-bold">{{ playlist.name }}</p>
+              <p *ngIf="playlist.description" class="tw-text-sm md:tw-text-base tw-mt-2">{{
                 playlist.description }}</p>
               <div class="tw-flex tw-items-center tw-mt-2">
                 <div class="tw-w-10">
@@ -24,11 +24,11 @@
                       [lazyLoad]="playlist.author.smallAvatarUrl"
                       [lazyLoadPlaceholder]="playlist.author.avatarColor | rgbColor" [alt]="playlist.author.username">
                     <ng-template #noAvatar>
-                      <span class="tw-text-white ms ms-account-circle ms-opsz-lg tw-text-4xl tw-leading-9"></span>
+                      <span class="ms ms-account-circle ms-opsz-lg tw-text-4xl tw-leading-9"></span>
                     </ng-template>
                   </div>
                 </div>
-                <p class="tw-text-white tw-text-sm md:tw-text-base tw-font-medium tw-ml-2">{{
+                <p class="tw-text-sm md:tw-text-base tw-font-medium tw-ml-2">{{
                   playlist.author.displayName || playlist.author.username }}</p>
               </div>
             </div>
@@ -44,31 +44,58 @@
         <ng-template #playlistItemsLoaded>
           <ng-container *ngIf="playlistItems && playlistItems.results.length">
             <ul class="tw-overflow-hidden tw-rounded-md tw-list-none">
-              <li class="tw-bg-neutral-875 hover:tw-bg-neutral-800 focus-visible:tw-bg-neutral-725 tw-transition-colors
-                tw-duration-200 tw-block tw-p-1" *ngFor="let item of playlistItems.results; trackBy: track_Id">
-                <ng-container *ngIf="item.media as media; else mediaUnavailable">
-                  <a [routerLink]="['/watch', media._id]">
-                    <div class="tw-flex">
-                      <div class="tw-w-20">
-                        <div class="tw-aspect-w-2 tw-aspect-h-3 [&>*]:tw-rounded-md">
-                          <img *ngIf="media.thumbnailPosterUrl; else noPoster" class="tw-object-cover"
-                            [lazyLoad]="media.thumbnailPosterUrl" [lazyLoadPlaceholder]="media.posterColor | rgbColor"
-                            [alt]="media.title" errorImage="assets/images/media-poster-md.png">
-                          <ng-template #noPoster>
-                            <img class="tw-object-cover" src="assets/images/media-poster-md.png" loading="lazy"
-                              [alt]="media.title">
-                          </ng-template>
-                        </div>
+              <li class="tw-bg-neutral-875 hover:tw-bg-neutral-800 tw-transition-colors
+                tw-duration-200 tw-block tw-p-1"
+                *ngFor="let item of playlistItems.results; let itemIndex = index; trackBy: track_Id">
+                <ng-container *ngIf="item.media && (item.media | isTypeOf:'string') === false; else mediaUnavailable">
+                  <div class="tw-group tw-flex">
+                    <a #thumbnailLink [routerLink]="['/watch', item.media._id]"
+                      class="tw-block tw-w-20 focus-visible:tw-shadow-focus-box">
+                      <div class="tw-aspect-w-2 tw-aspect-h-3 [&>*]:tw-rounded-md">
+                        <img *ngIf="item.media.thumbnailPosterUrl; else noPoster" class="tw-object-cover"
+                          [lazyLoad]="item.media.thumbnailPosterUrl"
+                          [lazyLoadPlaceholder]="item.media.posterColor | rgbColor" [alt]="item.media.title"
+                          errorImage="assets/images/media-poster-md.png">
+                        <ng-template #noPoster>
+                          <img class="tw-object-cover" src="assets/images/media-poster-md.png" loading="lazy"
+                            [alt]="item.media.title">
+                        </ng-template>
                       </div>
-                      <div class="tw-text-white tw-mx-2">
-                        <p class="tw-text-xs sm:tw-text-sm md:tw-text-lg tw-font-bold tw-line-clamp-2">{{
-                          media.title }}</p>
-                      </div>
+                    </a>
+                    <div class="tw-text-white tw-mx-2 tw-flex-1 tw-cursor-pointer" (click)="thumbnailLink.click()">
+                      <a [routerLink]="['/watch', item.media._id]" class="tw-block tw-text-xs sm:tw-text-sm md:tw-text-lg tw-font-bold
+                        tw-line-clamp-2 focus-visible:tw-shadow-focus-box">{{
+                        item.media.title }}</a>
                     </div>
-                  </a>
+                    <div class="tw-ml-auto tw-mr-4 tw-self-center">
+                      <button pButton icon="ms ms-more-vert" class="p-button-rounded p-button-secondary p-button-sm p-button-sm-icon
+                        focus-visible:!tw-shadow-focus-box tw-invisible group-hover:tw-visible"
+                        [appMenuTriggerFor]="playlistItemMenu" #playlistMenuButton
+                        #playlistMenuTrigger="appMenuTriggerFor"
+                        (cdkMenuOpened)="onPlaylistMenuClick(playlistMenuButton, true)"
+                        (cdkMenuClosed)="onPlaylistMenuClick(playlistMenuButton, false)">
+                      </button>
+                      <ng-template #playlistItemMenu>
+                        <div appMenu>
+                          <button appMenuItem (click)="addToPlaylist()">
+                            <i class="ms ms-playlist-add-circle"></i>
+                            <span>{{ t('media.playlists.addToRecentPlaylist') }}</span>
+                          </button>
+                          <button appMenuItem (click)="addToPlaylist()">
+                            <i class="ms ms-playlist-add"></i>
+                            <span>{{ t('media.playlists.addToPlaylist') }}</span>
+                          </button>
+                          <button appMenuItem (click)="removeFromPlaylist(itemIndex)">
+                            <i class="ms ms-delete"></i>
+                            <span>{{ t('media.playlists.removeFromPlaylist') }}</span>
+                          </button>
+                        </div>
+                      </ng-template>
+                    </div>
+                  </div>
                 </ng-container>
                 <ng-template #mediaUnavailable>
-                  <div class="tw-flex">
+                  <div class="tw-group tw-flex">
                     <div class="tw-w-20">
                       <div class="tw-aspect-w-2 tw-aspect-h-3">
                         <img class="tw-object-cover tw-rounded-md" src="assets/images/media-poster-error-md.png"
@@ -76,7 +103,13 @@
                       </div>
                     </div>
                     <p class="tw-text-gray-400 tw-text-xs sm:tw-text-sm md:tw-text-lg tw-font-bold
-                        tw-mx-2">{{ t('media.playlists.playlistItemUnavailable') }}</p>
+                      tw-mx-2">{{ t('media.playlists.playlistItemUnavailable') }}</p>
+                    <div class="tw-ml-auto tw-mr-4 tw-self-center [&>*]:tw-hidden focus:[&>*]:tw-inline-flex
+                      group-hover:[&>*]:tw-inline-flex">
+                      <button pButton icon="ms ms-delete" class="p-button-rounded p-button-secondary p-button-sm p-button-sm-icon
+                        focus-visible:!tw-shadow-focus-box" (click)="removeFromPlaylist(itemIndex)">
+                      </button>
+                    </div>
                   </div>
                 </ng-template>
               </li>

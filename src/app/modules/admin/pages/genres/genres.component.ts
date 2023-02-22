@@ -105,6 +105,10 @@ export class GenresComponent implements OnInit, OnDestroy {
     this.genresService.remove(id).subscribe().add(() => this.loadGenres());
   }
 
+  onPage() {
+    this.genreTable?.el.nativeElement.scrollIntoView();
+  }
+
   trackId(index: number, item: any): any {
     return item?._id;
   }

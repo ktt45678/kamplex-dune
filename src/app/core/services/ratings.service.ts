@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
-import { CreateRatingDto, FindRatedMediaDto } from '../dto/ratings';
-import { Rating } from '../models';
+import { CreateRatingDto, CursorPageRatingsDto, FindRatedMediaDto } from '../dto/ratings';
+import { CursorPaginated, Rating, RatingDetails } from '../models';
 
 @Injectable()
 export class RatingsService {
@@ -12,8 +12,19 @@ export class RatingsService {
     return this.http.post<Rating>('ratings', createRatingDto);
   }
 
+  findPage(cursorPageRatingsDto?: CursorPageRatingsDto) {
+    const params: { [key: string]: any } = {};
+    if (cursorPageRatingsDto) {
+      const { pageToken, limit, user } = cursorPageRatingsDto;
+      pageToken && (params['pageToken'] = pageToken);
+      limit && (params['limit'] = limit);
+      user && (params['user'] = user);
+    }
+    return this.http.get<CursorPaginated<RatingDetails>>('ratings', { params });
+  }
+
   remove(id: string) {
-    return this.http.delete<Rating>(`ratings/${id}`);
+    return this.http.delete(`ratings/${id}`);
   }
 
   findMedia(findRatedMediaDto: FindRatedMediaDto) {

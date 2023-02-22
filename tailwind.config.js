@@ -47,6 +47,9 @@ module.exports = {
         '40': '.4'
       },
       colors: {
+        body: {
+          '1': '#111111'
+        },
         neutral: {
           '620': '#575757',
           '625': '#393939',
@@ -78,7 +81,11 @@ module.exports = {
       maxWidth: {
         '115px': '115px',
         '32': '128px',
+        '48': '12rem',
         '8xl': '90rem'
+      },
+      opacity: {
+        '6': '0.06'
       },
       spacing: {
         '1.75': '0.4rem',

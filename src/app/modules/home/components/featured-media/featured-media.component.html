@@ -2,9 +2,9 @@
   <div class="tw-relative">
     <ng-container *ngIf="mediaList?.length; else noMediaList">
       <swiper [config]="swiperConfig" [ngClass]="swiperClass || ''" (slideChange)="onSwiperSlideChange($event)">
-        <ng-template swiperSlide *ngFor="let media of mediaList; trackBy:trackId">
-          <div class="tw-flex tw-flex-wrap">
-            <div class="tw-hidden md:tw-block sm:tw-w-1/6">
+        <ng-template swiperSlide *ngFor="let media of mediaList; trackBy: track_Id">
+          <div class="tw-flex">
+            <div class="tw-hidden md:tw-block tw-w-full sm:tw-w-1/6 tw-flex-shrink-0 tw-min-w-[220px]">
               <div class="tw-aspect-w-2 tw-aspect-h-3">
                 <img *ngIf="media.thumbnailPosterUrl; else noPoster" class="tw-object-cover tw-h-full"
                   [lazyLoad]="media.thumbnailPosterUrl" [lazyLoadPlaceholder]="media.posterColor | rgbColor"
@@ -40,10 +40,13 @@
                 <div class="tw-flex tw-flex-wrap tw-items-center tw-justify-center md:tw-justify-start
                   tw-text-gray-300 tw-text-sm md:tw-text-base tw-text-center sm:tw-text-left">
                   <i class="ms ms-calendar-today ms-icon-sm tw-mr-1.5"></i>
-                  <p class="tw-font-semibold tw-mr-2">{{ media.releaseDate.year }}</p>
+                  <p class="tw-font-semibold tw-mr-2">
+                    <a class="hover:tw-underline focus-visible:tw-underline" tabindex="-1"
+                      [routerLink]="['/list', 'year', media.releaseDate.year]">{{ media.releaseDate.year }}</a>
+                  </p>
                   <i class="ms ms-schedule ms-icon-sm tw-mr-1.5"></i>
-                  <p class="tw-font-semibold tw-mr-2">{{ media.runtime * 60 * 1000 | time:['hours','minutes']:'short'
-                    }}</p>
+                  <p class="tw-font-semibold">{{ media.runtime * 1000 | time:{ format:['hours', 'minutes'],
+                    display:'short' } }}</p>
                 </div>
                 <div
                   class="tw-mb-4 tw-h-12 md:tw-h-8 tw-flex tw-flex-wrap tw-items-center tw-justify-center md:tw-justify-start">
@@ -51,9 +54,12 @@
                   </i>
                   <p *ngIf="media.genres.length; else noGenres" class="tw-text-gray-300 tw-text-sm md:tw-text-base tw-font-semibold
                       tw-text-center sm:tw-text-left tw-space-x-2 tw-line-clamp-2 md:tw-line-clamp-1">
-                    <span class="tw-inline-block"
-                      *ngFor="let genre of media.genres; let last = last; trackBy:trackId">{{
-                      last ? genre.name : genre.name + ',' }}</span>
+                    <a *ngFor="let genre of media.genres; let last = last; trackBy: track_Id"
+                      class="hover:tw-underline focus-visible:tw-underline" tabindex="-1"
+                      [routerLink]="['/list', 'genre', genre._id]">
+                      <span>{{ genre.name }}</span>
+                      <span *ngIf="!last">,</span>
+                    </a>
                   </p>
                   <ng-template #noGenres>
                     <p class="tw-text-gray-400 tw-italic tw-text-sm md:tw-text-base tw-font-semibold
@@ -95,37 +101,73 @@
   </div>
 </ng-container>
 <ng-template #noMediaList>
-  <div *ngIf="loading" class="tw-bg-neutral-850" [ngClass]="swiperClass || ''">
-    <div class="tw-grid tw-items-center tw-mx-5%">
-      <div class="tw-flex tw-flex-col tw-grow tw-my-20">
-        <p-skeleton animation="none" width="70%" height="100%" borderRadius="10px" class="tw-w-full tw-h-9 tw-mb-4"
-          styleClass="tw-mx-auto md:tw-ml-0">
-        </p-skeleton>
-        <div class="tw-flex tw-items-center tw-mx-auto md:tw-ml-0 tw-mb-4">
-          <p-skeleton animation="none" width="80px" height="100%" borderRadius="10px" class="tw-w-full tw-h-6">
-          </p-skeleton>
-          <p-skeleton animation="none" width="80px" height="100%" borderRadius="10px" class="tw-w-full tw-h-6 tw-ml-2">
-          </p-skeleton>
+  <div class="tw-bg-neutral-850 tw-overflow-hidden" [ngClass]="swiperClass || ''">
+    <div class="tw-flex">
+      <div class="tw-hidden md:tw-block sm:tw-w-1/6 tw-flex-shrink-0 tw-min-w-[220px]">
+        <div class="tw-aspect-w-2 tw-aspect-h-3">
+          <app-skeleton width="100%" height="100%" shape="none"></app-skeleton>
         </div>
-        <div class="tw-flex tw-h-5 tw-mx-auto md:tw-ml-0 tw-mb-4">
-          <p-skeleton animation="none" width="75px" height="100%" borderRadius="10px"></p-skeleton>
-          <p-skeleton animation="none" width="75px" height="100%" borderRadius="10px" styleClass="tw-ml-2">
-          </p-skeleton>
-          <p-skeleton animation="none" width="75px" height="100%" borderRadius="10px" styleClass="tw-ml-2">
-          </p-skeleton>
-        </div>
-        <div class="tw-block sm:tw-flex tw-mx-auto md:tw-ml-0 tw-mt-2">
-          <p-skeleton animation="none" width="auto" height="50.83px" borderRadius="1000px"
-            styleClass="!tw-w-80 sm:!tw-w-32">
-          </p-skeleton>
-          <p-skeleton animation="none" width="auto" height="50.83px" borderRadius="1000px"
-            styleClass="!tw-w-80 sm:!tw-w-36 sm:tw-ml-2.5 tw-mt-2 sm:tw-mt-0">
-          </p-skeleton>
-          <p-skeleton animation="none" width="auto" height="50.83px" borderRadius="1000px"
-            styleClass="!tw-w-80 sm:!tw-w-36 sm:tw-ml-2.5 tw-mt-2 sm:tw-mt-0">
-          </p-skeleton>
+      </div>
+      <div class="tw-w-full md:tw-w-5/6 tw-relative tw-overflow-hidden">
+        <div class="tw-mx-8 tw-my-8 md:tw-my-4">
+          <div class="tw-mb-4 tw-h-16 md:tw-h-auto tw-flex">
+            <app-skeleton width="35%" height="100%" class="tw-w-full tw-h-9 tw-mb-4" styleClass="tw-mx-auto md:tw-ml-0">
+            </app-skeleton>
+          </div>
+          <div class="tw-mb-6 tw-justify-center md:tw-justify-start">
+            <app-skeleton width="82%" height="16px" styleClass="tw-mx-auto md:tw-mx-0"></app-skeleton>
+            <app-skeleton width="80%" height="16px" styleClass="tw-mt-1 tw-mx-auto md:tw-mx-0"></app-skeleton>
+            <app-skeleton width="65%" height="16px" styleClass="tw-mt-1 tw-mx-auto md:tw-mx-0"></app-skeleton>
+          </div>
+          <div class="tw-mb-2 tw-h-6 tw-flex tw-flex-wrap tw-justify-center md:tw-justify-start">
+            <app-skeleton width="70px" height="100%"></app-skeleton>
+            <app-skeleton width="55px" height="100%" styleClass="tw-ml-2"></app-skeleton>
+          </div>
+          <div class="tw-mb-6 tw-h-6 tw-flex tw-flex-wrap tw-justify-center md:tw-justify-start">
+            <app-skeleton></app-skeleton>
+            <app-skeleton width="75px" height="100%"></app-skeleton>
+            <app-skeleton width="78px" height="100%" styleClass="tw-ml-2"></app-skeleton>
+            <app-skeleton width="80px" height="100%" styleClass="tw-ml-2"></app-skeleton>
+          </div>
+          <div class="tw-flex tw-flex-wrap tw-justify-center md:tw-justify-start">
+            <app-skeleton height="51px" shape="circle" styleClass="tw-w-64 sm:tw-w-32"></app-skeleton>
+            <app-skeleton height="51px" shape="circle" styleClass="tw-w-64 sm:tw-w-36 sm:tw-ml-2.5 tw-mt-2 sm:tw-mt-0">
+            </app-skeleton>
+            <app-skeleton height="51px" shape="circle" styleClass="tw-w-64 sm:tw-w-36 sm:tw-ml-2.5 tw-mt-2 sm:tw-mt-0">
+            </app-skeleton>
+          </div>
         </div>
       </div>
     </div>
+    <!--div class="tw-mx-5%">
+      <div class="tw-flex tw-flex-col tw-grow tw-my-20">
+        <app-skeleton width="70%" height="100%" borderRadius="10px" class="tw-w-full tw-h-9 tw-mb-4"
+          styleClass="tw-mx-auto md:tw-ml-0">
+        </app-skeleton>
+        <div class="tw-flex tw-items-center tw-mx-auto md:tw-ml-0 tw-mb-4">
+          <app-skeleton width="80px" height="100%" borderRadius="10px" class="tw-w-full tw-h-6">
+          </app-skeleton>
+          <app-skeleton width="80px" height="100%" borderRadius="10px" class="tw-w-full tw-h-6 tw-ml-2">
+          </app-skeleton>
+        </div>
+        <div class="tw-flex tw-h-5 tw-mx-auto md:tw-ml-0 tw-mb-4">
+          <app-skeleton width="75px" height="100%" borderRadius="10px"></app-skeleton>
+          <app-skeleton width="75px" height="100%" borderRadius="10px" styleClass="tw-ml-2">
+          </app-skeleton>
+          <app-skeleton width="75px" height="100%" borderRadius="10px" styleClass="tw-ml-2">
+          </app-skeleton>
+        </div>
+        <div class="tw-block sm:tw-flex tw-mx-auto md:tw-ml-0 tw-mt-2">
+          <app-skeleton width="auto" height="50.83px" borderRadius="1000px" styleClass="!tw-w-80 sm:!tw-w-32">
+          </app-skeleton>
+          <app-skeleton width="auto" height="50.83px" borderRadius="1000px"
+            styleClass="!tw-w-80 sm:!tw-w-36 sm:tw-ml-2.5 tw-mt-2 sm:tw-mt-0">
+          </app-skeleton>
+          <app-skeleton width="auto" height="50.83px" borderRadius="1000px"
+            styleClass="!tw-w-80 sm:!tw-w-36 sm:tw-ml-2.5 tw-mt-2 sm:tw-mt-0">
+          </app-skeleton>
+        </div>
+      </div>
+    </div-->
   </div>
 </ng-template>

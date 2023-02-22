@@ -11,7 +11,7 @@ import { Source, SourceInfo, Track } from 'plyr';
 import { DropdownOptionDto, UpdateTVEpisodeDto } from '../../../../core/dto/media';
 import { DestroyService, ItemDataService, MediaService, QueueUploadService } from '../../../../core/services';
 import { fileExtension, maxFileSize, shortDate } from '../../../../core/validators';
-import { MediaSubtitle, TVEpisodeDetails } from '../../../../core/models';
+import { MediaDetails, MediaSubtitle, TVEpisodeDetails } from '../../../../core/models';
 import { AddSubtitleForm, ShortDateForm } from '../../../../core/interfaces/forms';
 import { FileUploadComponent } from '../../../../shared/components/file-upload';
 import { AddSubtitleComponent } from '../add-subtitle';
@@ -78,10 +78,10 @@ export class ConfigureEpisodeComponent implements OnInit, AfterViewInit {
   languages: DropdownOptionDto[] = [];
 
   constructor(@Inject(DOCUMENT) private document: Document, private ref: ChangeDetectorRef, private renderer: Renderer2,
-    private dialogRef: DynamicDialogRef, private config: DynamicDialogConfig, private dialogService: DialogService,
-    private confirmationService: ConfirmationService, private mediaService: MediaService, private itemDataService: ItemDataService,
-    private queueUploadService: QueueUploadService, private translocoService: TranslocoService,
-    private destroyService: DestroyService) {
+    private dialogRef: DynamicDialogRef, private config: DynamicDialogConfig<{ media: MediaDetails, episode: TVEpisodeDetails }>,
+    private dialogService: DialogService, private confirmationService: ConfirmationService, private mediaService: MediaService,
+    private itemDataService: ItemDataService, private queueUploadService: QueueUploadService,
+    private translocoService: TranslocoService, private destroyService: DestroyService) {
     const lang = this.translocoService.getActiveLang();
     this.addSubtitleForm = new FormGroup<AddSubtitleForm>({
       language: new FormControl(lang, Validators.required),
@@ -118,8 +118,8 @@ export class ConfigureEpisodeComponent implements OnInit, AfterViewInit {
 
   loadEpisode(): void {
     if (!this.config.data) return;
-    const mediaId = this.config.data['media']['_id'];
-    const episodeId = this.config.data['episode']['_id'];
+    const mediaId = this.config.data!.media._id;
+    const episodeId = this.config.data!.episode._id;
     this.loadingEpisode = true;
     this.mediaService.findOneTVEpisode(mediaId, episodeId).subscribe(episode => {
       this.episode = episode;
@@ -133,8 +133,8 @@ export class ConfigureEpisodeComponent implements OnInit, AfterViewInit {
 
   onUpdateEpisodeFormSubmit(): void {
     if (this.updateEpisodeForm.invalid) return;
-    const mediaId = this.config.data['media']['_id'];
-    const episodeId = this.config.data['episode']['_id'];
+    const mediaId = this.config.data!.media._id;
+    const episodeId = this.config.data!.episode._id;
     this.updateEpisodeForm.disable({ emitEvent: false });
     const formValue = this.updateEpisodeForm.getRawValue();
     const updateTVEpisodeDto: UpdateTVEpisodeDto = ({
@@ -205,8 +205,8 @@ export class ConfigureEpisodeComponent implements OnInit, AfterViewInit {
   onUpdateStillSubmit(): void {
     if (!this.stillPreviewName) return;
     this.isUpdatingStill = true;
-    const mediaId = this.config.data['media']['_id'];
-    const episodeId = this.config.data['episode']['_id'];
+    const mediaId = this.config.data!.media._id;
+    const episodeId = this.config.data!.episode._id;
     const stillBlob = dataURItoBlob(this.stillPreviewUri!);
     this.mediaService.uploadStill(mediaId, episodeId, stillBlob, this.stillPreviewName).subscribe({
       next: (paritalEpisode) => {
@@ -261,7 +261,7 @@ export class ConfigureEpisodeComponent implements OnInit, AfterViewInit {
     if (file.size > UPLOAD_SUBTITLE_SIZE)
       throw new Error(AppErrorCode.UPLOAD_SUBTITLE_TOO_LARGE);
     this.subtitleFileUpload?.clear();
-    const media = this.config.data['media'];
+    const media = this.config.data!.media;
     const dialogRef = this.dialogService.open(AddSubtitleComponent, {
       data: { media: { ...media }, episode: { ...this.episode }, file },
       width: '500px',
@@ -279,8 +279,8 @@ export class ConfigureEpisodeComponent implements OnInit, AfterViewInit {
   }
 
   deleteSubtitle(subtitle: MediaSubtitle, event: Event): void {
-    const mediaId = this.config.data['media']['_id'];
-    const episodeId = this.config.data['episode']['_id'];
+    const mediaId = this.config.data!.media._id;
+    const episodeId = this.config.data!.episode._id;
     this.confirmationService.confirm({
       key: 'inModalEpisode',
       message: this.translocoService.translate('admin.media.deleteSubtitleConfirmation'),
@@ -305,14 +305,14 @@ export class ConfigureEpisodeComponent implements OnInit, AfterViewInit {
   }
 
   checkUploadInQueue(): void {
-    const mediaId = this.config.data['media']['_id'];
-    const episodeId = this.config.data['episode']['_id'];
+    const mediaId = this.config.data!.media._id;
+    const episodeId = this.config.data!.episode._id;
     this.isUploadingSource = this.queueUploadService.isMediaInQueue(`${mediaId}:${episodeId}`);
   }
 
   uploadSource(file: File): void {
-    const mediaId = this.config.data['media']['_id'];
-    const episodeId = this.config.data['episode']['_id'];
+    const mediaId = this.config.data!.media._id;
+    const episodeId = this.config.data!.episode._id;
     this.queueUploadService.addToQueue(`${mediaId}:${episodeId}`, file, `media/${mediaId}/tv/episodes/${episodeId}/source`, `media/${mediaId}/tv/episodes/${episodeId}/source/:id`);
     this.isUploadingSource = true;
     this.ref.markForCheck();
@@ -320,8 +320,8 @@ export class ConfigureEpisodeComponent implements OnInit, AfterViewInit {
 
   showSourcePreview(): void {
     this.showEpisodePlayer = true;
-    const mediaId = this.config.data['media']['_id'];
-    const episodeNumber = this.config.data['episode']['episodeNumber'];
+    const mediaId = this.config.data!.media._id;
+    const episodeNumber = this.config.data!.episode.episodeNumber;
     this.translocoService.selectTranslation('languages').pipe(first(), switchMap(t => {
       return this.mediaService.findTVStreams(mediaId, episodeNumber).pipe(map(movie => ({ movie, t })));
     })).subscribe(({ movie, t }) => {
@@ -355,9 +355,9 @@ export class ConfigureEpisodeComponent implements OnInit, AfterViewInit {
   }
 
   deleteSource(event: Event): void {
-    const mediaId = this.config.data['media']['_id'];
-    const episodeId = this.config.data['episode']['_id'];
-    const safeEpisodeName = translocoEscape(this.config.data['episode']['episodeNumber']);
+    const mediaId = this.config.data!.media._id;
+    const episodeId = this.config.data!.episode._id;
+    const safeEpisodeName = translocoEscape(this.config.data!.episode.episodeNumber.toString());
     this.confirmationService.confirm({
       key: 'inModalEpisode',
       message: this.translocoService.translate('admin.media.deleteSourceConfirmation', { name: safeEpisodeName }),
@@ -382,8 +382,8 @@ export class ConfigureEpisodeComponent implements OnInit, AfterViewInit {
   }
 
   updateExtStreams(event: ExtStreamSelected): void {
-    const mediaId = this.config.data['media']['_id'];
-    const episodeId = this.config.data['episode']['_id'];
+    const mediaId = this.config.data!.media._id;
+    const episodeId = this.config.data!.episode._id;
     this.mediaService.updateTVEpisode(mediaId, episodeId, { extStreams: event.streams }).subscribe({
       next: () => event.next(),
       error: () => event.error()

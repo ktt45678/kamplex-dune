@@ -3,8 +3,12 @@ import { Media } from '.';
 export interface Playlist {
   _id: string;
   name: string;
-  description: string;
-  thumbnailMedia: Pick<Media, ThumbnailMediaProps>;
+  thumbnailUrl?: string;
+  thumbnailThumbnailUrl?: string;
+  smallThumbnailUrl?: string;
+  fullThumbnailUrl?: string;
+  thumbnailColor?: string;
+  thumbnailMedia?: Pick<Media, ThumbnailMediaProps>;
   itemCount: number;
   visibility: number;
   createdAt: string;

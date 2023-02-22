@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, Inject, Input, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { AutoComplete } from 'primeng/autocomplete';
-import { takeUntil } from 'rxjs';
+import { filter, first, Subscription, takeUntil } from 'rxjs';
 
-import { Genre, Media, UserDetails } from '../../../core/models';
+import { CursorPaginated, Genre, Media, UserDetails } from '../../../core/models';
 import { AuthService, DestroyService, GenresService, MediaService } from '../../../core/services';
 import { MediaType, UserPermission } from '../../../core/enums';
 import { track_Id } from '../../../core/utils';
@@ -19,25 +19,34 @@ import { track_Id } from '../../../core/utils';
 export class HomeHeaderComponent implements OnInit {
   @ViewChild('mediaSearch') mediaSearch?: AutoComplete;
   @Input() isFixedNavbar: boolean = false;
+  @Input() navbarSpacing: boolean = true;
   track_Id = track_Id;
   MediaType = MediaType;
   UserPermission = UserPermission;
   currentUser!: UserDetails | null;
   mediaSuggestions: Media[] = [];
-  genres: Genre[] = [];
+  genreList?: CursorPaginated<Genre>;
   isMobileMenuOpened: boolean = false;
+  displaySidebar: boolean = false;
+  displaySidebarGenres: boolean = false;
+  loadingGenres: boolean = false;
+  loadingMoreGenres: boolean = false;
   displayMobileSearch: boolean = false;
+  genreLimit: number = 48;
   currentPageYOffset: number;
   //bgTransparent: string = 'tw-bg-opacity-80';
   //bgDark: string = 'tw-bg-opacity-100';
   showTop: string = 'tw-top-0';
   hideTop: string = '-tw-top-14';
   headerHeight: number = 56;
+  sidebarNavigationSub?: Subscription;
+  skeletonArray: Array<any> = [];
 
   constructor(@Inject(DOCUMENT) private document: Document, private ref: ChangeDetectorRef, private renderer: Renderer2,
     private router: Router, private authService: AuthService, private mediaService: MediaService, private genresService: GenresService,
     private destroyService: DestroyService) {
     this.currentPageYOffset = window.pageYOffset + this.headerHeight;
+    this.skeletonArray = new Array(this.genreLimit);
   }
 
   ngOnInit(): void {
@@ -45,9 +54,7 @@ export class HomeHeaderComponent implements OnInit {
       this.currentUser = user;
       this.ref.markForCheck();
     });
-    this.genresService.findAll('asc(name)').subscribe(genres => {
-      this.genres = genres;
-    });
+    this.loadGenres();
   }
 
   @HostListener('window:scroll')
@@ -64,8 +71,9 @@ export class HomeHeaderComponent implements OnInit {
     }
   }
 
-  onOpenMobileMenu(): void {
-    this.isMobileMenuOpened = !this.isMobileMenuOpened;
+  toggleMobileMenu(): void {
+    //this.isMobileMenuOpened = !this.isMobileMenuOpened;
+    this.displaySidebar = !this.displaySidebar;
     /*
     if (!this.isFixedNavbar) return;
     const element = this.document.getElementById('navbar');
@@ -86,6 +94,68 @@ export class HomeHeaderComponent implements OnInit {
       }
     }
     */
+  }
+
+  onSidebarVisibleChange(visible: boolean) {
+    if (this.sidebarNavigationSub && !this.sidebarNavigationSub.closed)
+      this.sidebarNavigationSub?.unsubscribe();
+    if (visible) {
+      this.router.events.pipe(
+        filter((event) => event instanceof NavigationEnd),
+        first()
+      ).subscribe(() => {
+        this.displaySidebar = false;
+      });
+    }
+  }
+
+  loadGenres(resetList?: boolean, pageToken?: string): void {
+    if (resetList)
+      this.loadingGenres = true;
+    else
+      this.loadingMoreGenres = true;
+    const sort = 'asc(name)';
+    this.genresService.findPageCursor({
+      pageToken: pageToken,
+      sort: sort,
+      limit: this.genreLimit
+    }).subscribe(newList => {
+      this.appendPlaylists(newList);
+    }).add(() => {
+      if (resetList)
+        this.loadingGenres = false;
+      else
+        this.loadingMoreGenres = false;
+      this.updateGenreSkeletonArray();
+      this.ref.markForCheck();
+    });
+  }
+
+  appendPlaylists(newList: CursorPaginated<Genre>, resetList?: boolean): void {
+    if (!this.genreList || resetList) {
+      this.genreList = newList;
+      return;
+    }
+    this.genreList = {
+      hasNextPage: newList.hasNextPage,
+      nextPageToken: newList.nextPageToken,
+      prevPageToken: newList.prevPageToken,
+      totalResults: newList.totalResults,
+      results: [...this.genreList.results, ...newList.results]
+    };
+  }
+
+  updateGenreSkeletonArray(): void {
+    if (!this.genreList || !this.genreLimit) return;
+    const itemLeft = this.genreList.totalResults - this.genreList.results.length;
+    if (itemLeft < this.genreLimit) {
+      this.skeletonArray = new Array(itemLeft);
+    }
+  }
+
+  onScroll(): void {
+    if (!this.genreList || !this.genreList.hasNextPage || this.loadingMoreGenres) return;
+    this.loadGenres(false, this.genreList.nextPageToken);
   }
 
   toggleMobileSearch(): void {
@@ -134,8 +204,9 @@ export class HomeHeaderComponent implements OnInit {
   }
 
   onSignOut(): void {
-    this.authService.signOut();
-    this.router.navigate(['/sign-in']);
+    this.authService.signOut().subscribe().add(() => {
+      this.router.navigate(['/sign-in']);
+    });
   }
 
 }

@@ -57,7 +57,7 @@ export class MenuTriggerDirective extends CdkMenuTriggerBase implements OnDestro
     this._registerCloseHandler();
     this._subscribeToMenuStackClosed();
     this._subscribeToMouseEnter();
-    this._subscribeToMenuStackHasFocus();
+    //this._subscribeToMenuStackHasFocus();
     this._setType();
   }
 
@@ -110,6 +110,7 @@ export class MenuTriggerDirective extends CdkMenuTriggerBase implements OnDestro
       case 'Space':
       case 'Enter':
         if (!hasModifierKey(event)) {
+          event.preventDefault();
           this.toggle();
           this.childMenu?.focusFirstItem('keyboard');
         }
@@ -166,9 +167,9 @@ export class MenuTriggerDirective extends CdkMenuTriggerBase implements OnDestro
    */
   private _subscribeToMouseEnter() {
     this._ngZone.runOutsideAngular(() => {
-      fromEvent(this._elementRef.nativeElement, 'mouseenter')
+      fromEvent<PointerEvent>(this._elementRef.nativeElement, 'pointerenter')
         .pipe(
-          filter(() => !this.menuStack.isEmpty() && !this.isOpen()),
+          filter((event) => event.pointerType === 'mouse' && !this.menuStack.isEmpty() && !this.isOpen()),
           takeUntil(this.destroyed),
         )
         .subscribe(() => {

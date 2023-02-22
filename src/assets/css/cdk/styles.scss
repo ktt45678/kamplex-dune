@@ -4,12 +4,12 @@
   padding: 0.5rem 0;
   color: rgba(255, 255, 255, 0.87);
   border-radius: 4px;
-  width: 12.5rem;
+  min-width: 12.5rem;
   background: #2b2b2b;
   border: 0 none;
   box-shadow: 0 2px 4px -1px rgb(0 0 0 / 20%), 0 4px 5px 0 rgb(0 0 0 / 14%), 0 1px 10px 0 rgb(0 0 0 / 12%);
 
-  >.cdk-menu-item {
+  .cdk-menu-item {
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -24,7 +24,7 @@
       margin-right: 0.5rem;
     }
 
-    &:hover {
+    &:hover:not(.cdk-menu-item-active) {
       background: rgba(255, 255, 255, 0.04);
     }
 
@@ -32,9 +32,18 @@
       background: rgba(255, 255, 255, 0.12);
       outline: 0;
     }
+
+    &:disabled {
+      opacity: 0.38;
+      pointer-events: none;
+    }
   }
 
-  >.cdk-menu-item-sm {
+  .cdk-menu-item-sm {
     padding: 0.5rem 1rem;
+  }
+
+  .cdk-menu-item-active {
+    background: rgba(255, 255, 255, 0.12);
   }
 }

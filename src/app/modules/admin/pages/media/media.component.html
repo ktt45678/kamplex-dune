@@ -22,7 +22,7 @@
     <p-table #mediaTable styleClass="p-datatable-sm tw-bg-neutral-875 tw-p-4 tw-rounded-md"
       [value]="mediaList?.results || []" [rows]="rowsPerPage" [totalRecords]="mediaList?.totalResults || 0"
       [paginator]="true" [rowsPerPageOptions]="[10, 25, 50]" responsiveLayout="scroll" [rowTrackBy]="trackId"
-      [rowHover]="true" [lazy]="true" (onLazyLoad)="loadMedia()" [loading]="loadingMediaList"
+      [rowHover]="true" [lazy]="true" (onLazyLoad)="loadMedia()" (onPage)="onPage()" [loading]="loadingMediaList"
       [currentPageReportTemplate]="t('admin.media.pageReport')" [showCurrentPageReport]="true">
       <ng-template pTemplate="caption">
         <h4 class="tw-mb-2">{{ t('admin.media.tableHeader') }}</h4>
@@ -74,15 +74,13 @@
           </td>
           <ng-container *ngIf="media.type === MediaType.MOVIE; else isTV">
             <td class="tw-w-24 tw-text-sm">{{ t('admin.media.movie') }}</td>
-            <td class="tw-w-40 tw-text-sm">
-              {{ media.runtime * 60 * 1000 | time }}
-            </td>
+            <td class="tw-w-40 tw-text-sm">{{ media.runtime * 1000 | time:{ display:'short' } }}</td>
           </ng-container>
           <ng-template #isTV>
             <td class="tw-w-24 tw-text-sm">{{ t('admin.media.tv') }}</td>
             <td class="tw-w-40 tw-text-sm">
               <p>{{ t('admin.media.episodeCountValue', { episodeCount: media.tv.episodeCount }) }}</p>
-              <p>{{ media.runtime * 60 * 1000 | time }} {{ t('admin.media.episodeRuntimeValue') }}</p>
+              <p>{{ media.runtime * 1000 | time:{ display:'short' } }} {{ t('admin.media.episodeRuntimeValue') }}</p>
             </td>
           </ng-template>
           <td class="tw-w-36 tw-text-sm">{{ media.releaseDate | shortDate }}</td>

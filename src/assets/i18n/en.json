@@ -25,15 +25,19 @@
     "movies": "Movies",
     "tvShows": "TV Shows",
     "genres": "Genres",
-    "recently": "Recently",
+    "added": "Added",
     "updated": "Updated",
+    "newReleases": "New Releases",
+    "mostViewed": "Most Viewed",
+    "topRated": "Top Rated",
     "signIn": "Sign in",
     "signUp": "Sign up",
     "search": "Search",
     "searchPlaceholder": "Search...",
     "manageMedia": "Manage media",
     "settings": "Settings",
-    "signOut": "Sign out"
+    "signOut": "Sign out",
+    "notSignedIn": "Not signed in"
   },
   "validationErrors": {
     "auth": {
@@ -290,6 +294,15 @@
       "airDate": {
         "required": "{{ validationErrors.createEpisode.airDate.required }}",
         "validShortDate": "{{ validationErrors.createEpisode.airDate.validShortDate }}"
+      }
+    },
+    "createPlaylist": {
+      "name": {
+        "required": "Playlist name is required",
+        "maxlength": "Name must not be longer than 100 characters"
+      },
+      "description": {
+        "maxlength": "Description must not be longer than 2000 characters"
       }
     }
   },

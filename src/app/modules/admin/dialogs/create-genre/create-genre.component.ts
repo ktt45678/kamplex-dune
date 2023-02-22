@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { takeUntil } from 'rxjs';
@@ -16,7 +16,7 @@ interface CreateGenreForm {
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [DestroyService]
 })
-export class CreateGenreComponent implements OnInit {
+export class CreateGenreComponent {
   createGenreForm: FormGroup<CreateGenreForm>;
 
   constructor(private ref: ChangeDetectorRef, private dialogRef: DynamicDialogRef, private genresService: GenresService,
@@ -24,9 +24,6 @@ export class CreateGenreComponent implements OnInit {
     this.createGenreForm = new FormGroup<CreateGenreForm>({
       name: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(32)] })
     }, { updateOn: 'change' });
-  }
-
-  ngOnInit(): void {
   }
 
   onCreateGenreFormSubmit(): void {

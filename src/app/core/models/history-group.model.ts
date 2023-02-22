@@ -1,6 +1,6 @@
-import { History } from '.';
+import { HistoryGroupable } from '.';
 
 export interface HistoryGroup {
   groupByDate: string;
-  historyList: History[];
+  historyList: HistoryGroupable[];
 }

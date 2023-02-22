@@ -1,11 +1,12 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { HttpCacheManager, withCache } from '@ngneat/cashew';
+import { HttpCacheManager } from '@ngneat/cashew';
 import { TranslocoService } from '@ngneat/transloco';
 import { map, tap } from 'rxjs';
 
-import { CreateGenreDto, PaginateGenresDto, UpdateGenreDto } from '../dto/genres';
-import { Genre, GenreDetails, Paginated } from '../models';
+import { CreateGenreDto, CursorPageGenresDto, CursorPageMediaDto, FindGenresDto, PaginateGenresDto, RemoveGenresDto, UpdateGenreDto } from '../dto/genres';
+import { CursorPaginated, Genre, GenreDetails, Media, Paginated } from '../models';
+import { FindSuggestionsOptions } from '../interfaces/options';
 import { CacheKey } from '../enums';
 
 @Injectable({ providedIn: 'root' })
@@ -28,15 +29,22 @@ export class GenresService {
     return this.http.get<Paginated<Genre>>('genres', { params });
   }
 
-  findAll(sort?: string) {
+  findPageCursor(cursorPageGenresDto: CursorPageGenresDto) {
+    const { pageToken, limit, search, sort } = cursorPageGenresDto;
     const params: any = {};
+    pageToken && (params['pageToken'] = pageToken);
+    limit && (params['limit'] = limit);
+    search && (params['search'] = search);
     sort && (params['sort'] = sort);
-    return this.http.get<Genre[]>('genres/all', {
-      params,
-      context: withCache({
-        key: CacheKey.ALL_GENRES
-      })
-    });
+    return this.http.get<CursorPaginated<Genre>>('genres/cursor', { params });
+  }
+
+  findAll(findGenresDto: FindGenresDto, context?: HttpContext) {
+    const { ids, sort } = findGenresDto;
+    const params: any = {};
+    ids && (params['ids'] = ids);
+    sort && (params['sort'] = sort);
+    return this.http.get<Genre[]>('genres/all', { params, context });
   }
 
   findOne(id: string) {
@@ -55,16 +63,36 @@ export class GenresService {
     }));
   }
 
-  findGenreSuggestions(search?: string, limit = 10) {
-    return this.findPage({ limit, search }).pipe(map(genres => {
+  removeMany(removeGenresDto: RemoveGenresDto) {
+    const { ids } = removeGenresDto;
+    const params: any = { ids };
+    return this.http.delete('genres', { params }).pipe(tap(() => {
+      this.invalidateAllGenresCache();
+    }));
+  }
+
+  findAllMedia(id: string, cursorPageMediaDto: CursorPageMediaDto) {
+    const { pageToken, limit, sort } = cursorPageMediaDto;
+    const params: any = {};
+    pageToken && (params['pageToken'] = pageToken);
+    limit && (params['limit'] = limit);
+    sort && (params['sort'] = sort);
+    return this.http.get<CursorPaginated<Media>>(`genres/${id}/media`, { params });
+  }
+
+  findGenreSuggestions(search?: string, options: FindSuggestionsOptions = {}) {
+    options = Object.assign({}, { limit: 10, withCreateOption: true }, options);
+    return this.findPage({ limit: options.limit, search, sort: 'asc(name)' }).pipe(map(genres => {
       const genreSuggestions = genres.results;
-      const hasMatch = genres.results.find(g => g.name === search);
-      if (search && search.length <= 32 && !hasMatch) {
-        const encodedName = encodeURIComponent(search);
-        genreSuggestions.push({
-          _id: `create:name=${encodedName}`,
-          name: this.translocoService.translate('admin.createMedia.createGenreByName', { name: search })
-        });
+      if (options.withCreateOption) {
+        const hasMatch = genres.results.find(g => g.name === search);
+        if (search && search.length <= 32 && !hasMatch) {
+          const encodedName = encodeURIComponent(search);
+          genreSuggestions.push({
+            _id: `create:name=${encodedName}`,
+            name: this.translocoService.translate('admin.createMedia.createGenreByName', { name: search })
+          });
+        }
       }
       return genreSuggestions;
     }));

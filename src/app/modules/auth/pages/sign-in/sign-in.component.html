@@ -1,43 +1,50 @@
-<ng-container *transloco="let t">
-  <div class="tw-h-14"></div> <!-- Fixed navbar space -->
-  <div class="tw-max-w-lg tw-mx-auto tw-my-14 tw-bg-neutral-875 tw-rounded-md tw-overflow-hidden">
-    <p-progressBar mode="indeterminate" [ngClass]="signInForm.disabled ? 'tw-visible' : 'tw-invisible'"></p-progressBar>
-    <div class="tw-px-10 tw-py-14 tw-shadow-md">
-      <h3 class="tw-text-white tw-text-3xl tw-font-bold tw-text-center tw-mb-8">{{ t('auth.signIn.formHeader') }}</h3>
-      <form [formGroup]="signInForm" formHandler (ngSubmit)="onSignInFormSubmit()">
-        <span class="p-float-label">
-          <input formControlName="email" class="tw-w-full" id="email" type="text" aria-describedby="email-error"
-            pInputText controlAutofocus>
-          <label for="email">{{ t('auth.signIn.email') }}</label>
-        </span>
-        <small id="email-error" class="p-error tw-text-xs tw-block tw-my-2"
-          [invalidControl]="signInForm.controls.email">{{
-          signInForm.controls.email.errors | firstErrorKey:'signIn':'email' }}</small>
-        <span class="p-float-label">
-          <input formControlName="password" class="tw-w-full" id="password" type="password"
-            aria-describedby="password-error" pInputText>
-          <label for="password">{{ t('auth.signIn.password') }}</label>
-        </span>
-        <small id="password-error" class="p-error tw-text-xs tw-block tw-my-2"
-          [invalidControl]="signInForm.controls.password">{{
-          signInForm.controls.password.errors | firstErrorKey:'signIn':'password' }}</small>
-        <div *ngIf="failureCount >= maxFailureCount" class="tw-flex">
-          <re-captcha #reCaptcha class="tw-mx-auto" theme="dark" formControlName="captcha"></re-captcha>
-        </div>
-        <div class="tw-flex tw-flex-wrap-reverse tw-mt-4">
-          <div class="tw-mr-auto">
-            <button pButton type="button" routerLink="/forgot-password" [label]="t('auth.signIn.forgotPassword')"
-              class="p-button-text p-button-sm tw-block !tw-p-1 tw-text-left" [disabled]="signInForm.disabled"></button>
-            <button pButton type="button" routerLink="/sign-up" [label]="t('auth.signIn.signUp')"
-              class="p-button-text p-button-sm tw-mt-1 tw-block !tw-p-1 tw-text-left"
-              [disabled]="signInForm.disabled"></button>
+<ng-container *transloco="let t; loadingTpl: loadingTpl">
+  <div class="tw-mx-auto tw-max-w-lg">
+    <div class="tw-mx-4 tw-my-14 tw-bg-neutral-875 tw-rounded-md tw-overflow-hidden">
+      <p-progressBar mode="indeterminate"
+        [ngClass]="signInForm.disabled ? 'tw-visible' : 'tw-invisible'"></p-progressBar>
+      <div class="tw-px-8 tw-py-14 tw-shadow-md">
+        <h3 class="tw-text-white tw-text-3xl tw-font-bold tw-text-center tw-mb-8">{{ t('auth.signIn.formHeader') }}</h3>
+        <form [formGroup]="signInForm" formHandler (ngSubmit)="onSignInFormSubmit()">
+          <span class="p-float-label">
+            <input formControlName="email" class="tw-w-full" id="email" type="text" aria-describedby="email-error"
+              pInputText controlAutofocus>
+            <label for="email">{{ t('auth.signIn.email') }}</label>
+          </span>
+          <small id="email-error" class="p-error tw-text-xs tw-block tw-my-2"
+            [invalidControl]="signInForm.controls.email">{{
+            signInForm.controls.email.errors | firstErrorKey:'signIn':'email' }}</small>
+          <span class="p-float-label">
+            <input formControlName="password" class="tw-w-full" id="password" type="password"
+              aria-describedby="password-error" pInputText>
+            <label for="password">{{ t('auth.signIn.password') }}</label>
+          </span>
+          <small id="password-error" class="p-error tw-text-xs tw-block tw-my-2"
+            [invalidControl]="signInForm.controls.password">{{
+            signInForm.controls.password.errors | firstErrorKey:'signIn':'password' }}</small>
+          <div *ngIf="failureCount >= maxFailureCount" class="tw-flex">
+            <re-captcha #reCaptcha class="tw-mx-auto" theme="dark" formControlName="captcha"></re-captcha>
           </div>
-          <div class="tw-ml-auto">
-            <button pButton type="submit" [label]="t('auth.signIn.submit')"
-              class="p-button tw-px-8 tw-w-full md:tw-w-auto" [disabled]="signInForm.disabled"></button>
+          <div class="tw-flex tw-flex-wrap-reverse tw-mt-4">
+            <div class="tw-mr-auto">
+              <button pButton type="button" routerLink="/forgot-password" [label]="t('auth.signIn.forgotPassword')"
+                class="p-button-text p-button-sm tw-block !tw-p-1 tw-text-left"
+                [disabled]="signInForm.disabled"></button>
+              <button pButton type="button" routerLink="/sign-up" [queryParams]="{ continue: continueUrl }"
+                [label]="t('auth.signIn.signUp')"
+                class="p-button-text p-button-sm tw-mt-1 tw-block !tw-p-1 tw-text-left"
+                [disabled]="signInForm.disabled"></button>
+            </div>
+            <div class="tw-ml-auto">
+              <button pButton type="submit" [label]="t('auth.signIn.submit')"
+                class="p-button tw-px-8 tw-w-full md:tw-w-auto" [disabled]="signInForm.disabled"></button>
+            </div>
           </div>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
   </div>
 </ng-container>
+<ng-template #loadingTpl>
+  <div class="tw-h-screen-75"></div>
+</ng-template>

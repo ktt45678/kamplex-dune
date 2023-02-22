@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { TranslocoService } from '@ngneat/transloco';
 import { MenuItem } from 'primeng/api';
@@ -6,6 +7,7 @@ import { filter, first, map, switchMap, takeUntil } from 'rxjs';
 
 import { UserDetails } from '../../../core/models';
 import { AuthService, DestroyService, UsersService } from '../../../core/services';
+import { SITE_NAME } from '../../../../environments/config';
 
 @Component({
   selector: 'app-users-layout',
@@ -18,8 +20,9 @@ export class UsersLayoutComponent implements OnInit {
   user?: UserDetails;
   userMenuItems: MenuItem[] = [];
 
-  constructor(private ref: ChangeDetectorRef, private authService: AuthService, private usersService: UsersService,
-    private route: ActivatedRoute, private translocoService: TranslocoService, private destroyService: DestroyService) { }
+  constructor(private ref: ChangeDetectorRef, private title: Title, private authService: AuthService,
+    private usersService: UsersService, private route: ActivatedRoute, private translocoService: TranslocoService,
+    private destroyService: DestroyService) { }
 
   ngOnInit(): void {
     this.initMenuItems();
@@ -30,6 +33,7 @@ export class UsersLayoutComponent implements OnInit {
       takeUntil(this.destroyService)
     ).subscribe(user => {
       this.user = user;
+      this.title.setTitle(`${user.displayName || user.username} - ${SITE_NAME}`);
       this.ref.markForCheck();
     });
   }

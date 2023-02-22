@@ -1,0 +1,43 @@
+<ng-container *transloco="let t">
+  <h3 class="tw-text-white tw-text-2xl tw-font-bold tw-text-center tw-mb-4">{{ t('media.playlists.createPlaylist')
+    }}</h3>
+  <form [formGroup]="createPlaylistForm" formHandler (ngSubmit)="onCreatePlaylistFormSubmit()">
+    <label for="name" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{ t('media.createPlaylist.name')
+      }}</label>
+    <input formControlName="name" class="tw-w-full" id="name" type="text" aria-describedby="name-error" pInputText
+      [placeholder]="t('media.createPlaylist.namePlaceholder')" autofocus>
+    <small id="name-error" class="p-error tw-text-xs tw-block tw-my-2"
+      [invalidControl]="createPlaylistForm.controls.name">{{ createPlaylistForm.controls.name.errors
+      | firstErrorKey:'createPlaylist':'name' }}</small>
+    <label for="description" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
+      t('media.createPlaylist.description') }}</label>
+    <textarea formControlName="description" class="tw-w-full" id="description" aria-describedby="description-error"
+      [placeholder]="t('media.createPlaylist.descriptionPlaceholder')" pInputTextarea [rows]="5"></textarea>
+    <small id="description-error" class="p-error tw-text-xs tw-block tw-my-2"
+      [invalidControl]="createPlaylistForm.controls.description">{{ createPlaylistForm.controls.description.errors
+      | firstErrorKey:'createPlaylist':'description' }}</small>
+    <label for="visibility" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
+      t('media.createPlaylist.visibility') }}</label>
+    <div id="visibility">
+      <p-radioButton name="visibility" [value]="1" [label]="t('media.createPlaylist.visibilityPublic')"
+        formControlName="visibility" class="tw-block tw-mb-2">
+      </p-radioButton>
+      <p-radioButton name="visibility" [value]="2" [label]="t('media.createPlaylist.visibilityUnlisted')"
+        formControlName="visibility" class="tw-block tw-mb-2">
+      </p-radioButton>
+      <p-radioButton name="visibility" [value]="3" [label]="t('media.createPlaylist.visibilityPrivate')"
+        formControlName="visibility" class="tw-block">
+      </p-radioButton>
+    </div>
+    <div class="tw-flex tw-mt-4">
+      <div class="tw-ml-auto">
+        <button pButton type="button" [label]="t('media.createPlaylist.cancel')" (click)="onCreatePlaylistFormCancel()"
+          class="p-button-text p-button-secondary p-button-sm">
+        </button>
+        <button pButton type="submit" [label]="t('media.createPlaylist.submit')" class="p-button p-button-sm tw-ml-1"
+          [disabled]="createPlaylistForm.disabled">
+        </button>
+      </div>
+    </div>
+  </form>
+</ng-container>

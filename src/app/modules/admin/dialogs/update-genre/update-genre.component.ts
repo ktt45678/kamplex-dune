@@ -5,6 +5,7 @@ import { takeUntil } from 'rxjs';
 
 import { UpdateGenreDto } from '../../../../core/dto/genres';
 import { DropdownOptionDto } from '../../../../core/dto/media';
+import { Genre } from '../../../../core/models';
 import { DestroyService, GenresService, ItemDataService } from '../../../../core/services';
 
 interface UpdateGenreForm {
@@ -24,10 +25,10 @@ export class UpdateGenreComponent implements OnInit {
   updateGenreForm: FormGroup<UpdateGenreForm>;
   translateOptions: DropdownOptionDto[] = [];
 
-  constructor(private ref: ChangeDetectorRef, private dialogRef: DynamicDialogRef, private config: DynamicDialogConfig,
+  constructor(private ref: ChangeDetectorRef, private dialogRef: DynamicDialogRef, private config: DynamicDialogConfig<Genre>,
     private genresService: GenresService, private itemDataService: ItemDataService, private destroyService: DestroyService) {
     this.updateGenreForm = new FormGroup<UpdateGenreForm>({
-      name: new FormControl(this.config.data['name'] || '', { nonNullable: true, validators: [Validators.required, Validators.maxLength(32)] }),
+      name: new FormControl(this.config.data!.name || '', { nonNullable: true, validators: [Validators.required, Validators.maxLength(32)] }),
       isTranslation: new FormControl(false, { nonNullable: true }),
       translate: new FormControl({ value: 'vi', disabled: true }, { nonNullable: true })
     }, { updateOn: 'change' });
@@ -47,7 +48,7 @@ export class UpdateGenreComponent implements OnInit {
       name: formValue.name
     };
     formValue.isTranslation && (params.translate = this.updateGenreForm.value.translate);
-    this.genresService.update(this.config.data['_id'], params).pipe(takeUntil(this.destroyService)).subscribe({
+    this.genresService.update(this.config.data!._id, params).pipe(takeUntil(this.destroyService)).subscribe({
       next: () => this.dialogRef.close(true),
       error: () => {
         this.updateGenreForm.enable({ emitEvent: false });

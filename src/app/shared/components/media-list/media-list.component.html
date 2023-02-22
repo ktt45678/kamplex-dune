@@ -1,48 +1,77 @@
-<ng-container *transloco="let t; loadingTpl: skeletonLoading">
-  <ng-container *ngIf="loading; then skeletonLoading; else mediaLoaded"></ng-container>
+<ng-container *transloco="let t; loadingTpl: loadingMediaTpl">
+  <ng-container *ngIf="loading; then loadingMediaTpl; else mediaLoaded"></ng-container>
   <ng-template #mediaLoaded>
-    <ng-container *ngIf="mediaList">
-      <p *ngIf="!mediaList.results.length" class="tw-text-center">{{ t('media.list.noResults') }}</p>
-      <div class="tw-grid tw-grid-cols-2 xs:tw-grid-cols-3 md:tw-grid-cols-4 lg:tw-grid-cols-5 xl:tw-grid-cols-6">
-        <a class="tw-bg-transparent tw-text-white hover:tw-bg-neutral-725 focus-visible:tw-bg-neutral-725
+    <ng-container *ngIf="mediaList && mediaList.results.length; else noResults">
+      <div
+        class="tw-text-white tw-grid tw-grid-cols-2 xs:tw-grid-cols-3 md:tw-grid-cols-4 lg:tw-grid-cols-5 xl:tw-grid-cols-6">
+        <div class="tw-group tw-bg-transparent hover:tw-bg-neutral-725 focus-visible:tw-bg-neutral-725
           tw-transition-colors tw-duration-200 tw-rounded-sm tw-px-1.5 tw-py-2"
-          *ngFor="let media of mediaList.results; trackBy: trackId" [routerLink]="['/details', media._id]">
-          <div class="tw-aspect-w-2 tw-aspect-h-3 tw-rounded-t-md tw-overflow-hidden">
-            <img *ngIf="media.thumbnailPosterUrl; else noPoster" class="tw-object-cover"
-              [lazyLoad]="media.thumbnailPosterUrl" [lazyLoadPlaceholder]="media.posterColor | rgbColor"
-              [alt]="media.title" errorImage="assets/images/media-poster-md.png">
-            <ng-template #noPoster>
-              <img class="tw-object-cover" src="assets/images/media-poster-md.png" loading="lazy" [alt]="media.title">
-            </ng-template>
+          *ngFor="let media of mediaList.results; trackBy: track_Id" [appContextMenuTriggerFor]="mediaMenu">
+          <a #mediaLink class="tw-block" [routerLink]="['/details', media._id]">
+            <div class="tw-aspect-w-2 tw-aspect-h-3 tw-rounded-t-md tw-overflow-hidden">
+              <img *ngIf="media.thumbnailPosterUrl; else noPoster" class="tw-object-cover"
+                [lazyLoad]="media.thumbnailPosterUrl" [lazyLoadPlaceholder]="media.posterColor | rgbColor"
+                [alt]="media.title" errorImage="assets/images/media-poster-md.png">
+              <ng-template #noPoster>
+                <img class="tw-object-cover" src="assets/images/media-poster-md.png" loading="lazy" [alt]="media.title">
+              </ng-template>
+            </div>
+            <p
+              class="tw-left-0 tw-bottom-0 tw-right-0 tw-bg-indigo-700 tw-flex tw-content-between tw-py-1 tw-px-2 tw-rounded-b-md">
+              <small class="tw-text-xs tw-font-semibold">{{ media.releaseDate.year }}</small>
+              <span class="tw-flex tw-items-center tw-ml-auto">
+                <ng-container *ngIf="media.type === MediaType.MOVIE; else notMovie">
+                  <i class="ms ms-movie ms-icon-xs"></i>
+                  <small class="tw-text-xs tw-font-semibold tw-ml-1">{{ media.runtime * 1000 | time:{
+                    format:['hours','minutes'], display:'short' } }}</small>
+                </ng-container>
+                <ng-template #notMovie>
+                  <ng-container *ngIf="media.type === MediaType.TV && media.tv.pLastEpisode">
+                    <i class="ms ms-tv ms-icon-xs"></i>
+                    <small class="tw-text-xs tw-font-semibold tw-ml-1">{{ t('media.episode.epPrefix') }} {{
+                      media.tv.pLastEpisode.episodeNumber }}</small>
+                  </ng-container>
+                </ng-template>
+              </span>
+            </p>
+          </a>
+          <div class="tw-flex tw-mt-2">
+            <div class="tw-flex-grow tw-cursor-pointer" (click)="mediaLink.click()">
+              <p class="tw-text-xs sm:tw-text-sm tw-font-bold tw-line-clamp-2">{{ media.title }}</p>
+            </div>
+            <button pButton [appMenuTriggerFor]="mediaMenu" icon="ms ms-more-vert" type="button"
+              aria-label="Toggle media menu" class="p-button-rounded p-button-text p-button-secondary p-button-sm p-button-sm-icon
+                tw-ml-auto tw-flex-shrink-0 focus-visible:!tw-shadow-focus-box tw-invisible group-hover:tw-visible"
+              #mediaMenuButton #mediaMenuTrigger="appMenuTriggerFor"
+              (cdkMenuOpened)="onMediaMenuClick(mediaMenuButton, true)"
+              (cdkMenuClosed)="onMediaMenuClick(mediaMenuButton, false)">
+            </button>
           </div>
-          <p
-            class="tw-left-0 tw-bottom-0 tw-right-0 tw-bg-indigo-700 tw-flex tw-content-between tw-py-1 tw-px-2 tw-rounded-b-md">
-            <small class="tw-text-xs tw-font-semibold">
-              {{ media.releaseDate.year }}
-            </small>
-            <small class="tw-text-xs tw-font-semibold tw-ml-auto"
-              *ngIf="media.type === MediaType.MOVIE; else notMovie">{{ media.runtime * 60 * 1000 |
-              time:['hours','minutes']:'short' }}</small>
-            <ng-template #notMovie>
-              <small class="tw-text-xs tw-font-semibold tw-ml-auto" *ngIf="media.type === MediaType.TV">
-                {{ t('media.list.episodeCountValue', { episodeCount: media.tv.pEpisodeCount }) }}
-              </small>
-            </ng-template>
-          </p>
-          <p class="tw-text-xs sm:tw-text-sm md:tw-text-base tw-font-bold tw-mt-2">{{ media.title }}</p>
-        </a>
+          <ng-template #mediaMenu>
+            <div appMenu>
+              <button appMenuItem (click)="showAddToPlaylistDialog(media)">
+                <i class="ms ms-playlist-add"></i>
+                <span>{{ t('media.playlists.addToPlaylist') }}</span>
+              </button>
+            </div>
+          </ng-template>
+        </div>
       </div>
     </ng-container>
+    <ng-template #noResults>
+      <p class="tw-text-gray-400 tw-text-center">{{ t('media.list.noResults') }}</p>
+    </ng-template>
   </ng-template>
+  <ng-container *ngIf="loadingMore; then loadingMediaTpl"></ng-container>
 </ng-container>
-<ng-template #skeletonLoading>
+<ng-template #loadingMediaTpl>
   <div class="tw-grid tw-grid-cols-2 xs:tw-grid-cols-3 md:tw-grid-cols-4 lg:tw-grid-cols-5 xl:tw-grid-cols-6">
     <div class="tw-px-1.5 tw-py-2" *ngFor="let item of skeletonArray">
       <div class="tw-aspect-w-2 tw-aspect-h-3 tw-mb-2">
-        <p-skeleton animation="none" width="100%" height="100%" borderRadius="6px"></p-skeleton>
+        <app-skeleton width="100%" height="100%" shape="none" styleClass="tw-rounded-md"></app-skeleton>
       </div>
-      <p-skeleton animation="none" width="100%" height="20px" styleClass="tw-mb-1"></p-skeleton>
-      <p-skeleton animation="none" width="80%" height="20px"></p-skeleton>
+      <app-skeleton width="100%" height="20px" styleClass="tw-mb-1"></app-skeleton>
+      <app-skeleton width="80%" height="20px"></app-skeleton>
     </div>
   </div>
 </ng-template>

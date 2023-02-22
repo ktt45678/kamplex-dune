@@ -55,7 +55,7 @@ export class AppComponent implements OnInit {
       filter((event) => event instanceof NavigationEnd),
       map(() => {
         let route: ActivatedRoute = this.router.routerState.root;
-        while (route.firstChild)
+        while (route.firstChild && !route.snapshot.data['applyToChildren'])
           route = route.firstChild;
         return route.snapshot.data;
       }),

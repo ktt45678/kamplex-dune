@@ -6,6 +6,7 @@ import { takeUntil } from 'rxjs';
 import { DropdownOptionDto, UpdateMediaVideoDto } from '../../../../core/dto/media';
 import { DestroyService, ItemDataService, MediaService } from '../../../../core/services';
 import { YOUTUBE_EMBED_URL } from '../../../../../environments/config';
+import { MediaDetails, MediaVideo } from '../../../../core/models';
 
 interface UpdateVideoForm {
   name: FormControl<string | null>;
@@ -27,11 +28,12 @@ export class UpdateVideoComponent implements OnInit {
   updateVideoForm: FormGroup<UpdateVideoForm>;
   translateOptions: DropdownOptionDto[] = [];
 
-  constructor(private ref: ChangeDetectorRef, private dialogRef: DynamicDialogRef, private config: DynamicDialogConfig,
+  constructor(private ref: ChangeDetectorRef, private dialogRef: DynamicDialogRef,
+    private config: DynamicDialogConfig<{ media: MediaDetails, video: MediaVideo }>,
     private mediaService: MediaService, private itemDataService: ItemDataService, private destroyService: DestroyService) {
-    const videoUrl = `https://www.youtube.com/watch?v=${this.config.data['video']['key']}`;
+    const videoUrl = `https://www.youtube.com/watch?v=${this.config.data!.video.key}`;
     this.updateVideoForm = new FormGroup<UpdateVideoForm>({
-      name: new FormControl(this.config.data['video']['name'] || '', [Validators.maxLength(50)]),
+      name: new FormControl(this.config.data!.video.name || '', [Validators.maxLength(50)]),
       url: new FormControl(videoUrl, [Validators.required, Validators.maxLength(1000)]),
       isTranslation: new FormControl(false, { nonNullable: true }),
       translate: new FormControl({ value: 'vi', disabled: true }, { nonNullable: true })
@@ -71,8 +73,8 @@ export class UpdateVideoComponent implements OnInit {
   onUpdateVideoFormSubmit(): void {
     if (this.updateVideoForm.invalid) return;
     this.updateVideoForm.disable({ emitEvent: false });
-    const mediaId = this.config.data['media']['_id'];
-    const videoId = this.config.data['video']['_id'];
+    const mediaId = this.config.data!.media._id;
+    const videoId = this.config.data!.video._id;
     const formValue = this.updateVideoForm.getRawValue();
     const params: UpdateMediaVideoDto = {
       name: formValue.name,

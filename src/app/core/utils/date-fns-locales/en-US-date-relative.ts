@@ -6,7 +6,7 @@ const formatRelativeLocale = {
   today: "'Today",
   tomorrow: "'Tomorrow",
   nextWeek: "eeee",
-  other: 'P',
+  other: 'PP',
 };
 
 export const enUSDateRelative = {

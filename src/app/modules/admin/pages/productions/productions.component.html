@@ -17,10 +17,10 @@
     </div>
     <p-table #productionTable styleClass="p-datatable-sm tw-bg-neutral-875 tw-p-4 tw-rounded-md"
       [value]="productionList?.results || []" [rows]="rowsPerPage" [totalRecords]="productionList?.totalResults || 0"
-      [paginator]="true" [rowsPerPageOptions]="[10, 25, 50]" responsiveLayout="scroll" [(selection)]="selectedProductions"
-      dataKey="_id" [rowTrackBy]="trackId" [rowHover]="true" [lazy]="true" (onLazyLoad)="loadProductions()"
-      [loading]="loadingProductionList" [currentPageReportTemplate]="t('admin.productions.pageReport')"
-      [showCurrentPageReport]="true">
+      [paginator]="true" [rowsPerPageOptions]="[10, 25, 50]" responsiveLayout="scroll"
+      [(selection)]="selectedProductions" dataKey="_id" [rowTrackBy]="trackId" [rowHover]="true" [lazy]="true"
+      (onLazyLoad)="loadProductions()" (onPage)="onPage()" [loading]="loadingProductionList"
+      [currentPageReportTemplate]="t('admin.productions.pageReport')" [showCurrentPageReport]="true">
       <ng-template pTemplate="caption">
         <h4 class="tw-mb-2">{{ t('admin.productions.tableHeader') }}</h4>
       </ng-template>
@@ -45,7 +45,8 @@
           <td class="tw-text-sm">{{ production.name }}</td>
           <td class="tw-text-sm">{{ production.country }}</td>
           <td>
-            <button pButton icon="ms ms-edit" class="p-button-rounded p-button-success p-button-sm p-button-sm-icon tw-mr-2"
+            <button pButton icon="ms ms-edit"
+              class="p-button-rounded p-button-success p-button-sm p-button-sm-icon tw-mr-2"
               (click)="showUpdateProductionDialog(production)">
             </button>
             <button pButton icon="ms ms-delete" class="p-button-rounded p-button-danger p-button-sm p-button-sm-icon"

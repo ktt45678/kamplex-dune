@@ -10,7 +10,7 @@
     "episodeCountValue": "{{ episodeCount }} tập"
   },
   "filter": {
-    "search": "Tìm kiếm - Điền ít nhất 3 kí tự",
+    "search": "Tìm kiếm (Điền ít nhất 2 kí tự)",
     "genre": "Thể loại",
     "sort": "Sắp xếp",
     "type": "Loại phim",

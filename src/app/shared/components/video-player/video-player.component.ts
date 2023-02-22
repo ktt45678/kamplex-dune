@@ -14,6 +14,7 @@ import { ExtStreamList } from '../../../core/models';
 export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
   @Input() source?: Plyr.SourceInfo;
   @Input() hlsSource?: ExtStreamList;
+  @Input() previewThumbnail?: string;
   @Output() onEnded = new EventEmitter<Plyr.PlyrEvent>();
   player?: Plyr;
   hls?: Hls
@@ -25,6 +26,7 @@ export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
       controls: ['play-large', 'play', 'rewind', 'fast-forward', 'progress', 'current-time', 'duration', 'mute', 'volume', 'captions', 'settings', 'pip', 'airplay', 'fullscreen'],
       settings: ['captions', 'quality', 'speed', 'loop'],
       autoplay: true,
+      previewThumbnails: { enabled: true },
       i18n: {
         qualityLabel: {
           0: 'Auto'
@@ -39,6 +41,11 @@ export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnChanges(changes: SimpleChanges): void {
     this.setPlayerSource(changes['source']?.currentValue, changes['hlsSource']?.currentValue);
+    if (changes['previewThumbnail']) {
+      this.player?.setPreviewThumbnails({
+        src: changes['previewThumbnail'].currentValue
+      });
+    }
   }
 
   setPlayerSource(source?: Plyr.SourceInfo, hlsSource?: ExtStreamList) {
@@ -100,7 +107,7 @@ export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
       this.hls.currentLevel = -1;
       return;
     }
-    const levelIndex = this.hls.levels.findIndex(level => level.height === newQuality);
+    const levelIndex = this.hls.levels.findIndex((level: any) => level.height === newQuality);
     this.hls.currentLevel = levelIndex;
   }
 

@@ -1,0 +1,20 @@
+<div class="tw-max-w-7xl tw-mx-auto tw-my-8">
+  <ng-container *transloco="let t">
+    <div class="tw-mx-4">
+      <div class="tw-my-8">
+        <h2 class="tw-text-white tw-flex tw-items-center tw-text-2xl tw-font-semibold tw-mb-2">
+          <span>{{ t('media.listPaths.' + currentPath) }}</span>
+          <ng-container *ngIf="subPathLabel">
+            <i class="ms ms-chevron-right tw-mx-1"></i>
+            <span>{{ subPathLabel }}</span>
+          </ng-container>
+        </h2>
+        <div infiniteScroll [infiniteScrollDistance]="2" [infiniteScrollDisabled]="!mediaList?.hasNextPage"
+          (scrolled)="onScroll()">
+          <app-media-list [mediaList]="mediaList" [loading]="loadingMediaList"
+            [loadingMore]="loadingMoreMediaList"></app-media-list>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>

@@ -5,5 +5,6 @@ export interface MediaStream {
   episode?: TVEpisodeDetails;
   streams: MediaStreamFile[];
   subtitles: MediaStreamSubtitle[];
+  previewThumbnail: string;
   extStreamList: ExtStreamList;
 }

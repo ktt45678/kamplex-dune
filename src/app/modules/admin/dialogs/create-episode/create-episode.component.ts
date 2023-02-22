@@ -60,9 +60,10 @@ export class CreateEpisodeComponent implements OnInit {
   years: DropdownOptionDto[] = [];
 
   constructor(@Inject(DOCUMENT) private document: Document, private ref: ChangeDetectorRef, private dialogRef: DynamicDialogRef,
-    private dialogService: DialogService, private config: DynamicDialogConfig, private renderer: Renderer2,
-    private translocoService: TranslocoService, private mediaService: MediaService, private queueUploadService: QueueUploadService,
-    private itemDataService: ItemDataService, private destroyService: DestroyService) {
+    private dialogService: DialogService, private config: DynamicDialogConfig<{ media: MediaDetails, episodes: TVEpisode[] }>,
+    private renderer: Renderer2, private translocoService: TranslocoService, private mediaService: MediaService,
+    private queueUploadService: QueueUploadService, private itemDataService: ItemDataService,
+    private destroyService: DestroyService) {
     // Create episode form
     this.createEpisodeForm = new FormGroup<CreateEpisodeForm>({
       episodeNumber: new FormControl(1, { nonNullable: true, validators: [Validators.required, Validators.min(0), Validators.max(10000)] }),
@@ -105,8 +106,8 @@ export class CreateEpisodeComponent implements OnInit {
   }
 
   patchCreateEpisodeForm(): void {
-    const media: MediaDetails = this.config.data['media'];
-    const episodes: TVEpisode[] = this.config.data['episodes'];
+    const media = this.config.data!.media;
+    const episodes = this.config.data!.episodes;
     let newAirDate: ShortDate;
     let newEpisodeNumber;
     let newEpisodeRuntime;
@@ -134,7 +135,7 @@ export class CreateEpisodeComponent implements OnInit {
   onCreateEpisodeFormSubmit(): void {
     if (this.createEpisodeForm.invalid) return;
     this.createEpisodeForm.disable({ emitEvent: false });
-    const mediaId = this.config.data['media']['_id'];
+    const mediaId = this.config.data!.media._id;
     const formValue = this.createEpisodeForm.getRawValue();
     const addTVEpisodeDto: AddTVEpisodeDto = ({
       episodeNumber: formValue.episodeNumber,
@@ -151,7 +152,7 @@ export class CreateEpisodeComponent implements OnInit {
     this.mediaService.addTVEpisode(mediaId, addTVEpisodeDto).pipe(takeUntil(this.destroyService)).subscribe({
       next: (episode) => {
         this.episode = episode;
-        this.patchUpdateMediaForm(episode);
+        this.patchUpdateEpisodeForm(episode);
         this.ref.markForCheck();
         this.stepper?.next();
       }
@@ -164,7 +165,7 @@ export class CreateEpisodeComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  patchUpdateMediaForm(episode: TVEpisodeDetails): void {
+  patchUpdateEpisodeForm(episode: TVEpisodeDetails): void {
     this.updateEpisodeForm.patchValue({
       episodeNumber: episode.episodeNumber,
       name: episode.name,
@@ -194,7 +195,7 @@ export class CreateEpisodeComponent implements OnInit {
       return this.stepper?.next();
     if (!this.episode || this.updateEpisodeForm.invalid) return;
     this.updateEpisodeForm.disable({ emitEvent: false });
-    const mediaId = this.config.data['media']['_id'];
+    const mediaId = this.config.data!.media._id;
     const formValue = this.updateEpisodeForm.getRawValue();
     const updateTVEpisodeDto: UpdateTVEpisodeDto = ({
       episodeNumber: formValue.episodeNumber,
@@ -232,7 +233,7 @@ export class CreateEpisodeComponent implements OnInit {
       throw new Error(AppErrorCode.UPLOAD_STILL_TOO_LARGE);
     if (!IMAGE_PREVIEW_MIMES.includes(file.type))
       throw new Error(AppErrorCode.UPLOAD_STILL_UNSUPORTED);
-    const mediaId = this.config.data['media']['_id'];
+    const mediaId = this.config.data!.media._id;
     this.editImage({
       aspectRatioWidth: UPLOAD_STILL_ASPECT_WIDTH, aspectRatioHeight: UPLOAD_STILL_ASPECT_HEIGHT,
       minWidth: UPLOAD_STILL_MIN_WIDTH, minHeight: UPLOAD_STILL_MIN_HEIGHT,
@@ -268,7 +269,7 @@ export class CreateEpisodeComponent implements OnInit {
     if (file && file.size > UPLOAD_SUBTITLE_SIZE)
       throw new Error(AppErrorCode.UPLOAD_SUBTITLE_TOO_LARGE);
     this.subtitleFileUpload?.clear();
-    const media = this.config.data['media'];
+    const media = this.config.data!.media;
     const dialogRef = this.dialogService.open(AddSubtitleComponent, {
       data: { media: { ...media }, episode: { ...this.episode }, file: file },
       width: '500px',
@@ -288,8 +289,8 @@ export class CreateEpisodeComponent implements OnInit {
 
   uploadSource(file: File): void {
     if (!this.episode) return;
-    const mediaId = this.config.data['media']['_id'];
-    const episodeId = this.config.data['episode']['_id'];
+    const mediaId = this.config.data!.media._id;
+    const episodeId = this.episode._id;
     this.queueUploadService.addToQueue(`${mediaId}:${episodeId}`, file, `media/${mediaId}/tv/episodes/${episodeId}/source`, `media/${mediaId}/tv/episodes/${episodeId}/source/:id`);
     this.isUploadingSource = true;
     this.ref.markForCheck();
@@ -297,7 +298,7 @@ export class CreateEpisodeComponent implements OnInit {
 
   updateExtStreams(event: ExtStreamSelected): void {
     if (!this.episode) return;
-    const mediaId = this.config.data['media']['_id'];
+    const mediaId = this.config.data!.media._id;
     this.mediaService.updateTVEpisode(mediaId, this.episode._id, { extStreams: event.streams }).subscribe({
       next: () => event.next(),
       error: () => event.error()

@@ -1,40 +1,163 @@
 <ng-container *transloco="let t">
-  <div class="tw-my-4">
+  <div class="tw-my-4 tw-mx-2">
+    <div class="tw-flex">
+      <button pButton [label]="t('media.playlists.create')" icon="ms ms-add"
+        class="p-button p-button-sm p-button-shrink" (click)="showCreatePlaylistDialog()">
+      </button>
+      <p-altSelectButton [options]="[ { icon: 'ms ms-grid-view', value: 1 }, { icon: 'ms ms-list', value: 2 } ]"
+        [value]="listViewMode" optionLabel="label" optionValue="value" class="tw-ml-auto" styleClass="p-button-sm"
+        (onChange)="listViewMode = $event.value">
+      </p-altSelectButton>
+    </div>
     <ng-container *ngIf="loadingPlaylists; then skeletonLoading; else playlistListLoaded"></ng-container>
     <ng-template #playlistListLoaded>
-      <ng-container *ngIf="playlistList && playlistList.results?.length; else noPlaylists">
-        <div
-          class="tw-grid tw-grid-cols-2 xs:tw-grid-cols-3 md:tw-grid-cols-4 lg:tw-grid-cols-5 xl:tw-grid-cols-6 tw-my-2">
-          <a [routerLink]="['/playlists', playlist._id]" class="tw-bg-transparent tw-text-white hover:tw-bg-neutral-725
-            focus-visible:tw-bg-neutral-725 tw-transition-colors tw-duration-200 tw-rounded-sm tw-px-1.5 tw-py-2"
-            *ngFor="let playlist of playlistList.results; trackBy: track_Id">
-            <div class="tw-relative">
-              <div class="tw-aspect-w-16 tw-aspect-h-9 [&>*]:tw-rounded-md">
-                <img *ngIf="playlist.thumbnailMedia && playlist.thumbnailMedia.smallBackdropUrl; else noBackdrop"
-                  class="tw-object-cover" [lazyLoad]="playlist.thumbnailMedia.smallBackdropUrl"
-                  [lazyLoadPlaceholder]="playlist.thumbnailMedia.backdropColor | rgbColor" [alt]="playlist.name"
-                  errorImage="assets/images/media-backdrop-md.png">
-                <ng-template #noBackdrop>
-                  <img class="tw-object-cover" src="assets/images/media-backdrop-md.png" loading="lazy"
-                    [alt]="playlist.name">
-                </ng-template>
-              </div>
-              <div class="tw-bg-black tw-bg-opacity-80 tw-text-white tw-flex tw-absolute tw-top-0 tw-right-0 tw-bottom-0
-                tw-px-4 sm:tw-px-8 tw-rounded-r-md">
-                <div class="tw-m-auto tw-text-center">
-                  <p class="tw-text-sm sm:tw-text-base">{{ playlist.itemCount }}</p>
-                  <i class="ms ms-playlist-play ms-opsz-xl tw-text-xl sm:tw-text-3xl"></i>
+      <div class="tw-mt-2" *ngIf="playlistList && playlistList.results?.length; else noPlaylists" infiniteScroll
+        [infiniteScrollDistance]="2" [infiniteScrollDisabled]="!playlistList.hasNextPage" (scrolled)="onScroll()">
+        <ng-container *ngIf="listViewMode === 1; else detailedView">
+          <div class="tw-text-white tw-grid tw-grid-cols-2 xs:tw-grid-cols-3 md:tw-grid-cols-4 lg:tw-grid-cols-5 xl:tw-grid-cols-6
+              tw-my-2">
+            <div class="tw-group tw-bg-transparent hover:tw-bg-neutral-725 focus-within:tw-bg-neutral-725 tw-transition-colors
+              tw-duration-200 tw-rounded-sm tw-px-1.5 tw-py-2"
+              *ngFor="let playlist of playlistList.results; trackBy: track_Id"
+              [appContextMenuTriggerFor]="playlistMenu">
+              <a #playlistLink [routerLink]="['/playlists', playlist._id]" class="tw-block">
+                <div class="tw-relative">
+                  <div class="tw-aspect-w-16 tw-aspect-h-9 [&>*]:tw-rounded-md">
+                    <img *ngIf="playlist.thumbnailMedia && playlist.thumbnailMedia.smallBackdropUrl; else noBackdrop"
+                      class="tw-object-cover" [lazyLoad]="playlist.thumbnailMedia.smallBackdropUrl"
+                      [lazyLoadPlaceholder]="playlist.thumbnailMedia.backdropColor | rgbColor" [alt]="playlist.name"
+                      errorImage="assets/images/media-backdrop-md.png">
+                    <ng-template #noBackdrop>
+                      <img class="tw-object-cover" src="assets/images/media-backdrop-md.png" loading="lazy"
+                        [alt]="playlist.name">
+                    </ng-template>
+                  </div>
+                  <div class="tw-bg-black tw-bg-opacity-80 tw-text-white tw-flex tw-absolute tw-top-0 tw-right-0 tw-bottom-0
+                    tw-px-4 sm:tw-px-8 tw-rounded-r-md">
+                    <div class="tw-m-auto tw-text-center">
+                      <p class="tw-text-sm sm:tw-text-base">{{ playlist.itemCount }}</p>
+                      <i class="ms ms-playlist-play ms-opsz-xl tw-text-xl sm:tw-text-3xl"></i>
+                    </div>
+                  </div>
                 </div>
+              </a>
+              <div class="tw-flex tw-mt-2">
+                <div class="tw-flex-grow tw-cursor-pointer" (click)="playlistLink.click()">
+                  <p class="tw-text-xs sm:tw-text-sm md:tw-text-base tw-font-bold tw-line-clamp-2">{{ playlist.name }}
+                  </p>
+                </div>
+                <button pButton [appMenuTriggerFor]="playlistMenu" icon="ms ms-more-vert" type="button"
+                  aria-label="Toggle playlist menu" class="p-button-rounded p-button-text p-button-secondary p-button-sm p-button-sm-icon
+                  tw-ml-auto tw-flex-shrink-0 focus-visible:!tw-shadow-focus-box tw-invisible group-hover:tw-visible"
+                  #playlistMenuButton #playlistMenuTrigger="appMenuTriggerFor"
+                  (cdkMenuOpened)="onPlaylistMenuClick(playlistMenuButton, true)"
+                  (cdkMenuClosed)="onPlaylistMenuClick(playlistMenuButton, false)">
+                </button>
               </div>
+              <ng-template #playlistMenu>
+                <div appMenu>
+                  <button appMenuItem (click)="showAddToPlaylistDialog(playlist)">
+                    <i class="ms ms-playlist-add"></i>
+                    <span>{{ t('media.playlists.addAllToPlaylists') }}</span>
+                  </button>
+                  <button appMenuItem>
+                    <i class="ms ms-add-photo-alternate"></i>
+                    <span>{{ t('media.playlists.uploadCustomThumbnail') }}</span>
+                  </button>
+                  <button appMenuItem>
+                    <i class="ms ms-settings"></i>
+                    <span>{{ t('media.playlists.settings') }}</span>
+                  </button>
+                  <button appMenuItem (click)="deletePlaylist(playlist)">
+                    <i class="ms ms-delete"></i>
+                    <span>{{ t('media.playlists.delete') }}</span>
+                  </button>
+                </div>
+              </ng-template>
             </div>
-            <p class="tw-text-xs sm:tw-text-sm md:tw-text-base tw-font-bold tw-mt-2">{{ playlist.name }}</p>
-          </a>
-        </div>
-        <button *ngIf="playlistList.nextPageToken" type="button" role="navigation" aria-label="Play media" pButton
-          icon="ms ms-expand-more" iconPos="left" label="Load more" class="p-button-shrink tw-w-full"
-          (click)="loadPlaylists(playlistList.nextPageToken)">
-        </button>
-      </ng-container>
+          </div>
+        </ng-container>
+        <ng-template #detailedView>
+          <p-table #playlistTable styleClass="p-datatable-sm tw-bg-neutral-875 tw-p-4 tw-rounded-md"
+            [value]="playlistList.results || []" responsiveLayout="stack" breakpoint="768px" [rowTrackBy]="track_Id"
+            [rowHover]="true" [loading]="loadingPlaylists">
+            <ng-template pTemplate="header">
+              <tr>
+                <th class="tw-w-96">{{ t('users.playlistTable.name') }}</th>
+                <th class="tw-w-40">{{ t('users.playlistTable.itemCount') }}</th>
+                <th class="tw-w-40">{{ t('users.playlistTable.visibility') }}</th>
+                <th class="tw-w-36">{{ t('users.playlistTable.createdAt') }}</th>
+                <th class="tw-w-32"></th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-playlist>
+              <tr>
+                <td class="tw-w-96">
+                  <div class="tw-flex">
+                    <div class="tw-flex-shrink-0 tw-w-24">
+                      <div class="tw-aspect-w-16 tw-aspect-h-9 [&>*]:tw-rounded-md">
+                        <img
+                          *ngIf="playlist.thumbnailMedia && playlist.thumbnailMedia.smallBackdropUrl else noThumbnail"
+                          class="tw-object-cover" [lazyLoad]="playlist.thumbnailMedia.smallBackdropUrl"
+                          [lazyLoadPlaceholder]="playlist.thumbnailMedia.backdropColor | rgbColor"
+                          errorImage="assets/images/media-poster-error-sm.png" [alt]="playlist.name">
+                        <ng-template #noThumbnail>
+                          <img class="tw-object-cover" src="assets/images/media-backdrop-md.png" loading="lazy"
+                            [alt]="playlist.name">
+                        </ng-template>
+                      </div>
+                    </div>
+                    <div class="tw-ml-2">
+                      <p class="tw-text-base tw-font-semibold tw-line-clamp-2">{{ playlist.name }}</p>
+                    </div>
+                  </div>
+                </td>
+                <td class="tw-w-40 tw-text-sm">{{ playlist.itemCount | number }}</td>
+                <td class="tw-w-40 tw-text-sm">
+                  <ng-container [ngSwitch]="playlist.visibility">
+                    <i *ngSwitchCase="MediaVisibility.PUBLIC" class="ms ms-public"
+                      [pAltTooltip]="t('media.visibility.public')"></i>
+                    <i *ngSwitchCase="MediaVisibility.UNLISTED" class="ms ms-link"
+                      [pAltTooltip]="t('media.visibility.unlisted')"></i>
+                    <i *ngSwitchCase="MediaVisibility.PRIVATE" class="ms ms-lock"
+                      [pAltTooltip]="t('media.visibility.private')"></i>
+                  </ng-container>
+                </td>
+                <td class="tw-w-36 tw-text-sm">{{ playlist.createdAt | dateAlt:'PPpp' }}</td>
+                <td class="tw-w-32">
+                  <a [routerLink]="['/playlists', playlist._id]" class="tw-inline-block tw-rounded-full">
+                    <button pButton icon="ms ms-visibility" class="p-button-rounded p-button-sm p-button-sm-icon">
+                    </button>
+                  </a>
+                  <button pButton icon="ms ms-more-vert" [appMenuTriggerFor]="playlistMenu"
+                    class="p-button-rounded p-button-secondary p-button-sm p-button-sm-icon tw-ml-2">
+                  </button>
+                  <ng-template #playlistMenu>
+                    <div appMenu>
+                      <button appMenuItem (click)="showAddToPlaylistDialog(playlist)">
+                        <i class="ms ms-playlist-add"></i>
+                        <span>{{ t('media.playlists.addAllToPlaylists') }}</span>
+                      </button>
+                      <button appMenuItem>
+                        <i class="ms ms-add-photo-alternate"></i>
+                        <span>{{ t('media.playlists.uploadCustomThumbnail') }}</span>
+                      </button>
+                      <button appMenuItem>
+                        <i class="ms ms-settings"></i>
+                        <span>{{ t('media.playlists.settings') }}</span>
+                      </button>
+                      <button appMenuItem (click)="deletePlaylist(playlist)">
+                        <i class="ms ms-delete"></i>
+                        <span>{{ t('media.playlists.delete') }}</span>
+                      </button>
+                    </div>
+                  </ng-template>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </ng-template>
+      </div>
       <ng-template #noPlaylists>
         <p class="tw-text-gray-400 tw-text-base tw-italic">{{ t('media.playlists.noPlaylists') }}</p>
       </ng-template>

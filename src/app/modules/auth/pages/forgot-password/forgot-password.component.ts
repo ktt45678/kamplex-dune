@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { RecaptchaComponent } from 'ng-recaptcha';
 import { finalize, interval, Observable, takeUntil, takeWhile, tap } from 'rxjs';
@@ -18,18 +19,25 @@ interface RecoverPasswordForm {
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [DestroyService]
 })
-export class ForgotPasswordComponent {
+export class ForgotPasswordComponent implements OnInit {
   @ViewChild('reCaptcha') reCaptcha?: RecaptchaComponent;
   recoverPasswordForm: FormGroup<RecoverPasswordForm>;
   success: boolean = false;
   canResendEmail: boolean = true;
   resendEmailTtl: number = 0;
 
-  constructor(private ref: ChangeDetectorRef, private authService: AuthService, private destroyService: DestroyService) {
+  constructor(private ref: ChangeDetectorRef, private authService: AuthService, private router: Router,
+    private destroyService: DestroyService) {
     this.recoverPasswordForm = new FormGroup<RecoverPasswordForm>({
       email: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
       captcha: new FormControl('', { nonNullable: true, validators: Validators.required })
     }, { updateOn: 'change' });
+  }
+
+  ngOnInit(): void {
+    if (this.authService.currentUser) {
+      this.router.navigate(['/']);
+    }
   }
 
   onRecoverPasswordFormSubmit(): void {

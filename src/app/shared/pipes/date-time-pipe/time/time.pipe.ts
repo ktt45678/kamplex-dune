@@ -7,6 +7,13 @@ import { enUSShort } from '../../../../core/utils/date-fns-locales';
 
 type TimeDisplay = 'long' | 'short' | 'shortColon';
 
+interface TimeOptions {
+  format?: string[];
+  display?: TimeDisplay;
+  zeroPad?: boolean;
+  fallbackToSeconds?: boolean;
+}
+
 @Pipe({
   name: 'time'
 })
@@ -16,19 +23,29 @@ export class TimePipe implements PipeTransform {
 
   constructor(private translocoService: TranslocoService) { }
 
-  transform(value: number, format: string[] = ['hours', 'minutes', 'seconds'], display: TimeDisplay = 'long'): string | null {
-    if (!value)
+  transform(value: number, options?: TimeOptions): string | null {
+    options = Object.assign({}, {
+      format: ['hours', 'minutes', 'seconds'], display: 'long', zeroPad: true, fallbackToSeconds: true
+    }, options);
+    if (value == undefined)
       return null;
+    const { format, display, zeroPad, fallbackToSeconds } = options;
+    if (fallbackToSeconds && value < 60000 && !format!.includes('seconds'))
+      format!.push('seconds');
     const roundedValue = Math.floor(value / 1000) * 1000;
     const lang = this.translocoService.getActiveLang();
     const duration = intervalToDuration({ start: 0, end: roundedValue });
     if (display === 'shortColon') {
-      const zeroPad = (value: number) => String(value).padStart(2, '0');
+      const convertToString = (value: number) => {
+        const result = String(value);
+        if (zeroPad) return result.padStart(2, '0');
+        return result;
+      };
       return formatDuration(duration, {
         format,
-        zero: true,
+        zero: false,
         delimiter: ':',
-        locale: { formatDistance: (_token, count) => zeroPad(count) }
+        locale: { formatDistance: (_token, count) => convertToString(count) }
       });
     }
     const locale = display === 'long' ? this.locales[lang] : this.shortLocales['en'];
