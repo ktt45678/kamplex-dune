@@ -25,7 +25,8 @@
               "@messageformat/core",
               "flat",
               "plyr",
-              "hls.js"
+              "hls.js",
+              "dompurify"
             ],
             "outputPath": "dist/kamplex-v2",
             "index": "src/index.html",
@@ -52,8 +53,8 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "1.5mb",
-                  "maximumError": "2mb"
+                  "maximumWarning": "2mb",
+                  "maximumError": "4mb"
                 },
                 {
                   "type": "anyComponentStyle",
