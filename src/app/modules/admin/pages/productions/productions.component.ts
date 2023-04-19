@@ -26,7 +26,7 @@ export class ProductionsComponent implements OnInit, OnDestroy {
   productionList?: Paginated<Production>;
   selectedProductions?: Production[];
 
-  constructor(private ref: ChangeDetectorRef, private route: ActivatedRoute, private router: Router,
+  constructor(private ref: ChangeDetectorRef,
     public dialogService: DialogService, private confirmationService: ConfirmationService,
     private productionsService: ProductionsService, private translocoService: TranslocoService) { }
 
@@ -95,7 +95,7 @@ export class ProductionsComponent implements OnInit, OnDestroy {
     this.confirmationService.confirm({
       message: this.translocoService.translate('admin.productions.deleteConfirmation', { name: safeProductionName }),
       header: this.translocoService.translate('admin.productions.deleteConfirmationHeader'),
-      icon: 'pi pi-info-circle',
+      icon: 'ms ms-delete',
       defaultFocus: 'reject',
       accept: () => this.removeProduction(production._id)
     });

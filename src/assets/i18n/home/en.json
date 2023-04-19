@@ -1,6 +1,10 @@
 {
   "mediaList": {
+    "newReleases": "New Releases",
     "lastUpdated": "Last Updated",
+    "newAdded": "New Added",
+    "finishedAiring": "Finished Airing",
+    "browseByGenre": "Browse by Genre",
     "mostViewed": "Most Viewed",
     "topRated": "Top Rated"
   }

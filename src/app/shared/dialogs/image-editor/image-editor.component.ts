@@ -40,7 +40,7 @@ export class ImageEditorComponent {
     const maxSize = this.config.data!.maxSize || 5242880; //5 MiB
     this.format = this.imageFile.size <= maxSize ? getImageFormat(this.imageFile.type) : 'jpeg';
     this.transform = {};
-    this.aspectRatio = this.aspectRatioWidth / this.aspectRatioHeight;
+    this.aspectRatio = (this.aspectRatioWidth && this.aspectRatioHeight) ? this.aspectRatioWidth / this.aspectRatioHeight : 0;
   }
 
   zoomSliderChange(event: any): void {

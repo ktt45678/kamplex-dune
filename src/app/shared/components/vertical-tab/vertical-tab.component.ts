@@ -7,6 +7,7 @@ import { TabMenu } from 'primeng/tabmenu';
 import { PanelToastDirective } from './panel-toast.directive';
 import { TabPanelDirective } from './tab-panel.directive';
 import { VerticalTabChange } from '../../../core/interfaces/events';
+import { trackId, trackTabId } from '../../../core/utils';
 
 @Component({
   selector: 'app-vertical-tab',
@@ -14,7 +15,7 @@ import { VerticalTabChange } from '../../../core/interfaces/events';
   styleUrls: ['./vertical-tab.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [
-    trigger('tabPanelToastAnimation', [
+    trigger('tabPanelToast', [
       transition(':enter', [
         style({ transform: 'translateY(100%)', opacity: 0 }),
         animate('200ms ease-in-out', style({ transform: 'translateY(0)', opacity: 1 }))
@@ -27,6 +28,8 @@ import { VerticalTabChange } from '../../../core/interfaces/events';
   ]
 })
 export class VerticalTabComponent implements AfterViewInit, AfterContentInit {
+  trackId = trackId;
+  trackTabId = trackTabId;
   @Input() contentStyleClass: string = '';
   @Input() panelStyleClass: string = '';
   @Input() width: string = '100vw';
@@ -108,13 +111,4 @@ export class VerticalTabComponent implements AfterViewInit, AfterContentInit {
     this.renderer.addClass(node, 'p-menuitem-link-active');
     return node;
   }
-
-  trackId(index: number, item: any): any {
-    return item?.id;
-  }
-
-  trackTabId(index: number, item: any): any {
-    return item?.tabId;
-  }
-
 }

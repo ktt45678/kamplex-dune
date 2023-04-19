@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild, Renderer2, Inject, AfterViewInit } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService, TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { EMPTY, first, Observable, switchMap, takeUntil } from 'rxjs';
 import { cloneDeep } from 'lodash-es';
@@ -19,7 +19,7 @@ import { ExtStreamSelected } from '../../../../core/interfaces/events';
 import { Genre, MediaDetails, MediaSubtitle, MediaVideo, Production, Tag } from '../../../../core/models';
 import { DestroyService, GenresService, ItemDataService, MediaService, ProductionsService, QueueUploadService, TagsService } from '../../../../core/services';
 import { shortDate } from '../../../../core/validators';
-import { dataURItoBlob, detectFormChange, fixNestedDialogFocus, replaceDialogHideMethod } from '../../../../core/utils';
+import { dataURItoBlob, detectFormChange, fixNestedDialogFocus, replaceDialogHideMethod, secondsToTimeString, timeStringToSeconds } from '../../../../core/utils';
 import {
   IMAGE_PREVIEW_MIMES, IMAGE_PREVIEW_SIZE, UPLOAD_BACKDROP_ASPECT_HEIGHT, UPLOAD_BACKDROP_ASPECT_WIDTH, UPLOAD_BACKDROP_MIN_HEIGHT,
   UPLOAD_BACKDROP_MIN_WIDTH, UPLOAD_BACKDROP_SIZE, UPLOAD_POSTER_ASPECT_HEIGHT, UPLOAD_POSTER_ASPECT_WIDTH, UPLOAD_POSTER_MIN_HEIGHT,
@@ -33,9 +33,10 @@ interface CreateMediaForm {
   overview: FormControl<string>;
   originalLanguage: FormControl<string | null>;
   genres: FormControl<Genre[] | null>;
-  productions: FormControl<Production[] | null>;
+  producers: FormControl<Production[] | null>;
+  studios: FormControl<Production[] | null>;
   tags: FormControl<Tag[] | null>;
-  runtime: FormControl<number | null>;
+  runtime: FormControl<string | null>;
   adult: FormControl<boolean>;
   releaseDate: FormGroup<ShortDateForm>;
   lastAirDate?: FormGroup<ShortDateForm>;
@@ -50,7 +51,14 @@ interface UpdateMediaForm extends Omit<CreateMediaForm, 'type'> { }
   templateUrl: './create-media.component.html',
   styleUrls: ['./create-media.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [ItemDataService, DestroyService]
+  providers: [
+    ItemDataService,
+    DestroyService,
+    {
+      provide: TRANSLOCO_SCOPE,
+      useValue: 'common'
+    }
+  ]
 })
 export class CreateMediaComponent implements OnInit, AfterViewInit {
   @ViewChild('stepper') stepper?: StepperComponent;
@@ -94,9 +102,10 @@ export class CreateMediaComponent implements OnInit, AfterViewInit {
       overview: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(10), Validators.maxLength(2000)] }),
       originalLanguage: new FormControl(null),
       genres: new FormControl(null),
-      productions: new FormControl(null),
+      producers: new FormControl(null),
+      studios: new FormControl(null),
       tags: new FormControl(null),
-      runtime: new FormControl(null, [Validators.required, Validators.min(0), Validators.max(10000)]),
+      runtime: new FormControl(null, [Validators.required]),
       adult: new FormControl(false, { nonNullable: true, validators: Validators.required }),
       releaseDate: new FormGroup<ShortDateForm>({
         day: new FormControl(null),
@@ -113,9 +122,10 @@ export class CreateMediaComponent implements OnInit, AfterViewInit {
       overview: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(10), Validators.maxLength(2000)] }),
       originalLanguage: new FormControl(''),
       genres: new FormControl(null),
-      productions: new FormControl(null),
+      producers: new FormControl(null),
+      studios: new FormControl(null),
       tags: new FormControl(null),
-      runtime: new FormControl(null, [Validators.required, Validators.min(0), Validators.max(10000)]),
+      runtime: new FormControl(null, [Validators.required]),
       adult: new FormControl(false, { nonNullable: true, validators: Validators.required }),
       releaseDate: new FormGroup<ShortDateForm>({
         day: new FormControl(null),
@@ -179,18 +189,21 @@ export class CreateMediaComponent implements OnInit, AfterViewInit {
     this.createMediaForm.disable({ emitEvent: false });
     const formValue = this.createMediaForm.getRawValue();
     const genreIds = formValue.genres?.map(g => g._id) || [];
-    const productionIds = formValue.productions?.map(p => p._id) || [];
+    const studioIds = formValue.studios?.map(p => p._id) || [];
+    const producerIds = formValue.producers?.map(p => p._id) || [];
     const tagIds = formValue.tags?.map(p => p._id) || [];
+    const runtimeValue = timeStringToSeconds(formValue.runtime)!;
     const createMediaDto: CreateMediaDto = {
       type: formValue.type,
       title: formValue.title,
       originalTitle: formValue.originalTitle || null,
       overview: formValue.overview,
       genres: genreIds,
-      originalLanguage: formValue.originalLanguage,
-      productions: productionIds,
+      originalLang: formValue.originalLanguage,
+      producers: producerIds,
+      studios: studioIds,
       tags: tagIds,
-      runtime: formValue.runtime!,
+      runtime: runtimeValue,
       adult: formValue.adult,
       releaseDate: {
         day: formValue.releaseDate.day!,
@@ -228,15 +241,17 @@ export class CreateMediaComponent implements OnInit, AfterViewInit {
   }
 
   patchUpdateMediaForm(media: MediaDetails): void {
+    const runtimeValue = secondsToTimeString(media.runtime);
     this.updateMediaForm.patchValue({
       title: media.title,
       originalTitle: media.originalTitle || '',
       overview: media.overview,
-      originalLanguage: media.originalLanguage || null,
+      originalLanguage: media.originalLang || null,
       genres: media.genres,
-      productions: media.productions,
+      studios: media.studios,
+      producers: media.producers,
       tags: media.tags,
-      runtime: media.runtime,
+      runtime: runtimeValue,
       adult: media.adult,
       releaseDate: {
         day: media.releaseDate.day,
@@ -277,15 +292,18 @@ export class CreateMediaComponent implements OnInit, AfterViewInit {
     const mediaId = this.media._id;
     const formValue = this.updateMediaForm.getRawValue();
     const genreIds = formValue.genres?.map(g => g._id) || [];
-    const productionIds = formValue.productions?.map(p => p._id) || [];
+    const studioIds = formValue.studios?.map(p => p._id) || [];
+    const producerIds = formValue.producers?.map(p => p._id) || [];
+    const runtimeValue = timeStringToSeconds(formValue.runtime)!;
     const updateMediaDto: UpdateMediaDto = {
       title: formValue.title,
       originalTitle: formValue.originalTitle || null,
       overview: formValue.overview,
       genres: genreIds,
-      originalLanguage: formValue.originalLanguage,
-      productions: productionIds,
-      runtime: formValue.runtime!,
+      originalLang: formValue.originalLanguage,
+      studios: studioIds,
+      producers: producerIds,
+      runtime: runtimeValue,
       adult: formValue.adult,
       releaseDate: {
         day: formValue.releaseDate.day!,
@@ -367,7 +385,7 @@ export class CreateMediaComponent implements OnInit, AfterViewInit {
   editImage(data: any): Observable<string[] | null> {
     const dialogRef = this.dialogService.open(ImageEditorComponent, {
       data: data,
-      header: this.translocoService.translate('admin.configureMedia.editImage'),
+      header: this.translocoService.translate('common.imageEditor.header'),
       width: '700px',
       modal: true,
       dismissableMask: false,

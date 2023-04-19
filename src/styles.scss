@@ -1,18 +1,29 @@
 /* You can add global styles to this file, and also import other style files */
-@import url("https://fonts.sandbox.google.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24..48,300,0..1,0");
+@import url("https://fonts.sandbox.google.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24..48,300..600,0..1,0");
+@import "./assets/css/tailwindcss/preflight-custom.css";
 @import "./assets/css/material-symbols/styles.css";
 @import "./assets/css/cdk/styles.scss";
+@import "./assets/css/markdown/markdown-dark.css";
 @import "../node_modules/@angular/cdk/overlay-prebuilt.css";
-@import "../node_modules/plyr/dist/plyr.css";
+
+/* Vidstack */
+@import "../node_modules/vidstack/styles/base.css";
+@import "../node_modules/vidstack/styles/ui/captions.css";
+
+/* PrimeNG */
 @import "../node_modules/primeicons/primeicons.css";
 @import "./assets/css/primeng/md-dark-indigo-custom.css";
 @import "../node_modules/primeng/resources/primeng.min.css";
+/* @import "../node_modules/primeng/resources/themes/md-dark-indigo/theme.css"; */
+
+/* Swiper */
 @import "../node_modules/swiper/swiper.scss";
 @import "../node_modules/swiper/modules/autoplay/autoplay.scss";
 @import "../node_modules/swiper/modules/navigation/navigation.scss";
 @import "../node_modules/swiper/modules/pagination/pagination.scss";
+
+/* Tailwind */
 @import "../node_modules/tailwindcss/base";
-@import "./assets/css/tailwindcss/preflight-custom.css";
 @import "../node_modules/tailwindcss/components";
 @import "../node_modules/tailwindcss/utilities";
 
@@ -32,16 +43,12 @@ html {
 }
 
 body {
-  font-family: Roboto, Helvetica Neue Light, Helvetica Neue, Helvetica, Arial,
-    Lucida Grande, sans-serif;
+  font-family: Roboto, Helvetica Neue Light, Helvetica Neue, Helvetica, Arial, Lucida Grande, sans-serif;
   background-color: #111111;
   color: #888888;
 }
 
-img:focus,
-a:focus,
-button:focus,
-div:focus {
+img:focus, a:focus, button:focus, div:focus {
   outline: none;
 }
 
@@ -60,11 +67,15 @@ p {
 
 @layer components {
   .tw-divider {
-    @apply tw-border-neutral-625 tw-border-t tw-my-5 tw-px-5;
+    @apply tw-border-neutral-625 tw-border-t tw-px-5;
   }
 
   .tw-divider-2 {
-    @apply tw-border-neutral-625 tw-border-t tw-my-10 tw-px-10;
+    @apply tw-border-neutral-625 tw-border-t tw-px-10;
+  }
+
+  .tw-divider-y {
+    @apply tw-border-neutral-625 tw-border-l tw-py-5;
   }
 
   .tw-nav-item {

@@ -1,14 +1,14 @@
 <ng-container *transloco="let t">
   <div class="tw-my-4 tw-mx-2">
     <div class="tw-flex">
-      <p-altToggleButton styleClass="p-button-sm p-togglebutton-dark !tw-border-none" [onIcon]="'ms ms-expand-less'"
-        offIcon="ms ms-expand-more" [initValue]="true" [pAltTooltip]="t('users.filterHistory.toggleButton')"
+      <p-toggleButton styleClass="p-button-sm p-togglebutton-dark !tw-border-none" [onIcon]="'ms ms-expand-less'"
+        offIcon="ms ms-expand-more" [initValue]="true" [pTooltip]="t('users.filterHistory.toggleButton')"
         (onChange)="showFilterForm = $event.checked">
-      </p-altToggleButton>
-      <p-altSelectButton [options]="[ { icon: 'ms ms-grid-view', value: 1 }, { icon: 'ms ms-list', value: 2 } ]"
-        [value]="listViewMode" optionLabel="label" optionValue="value" class="tw-ml-auto" styleClass="p-button-sm"
+      </p-toggleButton>
+      <p-selectButton [options]="[ { icon: 'ms ms-grid-view', value: 1 }, { icon: 'ms ms-list', value: 2 } ]"
+        [initValue]="listViewMode" optionLabel="label" optionValue="value" class="tw-ml-auto" styleClass="p-button-sm"
         (onChange)="listViewMode = $event.value">
-      </p-altSelectButton>
+      </p-selectButton>
     </div>
     <div class="tw-flex tw-flex-wrap tw-mt-2">
       <div *ngIf="showFilterForm" class="md:tw-sticky md:tw-top-4 tw-w-full md:tw-w-1/4 md:tw-h-fit">
@@ -26,13 +26,13 @@
               icon="ms ms-calendar-today"></p-calendar>
             <label class="tw-inline-block tw-text-base tw-font-medium tw-mt-2">{{
               t('users.filterHistory.mediaFilters') }}</label>
-            <p-autoComplete formControlName="media" [suggestions]="mediaSuggestions"
+            <p-altAutoComplete formControlName="media" [suggestions]="mediaSuggestions"
               (completeMethod)="loadMediaSuggestions($event.query)" field="title" dataKey="_id" [multiple]="true"
               [unique]="true" [placeholder]="t('users.filterHistory.mediaIds')" scrollHeight="300px" appendTo="body"
               class="p-autocomplete-full" styleClass="p-autocomplete-xs tw-mt-2" panelStyleClass="p-autocomplete-xs"
               inputId="media-ids" ariaLabel="Find Movie and TV Shows"
               dropdownAriaLabel="Movie and TV Shows search results">
-            </p-autoComplete>
+            </p-altAutoComplete>
             <div class="tw-flex tw-flex-wrap tw-justify-center tw-mt-2">
               <p-radioButton name="mediaType" [value]="null" [label]="t('media.mediaTypes.all')"
                 formControlName="mediaType">
@@ -60,12 +60,12 @@
                 </p-dropdown>
               </div>
             </div>
-            <p-autoComplete formControlName="mediaGenres" [suggestions]="genreSuggestions"
+            <p-altAutoComplete formControlName="mediaGenres" [suggestions]="genreSuggestions"
               (completeMethod)="loadGenreSuggestions($event.query)" field="name" dataKey="_id" [multiple]="true"
               [unique]="true" [placeholder]="t('users.filterHistory.mediaGenres')" scrollHeight="300px" appendTo="body"
               class="p-autocomplete-full" styleClass="p-autocomplete-xs tw-mt-2" panelStyleClass="p-autocomplete-xs"
               ariaLabel="Find genres" dropdownAriaLabel="Genre search results">
-            </p-autoComplete>
+            </p-altAutoComplete>
             <button pButton type="submit" [label]="t('users.filterHistory.filter')" icon="ms ms-filter-list"
               class="p-button-sm p-button-shrink !tw-mt-4 tw-w-full" [disabled]="filterHistoryForm.disabled"></button>
           </form>
@@ -82,78 +82,13 @@
                 *ngFor="let historyGroup of historyGroupList.results; let firstGroup = first; trackBy: trackHistoryGroup">
                 <p class="tw-text-white tw-text-2xl tw-font-semibold" [ngClass]="{ 'tw-mt-8': !firstGroup }">{{
                   historyGroup.groupByDate | relativeDate }}</p>
-                <div *ngIf="!firstGroup" class="tw-divider"></div>
+                <div *ngIf="!firstGroup" class="tw-divider tw-my-5"></div>
                 <div
                   class="tw-text-white tw-grid tw-grid-cols-2 xs:tw-grid-cols-3 md:tw-grid-cols-4 lg:tw-grid-cols-6 tw-my-2">
-                  <div class="tw-group tw-bg-transparent hover:tw-bg-neutral-725 focus-within:tw-bg-neutral-725
-                      tw-transition-colors tw-duration-200 tw-rounded-sm tw-px-1.5
-                      tw-py-2" *ngFor="let history of historyGroup.historyList; trackBy: track_Id"
-                    [appContextMenuTriggerFor]="historyMenu">
-                    <a #mediaLink [routerLink]="['/watch', history.media._id]"
-                      [queryParams]="{ ep: history.episode?.episodeNumber, time: history.watchTime }" class="tw-block">
-                      <div class="tw-relative">
-                        <div class="tw-aspect-w-2 tw-aspect-h-3 [&>*]:tw-rounded-md">
-                          <img *ngIf="history.media.thumbnailPosterUrl; else noPoster" class="tw-object-cover"
-                            [lazyLoad]="history.media.thumbnailPosterUrl"
-                            [lazyLoadPlaceholder]="history.media.posterColor | rgbColor" [alt]="history.media.title"
-                            errorImage="assets/images/media-poster-error-md.png">
-                          <ng-template #noPoster>
-                            <img class="tw-object-cover" src="assets/images/media-poster-md.png" loading="lazy"
-                              [alt]="history.media.title">
-                          </ng-template>
-                        </div>
-                        <div class="tw-absolute tw-left-0 tw-bottom-0 tw-right-0 tw-rounded-b-md">
-                          <div *ngIf="history.paused" class="tw-w-full tw-text-right">
-                            <i class="ms ms-pause ms-icon-sm tw-mr-1"></i>
-                          </div>
-                          <p-progressBar
-                            [value]="history.watchTime / (history.episode && history.episode.runtime || history.media.runtime) * 100"
-                            styleClass="tw-h-1 tw-rounded-b-md"></p-progressBar>
-                        </div>
-                      </div>
-                    </a>
-                    <div class="tw-flex tw-mt-2">
-                      <div class="tw-flex-grow tw-cursor-pointer" (click)="mediaLink.click()">
-                        <p class="tw-text-xs sm:tw-text-sm tw-font-bold tw-line-clamp-2">{{
-                          history.media.title }}</p>
-                        <p class="tw-text-orange-400 tw-text-xs sm:tw-text-sm tw-font-medium tw-mt-2">
-                          <span *ngIf="history.episode; else movieTag"
-                            class="tw-bg-white tw-bg-opacity-10 tw-rounded-md tw-px-1">{{
-                            t('media.episode.episodePrefix') }} {{ history.episode.episodeNumber }}</span>
-                          <ng-template #movieTag>
-                            <span class="tw-bg-white tw-bg-opacity-10 tw-rounded-md tw-px-1">{{
-                              t('media.mediaTypes.movie') }}</span>
-                          </ng-template>
-                        </p>
-                      </div>
-                      <button pButton [appMenuTriggerFor]="historyMenu" icon="ms ms-more-vert" type="button"
-                        aria-label="Toggle history menu" class="p-button-rounded p-button-text p-button-secondary p-button-sm
-                          p-button-sm-icon tw-ml-auto tw-flex-shrink-0 focus-visible:!tw-shadow-focus-box tw-invisible
-                          group-hover:tw-visible" #historyMenuButton #historyMenuTrigger="appMenuTriggerFor"
-                        (cdkMenuOpened)="onHistoryMenuClick(historyMenuButton, true)"
-                        (cdkMenuClosed)="onHistoryMenuClick(historyMenuButton, false)">
-                      </button>
-                    </div>
-                    <ng-template #historyMenu>
-                      <div appMenu>
-                        <button appMenuItem (click)="showAddToPlaylistDialog(history.media)">
-                          <i class="ms ms-playlist-add"></i>
-                          <span>{{ t('media.playlists.addToPlaylist') }}</span>
-                        </button>
-                        <button appMenuItem (click)="pauseAndUnpauseHistory(history, $event)">
-                          <i class="ms" [ngClass]="history.paused ? 'ms-resume' : 'ms-pause'"></i>
-                          <span *ngIf="!history.paused; else isPaused">{{ t('users.history.pauseHistory') }}</span>
-                          <ng-template #isPaused>
-                            <span>{{ t('users.history.unpauseHistory') }}</span>
-                          </ng-template>
-                        </button>
-                        <button appMenuItem (click)="deleteHistory(history)">
-                          <i class="ms ms-delete"></i>
-                          <span>{{ t('users.history.delete') }}</span>
-                        </button>
-                      </div>
-                    </ng-template>
-                  </div>
+                  <app-history-card #historyCard *ngFor="let history of historyGroup.historyList; trackBy: track_Id"
+                    [history]="history" (onAddToPlaylist)="showAddToPlaylistDialog($event)"
+                    (onPauseAndUnpause)="pauseAndUnpauseHistory($event.history, $event.originalEvent, historyCard)"
+                    (onDelete)="showDeleteHistoryDialog($event)"></app-history-card>
                 </div>
               </ng-container>
             </ng-container>
@@ -187,7 +122,7 @@
                             class="tw-rounded-md tw-overflow-hidden">
                             <img class="tw-object-cover tw-w-12 tw-h-12" [lazyLoad]="history.media.smallPosterUrl"
                               [lazyLoadPlaceholder]="history.media.posterColor | rgbColor"
-                              errorImage="assets/images/media-poster-error-sm.png" [alt]="history.media.title">
+                              errorImage="assets/images/media-poster-sm.png" [alt]="history.media.title">
                           </div>
                           <ng-template #noPoster>
                             <img class="tw-object-cover tw-rounded-md" src="assets/images/media-poster-sm.png"
@@ -197,7 +132,7 @@
                         <div class="tw-ml-2">
                           <p class="tw-text-base tw-font-semibold tw-line-clamp-2">{{ history.media.title }}</p>
                           <p *ngIf="history.episode" class="tw-text-sm">
-                            <span>{{ history.episode.episodeNumber }}</span>
+                            <span>{{ history.episode.epNumber }}</span>
                             <span *ngIf="history.episode.name">. {{ history.episode.name }}</span>
                           </p>
                         </div>
@@ -217,7 +152,7 @@
                     <td class="tw-w-36 tw-text-sm">{{ history.date | dateAlt:'p' }}</td>
                     <td class="tw-w-32">
                       <a [routerLink]="['/watch', history.media._id]" class="tw-inline-block tw-rounded-full"
-                        [queryParams]="{ ep: history.episode?.episodeNumber, time: history.watchTime }">
+                        [queryParams]="{ ep: history.episode?.epNumber, time: history.watchTime }">
                         <button pButton icon="ms ms-play-arrow" class="p-button-rounded p-button-sm p-button-sm-icon">
                         </button>
                       </a>
@@ -230,17 +165,19 @@
                             <i class="ms ms-playlist-add"></i>
                             <span>{{ t('media.playlists.addToPlaylist') }}</span>
                           </button>
-                          <button appMenuItem (click)="pauseAndUnpauseHistory(history, $event)">
-                            <i class="ms" [ngClass]="history.paused ? 'ms-resume' : 'ms-pause'"></i>
-                            <span *ngIf="!history.paused; else isPaused">{{ t('users.history.pauseHistory') }}</span>
-                            <ng-template #isPaused>
-                              <span>{{ t('users.history.unpauseHistory') }}</span>
-                            </ng-template>
-                          </button>
-                          <button appMenuItem (click)="deleteHistory(history)">
-                            <i class="ms ms-delete"></i>
-                            <span>{{ t('users.history.delete') }}</span>
-                          </button>
+                          <ng-container *ngIf="currentUser && currentUser._id === userId">
+                            <button appMenuItem (click)="pauseAndUnpauseHistory(history, $event)">
+                              <i class="ms" [ngClass]="history.paused ? 'ms-resume' : 'ms-pause'"></i>
+                              <span *ngIf="!history.paused; else isPaused">{{ t('users.history.pauseHistory') }}</span>
+                              <ng-template #isPaused>
+                                <span>{{ t('users.history.unpauseHistory') }}</span>
+                              </ng-template>
+                            </button>
+                            <button appMenuItem (click)="showDeleteHistoryDialog(history)">
+                              <i class="ms ms-delete"></i>
+                              <span>{{ t('users.history.delete') }}</span>
+                            </button>
+                          </ng-container>
                         </div>
                       </ng-template>
                     </td>
@@ -256,6 +193,10 @@
       </div>
     </div>
   </div>
+  <p-confirmDialog [style]="{width: '500px'}" [baseZIndex]="1000" acceptButtonStyleClass="p-button-danger p-button-sm"
+    rejectButtonStyleClass="p-button-text p-button-secondary p-button-sm" rejectIcon="" acceptIcon=""
+    [dismissableMask]="true">
+  </p-confirmDialog>
 </ng-container>
 <div #dropdownZone class="p-dropdown-xs"></div>
 <div #multiSelectZone class="p-multiselect-xs"></div>

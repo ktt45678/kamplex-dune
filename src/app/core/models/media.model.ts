@@ -9,7 +9,7 @@ export interface Media {
   overview: string;
   runtime: number;
   genres: Genre[];
-  originalLanguage?: string;
+  originalLang?: string;
   adult: boolean;
   releaseDate: ShortDate;
   movie: MovieStatus;

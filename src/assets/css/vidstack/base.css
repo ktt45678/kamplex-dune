@@ -1,0 +1,48 @@
+media-player {
+  --media-aspect-ratio: 16 / 9;
+  --media-font-family: Roboto, Helvetica Neue Light, Helvetica Neue, Helvetica, Arial, Lucida Grande, sans-serif;
+  display: block;
+}
+
+/* Avoid double controls on iOS when in fullscreen. */
+media-player[data-ios-controls] .media-controls,
+/* Hide controls while media is loading, or user is idle. */
+media-player:not([data-can-play]) .media-controls, media-player[data-user-idle] .media-controls
+/*, media-player:focus[data-user-idle] .media-controls, media-player:not(:focus) .media-controls */ {
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* Show controls if autoplay fails or paused. */
+media-player[data-autoplay-error] .media-controls, media-player[data-paused] .media-controls
+/*, media-player:focus .media-controls */ {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Apply outline */
+[data-media-slider][data-focus] [part='track'], [data-media-button][data-focus] {
+  outline: none;
+  @apply tw-shadow-focus-box;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  /* mouse or touchpad */
+  media-player:not([data-hocus]):not([data-paused]) .media-controls {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  /* smartphones or touchscreens */
+  media-player:not(:focus):not([data-paused]) .media-controls, media-player:not(:focus-within):not([data-paused]) .media-controls {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  media-player:focus:not([data-user-idle]) .media-controls, media-player:focus-within:not([data-user-idle]) .media-controls {
+    opacity: 1;
+    visibility: visible;
+  }
+}

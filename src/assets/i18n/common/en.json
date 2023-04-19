@@ -1,5 +1,6 @@
 {
   "imageEditor": {
+    "header": "Edit image",
     "skip": "Skip",
     "cancel": "Cancel",
     "confirm": "Confirm"

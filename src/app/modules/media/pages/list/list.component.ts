@@ -11,7 +11,7 @@ import { SITE_NAME } from '../../../../../environments/config';
 import { MediaType } from '../../../../core/enums';
 
 type ListPath = 'movie' | 'tv' | 'added' | 'updated' | 'newReleases' | 'mostViewed' | 'topRated' | 'genre' | 'studio' | 'producer'
-  | 'tag';
+  | 'tag' | 'year';
 
 type HandleListOptions = HandleListPath | HandleListSubPath;
 
@@ -27,7 +27,7 @@ interface HandleListPath extends HandleListBase {
 }
 
 interface HandleListSubPath extends HandleListBase {
-  path: 'genre' | 'studio' | 'producer' | 'tag';
+  path: 'genre' | 'studio' | 'producer' | 'tag' | 'year';
   subPath: string;
   resetSubPath: boolean;
 }
@@ -107,6 +107,10 @@ export class ListComponent implements OnInit, OnDestroy {
       case 'tag':
         options.resetSubPath && this.findTagName(options.subPath);
         this.loadMediaByTag(options.subPath, options.resetList, options.nextPageToken);
+        break;
+      case 'year':
+        options.resetSubPath && (this.subPathLabel = options.subPath);
+        this.loadMediaByYear(options.subPath, options.resetList, { year: +options.subPath, pageToken: options.nextPageToken });
         break;
     }
   }
@@ -207,10 +211,23 @@ export class ListComponent implements OnInit, OnDestroy {
     });
   }
 
+  loadMediaByYear(year: string, resetList: boolean, options?: CursorPageMediaDto): void {
+    this.setTitleAndMeta(year);
+    this.preMediaLoad(resetList);
+    options = Object.assign({}, { sort: 'desc(_id)', limit: this.itemsPerPage }, options);
+    this.mediaService.findPageCursor(options).subscribe(mediaList => {
+      this.appendMediaList(mediaList);
+    }).add(() => {
+      this.postMediaLoad(resetList);
+      this.ref.markForCheck();
+    });
+  }
+
   onScroll(): void {
     if (!this.currentPath || !this.mediaList) return;
     if (!this.mediaList.hasNextPage) return;
-    if (this.currentPath === 'genre' || this.currentPath === 'studio' || this.currentPath === 'producer' || this.currentPath === 'tag') {
+    if (this.currentPath === 'genre' || this.currentPath === 'studio' || this.currentPath === 'producer' ||
+      this.currentPath === 'tag' || this.currentPath === 'year') {
       if (!this.currentSubPath) return;
       this.handlePath({
         path: this.currentPath, subPath: this.currentSubPath, resetList: false,

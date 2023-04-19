@@ -6,7 +6,7 @@ import { first, Observable, takeUntil } from 'rxjs';
 import { CanComponentDeactivate } from '../../../core/guards';
 import { DestroyService, QueueUploadService } from '../../../core/services';
 import { QueueUploadStatus } from '../../../core/enums';
-import { FileUpload } from '../../../core/utils';
+import { FileUpload, trackId } from '../../../core/utils';
 
 @Component({
   selector: 'app-admin-layout',
@@ -16,6 +16,7 @@ import { FileUpload } from '../../../core/utils';
   providers: [DestroyService]
 })
 export class AdminLayoutComponent implements OnInit, OnDestroy, CanComponentDeactivate {
+  trackId = trackId;
   sideBarItems: MenuItem[] = [];
   tabMenuItems: MenuItem[] = [];
   uploadQueue: FileUpload[] = [];
@@ -69,14 +70,6 @@ export class AdminLayoutComponent implements OnInit, OnDestroy, CanComponentDeac
   cancelUpload(upload: FileUpload): void {
     upload.cancel();
     this.queueUploadService.removeFromQueue(upload);
-  }
-
-  trackId(index: number, item: any): any {
-    return item?.id;
-  }
-
-  trackCreateUrl(index: number, item: any): any {
-    return item?.createUrl;
   }
 
   ngOnDestroy(): void {

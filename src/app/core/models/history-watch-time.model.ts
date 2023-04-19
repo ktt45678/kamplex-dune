@@ -1,5 +1,5 @@
 export interface HistoryWatchTime {
   _id: string;
-  watchTime: number;
+  time: number;
   date: string;
 }

@@ -1,15 +1,22 @@
-import { NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { TranslocoModule } from '@ngneat/transloco';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 import { VideoPlayerComponent } from './video-player.component';
+import { SlideMenuModule } from '../../components/slide-menu';
 
 @NgModule({
   declarations: [VideoPlayerComponent],
   imports: [
     CommonModule,
-    RouterModule
+    RouterModule,
+    TranslocoModule,
+    SlideMenuModule,
+    ProgressSpinnerModule
   ],
-  exports: [VideoPlayerComponent]
+  exports: [VideoPlayerComponent],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class VideoPlayerModule { }

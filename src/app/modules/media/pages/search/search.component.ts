@@ -37,7 +37,7 @@ export class SearchComponent implements OnInit, AfterViewInit {
       sort: filterOptions.get('sort'),
       type: filterOptions.get('type'),
       status: filterOptions.get('status'),
-      originalLanguage: filterOptions.get('originalLanguage'),
+      originalLang: filterOptions.get('originalLanguage'),
       year: Number(filterOptions.get('year')) || undefined
     })
   }

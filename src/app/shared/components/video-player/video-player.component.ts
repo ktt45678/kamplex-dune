@@ -1,129 +1,244 @@
-import { DOCUMENT } from '@angular/common';
-import { Component, OnInit, ChangeDetectionStrategy, Input, OnChanges, SimpleChanges, OnDestroy, Inject, Output, EventEmitter } from '@angular/core';
-import Hls from 'hls.js';
-import * as Plyr from 'plyr';
+import { Component, OnInit, ChangeDetectionStrategy, Input, OnDestroy, Output, EventEmitter, ViewChild, ElementRef, ChangeDetectorRef, ViewEncapsulation, Renderer2 } from '@angular/core';
+import { Platform } from '@angular/cdk/platform';
+import { TRANSLOCO_SCOPE, TranslocoService } from '@ngneat/transloco';
+import { MediaPlayerElement, MediaStore } from 'vidstack';
+import { Dispose } from 'maverick.js';
+import { first } from 'rxjs';
 
-import { ExtStreamList } from '../../../core/models';
+import { MediaStream } from '../../../core/models';
+import { KPTrack, KPVideoSource } from './interfaces';
+import { track_Id } from '../../../core/utils';
+
+import 'vidstack/define/media-player.js';
+import 'vidstack/define/media-time.js';
+import 'vidstack/define/media-slider.js';
+import 'vidstack/define/media-captions.js';
+import 'vidstack/define/media-time-slider.js';
+import 'vidstack/define/media-volume-slider.js';
+import 'vidstack/define/media-slider-value.js';
+import 'vidstack/define/media-slider-thumbnail.js';
 
 @Component({
   selector: 'app-video-player',
   templateUrl: './video-player.component.html',
   styleUrls: ['./video-player.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  encapsulation: ViewEncapsulation.None,
+  providers: [
+    {
+      provide: TRANSLOCO_SCOPE,
+      useValue: ['languages', 'player']
+    }
+  ]
 })
-export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
-  @Input() source?: Plyr.SourceInfo;
-  @Input() hlsSource?: ExtStreamList;
-  @Input() previewThumbnail?: string;
-  @Output() onEnded = new EventEmitter<Plyr.PlyrEvent>();
-  player?: Plyr;
-  hls?: Hls
-  playerOptions: Plyr.Options;
+export class VideoPlayerComponent implements OnInit, OnDestroy {
+  track_Id = track_Id;
+  @Output() onEnded = new EventEmitter<void>();
+  player!: MediaPlayerElement;
+  readonly playbackSpeeds: number[];
+  currentStream?: MediaStream;
+  sources?: KPVideoSource[];
+  tracks?: KPTrack[];
+  playerDisposeFn: Dispose[] = [];
+  playerStore?: MediaStore;
+  previewThumbnail?: string;
+  activeSourceIndex: number = 0;
+  activeSpeedValue: number = 1;
+  activeTrackValue: string | null = null;
+  trackDisabled: boolean = true;
+  isVolumeCtrlActive: boolean = false;
+  isMobile: boolean = false;
 
-  constructor(@Inject(DOCUMENT) private document: Document) {
-    this.playerOptions = {
-      captions: { active: true },
-      controls: ['play-large', 'play', 'rewind', 'fast-forward', 'progress', 'current-time', 'duration', 'mute', 'volume', 'captions', 'settings', 'pip', 'airplay', 'fullscreen'],
-      settings: ['captions', 'quality', 'speed', 'loop'],
-      autoplay: true,
-      previewThumbnails: { enabled: true },
-      i18n: {
-        qualityLabel: {
-          0: 'Auto'
-        }
-      }
-    };
+  @Input('stream') set setStreamData(value: MediaStream | undefined) {
+    if (!value || this.currentStream === value) return;
+    this.currentStream = value;
+    this.setPlayerData(value);
+  }
+
+  @ViewChild('player') set setPlayer(value: ElementRef<MediaPlayerElement>) {
+    if (!this.player && value) {
+      this.player = value.nativeElement;
+      this.player.onAttach(() => {
+        this.onPlayerAttach();
+      });
+    }
+  }
+
+  constructor(private ref: ChangeDetectorRef, private renderer: Renderer2, private platform: Platform,
+    private translocoService: TranslocoService) {
+    this.isMobile = this.platform.ANDROID || this.platform.IOS;
+    this.playbackSpeeds = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
   }
 
   ngOnInit(): void {
-    this.setPlayerSource(this.source, this.hlsSource);
+
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    this.setPlayerSource(changes['source']?.currentValue, changes['hlsSource']?.currentValue);
-    if (changes['previewThumbnail']) {
-      this.player?.setPreviewThumbnails({
-        src: changes['previewThumbnail'].currentValue
-      });
-    }
-  }
-
-  setPlayerSource(source?: Plyr.SourceInfo, hlsSource?: ExtStreamList) {
-    if (this.hls) {
-      this.hls.detachMedia();
-      this.hls.destroy();
-    }
-    if (this.player) {
-      this.player.destroy();
-    }
-    if (source?.sources.length) {
-      this.player = new Plyr('#plyrPlayer', this.playerOptions);
-      this.player.on('ended', (event) => {
-        this.onEnded.emit(event);
-      });
-      this.player.source = source;
-      this.player.play();
-    } else if (hlsSource) {
-      const sourceUrl = this.findAvailableHlsSource(hlsSource);
-      if (!sourceUrl) return;
-      const videoElement = this.document.getElementById('plyrPlayer') as HTMLMediaElement;
-      if (!Hls.isSupported()) {
-        videoElement.src = sourceUrl;
-        this.player = new Plyr('#plyrPlayer', this.playerOptions);
-        this.player.on('ended', (event) => {
-          this.onEnded.emit(event);
+  setPlayerData(data: MediaStream): void {
+    const sources: KPVideoSource[] = [];
+    const tracks: KPTrack[] = [];
+    data.streams?.forEach(file => {
+      if (file.codec === 1) {
+        sources.push({
+          _id: file._id,
+          src: file.src,
+          type: file.mimeType,
+          size: file.quality
         });
-        this.player.play();
-      } else {
-        const hls = new Hls();
-        hls.loadSource(sourceUrl);
-        hls.on(Hls.Events.MANIFEST_PARSED, () => {
-          const availableQualities = hls.levels.map((l) => l.height).reverse();
-          availableQualities.push(0);
-          const hlsPlayerOptions: Plyr.Options = {
-            ...this.playerOptions,
-            quality: {
-              default: 0,
-              options: availableQualities,
-              forced: true,
-              onChange: (e: number) => this.updateHlsQuality(e)
-            }
-          };
-          this.player = new Plyr(videoElement, hlsPlayerOptions);
-          this.player.on('ended', (event) => {
-            this.onEnded.emit(event);
-          });
-          this.player.play();
-        });
-        hls.attachMedia(videoElement);
-        this.hls = hls;
       }
+    });
+    if (data.subtitles?.length) {
+      this.translocoService.selectTranslation('languages').pipe(first()).subscribe(t => {
+        data.subtitles.sort().forEach(subtitle => {
+          tracks.push({
+            _id: subtitle._id,
+            label: t[subtitle.lang],
+            lang: subtitle.lang,
+            src: subtitle.src
+          });
+        });
+      });
     }
+    this.sources = sources;
+    this.tracks = tracks;
+    this.previewThumbnail = data.previewThumbnail;
+    this.setPlayerTrackList();
+    this.setPlayerSource();
   }
 
-  updateHlsQuality(newQuality: number) {
-    if (!this.hls) return;
-    if (newQuality === 0) {
-      this.hls.currentLevel = -1;
-      return;
+  onPlayerAttach() {
+    if (this.sources?.length && this.activeSourceIndex > -1) {
+      this.player.src = {
+        src: this.sources[this.activeSourceIndex].src,
+        type: this.sources[this.activeSourceIndex].type
+      };
     }
-    const levelIndex = this.hls.levels.findIndex((level: any) => level.height === newQuality);
-    this.hls.currentLevel = levelIndex;
+    this.setPlayerTrackList();
+    this.player.keyShortcuts = {
+      togglePaused: 'k Space',
+      toggleMuted: 'm',
+      toggleFullscreen: 'f',
+      togglePictureInPicture: 'i',
+      toggleCaptions: 'c',
+      seekBackward: 'ArrowLeft',
+      seekForward: 'ArrowRight',
+      volumeUp: 'ArrowUp',
+      volumeDown: 'ArrowDown',
+    };
+    this.playerDisposeFn.push(
+      this.player.subscribe((store => {
+        this.playerStore = store;
+        this.ref.detectChanges();
+      })),
+      this.player.subscribe((({ ended }) => {
+        if (!ended) return;
+        this.onEnded.emit();
+      }))
+    );
   }
 
-  findAvailableHlsSource(extStreamList: ExtStreamList) {
-    if (extStreamList.zoroStream) {
-      return extStreamList.zoroStream.sources[0].url;
-    } else if (extStreamList.flixHQStream) {
-      return extStreamList.flixHQStream.sources[0].url;
+  setPlayerTrackList(): void {
+    if (!this.player || !this.player.textTracks) return;
+    this.player.textTracks.clear();
+    this.tracks?.forEach((track) => {
+      const trackType = <'vtt' | 'srt' | 'ass' | 'ssa'>track.src.substring(track.src.lastIndexOf('.') + 1);
+      this.player.textTracks.add({
+        id: track._id,
+        label: track.lang,
+        language: track.lang,
+        src: track.src,
+        kind: 'subtitles',
+        type: trackType
+      });
+    });
+  }
+
+  onSettingsMenuClick(button: HTMLButtonElement, opened: boolean): void {
+    this.renderer[opened ? 'removeClass' : 'addClass'](button, 'media-settings-button-active');
+    this.renderer[opened ? 'addClass' : 'removeClass'](button, 'media-settings-button-active');
+  }
+
+  setPlaybackSpeed(speed: number = 1): void {
+    if (!this.player) return;
+    this.player.playbackRate = speed;
+    this.activeSpeedValue = speed;
+  }
+
+  setPlayerSource(index?: number): void {
+    if (!this.player || !this.playerStore) return;
+    index && (this.activeSourceIndex = index);
+    this.player.src = {
+      src: this.sources![this.activeSourceIndex].src,
+      type: this.sources![this.activeSourceIndex].type
+    };
+  }
+
+  changePlayerQuality(index: number): void {
+    if (!this.player || !this.playerStore) return;
+    const time = this.playerStore.currentTime;
+    const isPlaying = this.playerStore.playing;
+    // Set selected source
+    this.setPlayerSource(index);
+    // Resume playing media
+    this.player.addEventListener('can-play', () => {
+      this.player.currentTime = time;
+      isPlaying && this.player.play();
+    }, { once: true });
+  }
+
+  setPlayerTrack(lang: string | null): void {
+    if (!this.player) return;
+    if (!this.trackDisabled && this.player.textTracks.selected) {
+      this.player.textTracks.selected.mode = 'disabled';
+      this.trackDisabled = true;
+    }
+    if (lang !== null) {
+      const nextTrack = this.tracks!.find(t => t.lang === lang)!;
+      this.player.textTracks.getById(nextTrack._id)!.mode = 'showing';
+      this.activeTrackValue = lang;
+      this.trackDisabled = false;
     } else {
-      return extStreamList.gogoAnimeStreamUrl;
+      this.trackDisabled = true;
+    }
+  }
+
+  togglePlay(): void {
+    this.player.paused = !this.player.paused;
+  }
+
+  toggleMute(): void {
+    if (this.player.muted && this.player.volume === 0)
+      this.player.volume = 0.25; // Workaround
+    this.player.muted = !this.player.muted;
+  }
+
+  toggleFullscreen(): void {
+    if (this.playerStore?.canFullscreen) {
+      if (!this.playerStore.fullscreen)
+        this.player.enterFullscreen();
+      else
+        this.player.exitFullscreen();
+    }
+  }
+
+  toggleSubtitle(): void {
+    if (!this.player.textTracks.length) return;
+    if (!this.trackDisabled) {
+      this.setPlayerTrack(null);
+    } else if (this.tracks) {
+      const nextTrack = this.activeTrackValue ? this.tracks.find(t => t.lang === this.activeTrackValue) : this.tracks[0];
+      if (nextTrack) {
+        this.player.textTracks.getById(nextTrack._id)!.mode = 'showing';
+        this.activeTrackValue = nextTrack.lang;
+      }
+      this.trackDisabled = false;
     }
   }
 
   ngOnDestroy(): void {
+    this.playerDisposeFn.forEach(fn => {
+      fn();
+    });
     this.player?.destroy();
-    this.hls?.detachMedia();
-    this.hls?.destroy();
   }
 }

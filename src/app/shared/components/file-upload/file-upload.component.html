@@ -1,6 +1,7 @@
-<div dragDropFile (fileDropped)="submitFile($event)" [disabled]="disabled"
+<div dragDropFile [documentListener]="false" (dragChange)="isOverElement = $event" (fileDropped)="submitFile($event)"
+  [disabled]="disabled"
   class="tw-flex tw-justify-center tw-items-center tw-border-2 tw-border-dashed tw-rounded-md disabled:tw-border-gray-600 disabled:tw-text-gray-600"
-  [ngClass]="styleClass">
+  [class]="styleClass" [ngClass]="{ 'tw-upload-file': !isOverElement, 'tw-upload-file-over': isOverElement }">
   <div class="tw-text-center tw-mx-4">
     <input #inputFile hidden="true" type="file" id="file-upload" onclick="this.value = null"
       (change)="onFileInputChange($event)" [attr.accept]="accept" [attr.aria-label]="ariaLabel"

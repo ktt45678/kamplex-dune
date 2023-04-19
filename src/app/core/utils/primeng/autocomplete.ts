@@ -213,20 +213,7 @@ export const AUTOCOMPLETE_VALUE_ACCESSOR: any = {
   styleUrls: ['../../../../../node_modules/primeng/resources/components/autocomplete/autocomplete.css']
 })
 export class AltAutoComplete extends AutoComplete {
-  removeItemByObject(item: any) {
-    if (this.value && this.value.length) {
-      if (this.dataKey) {
-        const itemValue = ObjectUtils.resolveFieldData(item, this.dataKey);
-        this.value = this.value.filter((val: any) => ObjectUtils.resolveFieldData(val, this.dataKey) != itemValue);
-      } else {
-        this.value = this.value.filter((val: any) => val != item);
-      }
-      const removedValue = item;
-      this.onModelChange(this.value);
-      this.updateFilledState();
-      this.onUnselect.emit(removedValue);
-    }
-  }
+
 }
 
 @NgModule({

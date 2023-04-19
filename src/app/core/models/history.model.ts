@@ -7,4 +7,5 @@ export interface History {
   watchTime: number;
   date: string;
   paused: boolean;
+  watched: boolean;
 }

@@ -3,7 +3,7 @@ import { ShortDate } from '.';
 export interface TVEpisode {
   _id: string;
   airDate: ShortDate;
-  episodeNumber: number;
+  epNumber: number;
   runtime: number;
   name?: string;
   overview?: string;

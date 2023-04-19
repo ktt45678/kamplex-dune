@@ -5,9 +5,9 @@
       }}</label>
     <input formControlName="name" class="tw-w-full" id="name" type="text" aria-describedby="name-error" pInputText
       autofocus>
-    <small id="name-error" class="p-error tw-text-xs tw-block tw-my-2" [invalidControl]="updateGenreForm.controls.name"
-      updateGenreForm.controls.name>{{ updateGenreForm.controls.name.errors | firstErrorKey:'updateGenre':'name'
-      }}</small>
+    <small id="name-error" class="p-error tw-text-xs tw-block tw-my-2"
+      [invalidControl]="updateGenreForm.controls.name">{{ updateGenreForm.controls.name.errors |
+      firstErrorKey:'updateGenre':'name' }}</small>
     <div class="tw-flex tw-my-2">
       <label for="is-translation" class="tw-inline-block tw-text-base tw-font-medium">{{
         t('admin.updateGenre.isTranslation') }}</label>

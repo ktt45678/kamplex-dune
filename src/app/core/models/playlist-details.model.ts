@@ -7,7 +7,7 @@ export interface PlaylistDetails extends Playlist {
 
 type AuthorProps = '_id'
   | 'username'
-  | 'displayName'
+  | 'nickname'
   | 'avatarUrl'
   | 'thumbnailAvatarUrl'
   | 'smallAvatarUrl'

@@ -1,1 +1,78 @@
-<p>profile works!</p>
+<ng-container *transloco="let t">
+  <div *ngIf="user" class="tw-flex max-lg:tw-flex-wrap tw-my-4 tw-mx-2">
+    <div class="tw-w-full lg:tw-w-1/4">
+      <!--div class="tw-bg-neutral-875 tw-h-96 tw-rounded-md">
+        <div class="tw-text-right tw-p-4">
+          <button *ngIf="currentUser && currentUser._id === user._id" pButton icon="ms ms-edit"
+            class="p-button-plain p-button-sm p-button-rounded p-button-text p-button-sm-icon tw-ml-auto">
+          </button>
+        </div>
+        <div class="tw-text-white tw-py-4 tw-mx-4">
+          <p>{{ t('users.profile.memberSince') }}: {{ user.createdAt | relativeDate }}</p>
+          <p>{{ t('users.profile.lastActiveAt') }}: {{ user.lastActiveAt| relativeDate }}</p>
+        </div>
+      </div-->
+      <div class="markdown-body tw-rounded-md tw-min-h-[24rem] tw-p-4 tw-shadow"
+        [innerHTML]="user.about ? (user.about | marked) : null">
+      </div>
+    </div>
+    <div class="tw-text-white tw-w-full lg:tw-w-3/4 lg:tw-ml-4 max-lg:tw-mt-2">
+      <div class="tw-flex tw-space-x-4 [&>*]:tw-bg-neutral-875 hover:[&>*]:tw-bg-neutral-725
+        [&>*]:tw-p-8 [&>*]:tw-rounded-md [&>*]:tw-transition-colors [&>*]:tw-duration-200"
+        [class]="currentUser && currentUser._id === user._id ? '[&>*]:tw-w-1/3' : '[&>*]:tw-w-1/2'">
+        <div *ngIf="historyList">
+          <p class="tw-text-4xl tw-font-semibold">{{ historyList.totalResults }}</p>
+          <p>{{ t('users.profile.showsViewedCount') }}</p>
+        </div>
+        <div *ngIf="playlistList">
+          <p class="tw-text-4xl tw-font-semibold">{{ playlistList.totalResults }}</p>
+          <p>{{ t('users.profile.playlistsCreatedCount') }}</p>
+        </div>
+        <div *ngIf="ratingList">
+          <p class="tw-text-4xl tw-font-semibold">{{ ratingList.totalResults }}</p>
+          <p>{{ t('users.profile.ratingsCount') }}</p>
+        </div>
+      </div>
+      <p class="tw-text-xl tw-font-medium tw-mt-2">{{ t('users.profile.activity') }}</p>
+      <div *ngIf="historyList">
+        <div class="tw-bg-neutral-875 tw-flex tw-rounded-md tw-mt-3"
+          *ngFor="let history of historyList.results; trackBy: track_Id">
+          <div class="tw-w-12">
+            <div class="tw-aspect-w-2 tw-aspect-h-3 [&>*]:tw-rounded-l-md">
+              <img *ngIf="history.media.smallPosterUrl else noPoster" class="tw-object-cover"
+                [lazyLoad]="history.media.smallPosterUrl" [lazyLoadPlaceholder]="history.media.posterColor | rgbColor"
+                errorImage="assets/images/media-poster-sm.png" [alt]="history.media.title">
+              <ng-template #noPoster>
+                <img class="tw-object-cover tw-rounded-md" src="assets/images/media-poster-sm.png" loading="lazy"
+                  [alt]="history.media.title">
+              </ng-template>
+            </div>
+          </div>
+          <div class="tw-ml-4 tw-self-center">
+            <p class="tw-text-sm">
+              <ng-container *ngIf="history.watchTime < (history.episode ? history.episode.runtime : history.media.runtime);
+                else isWatching">
+                <span>{{ t('users.activity.watching') }} </span>
+              </ng-container>
+              <ng-template #isWatching>
+                <span>{{ t('users.activity.watched') }} </span>
+              </ng-template>
+              <ng-container *ngIf="!history.episode; else isTV">
+                <a class="tw-text-blue-400 hover:tw-underline" [routerLink]="['/watch', history.media._id]"
+                  [queryParams]="{ time: history.watchTime }">{{
+                  history.media.title
+                  }}</a>
+              </ng-container>
+              <ng-template #isTV>
+                <a class="tw-text-blue-400 hover:tw-underline" [routerLink]="['/watch', history.media._id]"
+                  [queryParams]="{ ep: history.episode!.epNumber, time: history.watchTime }">{{
+                  t('users.activity.episodeLink', { episode: history.episode?.epNumber, title: history.media.title
+                  }) }}</a>
+              </ng-template>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>

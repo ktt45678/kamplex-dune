@@ -17,8 +17,10 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { InputNumberModule } from 'primeng/inputnumber';
+import { InputMaskModule } from 'primeng/inputmask';
 import { DropdownModule } from 'primeng/dropdown';
 import { MessageModule } from 'primeng/message';
+import { ChipModule } from 'primeng/chip';
 
 import { AdminRoutingModule } from './admin-routing.module';
 import { AdminLayoutModule } from '../../shared/layouts/admin-layout';
@@ -105,8 +107,10 @@ import { AltAutoCompleteModule } from '../../core/utils/primeng';
     RadioButtonModule,
     InputSwitchModule,
     InputNumberModule,
+    InputMaskModule,
     DropdownModule,
     MessageModule,
+    ChipModule,
     WsModule
   ],
   providers: [

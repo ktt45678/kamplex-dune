@@ -31,11 +31,10 @@
                 <div class="tw-w-full md:tw-w-1/2 md:tw-pl-2">
                   <label for="runtime" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
                     t('admin.updateEpisode.runtime') }}</label>
-                  <p-inputNumber formControlName="runtime" form="update-episode-form" class="tw-w-full"
-                    styleClass="tw-w-full" id="runtime" suffix=" sec" aria-describedby="runtime-error"
-                    [useGrouping]="false" [min]="0" [max]="10000"
+                  <p-inputMask formControlName="runtime" form="update-episode-form" styleClass="tw-w-full" id="runtime"
+                    aria-describedby="runtime-error" mask="99:99:99" slotChar="00:00:00"
                     [placeholder]="t('admin.updateEpisode.runtimePlaceholder')">
-                  </p-inputNumber>
+                  </p-inputMask>
                   <small id="runtime-error" class="p-error tw-text-xs tw-block tw-my-2"
                     [invalidControl]="updateEpisodeForm.controls.runtime">{{ updateEpisodeForm.controls.runtime.errors |
                     firstErrorKey:'updateEpisode':'runtime' }}</small>
@@ -70,7 +69,7 @@
                 <div class="tw-flex tw-mt-2">
                   <div class="tw-mx-auto">
                     <ng-container *ngIf="!stillPreviewName; else stillPreviewActions">
-                      <input #inputUploadPoster hidden="true" type="file" id="file-upload-poster"
+                      <input #inputUploadPoster hidden="true" type="file" id="file-upload-still"
                         onclick="this.value = null" (change)="onInputStillChange($event)" accept=".jpg, .jpeg, .png"
                         aria-label="Upload a poster" />
                       <button pButton type="button" icon="ms ms-upload" class="p-button-rounded p-button-text"
@@ -164,9 +163,9 @@
         <p class="tw-text-white tw-font-semibold tw-text-xl">{{ t('admin.configureEpisode.subtitles')
           }}</p>
         <div class="tw-my-3">
-          <app-file-upload #subtitleFileUpload accept=".vtt" [label]="t('admin.configureEpisode.addSubtitle')"
-            [desciption]="t('admin.configureEpisode.addSubtitleDesc')" [showFilename]="false"
-            styleClass="tw-max-w-xl tw-h-40 tw-mx-auto" ariaLabel="Choose a subtitle to upload"
+          <app-file-upload #subtitleFileUpload accept=".vtt, .srt, .ass"
+            [label]="t('admin.configureEpisode.addSubtitle')" [desciption]="t('admin.configureEpisode.addSubtitleDesc')"
+            [showFilename]="false" styleClass="tw-max-w-xl tw-h-40 tw-mx-auto" ariaLabel="Choose a subtitle to upload"
             (fileChange)="showAddSubtitleDialog($event)">
           </app-file-upload>
         </div>
@@ -189,7 +188,7 @@
                 <td>
                   <p-tableCheckbox [value]="subtitle"></p-tableCheckbox>
                 </td>
-                <td>{{ t('languages.' + subtitle.language) }}</td>
+                <td>{{ t('languages.' + subtitle.lang) }}</td>
                 <td>
                   <button pButton icon="ms ms-delete"
                     class="p-button-outlined p-button-rounded p-button-danger p-button-sm p-button-sm-icon"
@@ -249,7 +248,7 @@
           </button>
         </ng-template>
         <ng-template #sourcePreview>
-          <app-video-player [source]="previewSource"></app-video-player>
+          <app-video-player [stream]="previewStream"></app-video-player>
         </ng-template>
         <p class="tw-text-base tw-font-medium tw-mt-4 tw-mb-2">{{ t('admin.configureEpisode.addEpisodeSourceAltLabel')
           }}</p>

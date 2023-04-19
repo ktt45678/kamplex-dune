@@ -6,7 +6,6 @@ import { TranslocoService } from '@ngneat/transloco';
 import { EMPTY, filter, first, map, pairwise, switchMap } from 'rxjs';
 
 import { SITE_NAME } from '../environments/config';
-import { applyPrimeNGPatches } from './core/utils/primeng-helper';
 
 @Component({
   selector: 'app-root',
@@ -23,7 +22,6 @@ export class AppComponent implements OnInit {
     this.viewportScroller.setHistoryScrollRestoration('manual');
     this.handleScrollOnNavigation();
     this.handlePageTitle();
-    applyPrimeNGPatches();
   }
 
   private handleScrollOnNavigation(): void {
@@ -40,6 +38,11 @@ export class AppComponent implements OnInit {
         // Anchor navigation
         this.viewportScroller.scrollToAnchor(current.anchor);
       } else {
+        let route: ActivatedRoute = this.router.routerState.root;
+        while (route.firstChild && !route.snapshot.data['applyToChildren'])
+          route = route.firstChild;
+        if (route.snapshot.data['keepScrollPosition'] === true)
+          return;
         // Check if routes match, or if it is only a query param change
         if (this.getBaseRoute(previous.routerEvent.urlAfterRedirects) !== this.getBaseRoute(current.routerEvent.urlAfterRedirects)) {
           // Routes don't match, this is actual forward navigation

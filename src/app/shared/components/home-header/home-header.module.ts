@@ -6,6 +6,7 @@ import { LazyLoadImageModule } from 'ng-lazyload-image';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { ButtonModule } from 'primeng/button';
+import { SidebarModule } from 'primeng/sidebar';
 
 import { HomeHeaderComponent } from './home-header.component';
 import { SkeletonModule } from '../skeleton';
@@ -15,7 +16,6 @@ import { LazyloadImageExtraModule } from '../../directives/lazyload-image-extra'
 import { PermissionPipeModule } from '../../pipes/permission-pipe';
 import { NumberPipeModule } from '../../pipes/number-pipe';
 import { DateTimePipeModule } from '../../pipes/date-time-pipe';
-import { AltSidebarModule } from '../../../core/utils/primeng';
 
 @NgModule({
   declarations: [HomeHeaderComponent],
@@ -32,9 +32,9 @@ import { AltSidebarModule } from '../../../core/utils/primeng';
     PermissionPipeModule,
     NumberPipeModule,
     DateTimePipeModule,
-    AltSidebarModule,
     AutoCompleteModule,
-    ButtonModule
+    ButtonModule,
+    SidebarModule
   ],
   exports: [HomeHeaderComponent]
 })

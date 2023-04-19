@@ -8,10 +8,24 @@
     <div class="tw-flex tw-flex-wrap tw-mx-4">
       <div class="tw-w-full xl:tw-w-3/4">
         <div class="tw-mt-4">
+          <h3 class="tw-text-gray-200 tw-text-lg tw-font-bold tw-uppercase">{{ t('home.mediaList.newReleases') }}</h3>
+        </div>
+        <div class="tw-my-4">
+          <app-media-list [mediaList]="newReleaseMedia" [loading]="loadingMediaList"></app-media-list>
+        </div>
+        <div class="tw-divider tw-my-5"></div>
+        <div class="tw-mt-4">
           <h3 class="tw-text-gray-200 tw-text-lg tw-font-bold tw-uppercase">{{ t('home.mediaList.lastUpdated') }}</h3>
         </div>
         <div class="tw-my-4">
-          <app-media-list [mediaList]="latestMedia" [loading]="loadingMediaList"></app-media-list>
+          <app-media-list [mediaList]="lastUpdatedMedia" [loading]="loadingMediaList"></app-media-list>
+        </div>
+        <div class="tw-divider tw-my-5"></div>
+        <div class="tw-mt-4">
+          <h3 class="tw-text-gray-200 tw-text-lg tw-font-bold tw-uppercase">{{ t('home.mediaList.newAdded') }}</h3>
+        </div>
+        <div class="tw-my-4">
+          <app-media-list [mediaList]="lastAddedMedia" [loading]="loadingMediaList"></app-media-list>
         </div>
       </div>
       <div class="tw-w-full xl:tw-w-1/4">

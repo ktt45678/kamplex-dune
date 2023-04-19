@@ -144,7 +144,9 @@ export class MediaComponent implements OnInit, OnDestroy {
       modal: true,
       showHeader: false,
       contentStyle: { 'overflow-y': 'hidden', 'padding': '0' },
-      styleClass: '!tw-max-h-full'
+      styleClass: '!tw-max-h-full',
+      maskStyleClass: 'tw-z-[100]',
+      autoZIndex: false
     });
     dialogRef.onClose.pipe(first()).subscribe((isUpdated: boolean) => {
       if (!isUpdated) return;
@@ -197,7 +199,7 @@ export class MediaComponent implements OnInit, OnDestroy {
       key: 'default',
       message: this.translocoService.translate('admin.media.deleteConfirmation', { name: safeMediaTitle }),
       header: this.translocoService.translate('admin.media.deleteConfirmationHeader'),
-      icon: 'pi pi-info-circle',
+      icon: 'ms ms-delete',
       defaultFocus: 'reject',
       accept: () => this.removeMedia(media._id)
     });
@@ -229,7 +231,7 @@ export class MediaComponent implements OnInit, OnDestroy {
       key: 'default',
       message: this.translocoService.translate('admin.media.deletePosterConfirmation', { name: safeMediaTitle }),
       header: this.translocoService.translate('admin.media.deletePosterConfirmationHeader'),
-      icon: 'pi pi-info-circle',
+      icon: 'ms ms-delete',
       defaultFocus: 'reject',
       accept: () => {
         const element = <HTMLButtonElement>event.target;
@@ -261,7 +263,7 @@ export class MediaComponent implements OnInit, OnDestroy {
       key: 'default',
       message: this.translocoService.translate('admin.media.deleteBackdropConfirmation', { name: safeMediaTitle }),
       header: this.translocoService.translate('admin.media.deleteBackdropConfirmationHeader'),
-      icon: 'pi pi-info-circle',
+      icon: 'ms ms-delete',
       defaultFocus: 'reject',
       accept: () => {
         const element = <HTMLButtonElement>event.target;

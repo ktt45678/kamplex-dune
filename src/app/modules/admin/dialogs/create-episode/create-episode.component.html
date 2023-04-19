@@ -24,10 +24,10 @@
               <div class="tw-w-full md:tw-w-1/2 md:tw-pl-2">
                 <label for="runtime" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
                   t('admin.createEpisode.runtime') }}</label>
-                <p-inputNumber formControlName="runtime" class="tw-w-full" styleClass="tw-w-full" id="runtime"
-                  suffix=" sec" aria-describedby="runtime-error" [useGrouping]="false" [min]="0" [max]="10000"
+                <p-inputMask formControlName="runtime" styleClass="tw-w-full" id="runtime"
+                  aria-describedby="runtime-error" mask="99:99:99" slotChar="00:00:00"
                   [placeholder]="t('admin.createEpisode.runtimePlaceholder')">
-                </p-inputNumber>
+                </p-inputMask>
                 <small id="runtime-error" class="p-error tw-text-xs tw-block tw-my-2"
                   [invalidControl]="createEpisodeForm.controls.runtime">{{ createEpisodeForm.controls.runtime.errors
                   | firstErrorKey:'createEpisode':'runtime' }}</small>
@@ -220,7 +220,7 @@
               <span class="tw-ml-1">{{ t('admin.createEpisode.subtitlesAdded', { subtitleCount }) }}</span>
             </p>
           </div>
-          <app-file-upload #subtitleFileUpload class="tw-ml-auto" accept=".vtt" styleClass="tw-w-48 tw-h-20"
+          <app-file-upload #subtitleFileUpload class="tw-ml-auto" accept=".vtt, .srt, .ass" styleClass="tw-w-48 tw-h-20"
             ariaLabel="Choose a subtitle to upload" [label]="t('admin.createEpisode.chooseFile')" [showFilename]="false"
             (fileChange)="showAddSubtitleDialog($event)">
           </app-file-upload>

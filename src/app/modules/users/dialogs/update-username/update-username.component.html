@@ -1,0 +1,32 @@
+<p-dialog-title></p-dialog-title>
+<ng-container *transloco="let t">
+  <div pDialogContent>
+    <h3 class="tw-text-white tw-text-2xl tw-font-bold tw-text-center tw-mb-4">{{ t('users.updateUsername.formHeader') }}
+    </h3>
+    <form id="update-username-form" [formGroup]="updateUsernameForm" formHandler
+      (ngSubmit)="onUpdateUsernameFormSubmit()">
+      <label for="username" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
+        t('users.updateUsername.username') }}</label>
+      <input formControlName="username" class="tw-w-full" id="username" type="text" aria-describedby="username-error"
+        pInputText controlAutofocus>
+      <small id="username-error" class="p-error tw-text-xs tw-block tw-my-2"
+        [invalidControl]="updateUsernameForm.controls.username">{{ updateUsernameForm.controls.username.errors |
+        firstErrorKey:'updateUsername':'username' }}</small>
+      <label for="current-password" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
+        t('users.updateUsername.currentPassword') }}</label>
+      <input formControlName="currentPassword" class="tw-w-full" id="current-password" type="password"
+        aria-describedby="current-password-error" pInputText>
+      <small id="current-password-error" class="p-error tw-text-xs tw-block tw-my-2"
+        [invalidControl]="updateUsernameForm.controls.currentPassword">{{
+        updateUsernameForm.controls.currentPassword.errors | firstErrorKey:'updateUsername':'currentPassword' }}</small>
+    </form>
+  </div>
+  <div pDialogActions>
+    <button pButton type="button" [label]="t('users.updateUsername.cancel')" (click)="onUpdateUsernameFormCancel()"
+      class="p-button-text p-button-plain p-button-sm">
+    </button>
+    <button pButton type="submit" form="update-username-form" [label]="t('users.updateUsername.submit')"
+      class="p-button p-button-sm tw-ml-1" [disabled]="updateUsernameForm.disabled">
+    </button>
+  </div>
+</ng-container>

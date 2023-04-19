@@ -3,7 +3,7 @@ import { Role } from '.'
 export interface User {
   _id: string;
   username: string;
-  displayName?: string;
+  nickname?: string;
   roles: Role[];
   banned: boolean;
   owner?: boolean;

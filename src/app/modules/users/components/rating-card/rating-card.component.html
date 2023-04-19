@@ -1,0 +1,52 @@
+<ng-container *transloco="let t">
+  <div class="tw-group tw-flex tw-bg-transparent hover:tw-bg-neutral-725 focus-within:tw-bg-neutral-725
+    tw-transition-colors tw-duration-200 tw-rounded-sm tw-px-1.5 tw-py-2" [appContextMenuTriggerFor]="ratingMenu">
+    <a [routerLink]="['/watch', rating.media._id]" class="tw-block tw-flex-1">
+      <div class="tw-flex">
+        <div class="tw-flex-grow-0 tw-flex-shrink-0">
+          <div class="tw-w-24">
+            <div class="tw-aspect-w-2 tw-aspect-h-3 [&>*]:tw-rounded-md">
+              <img *ngIf="rating.media.thumbnailPosterUrl && rating.media.thumbnailPosterUrl; else noPoster"
+                class="tw-object-cover" [lazyLoad]="rating.media.thumbnailPosterUrl"
+                [lazyLoadPlaceholder]="rating.media.posterColor| rgbColor" [alt]="rating.media.title"
+                errorImage="assets/images/media-poster-md.png">
+              <ng-template #noPoster>
+                <img class="tw-object-cover" src="assets/images/media-poster-md.png" loading="lazy"
+                  [alt]="rating.media.title">
+              </ng-template>
+            </div>
+          </div>
+        </div>
+        <div class="tw-mx-4">
+          <p class="tw-text-xs sm:tw-text-sm md:tw-text-base tw-font-bold">{{ rating.media.title }}</p>
+          <p class="tw-text-xl xs:tw-text-2xl [&>*]:tw-align-middle">
+            <i class="ms ms-star ms-fill tw-text-3xl tw-text-yellow-500 -tw-mt-0.5"></i>
+            <span class="tw-text-white tw-font-medium tw-ml-1.5">{{ rating.score }}</span>
+          </p>
+          <p class="tw-text-gray-400 tw-text-xs sm:tw-text-sm tw-font-medium">{{ rating.date | relativeDate }}</p>
+        </div>
+      </div>
+    </a>
+    <button pButton [appMenuTriggerFor]="ratingMenu" icon="ms ms-more-vert" type="button"
+      aria-label="Toggle rating menu" class="p-button-rounded p-button-text p-button-secondary p-button-sm p-button-sm-icon
+      tw-ml-auto tw-flex-shrink-0 focus-visible:!tw-shadow-focus-box tw-invisible group-hover:tw-visible"
+      #ratingMenuButton #ratingMenuTrigger="appMenuTriggerFor"
+      (cdkMenuOpened)="onRatingMenuClick(ratingMenuButton, true)"
+      (cdkMenuClosed)="onRatingMenuClick(ratingMenuButton, false)">
+    </button>
+    <ng-template #ratingMenu>
+      <div appMenu>
+        <button appMenuItem (click)="onAddToPlaylist.emit(rating.media)">
+          <i class="ms ms-playlist-add"></i>
+          <span>{{ t('media.playlists.addToPlaylist') }}</span>
+        </button>
+        <ng-container *ngIf="currentUser">
+          <button appMenuItem (click)="onDelete.emit(rating)">
+            <i class="ms ms-delete"></i>
+            <span>{{ t('media.rating.delete') }}</span>
+          </button>
+        </ng-container>
+      </div>
+    </ng-template>
+  </div>
+</ng-container>

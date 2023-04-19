@@ -1,0 +1,50 @@
+<p-dialog-title></p-dialog-title>
+<ng-container *transloco="let t">
+  <div pDialogContent>
+    <h3 class="tw-text-white tw-text-2xl tw-font-bold tw-text-center tw-mb-4">{{ t('users.updateEmail.formHeader') }}
+    </h3>
+    <form *ngIf="!updatedEmail; else emailUpdatedTpl" id="update-email-form" [formGroup]="updateEmailForm" formHandler
+      (ngSubmit)="onUpdateEmailFormSubmit()">
+      <label for="email" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
+        t('users.updateEmail.email') }}</label>
+      <input formControlName="email" class="tw-w-full" id="email" type="text" aria-describedby="email-error" pInputText
+        controlAutofocus>
+      <small id="email-error" class="p-error tw-text-xs tw-block tw-my-2"
+        [invalidControl]="updateEmailForm.controls.email">{{ updateEmailForm.controls.email.errors |
+        firstErrorKey:'updateEmail':'email' }}</small>
+      <label for="current-password" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
+        t('users.updateEmail.currentPassword') }}</label>
+      <input formControlName="currentPassword" class="tw-w-full" id="current-password" type="password"
+        aria-describedby="current-password-error" pInputText>
+      <small id="current-password-error" class="p-error tw-text-xs tw-block tw-my-2"
+        [invalidControl]="updateEmailForm.controls.currentPassword">{{
+        updateEmailForm.controls.currentPassword.errors | firstErrorKey:'updateEmail':'currentPassword' }}</small>
+      <p class="tw-text-gray-400 tw-flex tw-text-sm tw-mt-2">
+        <span>*</span>
+        <span class="tw-ml-1">{{ t('users.updateEmail.emailNote') }}</span>
+      </p>
+    </form>
+    <ng-template #emailUpdatedTpl>
+      <div class="tw-text-center tw-text-white">
+        <i class="ms ms-mail ms-opsz-xl tw-text-6xl"></i>
+        <p class="tw-text-xl tw-font-medium">{{ t('users.updateEmail.successMessageSummary') }}</p>
+        <p>{{ t('users.updateEmail.successMessageDetail') }}</p>
+      </div>
+    </ng-template>
+  </div>
+  <div pDialogActions>
+    <ng-container *ngIf="!updatedEmail; else emailUpdatedActionsTpl">
+      <button pButton type="button" [label]="t('users.updateEmail.cancel')" (click)="onUpdateEmailFormCancel()"
+        class="p-button-text p-button-plain p-button-sm">
+      </button>
+      <button pButton type="submit" form="update-email-form" [label]="t('users.updateEmail.submit')"
+        class="p-button p-button-sm tw-ml-1" [disabled]="updateEmailForm.disabled">
+      </button>
+    </ng-container>
+    <ng-template #emailUpdatedActionsTpl>
+      <button pButton type="button" [label]="t('users.updateEmail.close')" (click)="onClose()"
+        class="p-button-text p-button-plain p-button-sm">
+      </button>
+    </ng-template>
+  </div>
+</ng-container>

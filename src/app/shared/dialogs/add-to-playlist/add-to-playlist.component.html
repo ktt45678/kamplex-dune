@@ -7,10 +7,10 @@
       class="tw-text-gray-400 tw-font-medium tw-my-4 tw-text-center">
       {{ t('media.playlists.noPlaylists') }}</p>
     <ng-template #playlistList>
-      <p-altCheckbox #cbPlaylist *ngFor="let playlist of playlistsToAdd" name="playlists" styleClass="p-checkbox-md"
+      <p-checkbox #cbPlaylist *ngFor="let playlist of playlistsToAdd" name="playlists" styleClass="p-checkbox-md"
         labelStyleClass="tw-truncate" class="tw-flex tw-items-center tw-w-full tw-my-4" [label]="playlist.name" [icon]="'ms tw-flex-1 tw-ml-2 tw-text-right ' + (playlist.visibility === MediaVisibility.PUBLIC ? 'ms-public' :
             playlist.visibility === MediaVisibility.UNLISTED ? 'ms-link' : 'ms-lock')" [ariaLabel]="playlist.name"
-        [value]="playlist.hasMedia" [binary]="true" (onChange)="addOrRemoveMedia(playlist, cbPlaylist)"></p-altCheckbox>
+        [value]="playlist.hasMedia" [binary]="true" (onChange)="addOrRemoveMedia(playlist, cbPlaylist)"></p-checkbox>
     </ng-template>
   </ng-template>
   <button *ngIf="!showCreatePlaylistForm; else createPlaylistFormTpl" pButton type="button"
@@ -33,13 +33,13 @@
         <label for="visibility" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
           t('media.createPlaylist.visibility') }}</label>
         <div id="visibility">
-          <p-radioButton name="visibility" [value]="1" [label]="t('media.createPlaylist.visibilityPublic')"
+          <p-radioButton name="visibility" [value]="1" [label]="t('media.visibility.public')"
             formControlName="visibility" class="tw-block tw-mb-2">
           </p-radioButton>
-          <p-radioButton name="visibility" [value]="2" [label]="t('media.createPlaylist.visibilityUnlisted')"
+          <p-radioButton name="visibility" [value]="2" [label]="t('media.visibility.unlisted')"
             formControlName="visibility" class="tw-block tw-mb-2">
           </p-radioButton>
-          <p-radioButton name="visibility" [value]="3" [label]="t('media.createPlaylist.visibilityPrivate')"
+          <p-radioButton name="visibility" [value]="3" [label]="t('media.visibility.private')"
             formControlName="visibility" class="tw-block">
           </p-radioButton>
         </div>

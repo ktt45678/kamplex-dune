@@ -1,4 +1,4 @@
 export interface AddMediaSubtitleDto {
-  language: string;
+  lang: string;
   file: File;
 }

@@ -34,7 +34,8 @@
     "signUp": "Sign up",
     "search": "Search",
     "searchPlaceholder": "Search...",
-    "manageMedia": "Manage media",
+    "profile": "Profile",
+    "adminPanel": "Admin panel",
     "settings": "Settings",
     "signOut": "Sign out",
     "notSignedIn": "Not signed in"
@@ -304,17 +305,81 @@
       "description": {
         "maxlength": "Description must not be longer than 2000 characters"
       }
+    },
+    "updatePlaylist": {
+      "name": {
+        "required": "{{ validationErrors.createPlaylist.name.required }}",
+        "maxlength": "{{ validationErrors.createPlaylist.name.maxlength }}"
+      },
+      "description": {
+        "maxlength": "{{ validationErrors.createPlaylist.description.maxlength }}"
+      }
+    },
+    "updateUsername": {
+      "username": {
+        "required": "{{ validationErrors.auth.username.required }}",
+        "maxlength": "{{ validationErrors.auth.username.maxlength }}",
+        "minlength": "{{ validationErrors.auth.username.minlength }}"
+      },
+      "currentPassword": {
+        "required": "{{ validationErrors.auth.password.required }}",
+        "maxlength": "{{ validationErrors.auth.password.maxlength }}"
+      }
+    },
+    "updateEmail": {
+      "email": {
+        "required": "{{ validationErrors.auth.email.required }}",
+        "email": "{{ validationErrors.auth.email.email }}"
+      },
+      "currentPassword": {
+        "required": "{{ validationErrors.auth.password.required }}",
+        "maxlength": "{{ validationErrors.auth.password.maxlength }}"
+      }
+    },
+    "updateBirthdate": {
+      "birthdate": {
+        "required": "{{ validationErrors.auth.birthdate.required }}",
+        "validShortDate": "{{ validationErrors.auth.birthdate.validShortDate }}",
+        "shortDateBefore": "{{ validationErrors.auth.birthdate.shortDateBefore }}"
+      }
+    },
+    "updatePassword": {
+      "currentPassword": {
+        "required": "{{ validationErrors.auth.password.required }}",
+        "maxlength": "{{ validationErrors.auth.password.maxlength }}"
+      },
+      "password": {
+        "required": "New password is required",
+        "maxlength": "{{ validationErrors.auth.password.maxlength }}",
+        "minlength": "{{ validationErrors.auth.password.minlength }}",
+        "pattern": "{{ validationErrors.auth.password.pattern }}"
+      },
+      "confirmPassword": {
+        "required": "Confirm password is required",
+        "controlMatches": "Confirm password must match new password"
+      }
+    },
+    "updateProfile": {
+      "nickname": {
+        "maxlength": "Nickname must not be longer than 32 characters"
+      },
+      "about": {
+        "maxlength": "About text must not be longer than 3000 characters"
+      }
     }
   },
   "errorMessagesHeader": "An error occurred",
   "errorMessages": {
-    "uploadPosterTooLarge": "Your file is too large, recommended size is 8MB or less",
+    "previewImageTooLarge": "Your file is too large, recommended size is 8MB or less",
+    "uploadPosterTooLarge": "Your file is too large, recommended size is 3MB or less",
     "uploadPosterUnsuported": "Unsuported file format, must be jpeg or png",
     "uploadBackdropTooLarge": "{{ errorMessages.uploadPosterTooLarge }}",
     "uploadBackdropUnsuported": "{{ errorMessages.uploadPosterUnsuported }}",
     "uploadStillTooLarge": "{{ errorMessages.uploadPosterTooLarge }}",
     "uploadStillUnsuported": "{{ errorMessages.uploadPosterUnsuported }}",
-    "uploadSubtitleTooLarge": "Your file is too large, recommended size is 500KB or less"
+    "uploadSubtitleTooLarge": "Your file is too large, recommended size is 500KB or less",
+    "uploadPlaylistThumbnailUnsuported": "Unsuported file format, must be jpeg, png or gif",
+    "uploadPlaylistThumbnailTooLarge": "Your file is too large, recommended size is 5MB or less"
   },
   "pageTitles": {
     "home": "Home",
@@ -323,7 +388,12 @@
     "search": "Search",
     "confirmEmail": "Confirm Email",
     "forgotPassword": "Forgot Password",
-    "resetPassword": "Reset Password"
+    "resetPassword": "Reset Password",
+    "accountSettings": "Account Settings",
+    "profileSettings": "Profile Settings",
+    "privacySettings": "Privacy Settings",
+    "mediaSettings": "Media Settings",
+    "subtitleSettings": "Subtitle Settings"
   },
   "window": {
     "leaveSite": "Leave site? Changes you made may not be saved."

@@ -15,9 +15,10 @@ export class RatingsService {
   findPage(cursorPageRatingsDto?: CursorPageRatingsDto) {
     const params: { [key: string]: any } = {};
     if (cursorPageRatingsDto) {
-      const { pageToken, limit, user } = cursorPageRatingsDto;
+      const { pageToken, limit, sort, user } = cursorPageRatingsDto;
       pageToken && (params['pageToken'] = pageToken);
       limit && (params['limit'] = limit);
+      sort && (params['sort'] = sort);
       user && (params['user'] = user);
     }
     return this.http.get<CursorPaginated<RatingDetails>>('ratings', { params });

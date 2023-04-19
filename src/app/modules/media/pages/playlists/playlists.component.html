@@ -29,7 +29,7 @@
                   </div>
                 </div>
                 <p class="tw-text-sm md:tw-text-base tw-font-medium tw-ml-2">{{
-                  playlist.author.displayName || playlist.author.username }}</p>
+                  playlist.author.nickname || playlist.author.username }}</p>
               </div>
             </div>
           </ng-container>
@@ -77,11 +77,7 @@
                       </button>
                       <ng-template #playlistItemMenu>
                         <div appMenu>
-                          <button appMenuItem (click)="addToPlaylist()">
-                            <i class="ms ms-playlist-add-circle"></i>
-                            <span>{{ t('media.playlists.addToRecentPlaylist') }}</span>
-                          </button>
-                          <button appMenuItem (click)="addToPlaylist()">
+                          <button appMenuItem (click)="showAddToPlaylistDialog(item.media)">
                             <i class="ms ms-playlist-add"></i>
                             <span>{{ t('media.playlists.addToPlaylist') }}</span>
                           </button>

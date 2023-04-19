@@ -22,7 +22,7 @@ let nextId = 0;
     '[id]': 'id',
     '[attr.aria-orientation]': 'orientation',
     '[attr.data-cdk-menu-stack-id]': 'menuStack.id',
-    '(focus)': 'focusFirstItem()',
+    /*'(focus)': 'focusFirstItem()',*/
     '(focusin)': 'menuStack.setHasFocus(true)',
     '(focusout)': 'menuStack.setHasFocus(false)',
   }

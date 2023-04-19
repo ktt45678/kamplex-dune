@@ -6,7 +6,7 @@
         <li routerLinkActive="tw-bg-neutral-725" *ngFor="let episode of episodeList; trackBy: trackId">
           <div class="tw-flex tw-flex-wrap sm:tw-flex-nowrap tw-p-1">
             <div [ngClass]="stillStyleClass">
-              <a [routerLink]="['/watch', media._id]" [queryParams]="{ ep: episode.episodeNumber}"
+              <a [routerLink]="['/watch', media._id]" [queryParams]="{ ep: episode.epNumber}"
                 class="tw-group tw-block tw-aspect-w-16 tw-aspect-h-9 tw-rounded-md focus-visible:tw-shadow-focus-box">
                 <img *ngIf="episode.thumbnailStillUrl; else noStill" class="tw-object-cover tw-rounded-md"
                   [lazyLoad]="episode.thumbnailStillUrl" [lazyLoadPlaceholder]="episode.stillColor | rgbColor"
@@ -23,12 +23,12 @@
               </a>
             </div>
             <div [ngClass]="infoStyleClass">
-              <a [routerLink]="['/watch', media._id]" [queryParams]="{ ep: episode.episodeNumber}" class="tw-text-white
+              <a [routerLink]="['/watch', media._id]" [queryParams]="{ ep: episode.epNumber}" class="tw-text-white
                 tw-text-sm md:tw-text-base tw-leading-5 tw-font-bold tw-line-clamp-2 hover:tw-underline
                 focus-visible:tw-shadow-focus-box focus-visible:tw-rounded-md">
-                <span *ngIf="episode.name; else noEpisodeName">{{ episode.episodeNumber }}. {{ episode.name }}</span>
+                <span *ngIf="episode.name; else noEpisodeName">{{ episode.epNumber }}. {{ episode.name }}</span>
                 <ng-template #noEpisodeName>
-                  <span>{{ t('media.episode.episodePrefix') }} {{ episode.episodeNumber }}</span>
+                  <span>{{ t('media.episode.episodePrefix') }} {{ episode.epNumber }}</span>
                 </ng-template>
               </a>
               <p class="tw-text-gray-400 tw-flex tw-items-center tw-font-medium tw-mt-0.5"

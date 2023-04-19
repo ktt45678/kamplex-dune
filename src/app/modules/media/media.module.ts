@@ -7,8 +7,11 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { DialogService, DynamicDialogModule } from 'primeng/dynamicdialog';
+import { ToggleButtonModule } from 'primeng/togglebutton';
 import { PaginatorModule } from 'primeng/paginator';
+import { TooltipModule } from 'primeng/tooltip';
 import { TabViewModule } from 'primeng/tabview';
+import { TagModule } from 'primeng/tag';
 
 import { MediaRoutingModule } from './media-routing.module';
 import { MediaFilterModule } from '../../shared/components/media-filter';
@@ -17,7 +20,7 @@ import { MediaTopModule } from '../../shared/components/media-top';
 import { EpisodeListModule } from '../../shared/components/episode-list';
 import { VideoPlayerModule } from '../../shared/components/video-player';
 import { StarRatingModule } from '../../shared/components/star-rating';
-import { SkeletonModule as AppSkeletonModule } from '../../shared/components/skeleton';
+import { SkeletonModule } from '../../shared/components/skeleton';
 import { AddToPlaylistModule } from '../../shared/dialogs/add-to-playlist';
 import { SearchComponent } from './pages/search/search.component';
 import { WatchComponent } from './pages/watch/watch.component';
@@ -30,7 +33,6 @@ import { UrlPipeModule } from '../../shared/pipes/url-pipe';
 import { NumberPipeModule } from '../../shared/pipes/number-pipe';
 import { DateTimePipeModule } from '../../shared/pipes/date-time-pipe';
 import { TypePipeModule } from '../../shared/pipes/type-pipe';
-import { AltTagModule, AltToggleButtonModule, AltTooltipModule } from '../../core/utils/primeng';
 
 @NgModule({
   declarations: [
@@ -50,11 +52,8 @@ import { AltTagModule, AltToggleButtonModule, AltTooltipModule } from '../../cor
     EpisodeListModule,
     VideoPlayerModule,
     StarRatingModule,
-    AppSkeletonModule,
+    SkeletonModule,
     AddToPlaylistModule,
-    AltTagModule,
-    AltTooltipModule,
-    AltToggleButtonModule,
     TranslocoModule,
     LazyLoadImageModule,
     InfiniteScrollModule,
@@ -67,8 +66,11 @@ import { AltTagModule, AltToggleButtonModule, AltTooltipModule } from '../../cor
     ButtonModule,
     DialogModule,
     DynamicDialogModule,
+    ToggleButtonModule,
     PaginatorModule,
-    TabViewModule
+    TooltipModule,
+    TabViewModule,
+    TagModule
   ],
   providers: [
     DialogService,

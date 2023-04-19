@@ -76,14 +76,25 @@
                 t('media.details.overview') }}</p>
               <p class="tw-text-white tw-text-sm sm:tw-text-base tw-mt-2">{{ media.overview }}</p>
               <p class="tw-text-white tw-text-base tw-leading-5 tw-mt-4">
-                <span class="tw-font-bold">{{ t('media.details.productions') }}: </span>
-                <ng-container *ngIf="media.productions.length; else noProductions">
+                <span class="tw-font-bold">{{ t('media.details.studios') }}: </span>
+                <ng-container *ngIf="media.studios.length; else noStudios">
                   <span [class.tw-ml-2]="!first"
-                    *ngFor="let production of media.productions; let first = first; let last = last; trackBy: track_Id">{{
-                    last ? production.name : production.name + ',' }}</span>
+                    *ngFor="let studio of media.studios; let first = first; let last = last; trackBy: track_Id">{{
+                    last ? studio.name : studio.name + ',' }}</span>
                 </ng-container>
-                <ng-template #noProductions>
-                  <span class="tw-text-gray-400 tw-italic">{{ t('media.details.noProductions') }}</span>
+                <ng-template #noStudios>
+                  <span class="tw-text-gray-400 tw-italic">{{ t('media.details.noStudios') }}</span>
+                </ng-template>
+              </p>
+              <p class="tw-text-white tw-text-base tw-leading-5 tw-mt-2">
+                <span class="tw-font-bold">{{ t('media.details.producers') }}: </span>
+                <ng-container *ngIf="media.producers.length; else noProducers">
+                  <span [class.tw-ml-2]="!first"
+                    *ngFor="let producer of media.producers; let first = first; let last = last; trackBy: track_Id">{{
+                    last ? producer.name : producer.name + ',' }}</span>
+                </ng-container>
+                <ng-template #noProducers>
+                  <span class="tw-text-gray-400 tw-italic">{{ t('media.details.noProducers') }}</span>
                 </ng-template>
               </p>
               <p class="tw-text-white tw-text-base tw-leading-5 tw-mt-2">
@@ -136,16 +147,16 @@
             </button>
             <button type="button" role="button" aria-label="Add media to playlist" pButton icon="ms ms-playlist-add"
               class="p-button-secondary p-button-shrink tw-text-lg sm:tw-text-xl tw-ml-2 sm:tw-ml-auto sm:tw-mt-2"
-              (click)="showAddToPlaylistDialog()" [pAltTooltip]="t('media.playlists.addToPlaylists')">
+              (click)="showAddToPlaylistDialog()" [pTooltip]="t('media.playlists.addToPlaylists')">
             </button>
           </div>
         </ng-template>
         <ng-template #genreList let-genreListStyleClass="genreListStyleClass">
           <div *ngIf="media.genres.length; else noGenres" class="tw-text-white tw-flex tw-flex-wrap tw-gap-1"
             [ngClass]="genreListStyleClass">
-            <p-altTag *ngFor="let genre of media.genres; let first = first; trackBy: track_Id" [value]="genre.name"
+            <p-tag *ngFor="let genre of media.genres; let first = first; trackBy: track_Id" [value]="genre.name"
               [link]="['/list', 'genre', genre._id]"
-              styleClass="p-tag-secondary tw-text-base tw-font-normal tw-px-2.5 tw-rounded-full"></p-altTag>
+              styleClass="p-tag-secondary tw-text-base tw-font-normal tw-px-2.5 tw-rounded-full"></p-tag>
           </div>
           <ng-template #noGenres>
             <p class="tw-text-gray-400 tw-text-sm md:tw-text-base tw-italic" [ngClass]="genreListStyleClass">{{

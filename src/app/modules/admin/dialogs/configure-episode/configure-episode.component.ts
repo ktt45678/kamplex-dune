@@ -4,20 +4,19 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { TranslocoService, TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { ConfirmationService } from 'primeng/api';
-import { first, map, switchMap, takeUntil } from 'rxjs';
+import { first, takeUntil } from 'rxjs';
 import { cloneDeep } from 'lodash-es';
-import { Source, SourceInfo, Track } from 'plyr';
 
 import { DropdownOptionDto, UpdateTVEpisodeDto } from '../../../../core/dto/media';
 import { DestroyService, ItemDataService, MediaService, QueueUploadService } from '../../../../core/services';
 import { fileExtension, maxFileSize, shortDate } from '../../../../core/validators';
-import { MediaDetails, MediaSubtitle, TVEpisodeDetails } from '../../../../core/models';
+import { MediaDetails, MediaStream, MediaSubtitle, TVEpisodeDetails } from '../../../../core/models';
 import { AddSubtitleForm, ShortDateForm } from '../../../../core/interfaces/forms';
 import { FileUploadComponent } from '../../../../shared/components/file-upload';
 import { AddSubtitleComponent } from '../add-subtitle';
 import { ImageEditorComponent } from '../../../../shared/dialogs/image-editor';
 import { AppErrorCode, MediaSourceStatus } from '../../../../core/enums';
-import { dataURItoBlob, translocoEscape, fixNestedDialogFocus, replaceDialogHideMethod, detectFormChange } from '../../../../core/utils';
+import { dataURItoBlob, translocoEscape, fixNestedDialogFocus, replaceDialogHideMethod, detectFormChange, secondsToTimeString, timeStringToSeconds } from '../../../../core/utils';
 import {
   IMAGE_PREVIEW_SIZE, UPLOAD_STILL_ASPECT_HEIGHT, UPLOAD_STILL_ASPECT_WIDTH, UPLOAD_STILL_MIN_HEIGHT,
   UPLOAD_STILL_MIN_WIDTH, UPLOAD_STILL_SIZE, UPLOAD_SUBTITLE_EXT, UPLOAD_SUBTITLE_SIZE
@@ -29,7 +28,7 @@ interface UpdateEpisodeForm {
   episodeNumber: FormControl<number>;
   name: FormControl<string>;
   overview: FormControl<string>;
-  runtime: FormControl<number | null>;
+  runtime: FormControl<string | null>;
   airDate: FormGroup<ShortDateForm>;
   visibility: FormControl<number>;
   translate: FormControl<string>;
@@ -45,13 +44,7 @@ interface UpdateEpisodeForm {
     DestroyService,
     {
       provide: TRANSLOCO_SCOPE,
-      useValue: 'media',
-      multi: true
-    },
-    {
-      provide: TRANSLOCO_SCOPE,
-      useValue: 'languages',
-      multi: true
+      useValue: ['common', 'media', 'languages']
     }
   ]
 })
@@ -60,7 +53,7 @@ export class ConfigureEpisodeComponent implements OnInit, AfterViewInit {
   MediaSourceStatus = MediaSourceStatus;
   loadingEpisode: boolean = false;
   episode?: TVEpisodeDetails;
-  previewSource?: SourceInfo;
+  previewStream?: MediaStream;
   updateEpisodeForm: FormGroup<UpdateEpisodeForm>;
   addSubtitleLanguages?: DropdownOptionDto[];
   addSubtitleForm: FormGroup<AddSubtitleForm>;
@@ -137,18 +130,19 @@ export class ConfigureEpisodeComponent implements OnInit, AfterViewInit {
     const episodeId = this.config.data!.episode._id;
     this.updateEpisodeForm.disable({ emitEvent: false });
     const formValue = this.updateEpisodeForm.getRawValue();
-    const updateTVEpisodeDto: UpdateTVEpisodeDto = ({
-      episodeNumber: formValue.episodeNumber,
+    const runtimeValue = timeStringToSeconds(formValue.runtime)!;
+    const updateTVEpisodeDto: UpdateTVEpisodeDto = {
+      epNumber: formValue.episodeNumber,
       name: formValue.name,
       overview: formValue.overview,
-      runtime: formValue.runtime!,
+      runtime: runtimeValue,
       airDate: {
         day: formValue.airDate.day!,
         month: formValue.airDate.month!,
         year: formValue.airDate.year!
       },
       visibility: formValue.visibility
-    });
+    };
     this.mediaService.updateTVEpisode(mediaId, episodeId, updateTVEpisodeDto).pipe(takeUntil(this.destroyService)).subscribe({
       next: (episode) => {
         this.episode = episode;
@@ -186,7 +180,7 @@ export class ConfigureEpisodeComponent implements OnInit, AfterViewInit {
         minWidth: UPLOAD_STILL_MIN_WIDTH, minHeight: UPLOAD_STILL_MIN_HEIGHT,
         imageFile: element.files[0], maxSize: UPLOAD_STILL_SIZE
       },
-      header: this.translocoService.translate('admin.configureMedia.editImage'),
+      header: this.translocoService.translate('common.imageEditor.header'),
       width: '700px',
       modal: true,
       dismissableMask: false,
@@ -229,11 +223,12 @@ export class ConfigureEpisodeComponent implements OnInit, AfterViewInit {
   }
 
   patchUpdateEpisodeForm(episode: TVEpisodeDetails): void {
+    const runtimeValue = secondsToTimeString(episode.runtime);
     this.updateEpisodeForm.patchValue({
-      episodeNumber: episode.episodeNumber,
+      episodeNumber: episode.epNumber,
       name: episode.name,
       overview: episode.overview || '',
-      runtime: episode.runtime,
+      runtime: runtimeValue,
       airDate: {
         day: episode.airDate.day,
         month: episode.airDate.month,
@@ -250,7 +245,7 @@ export class ConfigureEpisodeComponent implements OnInit, AfterViewInit {
   }
 
   loadSubtitleFormData(episode: TVEpisodeDetails): void {
-    const disabledLanguages = episode.subtitles.map((s: MediaSubtitle) => s.language);
+    const disabledLanguages = episode.subtitles.map((s: MediaSubtitle) => s.lang);
     this.itemDataService.createLanguageList(disabledLanguages).subscribe({
       next: languages => this.addSubtitleLanguages = languages
     });
@@ -285,7 +280,7 @@ export class ConfigureEpisodeComponent implements OnInit, AfterViewInit {
       key: 'inModalEpisode',
       message: this.translocoService.translate('admin.media.deleteSubtitleConfirmation'),
       header: this.translocoService.translate('admin.media.deleteSubtitleConfirmationHeader'),
-      icon: 'pi pi-info-circle',
+      icon: 'ms ms-delete',
       defaultFocus: 'reject',
       accept: () => {
         const element = event.target instanceof HTMLButtonElement ? event.target : <HTMLButtonElement>(<HTMLSpanElement>event.target).parentElement;
@@ -321,48 +316,21 @@ export class ConfigureEpisodeComponent implements OnInit, AfterViewInit {
   showSourcePreview(): void {
     this.showEpisodePlayer = true;
     const mediaId = this.config.data!.media._id;
-    const episodeNumber = this.config.data!.episode.episodeNumber;
-    this.translocoService.selectTranslation('languages').pipe(first(), switchMap(t => {
-      return this.mediaService.findTVStreams(mediaId, episodeNumber).pipe(map(movie => ({ movie, t })));
-    })).subscribe(({ movie, t }) => {
-      const sources: Source[] = [];
-      const tracks: Track[] = [];
-      const selectedCodec = 1;
-      movie.streams.forEach(stream => {
-        if (stream.codec === selectedCodec) {
-          sources.push({
-            src: stream.src,
-            type: stream.mimeType,
-            provider: 'html5',
-            size: stream.quality
-          });
-        }
-      });
-      movie.subtitles.forEach(subtitle => {
-        tracks.push({
-          kind: 'subtitles',
-          label: t[subtitle.language],
-          srcLang: subtitle.language,
-          src: subtitle.src
-        });
-      });
-      this.previewSource = {
-        type: 'video',
-        sources: sources,
-        tracks: tracks
-      };
+    const episodeNumber = this.config.data!.episode.epNumber;
+    this.mediaService.findTVStreams(mediaId, episodeNumber).subscribe((episode) => {
+      this.previewStream = episode;
     });
   }
 
   deleteSource(event: Event): void {
     const mediaId = this.config.data!.media._id;
     const episodeId = this.config.data!.episode._id;
-    const safeEpisodeName = translocoEscape(this.config.data!.episode.episodeNumber.toString());
+    const safeEpisodeName = translocoEscape(this.config.data!.episode.epNumber.toString());
     this.confirmationService.confirm({
       key: 'inModalEpisode',
       message: this.translocoService.translate('admin.media.deleteSourceConfirmation', { name: safeEpisodeName }),
       header: this.translocoService.translate('admin.media.deleteSourceConfirmationHeader'),
-      icon: 'pi pi-info-circle',
+      icon: 'ms ms-delete',
       defaultFocus: 'reject',
       accept: () => {
         const element = event.target instanceof HTMLButtonElement ? event.target : <HTMLButtonElement>(<HTMLSpanElement>event.target).parentElement;

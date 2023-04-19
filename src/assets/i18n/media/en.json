@@ -21,7 +21,8 @@
     "updated": "Recently Updated",
     "newReleases": "New Releases",
     "mostViewed": "Most Viewed",
-    "topRated": "Top Rated"
+    "topRated": "Top Rated",
+    "year": "Year"
   },
   "details": {
     "information": "Information",
@@ -29,7 +30,10 @@
     "noGenres": "{{ media.list.noGenres }}",
     "overview": "Overview",
     "productions": "Productions",
-    "noProductions": "No productions found",
+    "studios": "Studios",
+    "noStudios": "No studios found",
+    "producers": "Productions",
+    "noProducers": "No producers found",
     "releaseDate": "Release date",
     "videos": "Videos",
     "noVideos": "No videos found",
@@ -46,9 +50,9 @@
     "search": "Search (2 or more characters)",
     "enteredSearch": "Search: ",
     "genre": "Genres",
-    "selectedGenres": "{ genreCount, plural, one {1 Genre Selected} other {# Genres Selected} }",
+    "selectedGenres": "{ genreCount, plural, one {1 genre selected} other {# genres selected} }",
     "tag": "Tags",
-    "selectedTags": "{ tagCount, plural, one {1 Tag Selected} other {# Tags Selected} }",
+    "selectedTags": "{ tagCount, plural, one {1 tag selected} other {# tags selected} }",
     "sort": "Sort",
     "type": "Type",
     "status": "Status",
@@ -135,20 +139,68 @@
     "removeFromPlaylist": "Remove"
   },
   "createPlaylist": {
+    "formHeader": "Create Playlist",
     "name": "Name",
     "namePlaceholder": "Enter playlist name",
     "description": "Description (optional)",
     "descriptionPlaceholder": "Some information about this playlist",
     "visibility": "Visibility",
-    "visibilityPublic": "Public",
-    "visibilityUnlisted": "Unlisted",
-    "visibilityPrivate": "Private",
     "cancel": "Cancel",
     "submit": "Create"
+  },
+  "updatePlaylist": {
+    "name": "{{ media.createPlaylist.name }}",
+    "namePlaceholder": "{{ media.createPlaylist.namePlaceholder }}",
+    "description": "{{ media.createPlaylist.description }}",
+    "descriptionPlaceholder": "{{ media.createPlaylist.descriptionPlaceholder }}",
+    "visibility": "{{ media.createPlaylist.visibility }}",
+    "cancel": "{{ media.createPlaylist.cancel }}",
+    "submit": "Save Changes"
+  },
+  "playlistSettings": {
+    "thumbnail": "Thumbnail",
+    "thumbnailRequirements": "Supported formats: JPEG, PNG, GIF. Minimum dimensions: 854x480. Maximum size: 5MB",
+    "uploadThumbnail": "Upload",
+    "removeThumbnail": "Remove",
+    "resetUploadThumbnail": "Reset",
+    "undoRemove": "Undo remove",
+    "dragDropThumbnail": "Drop file here to add thumbnail"
   },
   "visibility": {
     "public": "Public",
     "unlisted": "Unlisted",
     "private": "Private"
+  },
+  "subtitleFonts": {
+    "default": "Default",
+    "arialSansSerif": "Arial",
+    "robotoSansSerif": "Roboto (default)",
+    "helveticaSansSerif": "Helvetica",
+    "verdanaSansSerif": "Verdana",
+    "proportionalSansSerif": "Proportional Sans-Serif",
+    "monospaceSansSerif": "Monospace Sans-Serif",
+    "proportionalSerif": "Proportional Serif",
+    "monospaceSerif": "Monospace Serif"
+  },
+  "subtitleFontWeights": {
+    "default": "{{ media.subtitleFonts.default }}",
+    "thin": "Thin",
+    "extraLight": "Extra-light",
+    "light": "Light",
+    "normal": "Normal (default)",
+    "medium": "Medium",
+    "semiBold": "Semi-bold",
+    "bold": "Bold",
+    "extraBold": "Extra-bold",
+    "black": "Black"
+  },
+  "textEdgeStyles": {
+    "default": "{{ media.subtitleFonts.default }}",
+    "none": "None",
+    "outline": "Outline",
+    "raised": "Raised",
+    "depressed": "Depressed",
+    "uniform": "Uniform",
+    "dropshadow": "Dropshadow"
   }
 }

@@ -40,7 +40,7 @@ export class AddSubtitleComponent implements OnInit {
     const subtitles: MediaSubtitle[] = this.config.data!.media.type === MediaType.MOVIE
       ? this.config.data!.media.movie.subtitles
       : this.config.data!.episode.subtitles;
-    const disabledLanguages = subtitles.map(s => s.language);
+    const disabledLanguages = subtitles.map(s => s.lang);
     this.itemDataService.createLanguageList(disabledLanguages).subscribe({
       next: languages => this.languages = languages
     });
@@ -54,7 +54,7 @@ export class AddSubtitleComponent implements OnInit {
     const formValue = this.addSubtitleForm.getRawValue();
     if (mediaType === MediaType.MOVIE) {
       this.mediaService.addMovieSubtitle(mediaId, {
-        language: formValue.language!,
+        lang: formValue.language!,
         file: formValue.file!
       }).pipe(takeUntil(this.destroyService)).subscribe({
         next: subtitles => {
@@ -69,7 +69,7 @@ export class AddSubtitleComponent implements OnInit {
     }
     const episodeId = this.config.data!.episode._id;
     this.mediaService.addTVSubtitle(mediaId, episodeId, {
-      language: formValue.language!,
+      lang: formValue.language!,
       file: formValue.file!
     }).pipe(takeUntil(this.destroyService)).subscribe({
       next: subtitles => {

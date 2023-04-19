@@ -41,4 +41,6 @@ export * from './tv-show-last-episode.model';
 export * from './tv-show.model';
 export * from './upload-session.model';
 export * from './user-details.model';
+export * from './user-settings-options.model';
+export * from './user-settings.model';
 export * from './user.model';

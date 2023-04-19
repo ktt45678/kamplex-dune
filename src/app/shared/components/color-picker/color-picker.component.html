@@ -1,0 +1,23 @@
+<div class="tw-flex tw-flex-wrap" [class]="styleClass">
+  <button type="button" class="tw-bg-neutral-875 tw-inline-flex tw-relative tw-w-16 tw-h-12 tw-border tw-border-white
+    tw-border-opacity-30 tw-rounded hover:tw-border-opacity-60" [disabled]="disabled" (click)="setDefaultColor()">
+    <i class="ms ms-block ms-icon-xs tw-absolute tw-right-0.5 tw-top-0.5"></i>
+    <i *ngIf="!value" class="ms ms-check tw-absolute tw-absolute-center"></i>
+  </button>
+
+  <p-colorPicker class="tw-ml-2" inputStyleClass="tw-w-16 tw-h-12"
+    [initColor]="(selectedColorIndex == undefined && value) || '#000000'" [disabled]="disabled"
+    (onChange)="setCustomColor($event.value)">
+    <i class="ms ms-colorize ms-icon-xs tw-absolute tw-right-0.5 tw-top-0.5"></i>
+    <i *ngIf="value && selectedColorIndex == undefined" class="ms ms-check tw-absolute tw-absolute-center"></i>
+  </p-colorPicker>
+
+  <div class="max-xs:tw-mt-2 max-xs:tw-w-full xs:tw-ml-2">
+    <button type="button" *ngFor="let color of presetColors; let i = index; let isFirst = first" [disabled]="disabled"
+      class="tw-inline-flex tw-relative tw-w-6 tw-h-6 tw-rounded" [attr.aria-label]="color.label"
+      [ngClass]="{ 'tw-ml-2': !isFirst }" [ngStyle]="{ 'background-color': color.value }"
+      (click)="setPresetColor(color, i)">
+      <i *ngIf="i === selectedColorIndex" class="ms ms-check ms-icon-sm tw-absolute tw-absolute-center"></i>
+    </button>
+  </div>
+</div>

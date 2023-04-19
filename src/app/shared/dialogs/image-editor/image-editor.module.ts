@@ -4,7 +4,7 @@ import { TranslocoModule } from '@ngneat/transloco';
 import { ImageCropperModule } from '@ktt45678/ngx-image-cropper';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ButtonModule } from 'primeng/button';
-import { SliderModule } from 'primeng/slider';
+import { SliderAltModule } from 'primeng/slideralt';
 
 import { ImageEditorComponent } from './image-editor.component';
 import { UrlPipeModule } from '../../pipes/url-pipe';
@@ -18,7 +18,7 @@ import { UrlPipeModule } from '../../pipes/url-pipe';
     ProgressSpinnerModule,
     UrlPipeModule,
     ButtonModule,
-    SliderModule
+    SliderAltModule
   ],
   exports: [ImageEditorComponent]
 })

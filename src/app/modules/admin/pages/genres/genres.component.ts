@@ -26,7 +26,7 @@ export class GenresComponent implements OnInit, OnDestroy {
   genreList?: Paginated<Genre>;
   selectedGenres?: Genre[];
 
-  constructor(private ref: ChangeDetectorRef, private route: ActivatedRoute, private router: Router,
+  constructor(private ref: ChangeDetectorRef,
     public dialogService: DialogService, private confirmationService: ConfirmationService, private genresService: GenresService,
     private translocoService: TranslocoService) { }
 
@@ -95,7 +95,7 @@ export class GenresComponent implements OnInit, OnDestroy {
     this.confirmationService.confirm({
       message: this.translocoService.translate('admin.genres.deleteConfirmation', { name: safeGenreName }),
       header: this.translocoService.translate('admin.genres.deleteConfirmationHeader'),
-      icon: 'pi pi-info-circle',
+      icon: 'ms ms-delete',
       defaultFocus: 'reject',
       accept: () => this.removeGenre(genre._id)
     });

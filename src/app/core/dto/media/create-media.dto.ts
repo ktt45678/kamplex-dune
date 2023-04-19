@@ -6,8 +6,9 @@ export interface CreateMediaDto {
   originalTitle: string | null;
   overview: string;
   genres: string[] | null;
-  originalLanguage: string | null;
-  productions: string[] | null;
+  originalLang: string | null;
+  studios: string[] | null;
+  producers: string[] | null;
   tags: string[] | null;
   runtime: number;
   adult: boolean;

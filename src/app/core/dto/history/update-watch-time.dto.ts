@@ -1,5 +1,5 @@
 export interface UpdateWatchTimeDto {
   media: string;
   episode?: string;
-  watchTime: number;
+  time: number;
 }

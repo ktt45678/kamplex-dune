@@ -5,17 +5,36 @@
     "playlists": "Playlists",
     "rated": "Rated"
   },
+  "profile": {
+    "showsViewedCount": "Shows viewed",
+    "playlistsCreatedCount": "Playlists created",
+    "ratingsCount": "Ratings",
+    "memberSince": "Member since",
+    "lastActiveAt": "Last online at",
+    "activity": "Activity"
+  },
+  "activity": {
+    "watching": "Watching",
+    "watched": "Watched",
+    "episodeLink": "episode {{ episode }} of {{ title }}"
+  },
   "history": {
     "emptyHistory": "Nothing was recorded",
     "pauseHistory": "Pause updating",
     "unpauseHistory": "Resume updating",
-    "delete": "Delete"
+    "delete": "Delete",
+    "deleteConfirmationHeader": "Delete History",
+    "deleteConfirmation": "Are you sure you want to remove <strong>{{ name }}</strong> from your history? This action cannot be undone."
   },
   "historyTable": {
     "title": "Title",
     "progress": "Progress",
     "pauseOrResume": "Pause",
     "time": "Time"
+  },
+  "playlist": {
+    "deleteConfirmationHeader": "Delete Playlist",
+    "deleteConfirmation": "Are you sure you want to delete <strong>{{ name }}</strong>? This action cannot be undone."
   },
   "playlistTable": {
     "name": "Name",
@@ -24,7 +43,9 @@
     "createdAt": "Created at"
   },
   "rating": {
-    "editableScore": "Editable score"
+    "editMode": "Edit mode (details view)",
+    "deleteConfirmationHeader": "Delete Rating",
+    "deleteConfirmation": "Are you sure you want to remove <strong>{{ name }}</strong>? This action cannot be undone."
   },
   "ratingTable": {
     "title": "Title",
@@ -43,5 +64,112 @@
     "mediaGenres": "Genres",
     "mediaYear": "Year",
     "filter": "Filter"
+  },
+  "settings": {
+    "myAccount": "My Account",
+    "profile": "Profile",
+    "privacy": "Privacy",
+    "media": "Media",
+    "subtitle": "Subtitle"
+  },
+  "accountSettings": {
+    "username": "Username",
+    "email": "Email",
+    "dateOfBirth": "Date of birth",
+    "password": "Password",
+    "editUsername": "Edit",
+    "editEmail": "{{ users.accountSettings.editUsername }}",
+    "editDateOfBirth": "{{ users.accountSettings.editUsername }}",
+    "changePassword": "Change password",
+    "accountVerification": "Account verification",
+    "verifyEmail": "Verify email",
+    "verifiedEmailStatus": "Your email has been verified",
+    "unverifiedEmailStatus": "Your email is not verified"
+  },
+  "profileSettings": {
+    "changeAvatar": "Change avatar",
+    "removeAvatar": "Remove avatar",
+    "changeBanner": "Change banner",
+    "removeBanner": "Remove banner",
+    "unsavedChanges": "You have unsaved changes!",
+    "reset": "Reset",
+    "save": "Save changes"
+  },
+  "updateUsername": {
+    "formHeader": "Edit Username",
+    "username": "{{ users.accountSettings.username }}",
+    "currentPassword": "Current password",
+    "cancel": "Cancel",
+    "submit": "Save"
+  },
+  "updateEmail": {
+    "formHeader": "Edit Email",
+    "email": "{{ users.accountSettings.email }}",
+    "currentPassword": "{{ users.updateUsername.currentPassword }}",
+    "emailNote": "We will send a verification link to your new email, the previous email will also receive a notification of the change",
+    "cancel": "{{ users.updateUsername.cancel }}",
+    "submit": "{{ users.updateUsername.submit }}",
+    "close": "Close",
+    "successMessageSummary": "Email updated",
+    "successMessageDetail": "A verification link has been sent to your new email address"
+  },
+  "updateBirthdate": {
+    "formHeader": "Edit Date of Birth",
+    "birthdate": "{{ users.accountSettings.dateOfBirth }}",
+    "birthdateDay": "Day",
+    "birthdateMonth": "Month",
+    "birthdateYear": "Year",
+    "clearBirthdate": "Clear",
+    "birthdateNote": "Date of birth will be used to find age appropriate content",
+    "cancel": "{{ users.updateUsername.cancel }}",
+    "submit": "{{ users.updateUsername.submit }}"
+  },
+  "updatePassword": {
+    "formHeader": "Change Password",
+    "currentPassword": "{{ users.updateUsername.currentPassword }}",
+    "password": "New password",
+    "confirmPassword": "Confirm new password",
+    "cancel": "{{ users.updateUsername.cancel }}",
+    "submit": "{{ users.updateUsername.submit }}"
+  },
+  "updateProfile": {
+    "nickname": "Nickname",
+    "about": "About",
+    "submit": "{{ users.updateUsername.submit }}"
+  },
+  "updatePrivacy": {
+    "history": "Who can see your watch history and progress?",
+    "rating": "Who can see your rated shows?",
+    "playlist": "Default visibility for your playlists",
+    "playlistDescription": "When you create a new playlist, this option will be applied",
+    "submit": "{{ users.updateUsername.submit }}"
+  },
+  "mediaSettings": {
+    "historyLimit": "Automatically mark a movie/episode as watched at",
+    "historyLimitDesc": "Once you've reached this percentage, the movie/episode will be marked as watched in your watch history.",
+    "paused": "Pause history",
+    "pauseHistoryDescription": "Pausing history will stop updating your watch history, previous activities will not be affected. Please note that your watch history has nothing to do with movie and tv show recommendations",
+    "unsavedChanges": "{{ users.profileSettings.unsavedChanges }}",
+    "reset": "{{ users.profileSettings.reset }}",
+    "save": "{{ users.profileSettings.save }}"
+  },
+  "subtitleSettings": {
+    "fontSize": "Font size",
+    "fontFamily": "Font family",
+    "fontWeight": "Font weight",
+    "textColor": "Text color",
+    "textAlpha": "Text opacity",
+    "textEdge": "Text edge",
+    "bgColor": "Background color",
+    "bgAlpha": "Background opacity",
+    "winColor": "Window color",
+    "winAlpha": "Window opacity",
+    "unsavedChanges": "{{ users.profileSettings.unsavedChanges }}",
+    "reset": "{{ users.profileSettings.reset }}",
+    "save": "{{ users.profileSettings.save }}"
+  },
+  "privacy": {
+    "everyone": "Everyone",
+    "onlyMe": "Only me"
   }
 }

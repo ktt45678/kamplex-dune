@@ -20,7 +20,7 @@ export class MediaService {
   findPage(paginateMediaDto?: OffsetPageMediaDto, context?: HttpContext) {
     const params: { [key: string]: any } = {};
     if (paginateMediaDto) {
-      const { page, limit, search, sort, genres, tags, type, status, originalLanguage, year, includeHidden, includeUnprocessed } = paginateMediaDto;
+      const { page, limit, search, sort, genres, tags, type, status, originalLang, year, includeHidden, includeUnprocessed } = paginateMediaDto;
       page && (params['page'] = page);
       limit && (params['limit'] = limit);
       search && (params['search'] = search);
@@ -29,7 +29,7 @@ export class MediaService {
       tags?.length && (params['tags'] = tags);
       type && (params['type'] = type);
       status && (params['status'] = status);
-      originalLanguage && (params['originalLanguage'] = originalLanguage);
+      originalLang && (params['originalLang'] = originalLang);
       year && (params['year'] = year);
       includeHidden && (params['includeHidden'] = includeHidden);
       includeUnprocessed && (params['includeUnprocessed'] = includeUnprocessed);
@@ -40,7 +40,7 @@ export class MediaService {
   findPageCursor(paginateMediaDto?: CursorPageMediaDto, context?: HttpContext) {
     const params: { [key: string]: any } = {};
     if (paginateMediaDto) {
-      const { pageToken, limit, search, sort, genres, tags, type, status, originalLanguage, year, includeHidden, includeUnprocessed } = paginateMediaDto;
+      const { pageToken, limit, search, sort, genres, tags, type, status, originalLang, year, includeHidden, includeUnprocessed } = paginateMediaDto;
       pageToken && (params['page'] = pageToken);
       limit && (params['limit'] = limit);
       search && (params['search'] = search);
@@ -49,7 +49,7 @@ export class MediaService {
       tags?.length && (params['tags'] = tags);
       type && (params['type'] = type);
       status && (params['status'] = status);
-      originalLanguage && (params['originalLanguage'] = originalLanguage);
+      originalLang && (params['originalLang'] = originalLang);
       year && (params['year'] = year);
       includeHidden && (params['includeHidden'] = includeHidden);
       includeUnprocessed && (params['includeUnprocessed'] = includeUnprocessed);
@@ -127,7 +127,7 @@ export class MediaService {
 
   addMovieSubtitle(id: string, addMediaSubtitleDto: AddMediaSubtitleDto) {
     const data = new FormData();
-    data.set('language', addMediaSubtitleDto.language);
+    data.set('language', addMediaSubtitleDto.lang);
     data.set('file', addMediaSubtitleDto.file);
     return this.http.post<MediaSubtitle[]>(`media/${id}/movie/subtitles`, data);
   }
@@ -182,7 +182,7 @@ export class MediaService {
 
   addTVSubtitle(id: string, episodeId: string, addMediaSubtitleDto: AddMediaSubtitleDto) {
     const data = new FormData();
-    data.set('language', addMediaSubtitleDto.language);
+    data.set('language', addMediaSubtitleDto.lang);
     data.set('file', addMediaSubtitleDto.file);
     return this.http.post<MediaSubtitle[]>(`media/${id}/tv/episodes/${episodeId}/subtitles`, data);
   }
@@ -269,6 +269,6 @@ export class MediaService {
 
   invalidateHomeMediaCache() {
     this.httpCacheManager.delete(CacheKey.FEATURED_MEDIA);
-    this.httpCacheManager.delete(CacheKey.LATEST_MEDIA);
+    this.httpCacheManager.delete(CacheKey.LAST_ADDED_MEDIA);
   }
 }

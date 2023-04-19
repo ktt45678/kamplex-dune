@@ -29,7 +29,7 @@
       </div>
       <ng-container *ngFor="let toast of toasts; trackBy: trackTabId">
         <div *ngIf="toast.tabId === selectedTabId && toast.visible" class="tw-absolute" [ngClass]="toast.styleClass"
-          @tabPanelToastAnimation>
+          @tabPanelToast>
           <ng-container [ngTemplateOutlet]="toast.template"></ng-container>
         </div>
       </ng-container>

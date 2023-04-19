@@ -36,7 +36,7 @@
         [overlayOptions]="{ baseZIndex: 100 }" scrollHeight="400px" [showClear]="true" [appendTo]="dropdownZone"
         [placeholder]="t('media.filter.status')" styleClass="tw-w-full p-dropdown-xs">
       </p-dropdown>
-      <p-dropdown [hidden]="!showAdvanced" formControlName="originalLanguage" [options]="languages || []"
+      <p-dropdown [hidden]="!showAdvanced" formControlName="originalLang" [options]="languages || []"
         [overlayOptions]="{ baseZIndex: 100 }" scrollHeight="400px" [showClear]="true" [appendTo]="dropdownZone"
         [placeholder]="t('media.filter.language')" styleClass="tw-w-full p-dropdown-xs"
         panelStyleClass="md:tw-dropdown-cols-4 md:tw-w-full md:tw-max-w-2xl">
@@ -65,46 +65,46 @@
     <div class="tw-flex tw-mt-4">
       <div class="tw-ml-auto">
         <button pButton type="button" icon="ms ms-sort" aria-label="Sort media menu" [appMenuTriggerFor]="sortMenu"
-          class="p-button-secondary p-button-sm p-button-sm-icon" [pAltTooltip]="t('media.filter.sort')">
+          class="p-button-secondary p-button-sm p-button-sm-icon" [pTooltip]="t('media.filter.sort')">
         </button>
-        <p-altToggleButton formControlName="showAdvanced" class="tw-inline-block tw-ml-2"
+        <p-toggleButton formControlName="showAdvanced" class="tw-inline-block tw-ml-2"
           styleClass="p-button-sm p-togglebutton-dark !tw-border-none" [onIcon]="'ms ms-expand-less'"
-          offIcon="ms ms-expand-more" [pAltTooltip]="t('media.filter.toggleAdvanced')"
+          offIcon="ms ms-expand-more" [pTooltip]="t('media.filter.toggleAdvanced')"
           (onChange)="showAdvanced = $event.checked">
-        </p-altToggleButton>
+        </p-toggleButton>
       </div>
     </div>
     <div class="tw-flex tw-flex-wrap tw-items-center tw-mt-4 tw-gap-y-2">
       <i class="ms ms-label tw-mr-2 tw-text-white only:tw-hidden"></i>
-      <p-altChip *ngIf="filterForm.value.search" [label]="t('media.filter.enteredSearch') + filterForm.value.search"
+      <p-chip *ngIf="filterForm.value.search" [label]="t('media.filter.enteredSearch') + filterForm.value.search"
         [removable]="true" styleClass="p-chip-sm tw-rounded-full tw-mr-2"
         textStyleClass="tw-max-w-sm tw-truncate tw-capitalize"
-        (onRemove)="filterForm.controls.search.setValue(null)"></p-altChip>
+        (onRemove)="filterForm.controls.search.setValue(null)"></p-chip>
       <ng-container *ngFor="let genre of filterForm.value.genres">
-        <p-altChip [label]="genre.name" [removable]="true" styleClass="p-chip-sm tw-rounded-full tw-mr-2"
-          (onRemove)="genreAutoComplete.removeItemByObject(genre); genreAutoComplete.cd.markForCheck()"></p-altChip>
+        <p-chip [label]="genre.name" [removable]="true" styleClass="p-chip-sm tw-rounded-full tw-mr-2"
+          (onRemove)="genreAutoComplete.removeItemByObject(genre); genreAutoComplete.cd.markForCheck()"></p-chip>
       </ng-container>
-      <p-altChip *ngIf="filterForm.value.type"
+      <p-chip *ngIf="filterForm.value.type"
         [label]="t('media.mediaTypes.' + (filterForm.value.type === 'movie' ? 'movie' : 'tvShow'))" [removable]="true"
-        styleClass="p-chip-sm tw-rounded-full tw-mr-2" (onRemove)="filterForm.controls.type.setValue(null)"></p-altChip>
-      <p-altChip *ngIf="filterForm.value.status" [label]="t('media.statusOptions.' + filterForm.value.status)"
+        styleClass="p-chip-sm tw-rounded-full tw-mr-2" (onRemove)="filterForm.controls.type.setValue(null)"></p-chip>
+      <p-chip *ngIf="filterForm.value.status" [label]="t('media.statusOptions.' + filterForm.value.status)"
         [removable]="true" styleClass="p-chip-sm tw-rounded-full tw-mr-2"
-        (onRemove)="filterForm.controls.status.setValue(null)"></p-altChip>
-      <p-altChip *ngIf="filterForm.value.originalLanguage" [label]="t('languages.' + filterForm.value.originalLanguage)"
+        (onRemove)="filterForm.controls.status.setValue(null)"></p-chip>
+      <p-chip *ngIf="filterForm.value.originalLang" [label]="t('languages.' + filterForm.value.originalLang)"
         [removable]="true" styleClass="p-chip-sm tw-rounded-full tw-mr-2"
-        (onRemove)="filterForm.controls.originalLanguage.setValue(null)"></p-altChip>
-      <p-altChip *ngIf="filterForm.value.year" [label]="filterForm.value.year + ''" [removable]="true"
-        styleClass="p-chip-sm tw-rounded-full tw-mr-2" (onRemove)="filterForm.controls.year.setValue(null)"></p-altChip>
+        (onRemove)="filterForm.controls.originalLang.setValue(null)"></p-chip>
+      <p-chip *ngIf="filterForm.value.year" [label]="filterForm.value.year + ''" [removable]="true"
+        styleClass="p-chip-sm tw-rounded-full tw-mr-2" (onRemove)="filterForm.controls.year.setValue(null)"></p-chip>
       <ng-container *ngFor="let tag of filterForm.value.tags">
-        <p-altChip [label]="tag.name" [removable]="true" styleClass="p-chip-sm tw-rounded-full tw-mr-2"
-          (onRemove)="tagAutoComplete.removeItemByObject(tag); tagAutoComplete.cd.markForCheck()"></p-altChip>
+        <p-chip [label]="tag.name" [removable]="true" styleClass="p-chip-sm tw-rounded-full tw-mr-2"
+          (onRemove)="tagAutoComplete.removeItemByObject(tag); tagAutoComplete.cd.markForCheck()"></p-chip>
       </ng-container>
     </div>
     <!-- <div class="tw-flex tw-mt-4 tw-items-center">
       <i class="ms ms-sell tw-mr-2 tw-text-white"></i>
       <div class="tw-mr-2" *ngFor="let tag of tagAutoComplete.value">
-        <p-altChip [label]="tag.name" [removable]="true" styleClass="p-chip-sm"
-          (onRemove)="tagAutoComplete.removeItemByObject(tag); tagAutoComplete.cd.markForCheck()"></p-altChip>
+        <p-chip [label]="tag.name" [removable]="true" styleClass="p-chip-sm"
+          (onRemove)="tagAutoComplete.removeItemByObject(tag); tagAutoComplete.cd.markForCheck()"></p-chip>
       </div>
     </div> -->
   </form>

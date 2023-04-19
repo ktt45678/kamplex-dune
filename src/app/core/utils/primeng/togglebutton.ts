@@ -35,9 +35,7 @@ export const TOGGLEBUTTON_VALUE_ACCESSOR: any = {
   }
 })
 export class AltToggleButton extends ToggleButton implements ControlValueAccessor {
-  @Input() set initValue(value: boolean) {
-    this.checked = value;
-  };
+
 }
 
 @NgModule({

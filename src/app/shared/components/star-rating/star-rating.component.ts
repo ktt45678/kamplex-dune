@@ -56,7 +56,7 @@ export class StarRatingComponent implements OnInit, OnDestroy {
   private customCssClasses!: HTMLStyleElement[];
   private customClassIdentifier = Math.random().toString(36).substring(2);
 
-  constructor(private ref: ChangeDetectorRef) { }
+  constructor(public ref: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.setupStarImages();

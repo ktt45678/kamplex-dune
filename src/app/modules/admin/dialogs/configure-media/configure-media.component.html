@@ -44,10 +44,10 @@
               <div class="tw-w-full sm:tw-w-1/2">
                 <label for="runtime" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
                   t('admin.updateMedia.runtime') }}</label>
-                <p-inputNumber formControlName="runtime" class="tw-w-full" styleClass="tw-w-full" id="runtime"
-                  suffix=" sec" aria-describedby="runtime-error" [useGrouping]="false" [min]="0" [max]="10000"
+                <p-inputMask formControlName="runtime" styleClass="tw-w-full" id="runtime"
+                  aria-describedby="runtime-error" mask="99:99:99" slotChar="00:00:00"
                   [placeholder]="t('admin.updateMedia.runtimePlaceholder')">
-                </p-inputNumber>
+                </p-inputMask>
                 <small id="runtime-error" class="p-error tw-text-xs tw-block tw-my-2"
                   [invalidControl]="updateMediaForm.controls.runtime">{{ updateMediaForm.controls.runtime.errors |
                   firstErrorKey:'updateMedia':'runtime' }}</small>
@@ -67,46 +67,84 @@
                   }}</small>
               </div>
             </div>
-            <div class="tw-flex tw-flex-wrap">
-              <div class="tw-w-full md:tw-w-1/3">
+            <div class="tw-flex max-md:tw-flex-wrap tw-my-2">
+              <div class="tw-w-full md:tw-w-1/3 tw-mb-8">
                 <label for="genres" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
                   t('admin.updateMedia.genres') }}</label>
-                <p-altAutoComplete formControlName="genres" [suggestions]="genreSuggestions"
+                <p-altAutoComplete #genreAC formControlName="genres" [suggestions]="genreSuggestions"
                   (completeMethod)="loadGenreSuggestions($event.query)" field="name" dataKey="_id" [multiple]="true"
                   [unique]="true" [completeOnFocus]="true" scrollHeight="300px" appendTo="body" styleClass="tw-w-full"
                   panelStyleClass="p-autocomplete-xs" inputId="genres" ariaLabel="Find genres"
-                  dropdownAriaLabel="Genre search results" aria-describedby="genres-error">
+                  dropdownAriaLabel="Genre search results">
+                  <ng-template let-values pTemplate="selectedItem">{{ t('admin.updateMedia.selectedItems', { itemCount:
+                    values.length }) }}</ng-template>
                 </p-altAutoComplete>
-                <small id="genres-error" class="p-error tw-text-xs tw-block tw-my-2"
-                  [invalidControl]="updateMediaForm.controls.genres">{{ updateMediaForm.controls.genres.errors |
-                  firstErrorKey:'updateMedia':'genres' }}</small>
               </div>
-              <div class="tw-w-full md:tw-w-1/3 md:tw-pl-2">
-                <label for="productions" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
-                  t('admin.updateMedia.productions') }}</label>
-                <p-altAutoComplete formControlName="productions" [suggestions]="productionSuggestions"
+              <div class="max-md:tw-hidden tw-divider-y tw-mx-8"></div>
+              <div class="tw-flex tw-flex-wrap tw-w-full md:tw-w-2/3 tw-gap-2 tw-content-center">
+                <p-chip *ngFor="let genre of updateMediaForm.value.genres" [label]="genre.name" [removable]="true"
+                  styleClass="p-chip-sm tw-rounded-full"
+                  (onRemove)="genreAC.removeItemByObject(genre); genreAC.cd.markForCheck()"></p-chip>
+              </div>
+            </div>
+            <div class="tw-flex max-md:tw-flex-wrap tw-my-2">
+              <div class="tw-w-full md:tw-w-1/3 tw-mb-8">
+                <label for="studios" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
+                  t('admin.updateMedia.studios') }}</label>
+                <p-altAutoComplete #studioAC formControlName="studios" [suggestions]="productionSuggestions"
                   (completeMethod)="loadProductionSuggestions($event.query)" field="name" dataKey="_id"
                   [multiple]="true" [unique]="true" [completeOnFocus]="true" scrollHeight="300px" appendTo="body"
-                  styleClass="tw-w-full" panelStyleClass="p-autocomplete-xs" inputId="productions"
-                  ariaLabel="Find companies" dropdownAriaLabel="Company search results"
-                  aria-describedby="productions-error">
+                  styleClass="tw-w-full" panelStyleClass="p-autocomplete-xs" inputId="studios"
+                  ariaLabel="Find companies" dropdownAriaLabel="Studio search results">
+                  <ng-template let-values pTemplate="selectedItem">{{ t('admin.updateMedia.selectedItems', { itemCount:
+                    values.length }) }}</ng-template>
                 </p-altAutoComplete>
-                <small id="productions-error" class="p-error tw-text-xs tw-block tw-my-2"
-                  [invalidControl]="updateMediaForm.controls.productions">{{ updateMediaForm.controls.productions.errors
-                  | firstErrorKey:'updateMedia':'productions' }}</small>
               </div>
-              <div class="tw-w-full md:tw-w-1/3 md:tw-pl-2">
+              <div class="max-md:tw-hidden tw-divider-y tw-mx-8"></div>
+              <div class="tw-flex tw-flex-wrap tw-w-full md:tw-w-2/3 tw-gap-2 tw-content-center">
+                <p-chip *ngFor="let studio of updateMediaForm.value.studios" [label]="studio.name" [removable]="true"
+                  styleClass="p-chip-sm tw-rounded-full"
+                  (onRemove)="studioAC.removeItemByObject(studio); studioAC.cd.markForCheck()"></p-chip>
+              </div>
+            </div>
+            <div class="tw-flex max-md:tw-flex-wrap tw-my-2">
+              <div class="tw-w-full md:tw-w-1/3 tw-mb-8">
+                <label for="producers" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
+                  t('admin.updateMedia.producers') }}</label>
+                <p-altAutoComplete #producerAC formControlName="producers" [suggestions]="productionSuggestions"
+                  (completeMethod)="loadProductionSuggestions($event.query)" field="name" dataKey="_id"
+                  [multiple]="true" [unique]="true" [completeOnFocus]="true" scrollHeight="300px" appendTo="body"
+                  styleClass="tw-w-full" panelStyleClass="p-autocomplete-xs" inputId="producers"
+                  ariaLabel="Find companies" dropdownAriaLabel="Producer search results">
+                  <ng-template let-values pTemplate="selectedItem">{{ t('admin.updateMedia.selectedItems', { itemCount:
+                    values.length }) }}</ng-template>
+                </p-altAutoComplete>
+              </div>
+              <div class="max-md:tw-hidden tw-divider-y tw-mx-8"></div>
+              <div class="tw-flex tw-flex-wrap tw-w-full md:tw-w-2/3 tw-gap-2 tw-content-center">
+                <p-chip *ngFor="let producer of updateMediaForm.value.producers" [label]="producer.name"
+                  [removable]="true" styleClass="p-chip-sm tw-rounded-full"
+                  (onRemove)="producerAC.removeItemByObject(producer); producerAC.cd.markForCheck()"></p-chip>
+              </div>
+            </div>
+            <div class="tw-flex max-md:tw-flex-wrap tw-my-2">
+              <div class="tw-w-full md:tw-w-1/3 tw-mb-8">
                 <label for="tags" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
                   t('admin.updateMedia.tags') }}</label>
-                <p-altAutoComplete formControlName="tags" [suggestions]="tagSuggestions"
+                <p-altAutoComplete #tagAC formControlName="tags" [suggestions]="tagSuggestions"
                   (completeMethod)="loadTagSuggestions($event.query)" field="name" dataKey="_id" [multiple]="true"
                   [unique]="true" [completeOnFocus]="true" scrollHeight="300px" appendTo="body" styleClass="tw-w-full"
                   panelStyleClass="p-autocomplete-xs" inputId="tags" ariaLabel="Find tags"
-                  dropdownAriaLabel="Tag search results" aria-describedby="tags-error">
+                  dropdownAriaLabel="Tag search results">
+                  <ng-template let-values pTemplate="selectedItem">{{ t('admin.updateMedia.selectedItems', { itemCount:
+                    values.length }) }}</ng-template>
                 </p-altAutoComplete>
-                <small id="tags-error" class="p-error tw-text-xs tw-block tw-my-2"
-                  [invalidControl]="updateMediaForm.controls.tags">{{ updateMediaForm.controls.tags.errors
-                  | firstErrorKey:'updateMedia':'tags' }}</small>
+              </div>
+              <div class="max-md:tw-hidden tw-divider-y tw-mx-8"></div>
+              <div class="tw-flex tw-flex-wrap tw-w-full md:tw-w-2/3 tw-gap-2 tw-content-center">
+                <p-chip *ngFor="let tag of updateMediaForm.value.tags" [label]="tag.name" [removable]="true"
+                  styleClass="p-chip-sm tw-rounded-full"
+                  (onRemove)="tagAC.removeItemByObject(tag); tagAC.cd.markForCheck()"></p-chip>
               </div>
             </div>
             <label for="release-date" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
@@ -463,9 +501,9 @@
           <p class="tw-text-white tw-font-bold tw-text-2xl">{{ t('admin.configureMedia.subtitles')
             }}</p>
           <div class="tw-my-3">
-            <app-file-upload #subtitleFileUpload accept=".vtt" [label]="t('admin.configureMedia.addSubtitle')"
-              [desciption]="t('admin.configureMedia.addSubtitleDesc')" [showFilename]="false"
-              styleClass="tw-max-w-xl tw-h-40 tw-mx-auto" ariaLabel="Choose a subtitle to upload"
+            <app-file-upload #subtitleFileUpload accept=".vtt, .srt, .ass"
+              [label]="t('admin.configureMedia.addSubtitle')" [desciption]="t('admin.configureMedia.addSubtitleDesc')"
+              [showFilename]="false" styleClass="tw-max-w-xl tw-h-40 tw-mx-auto" ariaLabel="Choose a subtitle to upload"
               (fileChange)="showAddSubtitleDialog($event)">
             </app-file-upload>
           </div>
@@ -489,7 +527,7 @@
                     <p-tableCheckbox [value]="subtitle"></p-tableCheckbox>
                   </td>
                   <td>
-                    {{ t('languages.' + subtitle.language) }}
+                    {{ t('languages.' + subtitle.lang) }}
                   </td>
                   <td>
                     <button pButton icon="ms ms-delete"
@@ -552,7 +590,7 @@
             </button>
           </ng-template>
           <ng-template #sourcePreview>
-            <app-video-player [source]="previewSource"></app-video-player>
+            <app-video-player [stream]="previewStream"></app-video-player>
           </ng-template>
           <p class="tw-text-base tw-font-medium tw-mt-4 tw-mb-2">{{ t('admin.configureMedia.addMovieSourceAltLabel') }}
           </p>

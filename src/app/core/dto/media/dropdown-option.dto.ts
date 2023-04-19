@@ -1,5 +1,5 @@
 export interface DropdownOptionDto {
-  value: number | string;
+  value: number | string | null;
   label: number | string;
   disabled?: boolean;
 }

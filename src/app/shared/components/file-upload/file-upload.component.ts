@@ -25,6 +25,7 @@ export class FileUploadComponent implements ControlValueAccessor {
   @Input() disabled: boolean = false;
   @Output() fileChange = new EventEmitter<File>();
 
+  isOverElement: boolean = false;
   selectedFile?: File;
   touched: boolean = false;
 

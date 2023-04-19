@@ -1,0 +1,43 @@
+<p-dialog-title></p-dialog-title>
+<ng-container *transloco="let t">
+  <div pDialogContent>
+    <h3 class="tw-text-white tw-text-2xl tw-font-bold tw-text-center tw-mb-4">{{ t('users.updateBirthdate.formHeader')
+      }}</h3>
+    <form id="update-birthdate-form" [formGroup]="updateBirthdateForm" formHandler
+      (ngSubmit)="onUpdateBirthdateFormSubmit()">
+      <label for="birthdate" class="tw-text-white tw-inline-block tw-text-base tw-font-medium tw-mb-2">{{
+        t('users.updateBirthdate.birthdate') }}</label>
+      <div id="birthdate" formGroupName="birthdate" class="dropdown-group tw-flex tw-flex-wrap tw-w-full"
+        aria-describedby="birthdate-error">
+        <p-dropdown class="dropdown-group tw-w-full sm:tw-w-3/12" styleClass="tw-w-full" panelStyleClass="p-dropdown-xs"
+          [options]="days" formControlName="day" appendTo="body" [placeholder]="t('users.updateBirthdate.birthdateDay')"
+          scrollHeight="300px">
+        </p-dropdown>
+        <p-dropdown class="tw-w-full sm:tw-w-5/12 tw-pt-2 sm:tw-pt-0 sm:tw-pl-2" styleClass="tw-w-full"
+          panelStyleClass="p-dropdown-xs" [options]="months" formControlName="month" appendTo="body"
+          [placeholder]="t('users.updateBirthdate.birthdateMonth')" scrollHeight="300px">
+        </p-dropdown>
+        <p-dropdown class="tw-w-full sm:tw-w-4/12 tw-pt-2 sm:tw-pt-0 sm:tw-pl-2" styleClass="tw-w-full"
+          panelStyleClass="p-dropdown-xs" [options]="years" formControlName="year" appendTo="body"
+          [virtualScroll]="true" [virtualScrollItemSize]="40.98"
+          [placeholder]="t('users.updateBirthdate.birthdateYear')" scrollHeight="300px">
+        </p-dropdown>
+      </div>
+      <small id="birthdate-error" class="p-error tw-text-xs tw-block tw-my-2"
+        [invalidControl]="updateBirthdateForm.controls.birthdate">{{ updateBirthdateForm.controls.birthdate.errors |
+        firstErrorKey:'updateBirthdate':'birthdate' }}</small>
+      <p class="tw-text-gray-400 tw-flex tw-text-sm tw-mt-2">
+        <span>*</span>
+        <span class="tw-ml-1">{{ t('users.updateBirthdate.birthdateNote') }}</span>
+      </p>
+    </form>
+  </div>
+  <div pDialogActions>
+    <button pButton type="button" [label]="t('users.updateBirthdate.cancel')" (click)="onUpdateBirthdateFormCancel()"
+      class="p-button-text p-button-plain p-button-sm">
+    </button>
+    <button pButton type="submit" form="update-birthdate-form" [label]="t('users.updateBirthdate.submit')"
+      class="p-button p-button-sm tw-ml-1" [disabled]="updateBirthdateForm.disabled">
+    </button>
+  </div>
+</ng-container>

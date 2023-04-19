@@ -1,1 +1,117 @@
-<p>playlist-settings works!</p>
+<p-dialog-title></p-dialog-title>
+<ng-container *transloco="let t; loadingTpl: loadingPlaylistTpl">
+  <div pDialogContent>
+    <ng-container *ngIf="!loadingPlaylist && playlist; else loadingPlaylistTpl">
+      <div #dragDropFileEl="dragDropFile" dragDropFile class="tw-flex max-sm:tw-flex-wrap"
+        (fileDropped)="onFileDropped($event)">
+        <ng-container *ngIf="!dragDropFileEl.isOverDocument && !dragDropFileEl.isOverElement; else dragDropFileHolder">
+          <div class="sm:tw-mr-2 max-sm:tw-w-full">
+            <p class="tw-text-base tw-font-medium tw-mb-2">{{ t('media.playlistSettings.thumbnail') }}</p>
+            <p class="tw-text-gray-400 tw-text-sm tw-mb-4">{{ t('media.playlistSettings.thumbnailRequirements') }}</p>
+            <input #inputUploadThumbnail hidden="true" type="file" id="file-upload-thumbnail"
+              onclick="this.value = null" (change)="onInputThumbnailChange($event)" accept=".jpg, .jpeg, .png, .gif"
+              aria-label="Upload a custom thumbnail" />
+            <button pButton type="button" [label]="t('media.playlistSettings.uploadThumbnail')" icon="ms ms-upload"
+              class="p-button p-button-xs" (click)="inputUploadThumbnail.click()" [disabled]="isSubmitting">
+            </button>
+            <button pButton type="button" [label]="t('media.playlistSettings.removeThumbnail')" icon="ms ms-delete"
+              class="p-button-danger p-button-xs tw-ml-2" [disabled]="!playlist.thumbnailUrl || isSubmitting"
+              (click)="onRemoveThumbnail()" [disabled]="!playlist.thumbnailUrl || isSubmitting">
+            </button>
+            <button *ngIf="thumbnailPreviewName" pButton type="button"
+              [label]="t('media.playlistSettings.resetUploadThumbnail')" icon="ms ms-reset-image"
+              class="p-button-xs p-button-plain p-button-text max-sm:tw-mt-2 max-sm:tw-block sm:tw-ml-2"
+              (click)="onUpdateThumbnailCancel()" [disabled]="isSubmitting">
+            </button>
+            <button *ngIf="willRemoveThumbnail" pButton type="button" [label]="t('media.playlistSettings.undoRemove')"
+              icon="ms ms-reset-image"
+              class="p-button-xs p-button-plain p-button-text max-sm:tw-mt-2 max-sm:tw-block sm:tw-ml-2"
+              (click)="willRemoveThumbnail = false" [disabled]="isSubmitting">
+            </button>
+          </div>
+          <div class="tw-ml-auto sm:tw-w-64 max-sm:tw-w-48 max-sm:tw-mt-2">
+            <div class="tw-aspect-w-16 tw-aspect-h-9 tw-rounded-md tw-overflow-hidden">
+              <ng-container
+                *ngIf="!thumbnailPreviewName && !willRemoveThumbnail; then: customThumbnail; else updatingThumbnailTpl">
+              </ng-container>
+              <ng-template #updatingThumbnailTpl>
+                <ng-container *ngIf="thumbnailPreviewName; then: thumbnailPreview; else thumbnailMedia"></ng-container>
+              </ng-template>
+              <ng-template #customThumbnail>
+                <img *ngIf="playlist.thumbnailThumbnailUrl; else thumbnailMedia" class="tw-object-cover"
+                  [lazyLoad]="playlist.thumbnailThumbnailUrl" [lazyLoadPlaceholder]="playlist.thumbnailColor | rgbColor"
+                  [alt]="playlist.name" errorImage="assets/images/media-backdrop-md.png">
+              </ng-template>
+              <ng-template #thumbnailMedia>
+                <img *ngIf="playlist.thumbnailMedia && playlist.thumbnailMedia.smallBackdropUrl; else noThumbnail"
+                  class="tw-object-cover" [lazyLoad]="playlist.thumbnailMedia.smallBackdropUrl"
+                  [lazyLoadPlaceholder]="playlist.thumbnailMedia.backdropColor | rgbColor" [alt]="playlist.name"
+                  errorImage="assets/images/media-backdrop-md.png">
+              </ng-template>
+              <ng-template #noThumbnail>
+                <img class="tw-object-cover" src="assets/images/media-backdrop-md.png" loading="lazy"
+                  [alt]="playlist.name">
+              </ng-template>
+              <ng-template #thumbnailPreview>
+                <img *ngIf="thumbnailPreviewUri" class="tw-object-cover" [src]="thumbnailPreviewUri">
+              </ng-template>
+            </div>
+          </div>
+        </ng-container>
+        <ng-template #dragDropFileHolder>
+          <div class="tw-w-full tw-h-64 tw-relative tw-border-2 tw-border-dashed tw-rounded-md"
+            [ngClass]="{ 'tw-border-gray-400': dragDropFileEl.isOverElement}">
+            <div class="tw-absolute tw-absolute-center tw-text-center">
+              <i class="ms ms-place-item tw-text-4xl"></i>
+              <p class="tw-text-base tw-font-medium tw-mt-2">{{ t('media.playlistSettings.dragDropThumbnail') }}</p>
+            </div>
+          </div>
+        </ng-template>
+      </div>
+      <div class="tw-divider tw-my-5"></div>
+      <form id="update-playlist-form" #updatePlaylistFormEl="ngForm" [formGroup]="updatePlaylistForm" formHandler>
+        <label for="name" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
+          t('media.updatePlaylist.name')
+          }}</label>
+        <input formControlName="name" class="tw-w-full" id="name" type="text" aria-describedby="name-error" pInputText
+          [placeholder]="t('media.updatePlaylist.namePlaceholder')" autofocus>
+        <small id="name-error" class="p-error tw-text-xs tw-block tw-my-2"
+          [invalidControl]="updatePlaylistForm.controls.name">{{ updatePlaylistForm.controls.name.errors
+          | firstErrorKey:'updatePlaylist':'name' }}</small>
+        <label for="description" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
+          t('media.updatePlaylist.description') }}</label>
+        <textarea formControlName="description" class="tw-w-full" id="description" aria-describedby="description-error"
+          [placeholder]="t('media.updatePlaylist.descriptionPlaceholder')" pInputTextarea [rows]="5"></textarea>
+        <small id="description-error" class="p-error tw-text-xs tw-block tw-my-2"
+          [invalidControl]="updatePlaylistForm.controls.description">{{ updatePlaylistForm.controls.description.errors
+          | firstErrorKey:'updatePlaylist':'description' }}</small>
+        <label for="visibility" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
+          t('media.updatePlaylist.visibility') }}</label>
+        <div id="visibility">
+          <p-radioButton name="visibility" [value]="1" [label]="t('media.visibility.public')"
+            formControlName="visibility" class="tw-block tw-mb-2">
+          </p-radioButton>
+          <p-radioButton name="visibility" [value]="2" [label]="t('media.visibility.unlisted')"
+            formControlName="visibility" class="tw-block tw-mb-2">
+          </p-radioButton>
+          <p-radioButton name="visibility" [value]="3" [label]="t('media.visibility.private')"
+            formControlName="visibility" class="tw-block">
+          </p-radioButton>
+        </div>
+      </form>
+    </ng-container>
+  </div>
+  <div pDialogActions>
+    <button pButton type="button" [label]="t('media.updatePlaylist.cancel')" (click)="onCancel()"
+      class="p-button-text p-button-secondary p-button-sm">
+    </button>
+    <button pButton type="submit" form="update-playlist-form" [label]="t('media.updatePlaylist.submit')"
+      class="p-button-success p-button-sm tw-ml-1" (click)="onSubmit()" [disabled]="isSubmitting">
+    </button>
+  </div>
+</ng-container>
+<ng-template #loadingPlaylistTpl>
+  <div class="tw-flex tw-justify-center tw-items-center tw-h-96">
+    <p-progressSpinner strokeWidth="3px"></p-progressSpinner>
+  </div>
+</ng-template>

@@ -54,8 +54,8 @@ export class HistoryService {
         h.media === updateHistoryDto.media
     });
     if (media) {
-      if (media.watchTime === updateHistoryDto.watchTime) return;
-      media.watchTime = updateHistoryDto.watchTime;
+      if (media.time === updateHistoryDto.time) return;
+      media.time = updateHistoryDto.time;
     } else {
       historyList.push(updateHistoryDto);
     }

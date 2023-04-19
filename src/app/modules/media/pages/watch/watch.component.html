@@ -3,14 +3,13 @@
     <ng-container *ngIf="media">
       <div class="tw-flex tw-flex-wrap 2md:tw-flex-nowrap">
         <div class="tw-w-full 2md:tw-w-9/12">
-          <app-video-player #videoPlayer [source]="playerSource" [hlsSource]="playerHlsSource"
-            [previewThumbnail]="playerPreviewThumbnail"
+          <app-video-player #videoPlayer [stream]="playerStreamData"
             (onEnded)="autoNext && changeEpisode(nextEpIndex)"></app-video-player>
           <ng-container *ngIf="media.type === MediaType.TV && streams?.episode as episode">
             <div class="tw-bg-neutral-900 tw-text-white tw-flex tw-flex-wrap 2md:tw-flex-nowrap tw-items-center">
               <p class="tw-text-sm sm:tw-text-base md:tw-text-lg tw-font-bold tw-truncate tw-w-full
                 2md:tw-w-auto 2md:tw-max-w-[calc(100%-320px)] tw-mx-2">{{ t('media.episode.episodePrefix') + ' ' +
-                episode.episodeNumber }}{{ episode.name ? ': ' + episode.name : '' }}</p>
+                episode.epNumber }}{{ episode.name ? ': ' + episode.name : '' }}</p>
               <div class="tw-flex tw-flex-wrap tw-ml-auto tw-w-full xs:tw-w-auto">
                 <button pButton type="button" icon="ms ms-skip-previous" [label]="t('media.watch.prevEpisode')"
                   class="p-button-dark p-button-sm p-button-shrink tw-rounded-none tw-w-1/2 xs:tw-w-auto"
@@ -20,12 +19,12 @@
                   class="p-button-dark p-button-sm p-button-shrink tw-rounded-none tw-w-1/2 xs:tw-w-auto"
                   [disabled]="nextEpIndex === -1" (click)="changeEpisode(nextEpIndex)">
                 </button>
-                <p-altToggleButton class="tw-w-full xs:tw-w-auto"
+                <p-toggleButton class="tw-w-full xs:tw-w-auto"
                   styleClass="p-button-sm p-togglebutton-dark p-button-shrink tw-rounded-none !tw-border-none tw-w-full xs:tw-w-auto"
                   [onIcon]="'ms ms-check-box'" offIcon="ms ms-check-box-outline-blank"
                   [onLabel]="t('media.watch.autoNextEpisode')" [offLabel]="t('media.watch.autoNextEpisode')"
                   (onChange)="autoNext = $event.checked">
-                </p-altToggleButton>
+                </p-toggleButton>
               </div>
             </div>
             <div class="tw-bg-neutral-850 tw-text-white tw-p-4 tw-rounded-b-md">
@@ -77,8 +76,8 @@
                 </div>
                 <p *ngIf="userRating" class="tw-text-xs tw-text-right tw-font-medium">
                   <span>{{ t('media.rating.youRated', { score: userRating.score}) }}</span>
-                  <button pButton [label]="t('media.rating.clear')" [disabled]="loadingRating"
-                    (click)="deleteRating()" class="p-button-link p-button-shrink tw-p-0 tw-text-xs tw-font-medium
+                  <button pButton [label]="t('media.rating.clear')" [disabled]="loadingRating" (click)="deleteRating()"
+                    class="p-button-link p-button-shrink tw-p-0 tw-text-xs tw-font-medium
                       tw-min-w-0 tw-ml-1 disabled:!tw-bg-transparent">
                   </button>
                 </p>
@@ -89,7 +88,7 @@
               </ng-template>
             </div>
           </div>
-          <div class="tw-divider"></div>
+          <div class="tw-divider tw-my-5"></div>
           <p class="tw-text-sm sm:tw-text-base tw-mt-2">{{ media.overview }}</p>
         </div>
         <!--button *ngIf="!showingMore" class="tw-text-white tw-font-medium tw-bg-neutral-675 tw-bg-opacity-90 tw-absolute tw-h-12

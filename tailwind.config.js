@@ -47,8 +47,10 @@ module.exports = {
         '40': '.4'
       },
       colors: {
-        body: {
-          '1': '#111111'
+        app: {
+          'body': '#111111',
+          'primary': '#526ED3',
+          'backdrop': '#212121'
         },
         neutral: {
           '620': '#575757',
@@ -123,6 +125,7 @@ module.exports = {
     require('@tailwindcss/aspect-ratio'),
     require('@tailwindcss/line-clamp'),
     require('@tailwindcss/typography'),
+    require('vidstack/tailwind.cjs'),
     plugin(function ({ addComponents, addUtilities, addVariant, config, e }) {
       addComponents({
         '.vertical-tab-menu': {

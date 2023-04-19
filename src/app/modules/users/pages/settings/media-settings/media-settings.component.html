@@ -1,0 +1,33 @@
+<ng-container *transloco="let t">
+  <p class="tw-text-white tw-font-bold tw-text-2xl">{{ t('users.settings.media') }}</p>
+  <div class="tw-text-white tw-mt-4">
+    <form id="update-media-form" [formGroup]="updateMediaForm" formHandler (ngSubmit)="onUpdateMediaFormSubmit()">
+      <label id="history-limit-label" class="tw-inline-block tw-text-base tw-font-medium">{{
+        t('users.mediaSettings.historyLimit') }}:
+        <span>{{ updateMediaForm.controls.historyLimit.value }}%</span>
+      </label>
+      <p-sliderAlt formControlName="historyLimit" [min]="50" [max]="100" [step]="5" ariaLabelledBy="history-limit-label"
+        aria-describedby="limit-desc" styleClass="tw-mt-2"></p-sliderAlt>
+      <small id="limit-desc" class="p-error tw-text-sm tw-block tw-mt-2 tw-text-gray-400">{{
+        t('users.mediaSettings.historyLimitDesc') }}</small>
+      <p-inputSwitch formControlName="paused" class="tw-mt-4" labelStyleClass="tw-font-medium"
+        [label]="t('users.mediaSettings.paused')" aria-describedby="pause-history-desc"></p-inputSwitch>
+      <small id="pause-history-desc" class="p-error tw-text-sm tw-block tw-mt-2 tw-text-gray-400">{{
+        t('users.mediaSettings.pauseHistoryDescription') }}</small>
+    </form>
+  </div>
+  <div *ngIf="hasUnsavedChanges" class="tw-bg-neutral-925 tw-fixed tw-max-w-5xl tw-mx-auto tw-bg-opacity-80 tw-left-2 tw-right-2
+    tw-bottom-12 sm:tw-bottom-4 tw-rounded-md tw-z-1" @updateMediaToast>
+    <div class="tw-flex tw-flex-wrap tw-mx-4 tw-my-2 tw-items-center">
+      <p class="tw-text-white tw-font-medium max-sm:tw-w-full">{{ t('users.mediaSettings.unsavedChanges') }}</p>
+      <div class="tw-ml-auto max-sm:tw-mt-2">
+        <button pButton type="button" [label]="t('users.mediaSettings.reset')" (click)="resetMediaUpdate()"
+          class="p-button-text p-button-secondary p-button-sm" [disabled]="updateMediaForm.disabled">
+        </button>
+        <button pButton type="submit" form="update-media-form" [label]="t('users.mediaSettings.save')"
+          class="p-button-success p-button-sm tw-ml-2" [disabled]="updateMediaForm.disabled">
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-container>

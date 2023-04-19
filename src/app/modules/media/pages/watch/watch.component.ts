@@ -3,16 +3,16 @@ import { Meta, Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Translation, TranslocoService } from '@ngneat/transloco';
 import { combineLatest, filter, first, interval, map, of, switchMap, takeUntil, timer } from 'rxjs';
-import { SourceInfo, Source, Track } from 'plyr';
 
 import { UpdateWatchTimeDto } from '../../../../core/dto/history';
 import { AuthService, MediaService, HistoryService, RatingsService, DestroyService } from '../../../../core/services';
-import { ExtStreamList, MediaDetails, MediaStream, Rating, TVEpisode, UserDetails } from '../../../../core/models';
+import { MediaDetails, MediaStream, Rating, TVEpisode, UserDetails } from '../../../../core/models';
 import { VideoPlayerComponent } from '../../../../shared/components/video-player';
 import { StarRatingComponent } from '../../../../shared/components/star-rating';
 import { MediaType } from '../../../../core/enums';
 import { toHexColor } from '../../../../core/utils';
 import { SITE_NAME } from '../../../../../environments/config';
+
 
 @Component({
   selector: 'app-watch',
@@ -32,8 +32,7 @@ export class WatchComponent implements OnInit, OnDestroy {
   MediaType = MediaType;
   loading: boolean = false;
   currentUser!: UserDetails | null;
-  playerSource?: SourceInfo;
-  playerHlsSource?: ExtStreamList;
+  playerStreamData?: MediaStream;
   playerPreviewThumbnail?: string;
   selectedCodec: number = 1;
   media?: MediaDetails;
@@ -65,8 +64,8 @@ export class WatchComponent implements OnInit, OnDestroy {
 
   initWatch(): void {
     combineLatest([this.route.paramMap, this.route.queryParamMap]).pipe(
-      map(([params, queryParams]) => ({ id: params.get('id'), episodeNumber: queryParams.get('ep') })),
-      filter((params): params is { id: string, episodeNumber: string | null } => params.id !== null),
+      map(([params, queryParams]) => ({ id: params.get('id'), epNumber: queryParams.get('ep') })),
+      filter((params): params is { id: string, epNumber: string | null } => params.id !== null),
       switchMap(params => {
         if (params.id === this.media?._id) return of(this.media).pipe(map(media => ({ media, params })));
         this.loading = true;
@@ -89,12 +88,12 @@ export class WatchComponent implements OnInit, OnDestroy {
         if (!media.tv.episodes.length) return;
         this.episodes = media.tv.episodes;
         // Play first episode by default
-        if (!params.episodeNumber) {
-          const ep = media.tv.episodes[0].episodeNumber;
+        if (!params.epNumber) {
+          const ep = media.tv.episodes[0].epNumber;
           this.router.navigate([], { queryParams: { ep }, replaceUrl: true });
           return;
         }
-        this.watchTVEpisode(media, params.episodeNumber);
+        this.watchTVEpisode(media, params.epNumber);
       }
     }).add(() => {
       this.loading = false;
@@ -117,7 +116,7 @@ export class WatchComponent implements OnInit, OnDestroy {
     if (this.media && this.videoPlayer?.player) {
       const updateWatchTimeDto: UpdateWatchTimeDto = {
         media: this.media._id,
-        watchTime: ~~this.videoPlayer.player.currentTime
+        time: ~~this.videoPlayer.player.currentTime
       };
       if (this.streams?.episode)
         updateWatchTimeDto.episode = this.streams.episode._id;
@@ -142,17 +141,17 @@ export class WatchComponent implements OnInit, OnDestroy {
     });
   }
 
-  watchTVEpisode(media: MediaDetails, episodeNumber: string | number): void {
-    episodeNumber = Number(episodeNumber);
+  watchTVEpisode(media: MediaDetails, epNumber: string | number): void {
+    epNumber = Number(epNumber);
     if (this.media && media._id === this.media._id && this.streams?.episode
-      && this.streams.episode.episodeNumber === episodeNumber) return;
+      && this.streams.episode.epNumber === epNumber) return;
     this.translocoService.selectTranslation('media').pipe(first()).subscribe(t => {
-      this.title.setTitle(`${t['episode.episodePrefix']} ${episodeNumber} - ${media.title} - ${SITE_NAME}`);
+      this.title.setTitle(`${t['episode.episodePrefix']} ${epNumber} - ${media.title} - ${SITE_NAME}`);
     });
     this.setMediaMeta(media);
-    this.findPrevAndNextEpisodes(media.tv.episodes, episodeNumber);
+    this.findPrevAndNextEpisodes(media.tv.episodes, epNumber);
     this.translocoService.selectTranslation('languages').pipe(first(), switchMap(languages => {
-      return this.mediaService.findTVStreams(media._id, episodeNumber).pipe(map(episodeStreams => ({ episodeStreams, languages })));
+      return this.mediaService.findTVStreams(media._id, epNumber).pipe(map(episodeStreams => ({ episodeStreams, languages })));
     })).subscribe(({ episodeStreams, languages }) => {
       this.streams = episodeStreams;
       this.ref.markForCheck();
@@ -160,14 +159,14 @@ export class WatchComponent implements OnInit, OnDestroy {
     });
   }
 
-  findPrevAndNextEpisodes(episodes: TVEpisode[], episodeNumber: number): void {
-    this.prevEpIndex = episodes.findIndex(e => e.episodeNumber === episodeNumber - 1);
-    this.nextEpIndex = episodes.findIndex(e => e.episodeNumber === episodeNumber + 1);
+  findPrevAndNextEpisodes(episodes: TVEpisode[], epNumber: number): void {
+    this.prevEpIndex = episodes.findIndex(e => e.epNumber === epNumber - 1);
+    this.nextEpIndex = episodes.findIndex(e => e.epNumber === epNumber + 1);
   }
 
   changeEpisode(episodeIndex: number): void {
     if (!this.episodes) return;
-    const ep = this.episodes[episodeIndex].episodeNumber;
+    const ep = this.episodes[episodeIndex].epNumber;
     this.router.navigate([], { queryParams: { ep } });
   }
 
@@ -181,33 +180,30 @@ export class WatchComponent implements OnInit, OnDestroy {
   }
 
   setPlayerSource(data: MediaStream, languages: Translation): void {
-    const sources: Source[] = [];
-    const tracks: Track[] = [];
+    this.playerStreamData = data;
+    /*
+    const sources: KPVideoSource[] = [];
+    const tracks: KPTrack[] = [];
     data.streams?.forEach(file => {
       if (file.codec === this.selectedCodec) {
         sources.push({
           src: file.src,
           type: file.mimeType,
-          provider: 'html5',
           size: file.quality
         });
       }
     });
     data.subtitles?.forEach(subtitle => {
       tracks.push({
-        kind: 'subtitles',
-        label: languages[subtitle.language],
-        srcLang: subtitle.language,
+        label: languages[subtitle.lang],
+        lang: subtitle.lang,
         src: subtitle.src
       });
     });
-    this.playerSource = {
-      type: 'video',
-      sources: sources,
-      tracks: tracks
-    };
-    this.playerHlsSource = data.extStreamList;
+    this.playerSources = sources;
+    this.playerTracks = tracks;
     this.playerPreviewThumbnail = data.previewThumbnail;
+    */
     this.ref.markForCheck();
   }
 

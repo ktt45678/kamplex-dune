@@ -1,0 +1,37 @@
+<ng-container *transloco="let t">
+  <div class="tw-max-w-8xl tw-mx-auto">
+    <div *ngIf="user" class="tw-bg-app-backdrop tw-relative tw-h-80 tw-rounded-b-md tw-mb-24">
+      <div role="banner" aria-label="User banner" *ngIf="user.bannerUrl"
+        class="tw-absolute tw-bg-cover tw-bg-no-repeat tw-bg-center tw-inset-0 tw-rounded-b-md"
+        [lazyLoad]="user.bannerUrl"
+        [ngStyle]="{ 'background-color': user.bannerColor ? (user.bannerColor | rgbColor) : '#2b2b2b' }">
+      </div>
+      <div class="tw-flex tw-absolute tw-top-24 tw-py-4 tw-px-8 tw-h-full tw-items-end [&>*]:tw-z-1">
+        <div class="tw-w-36 tw-border-8 tw-border-app-body tw-rounded-full">
+          <div class="tw-aspect-w-1 tw-aspect-h-1 [&>*]:tw-rounded-full tw-flex-shrink-0">
+            <img *ngIf="user.thumbnailAvatarUrl; else noAvatar" class="tw-object-cover"
+              [lazyLoad]="user.thumbnailAvatarUrl" [lazyLoadPlaceholder]="user.avatarColor | rgbColor"
+              [alt]="user.username">
+            <ng-template #noAvatar>
+              <app-avatar [label]="(user.nickname || user.username) | substring" styleClass="tw-rounded-full"
+                labelStyleClass="tw-text-5xl"></app-avatar>
+            </ng-template>
+          </div>
+        </div>
+        <div class="tw-flex-1 tw-py-4 tw-mx-4 tw-text-white tw-self-end">
+          <ng-container *ngIf="user.nickname">
+            <p class="tw-text-2xl tw-font-semibold">{{ user.nickname }}</p>
+            <p>{{ user.username }}</p>
+          </ng-container>
+          <ng-template #noNickname>
+            <p class="tw-text-2xl tw-font-semibold">{{ user.username }}</p>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+    <p-tabMenu [model]="userMenuItems" styleClass="tw-text-white"></p-tabMenu>
+    <div>
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</ng-container>

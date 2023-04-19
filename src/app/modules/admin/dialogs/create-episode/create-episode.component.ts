@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, Renderer2, ViewChild, Inject } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService, TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { addDays } from 'date-fns';
 import { EMPTY, first, Observable, switchMap, takeUntil } from 'rxjs';
@@ -17,7 +17,7 @@ import { DestroyService, ItemDataService, MediaService, QueueUploadService } fro
 import { shortDate } from '../../../../core/validators';
 import { ShortDateForm } from '../../../../core/interfaces/forms';
 import { AppErrorCode } from '../../../../core/enums';
-import { dataURItoBlob, detectFormChange, fixNestedDialogFocus, replaceDialogHideMethod } from '../../../../core/utils';
+import { dataURItoBlob, detectFormChange, fixNestedDialogFocus, replaceDialogHideMethod, secondsToTimeString, timeStringToSeconds } from '../../../../core/utils';
 import {
   IMAGE_PREVIEW_MIMES, IMAGE_PREVIEW_SIZE, UPLOAD_STILL_ASPECT_HEIGHT, UPLOAD_STILL_ASPECT_WIDTH, UPLOAD_STILL_MIN_HEIGHT,
   UPLOAD_STILL_MIN_WIDTH, UPLOAD_STILL_SIZE, UPLOAD_SUBTITLE_SIZE
@@ -28,7 +28,7 @@ interface CreateEpisodeForm {
   episodeNumber: FormControl<number>;
   name: FormControl<string>;
   overview: FormControl<string>;
-  runtime: FormControl<number | null>;
+  runtime: FormControl<string | null>;
   airDate: FormGroup<ShortDateForm>;
   visibility: FormControl<number>;
 }
@@ -40,7 +40,14 @@ interface UpdateEpisodeForm extends CreateEpisodeForm { }
   templateUrl: './create-episode.component.html',
   styleUrls: ['./create-episode.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [ItemDataService, DestroyService]
+  providers: [
+    ItemDataService,
+    DestroyService,
+    {
+      provide: TRANSLOCO_SCOPE,
+      useValue: 'common'
+    }
+  ]
 })
 export class CreateEpisodeComponent implements OnInit {
   @ViewChild('stepper') stepper?: StepperComponent;
@@ -113,21 +120,22 @@ export class CreateEpisodeComponent implements OnInit {
     let newEpisodeRuntime;
     if (episodes?.length) {
       // Based on last created episode
-      const lastEpisode = episodes.reduce((prev, current) => (prev.episodeNumber > current.episodeNumber) ? prev : current);
+      const lastEpisode = episodes.reduce((prev, current) => (prev.epNumber > current.epNumber) ? prev : current);
       //const lastEpisode = episodes[episodes.length - 1];
       const lastAirDate = new Date(lastEpisode.airDate.year, lastEpisode.airDate.month - 1, lastEpisode.airDate.day);
       const newAirDate_ = addDays(lastAirDate, 7);
       newAirDate = { day: newAirDate_.getDate(), month: newAirDate_.getMonth() + 1, year: newAirDate_.getFullYear() };
-      newEpisodeNumber = lastEpisode.episodeNumber + 1;
+      newEpisodeNumber = lastEpisode.epNumber + 1;
       newEpisodeRuntime = lastEpisode.runtime;
     } else {
       newAirDate = { ...media.releaseDate };
       newEpisodeNumber = 1;
       newEpisodeRuntime = media.runtime;
     }
+    const runtimeValue = secondsToTimeString(newEpisodeRuntime);
     this.createEpisodeForm.patchValue({
       episodeNumber: newEpisodeNumber,
-      runtime: newEpisodeRuntime,
+      runtime: runtimeValue,
       airDate: newAirDate
     });
   }
@@ -137,11 +145,12 @@ export class CreateEpisodeComponent implements OnInit {
     this.createEpisodeForm.disable({ emitEvent: false });
     const mediaId = this.config.data!.media._id;
     const formValue = this.createEpisodeForm.getRawValue();
+    const runtimeValue = timeStringToSeconds(formValue.runtime)!;
     const addTVEpisodeDto: AddTVEpisodeDto = ({
-      episodeNumber: formValue.episodeNumber,
+      epNumber: formValue.episodeNumber,
       name: formValue.name,
       overview: formValue.overview,
-      runtime: formValue.runtime!,
+      runtime: runtimeValue,
       airDate: {
         day: formValue.airDate.day!,
         month: formValue.airDate.month!,
@@ -166,11 +175,12 @@ export class CreateEpisodeComponent implements OnInit {
   }
 
   patchUpdateEpisodeForm(episode: TVEpisodeDetails): void {
+    const runtimeValue = secondsToTimeString(episode.runtime);
     this.updateEpisodeForm.patchValue({
-      episodeNumber: episode.episodeNumber,
+      episodeNumber: episode.epNumber,
       name: episode.name,
       overview: episode.overview,
-      runtime: episode.runtime,
+      runtime: runtimeValue,
       airDate: {
         day: episode.airDate.day,
         month: episode.airDate.month,
@@ -197,11 +207,12 @@ export class CreateEpisodeComponent implements OnInit {
     this.updateEpisodeForm.disable({ emitEvent: false });
     const mediaId = this.config.data!.media._id;
     const formValue = this.updateEpisodeForm.getRawValue();
+    const runtimeValue = timeStringToSeconds(formValue.runtime)!;
     const updateTVEpisodeDto: UpdateTVEpisodeDto = ({
-      episodeNumber: formValue.episodeNumber,
+      epNumber: formValue.episodeNumber,
       name: formValue.name,
       overview: formValue.overview,
-      runtime: formValue.runtime!,
+      runtime: runtimeValue,
       airDate: {
         day: formValue.airDate.day!,
         month: formValue.airDate.month!,
@@ -254,7 +265,7 @@ export class CreateEpisodeComponent implements OnInit {
   editImage(data: any): Observable<string[] | null> {
     const dialogRef = this.dialogService.open(ImageEditorComponent, {
       data: data,
-      header: this.translocoService.translate('admin.configureMedia.editImage'),
+      header: this.translocoService.translate('common.imageEditor.header'),
       width: '700px',
       modal: true,
       dismissableMask: false,

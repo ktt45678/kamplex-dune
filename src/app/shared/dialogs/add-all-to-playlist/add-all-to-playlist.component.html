@@ -8,12 +8,12 @@
         class="tw-text-gray-400 tw-font-medium tw-my-4 tw-text-center">
         {{ t('media.playlists.noPlaylists') }}</p>
       <ng-template #playlistList>
-        <p-altRadioButton *ngFor="let playlist of playlistsToAdd" formControlName="playlistId"
+        <p-radioButton *ngFor="let playlist of playlistsToAdd" formControlName="playlistId"
           class="tw-flex tw-items-center tw-w-full tw-my-4" labelStyleClass="tw-w-full tw-truncate" name="playlistId"
           [label]="playlist.name" [value]="playlist._id" [icon]="'ms tw-flex-1 tw-ml-2 tw-text-right ' +
               (playlist.visibility === MediaVisibility.PUBLIC ? 'ms-public' :
               playlist.visibility === MediaVisibility.UNLISTED ? 'ms-link' : 'ms-lock')"
-          [ariaLabel]="playlist.name"></p-altRadioButton>
+          [ariaLabel]="playlist.name"></p-radioButton>
       </ng-template>
     </form>
   </ng-template>

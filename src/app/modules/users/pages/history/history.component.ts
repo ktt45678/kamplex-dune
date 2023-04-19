@@ -1,15 +1,18 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, Renderer2 } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { FormControl, FormGroup } from '@angular/forms';
 import { TranslocoService } from '@ngneat/transloco';
+import { ConfirmationService } from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
-import { first } from 'rxjs';
+import { first, takeUntil } from 'rxjs';
 
 import { AddToPlaylistComponent } from '../../../../shared/dialogs/add-to-playlist';
+import { HistoryCardComponent } from '../../components/history-card/history-card.component';
 import { CursorPageHistoryDto } from '../../../../core/dto/history';
 import { DropdownOptionDto } from '../../../../core/dto/media';
-import { CursorPaginated, Genre, HistoryGroup, HistoryGroupable, Media } from '../../../../core/models';
-import { GenresService, HistoryService, ItemDataService, MediaService } from '../../../../core/services';
-import { trackHistoryGroup, track_Id } from '../../../../core/utils';
+import { CursorPaginated, Genre, HistoryGroup, HistoryGroupable, Media, UserDetails } from '../../../../core/models';
+import { AuthService, DestroyService, GenresService, HistoryService, ItemDataService, MediaService } from '../../../../core/services';
+import { trackHistoryGroup, track_Id, translocoEscape } from '../../../../core/utils';
 
 interface FilterHistoryForm {
   startDate: FormControl<Date | null>;
@@ -25,7 +28,7 @@ interface FilterHistoryForm {
   selector: 'app-history',
   templateUrl: './history.component.html',
   styleUrls: ['./history.component.scss'],
-  providers: [HistoryService, ItemDataService],
+  providers: [HistoryService, ItemDataService, DestroyService],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HistoryComponent implements OnInit, OnDestroy {
@@ -39,6 +42,8 @@ export class HistoryComponent implements OnInit, OnDestroy {
   historyGroupList?: CursorPaginated<HistoryGroup>;
   mediaSuggestions: Media[] = [];
   genreSuggestions: Genre[] = [];
+  userId: string | null = null;
+  currentUser!: UserDetails | null;
   skeletonArray: Array<any>;
   yearOptions: DropdownOptionDto[] = [];
   typeOptions: DropdownOptionDto[] = [];
@@ -49,9 +54,11 @@ export class HistoryComponent implements OnInit, OnDestroy {
   track_Id = track_Id;
   trackHistoryGroup = trackHistoryGroup;
 
-  constructor(private ref: ChangeDetectorRef, private renderer: Renderer2, private translocoService: TranslocoService,
-    private dialogService: DialogService, private historyService: HistoryService, private genresService: GenresService,
-    private mediaService: MediaService, private itemDataService: ItemDataService,) {
+  constructor(private ref: ChangeDetectorRef, private renderer: Renderer2, private route: ActivatedRoute,
+    private translocoService: TranslocoService, private dialogService: DialogService,
+    private confirmationService: ConfirmationService, private authService: AuthService,
+    private historyService: HistoryService, private genresService: GenresService,
+    private mediaService: MediaService, private itemDataService: ItemDataService, private destroyService: DestroyService) {
     this.skeletonArray = new Array(this.historyLimit);
     this.maxCalendarDate = new Date();
     this.filterHistoryForm = new FormGroup<FilterHistoryForm>({
@@ -77,6 +84,14 @@ export class HistoryComponent implements OnInit, OnDestroy {
         { value: 'movie', label: t['mediaTypes.movie'] },
         { value: 'tv', label: t['mediaTypes.tvShow'] }
       ];
+    });
+    this.route.parent?.paramMap.pipe(takeUntil(this.destroyService)).subscribe(params => {
+      this.userId = params.get('id');
+      this.ref.markForCheck();
+    });
+    this.authService.currentUser$.pipe(takeUntil(this.destroyService)).subscribe(user => {
+      this.currentUser = user;
+      this.ref.markForCheck();
     });
   }
 
@@ -208,11 +223,6 @@ export class HistoryComponent implements OnInit, OnDestroy {
     this.loadHistoryList(true);
   }
 
-  onHistoryMenuClick(button: HTMLButtonElement, opened: boolean): void {
-    this.renderer[opened ? 'removeClass' : 'addClass'](button, 'tw-invisible');
-    this.renderer[opened ? 'addClass' : 'removeClass'](button, 'tw-visible');
-  }
-
   showAddToPlaylistDialog(media: Media): void {
     this.dialogService.open(AddToPlaylistComponent, {
       data: { ...media },
@@ -224,14 +234,26 @@ export class HistoryComponent implements OnInit, OnDestroy {
     });
   }
 
-  pauseAndUnpauseHistory(history: HistoryGroupable, event: Event): void {
+  pauseAndUnpauseHistory(history: HistoryGroupable, event: Event, historyCard?: HistoryCardComponent): void {
     const element = event.target instanceof HTMLButtonElement ? event.target : <HTMLButtonElement>(<HTMLSpanElement>event.target).parentElement;
     this.renderer.setProperty(element, 'disabled', true);
     this.historyService.update(history._id, { paused: !history.paused }).subscribe(updatedHistory => {
       history.paused = updatedHistory.paused;
       this.ref.markForCheck();
+      historyCard?.ref.markForCheck();
     }).add(() => {
       this.renderer.setProperty(element, 'disabled', false);
+    });
+  }
+
+  showDeleteHistoryDialog(history: HistoryGroupable): void {
+    const safeMediaName = translocoEscape(history.media.title);
+    this.confirmationService.confirm({
+      message: this.translocoService.translate('users.history.deleteConfirmation', { name: safeMediaName }),
+      header: this.translocoService.translate('users.history.deleteConfirmationHeader'),
+      icon: 'ms ms-delete',
+      defaultFocus: 'reject',
+      accept: () => this.deleteHistory(history)
     });
   }
 

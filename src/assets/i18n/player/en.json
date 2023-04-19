@@ -1,0 +1,15 @@
+{
+  "menu": {
+    "autoNext": "Auto next",
+    "speed": "Playback speed",
+    "quality": "Quality",
+    "subtitle": "Subtitle",
+    "back": "Back"
+  },
+  "speed": {
+    "normal": "Normal"
+  },
+  "subtitles": {
+    "off": "Off"
+  }
+}

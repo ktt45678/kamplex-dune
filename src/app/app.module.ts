@@ -1,11 +1,11 @@
 import { APP_INITIALIZER, ErrorHandler, NgModule } from '@angular/core';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserModule } from '@angular/platform-browser';
+import { FullscreenOverlayContainer, OverlayContainer } from '@angular/cdk/overlay';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { HttpCacheInterceptorModule } from '@ngneat/cashew';
 import { RecaptchaSettings, RECAPTCHA_SETTINGS } from 'ng-recaptcha';
-import { DialogService } from 'primeng/dynamicdialog';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { cloneDeep } from 'lodash-es';
@@ -21,7 +21,6 @@ import { GlobalErrorHandler } from './core/handlers/global-error-handler';
 import { AppInitializer } from './core/initializers/app.initializer';
 import { AuthService } from './core/services';
 import { HTTP_CACHE_TTL } from '../environments/config';
-
 
 @NgModule({
   declarations: [
@@ -73,6 +72,10 @@ import { HTTP_CACHE_TTL } from '../environments/config';
     {
       provide: RECAPTCHA_SETTINGS,
       useValue: { siteKey: environment.recaptchaSiteKey } as RecaptchaSettings
+    },
+    {
+      provide: OverlayContainer,
+      useClass: FullscreenOverlayContainer,
     }
   ],
   bootstrap: [AppComponent]

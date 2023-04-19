@@ -77,9 +77,10 @@
                     [label]="t('media.actions.details')"
                     class="p-button-secondary p-button-rounded p-button-shrink sm:tw-inline-flex tw-w-full sm:tw-w-auto tw-max-w-xs sm:tw-max-w-none not-disabled:hover:!tw-text-gray-600 tw-text-lg sm:tw-text-xl tw-mt-2 sm:tw-mt-0 tw-mx-auto sm:tw-mr-0 sm:tw-ml-2.5 tw-px-8">
                   </button>
-                  <button tabindex="-1" type="button" role="button" aria-label="Add media to playlist" routerLink="#"
-                    disabled="true" pButton icon="ms ms-playlist-add" [label]="t('media.actions.playlist')"
-                    class="p-button-secondary p-button-rounded p-button-shrink sm:tw-inline-flex tw-w-full sm:tw-w-auto tw-max-w-xs sm:tw-max-w-none not-disabled:hover:!tw-text-gray-600 tw-text-lg sm:tw-text-xl tw-mt-2 sm:tw-mt-0 tw-mx-auto sm:tw-mr-0 sm:tw-ml-2.5 tw-px-8">
+                  <button tabindex="-1" type="button" role="button" aria-label="Add media to playlist" pButton
+                    icon="ms ms-playlist-add" [label]="t('media.actions.playlist')"
+                    class="p-button-secondary p-button-rounded p-button-shrink sm:tw-inline-flex tw-w-full sm:tw-w-auto tw-max-w-xs sm:tw-max-w-none not-disabled:hover:!tw-text-gray-600 tw-text-lg sm:tw-text-xl tw-mt-2 sm:tw-mt-0 tw-mx-auto sm:tw-mr-0 sm:tw-ml-2.5 tw-px-8"
+                    (click)="showAddToPlaylistDialog(media)">
                   </button>
                 </div>
               </div>

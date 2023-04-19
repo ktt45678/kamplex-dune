@@ -1,12 +1,21 @@
 <ng-container *transloco="let t">
   <div class="tw-my-4 tw-mx-2">
     <div class="tw-text-right">
-      <p class="tw-text-white tw-inline-block">{{ t('users.rating.editableScore') }}</p>
-      <p-inputSwitch id="update-ratings" styleClass="tw-ml-2"></p-inputSwitch>
-      <p-altSelectButton [options]="[ { icon: 'ms ms-grid-view', value: 1 }, { icon: 'ms ms-list', value: 2 } ]"
-        [value]="listViewMode" optionLabel="label" optionValue="value" styleClass="p-button-sm tw-inline-block tw-ml-4"
-        (onChange)="listViewMode = $event.value">
-      </p-altSelectButton>
+      <button *ngIf="currentUser" pButton icon="ms ms-settings"
+        class="p-button-plain p-button-sm p-button-rounded p-button-text p-button-sm-icon"
+        [appOverlayOrigin]="overlayRatingMenu" #trigger="appOverlayOrigin" (click)="displaySettings = !displaySettings">
+      </button>
+      <p-selectButton [options]="[ { icon: 'ms ms-grid-view', value: 1 }, { icon: 'ms ms-list', value: 2 } ]"
+        optionLabel="label" optionValue="value" styleClass="p-button-sm tw-inline-block tw-ml-4"
+        [(ngModel)]="listViewMode">
+      </p-selectButton>
+      <ng-template #overlayRatingMenu #op="appConnectedOverlay" appConnectedOverlay>
+        <div class="tw-flex tw-items-center">
+          <p class="tw-text-white tw-flex-shrink tw-basis-48">{{ t('users.rating.editMode') }}</p>
+          <p-inputSwitch #switchEditableScore [(ngModel)]="editMode" ariaLabel="Toggle editable score" class="tw-h-7"
+            styleClass="tw-ml-8"></p-inputSwitch>
+        </div>
+      </ng-template>
     </div>
     <ng-container *ngIf="loadingRatings; then skeletonLoading; else ratingListLoaded"></ng-container>
     <ng-template #ratingListLoaded>
@@ -14,56 +23,9 @@
         [infiniteScrollDistance]="2" [infiniteScrollDisabled]="!ratingList.hasNextPage" (scrolled)="onScroll()">
         <ng-container *ngIf="listViewMode === 1; else detailedView">
           <div class="tw-text-white tw-grid tw-grid-cols-1 lg:tw-grid-cols-2 xl:tw-grid-cols-4 tw-my-2">
-            <div class="tw-group tw-flex tw-bg-transparent hover:tw-bg-neutral-725 focus-within:tw-bg-neutral-725 tw-transition-colors
-              tw-duration-200 tw-rounded-sm tw-px-1.5 tw-py-2"
-              *ngFor="let rating of ratingList.results; trackBy: track_Id" [appContextMenuTriggerFor]="ratingMenu">
-              <a [routerLink]="['/watch', rating.media._id]" class="tw-block tw-flex-1">
-                <div class="tw-flex">
-                  <div class="tw-flex-grow-0 tw-flex-shrink-0">
-                    <div class="tw-w-24">
-                      <div class="tw-aspect-w-2 tw-aspect-h-3 [&>*]:tw-rounded-md">
-                        <img *ngIf="rating.media.thumbnailPosterUrl && rating.media.thumbnailPosterUrl; else noPoster"
-                          class="tw-object-cover" [lazyLoad]="rating.media.thumbnailPosterUrl"
-                          [lazyLoadPlaceholder]="rating.media.posterColor| rgbColor" [alt]="rating.media.title"
-                          errorImage="assets/images/media-poster-md.png">
-                        <ng-template #noPoster>
-                          <img class="tw-object-cover" src="assets/images/media-poster-md.png" loading="lazy"
-                            [alt]="rating.media.title">
-                        </ng-template>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="tw-mx-4">
-                    <p class="tw-text-xs sm:tw-text-sm md:tw-text-base tw-font-bold">{{ rating.media.title }}</p>
-                    <p class="tw-text-xl xs:tw-text-2xl [&>*]:tw-align-middle">
-                      <i class="ms ms-star ms-fill tw-text-3xl tw-text-yellow-500 -tw-mt-0.5"></i>
-                      <span class="tw-text-white tw-font-medium tw-ml-1.5">{{ rating.score }}</span>
-                    </p>
-                    <p class="tw-text-gray-400 tw-text-xs sm:tw-text-sm tw-font-medium">{{ rating.date |
-                      relativeDate }}</p>
-                  </div>
-                </div>
-              </a>
-              <button pButton [appMenuTriggerFor]="ratingMenu" icon="ms ms-more-vert" type="button"
-                aria-label="Toggle rating menu" class="p-button-rounded p-button-text p-button-secondary p-button-sm p-button-sm-icon
-                tw-ml-auto tw-flex-shrink-0 focus-visible:!tw-shadow-focus-box tw-invisible group-hover:tw-visible"
-                #ratingMenuButton #ratingMenuTrigger="appMenuTriggerFor"
-                (cdkMenuOpened)="onRatingMenuClick(ratingMenuButton, true)"
-                (cdkMenuClosed)="onRatingMenuClick(ratingMenuButton, false)">
-              </button>
-              <ng-template #ratingMenu>
-                <div appMenu>
-                  <button appMenuItem (click)="showAddToPlaylistDialog(rating.media)">
-                    <i class="ms ms-playlist-add"></i>
-                    <span>{{ t('media.playlists.addToPlaylist') }}</span>
-                  </button>
-                  <button appMenuItem>
-                    <i class="ms ms-delete"></i>
-                    <span>{{ t('media.rating.delete') }}</span>
-                  </button>
-                </div>
-              </ng-template>
-            </div>
+            <app-rating-card *ngFor="let rating of ratingList.results; trackBy: track_Id" [rating]="rating"
+              (onAddToPlaylist)="showAddToPlaylistDialog($event)"
+              (onDelete)="showDeleteRatingDialog($event)"></app-rating-card>
           </div>
         </ng-container>
         <ng-template #detailedView>
@@ -86,7 +48,7 @@
                       <div *ngIf="rating.media.smallPosterUrl else noPoster" class="tw-rounded-md tw-overflow-hidden">
                         <img class="tw-object-cover tw-w-12 tw-h-12" [lazyLoad]="rating.media.smallPosterUrl"
                           [lazyLoadPlaceholder]="rating.media.posterColor | rgbColor"
-                          errorImage="assets/images/media-poster-error-sm.png" [alt]="rating.media.title">
+                          errorImage="assets/images/media-poster-sm.png" [alt]="rating.media.title">
                       </div>
                       <ng-template #noPoster>
                         <img class="tw-object-cover tw-rounded-md" src="assets/images/media-poster-sm.png"
@@ -100,7 +62,7 @@
                 </td>
                 <td class="tw-w-40 tw-text-sm">
                   <app-star-rating #starRating [maxStars]="5" [initialStars]="rating.score / 2" [size]="2"
-                    (ratingOutput)="onRating($event, starRating)">
+                    [readonly]="!editMode" (ratingOutput)="onRating($event, rating, starRating)">
                   </app-star-rating>
                 </td>
                 <td class="tw-w-36 tw-text-sm">{{ rating.date | dateAlt:'PPpp' }}</td>
@@ -118,10 +80,12 @@
                         <i class="ms ms-playlist-add"></i>
                         <span>{{ t('media.playlists.addToPlaylist') }}</span>
                       </button>
-                      <button appMenuItem>
-                        <i class="ms ms-delete"></i>
-                        <span>{{ t('media.rating.delete') }}</span>
-                      </button>
+                      <ng-container *ngIf="currentUser">
+                        <button appMenuItem (click)="showDeleteRatingDialog(rating)">
+                          <i class="ms ms-delete"></i>
+                          <span>{{ t('media.rating.delete') }}</span>
+                        </button>
+                      </ng-container>
                     </div>
                   </ng-template>
                 </td>
@@ -131,10 +95,14 @@
         </ng-template>
       </div>
       <ng-template #noRatings>
-        <p class="tw-text-gray-400 tw-text-base tw-italic">{{ t('media.ratings.noRatings') }}</p>
+        <p class="tw-text-gray-400 tw-text-base tw-italic">{{ t('media.rating.noRatings') }}</p>
       </ng-template>
     </ng-template>
   </div>
+  <p-confirmDialog [style]="{width: '500px'}" [baseZIndex]="1000" acceptButtonStyleClass="p-button-danger p-button-sm"
+    rejectButtonStyleClass="p-button-text p-button-secondary p-button-sm" rejectIcon="" acceptIcon=""
+    [dismissableMask]="true">
+  </p-confirmDialog>
 </ng-container>
 <ng-template #skeletonLoading>
   <p>Loading...</p>

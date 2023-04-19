@@ -1,0 +1,94 @@
+<ng-container *transloco="let t">
+  <p class="tw-text-white tw-font-bold tw-text-2xl">{{ t('users.settings.subtitle') }}</p>
+  <div class="tw-text-white tw-flex tw-flex-wrap-reverse tw-mt-4 tw-mb-24">
+    <form id="update-subtitle-form" class="tw-w-full lg:tw-w-1/2" [formGroup]="updateSubtitleForm" formHandler
+      (ngSubmit)="onUpdateSubtitleFormSubmit()">
+      <label id="font-size-label" class="tw-inline-block tw-text-base tw-font-medium">{{
+        t('users.subtitleSettings.fontSize') }}: {{ updateSubtitleForm.controls.fontSize.value }}%</label>
+      <p-sliderAlt formControlName="fontSize" [min]="25" [max]="300" [step]="5" ariaLabelledBy="font-size-label"
+        styleClass="tw-mt-2"></p-sliderAlt>
+      <label class="tw-inline-block tw-text-base tw-font-medium tw-mt-4">{{
+        t('users.subtitleSettings.fontFamily') }}</label>
+      <p-dropdown formControlName="fontFamily" [options]="fontFamilyList" [overlayOptions]="{ baseZIndex: 100 }"
+        scrollHeight="400px" [showClear]="true" [appendTo]="dropdownZone" styleClass="tw-w-full p-dropdown-sm tw-mt-2">
+      </p-dropdown>
+      <label class="tw-inline-block tw-text-base tw-font-medium tw-mt-4">{{ t('users.subtitleSettings.fontWeight')
+        }}</label>
+      <p-dropdown formControlName="fontWeight" [options]="fontWeightList" [overlayOptions]="{ baseZIndex: 100 }"
+        scrollHeight="400px" [showClear]="true" [appendTo]="dropdownZone" styleClass="tw-w-full p-dropdown-sm tw-mt-2">
+      </p-dropdown>
+      <label class="tw-inline-block tw-text-base tw-font-medium tw-mt-4">{{
+        t('users.subtitleSettings.textColor') }}</label>
+      <app-color-picker formControlName="textColor" styleClass="tw-mt-2"></app-color-picker>
+      <label id="text-alpha-label" class="tw-inline-block tw-text-base tw-font-medium tw-mt-4">{{
+        t('users.subtitleSettings.textAlpha') }}: {{ updateSubtitleForm.controls.textAlpha.value }}</label>
+      <p-sliderAlt formControlName="textAlpha" [min]="0" [max]="100" [step]="10" ariaLabelledBy="text-alpha-label"
+        styleClass="tw-mt-2"></p-sliderAlt>
+      <label class="tw-inline-block tw-text-base tw-font-medium tw-mt-4">{{ t('users.subtitleSettings.textEdge')
+        }}</label>
+      <p-dropdown formControlName="textEdge" [options]="textEdgeStyleList" [overlayOptions]="{ baseZIndex: 100 }"
+        scrollHeight="400px" [showClear]="true" [appendTo]="dropdownZone" styleClass="tw-w-full p-dropdown-sm tw-mt-2">
+      </p-dropdown>
+      <label class="tw-inline-block tw-text-base tw-font-medium tw-mt-4">{{
+        t('users.subtitleSettings.bgColor') }}</label>
+      <app-color-picker formControlName="bgColor" styleClass="tw-mt-2"></app-color-picker>
+      <label id="bg-alpha-label" class="tw-inline-block tw-text-base tw-font-medium tw-mt-4">{{
+        t('users.subtitleSettings.bgAlpha') }}: {{ updateSubtitleForm.controls.bgAlpha.value
+        }}</label>
+      <p-sliderAlt formControlName="bgAlpha" [min]="0" [max]="100" [step]="10" ariaLabelledBy="bg-alpha-label"
+        styleClass="tw-mt-2"></p-sliderAlt>
+      <label class="tw-inline-block tw-text-base tw-font-medium tw-mt-4">{{
+        t('users.subtitleSettings.winColor') }}</label>
+      <app-color-picker formControlName="winColor" styleClass="tw-mt-2"></app-color-picker>
+      <label id="win-alpha-label" class="tw-inline-block tw-text-base tw-font-medium tw-mt-4">{{
+        t('users.subtitleSettings.winAlpha') }}: {{ updateSubtitleForm.controls.winAlpha.value }}</label>
+      <p-sliderAlt formControlName="winAlpha" [min]="0" [max]="100" [step]="10" ariaLabelledBy="win-alpha-label"
+        styleClass="tw-mt-2"></p-sliderAlt>
+      <div #dropdownZone class="p-dropdown-xs"></div>
+    </form>
+    <div class="tw-w-full lg:tw-w-1/2 max-lg:tw-mb-4">
+      <div class="tw-relative lg:tw-mx-4 tw-h-64 tw-bg-gradient-to-r tw-from-gray-600 tw-to-neutral-900 tw-text-center
+        tw-rounded tw-overflow-hidden" [ngStyle]="previewStyles">
+        <div style="background-color: var(--subtitle-window-color);"
+          class="tw-absolute tw-left-4 tw-right-4 tw-bottom-4">
+          <div>
+            <p style="font-weight: var(--subtitle-font-weight);
+              text-shadow: var(--subtitle-text-edge-style); background-color: var(--subtitle-background-color);"
+              class="tw-my-1 tw-inline-block">Example Text</p>
+          </div>
+          <div>
+            <p style="font-weight: var(--subtitle-font-weight);
+              text-shadow: var(--subtitle-text-edge-style); background-color: var(--subtitle-background-color);"
+              class="tw-my-1 tw-inline-block">The quick brown fox jumps over the lazy dog</p>
+          </div>
+        </div>
+      </div>
+      <div class="tw-relative lg:tw-mx-4 tw-mt-4 tw-h-64 tw-bg-gradient-to-r tw-from-blue-300 tw-to-orange-300 tw-text-center
+        tw-rounded tw-overflow-hidden" [ngStyle]="previewStyles">
+        <div style="background-color: var(--subtitle-window-color);" class="tw-absolute tw-left-4 tw-right-4 tw-top-4">
+          <p style="font-weight: var(--subtitle-font-weight); text-shadow: var(--subtitle-text-edge-style);
+            background-color: var(--subtitle-background-color);" class="tw-my-1 tw-inline-block">Top Text</p>
+        </div>
+        <div style="background-color: var(--subtitle-window-color);"
+          class="tw-absolute tw-left-4 tw-right-4 tw-bottom-4">
+          <p style="font-weight: var(--subtitle-font-weight); text-shadow: var(--subtitle-text-edge-style);
+            background-color: var(--subtitle-background-color);" class="tw-my-1 tw-inline-block">Bottom Text</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="hasUnsavedChanges" class="tw-bg-neutral-925 tw-fixed tw-max-w-5xl tw-mx-auto tw-bg-opacity-80 tw-left-2 tw-right-2
+    tw-bottom-12 sm:tw-bottom-4 tw-rounded-md tw-z-1" @updateSubtitleToast>
+    <div class="tw-flex tw-flex-wrap tw-mx-4 tw-my-2 tw-items-center">
+      <p class="tw-text-white tw-font-medium max-sm:tw-w-full">{{ t('users.subtitleSettings.unsavedChanges') }}</p>
+      <div class="tw-ml-auto max-sm:tw-mt-2">
+        <button pButton type="button" [label]="t('users.subtitleSettings.reset')" (click)="resetSubtitleUpdate()"
+          class="p-button-text p-button-secondary p-button-sm" [disabled]="updateSubtitleForm.disabled">
+        </button>
+        <button pButton type="submit" form="update-subtitle-form" [label]="t('users.subtitleSettings.save')"
+          class="p-button-success p-button-sm tw-ml-2" [disabled]="updateSubtitleForm.disabled">
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-container>

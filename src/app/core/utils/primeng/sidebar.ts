@@ -54,8 +54,7 @@ const hideAnimation = animation([animate('{{transition}}', style({ transform: '{
   }
 })
 export class AltSidebar extends Sidebar {
-  @Input() contentStyleClass?: string;
-  @Input() contentId?: string;
+
 }
 
 @NgModule({

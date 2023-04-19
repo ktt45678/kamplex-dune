@@ -39,11 +39,9 @@ export class PlaylistsService {
     return this.http.delete(`playlists/${id}`);
   }
 
-  uploadThumbnail(id: string, backdrop: File | Blob, name?: string) {
-    if (!name)
-      name = getImageName(backdrop);
+  uploadThumbnail(id: string, thumbnail: File) {
     const data = new FormData();
-    data.set('file', backdrop, name);
+    data.set('file', thumbnail);
     return this.http.patch<PlaylistDetails>(`playlists/${id}/thumbnail`, data);
   }
 

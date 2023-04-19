@@ -7,9 +7,8 @@ import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dy
 import { Menu } from 'primeng/menu';
 import { first, map, merge, Observable, switchMap, takeUntil, tap } from 'rxjs';
 import { cloneDeep } from 'lodash-es';
-import { SourceInfo, Source, Track } from 'plyr';
 
-import { MediaDetails, MediaVideo, MediaSubtitle, TVEpisode, Genre, Production, Tag } from '../../../../core/models';
+import { MediaDetails, MediaStream, MediaVideo, MediaSubtitle, TVEpisode, Genre, Production, Tag } from '../../../../core/models';
 import { DestroyService, GenresService, ItemDataService, MediaService, ProductionsService, QueueUploadService, TagsService } from '../../../../core/services';
 import { WsService } from '../../../../shared/modules/ws';
 import { DropdownOptionDto, UpdateMediaDto } from '../../../../core/dto/media';
@@ -26,7 +25,7 @@ import { fileExtension, maxFileSize, shortDate } from '../../../../core/validato
 import { AddSubtitleForm, ExternalIdsForm, MediaScannerForm, ShortDateForm } from '../../../../core/interfaces/forms';
 import { ExtStreamSelected } from '../../../../core/interfaces/events';
 import { ImageEditorComponent } from '../../../../shared/dialogs/image-editor';
-import { dataURItoBlob, detectFormChange, translocoEscape, fixNestedDialogFocus, replaceDialogHideMethod } from '../../../../core/utils';
+import { dataURItoBlob, detectFormChange, translocoEscape, fixNestedDialogFocus, replaceDialogHideMethod, timeStringToSeconds, secondsToTimeString } from '../../../../core/utils';
 import { AppErrorCode, MediaPStatus, MediaSourceStatus, MediaStatus, MediaType, SocketMessage, SocketRoom } from '../../../../core/enums';
 import {
   UPLOAD_SUBTITLE_EXT, UPLOAD_SUBTITLE_SIZE, YOUTUBE_EMBED_URL, YOUTUBE_THUMBNAIL_URL, IMAGE_PREVIEW_SIZE, UPLOAD_POSTER_SIZE,
@@ -41,9 +40,10 @@ interface UpdateMediaForm {
   overview: FormControl<string>;
   originalLanguage: FormControl<string | null>;
   genres: FormControl<Genre[] | null>;
-  productions: FormControl<Production[] | null>;
+  producers: FormControl<Production[] | null>;
+  studios: FormControl<Production[] | null>;
   tags: FormControl<Tag[] | null>;
-  runtime: FormControl<number | null>;
+  runtime: FormControl<string | null>;
   adult: FormControl<boolean>;
   releaseDate: FormGroup<ShortDateForm>;
   lastAirDate?: FormGroup<ShortDateForm>;
@@ -63,7 +63,7 @@ interface UpdateMediaForm {
     DestroyService,
     {
       provide: TRANSLOCO_SCOPE,
-      useValue: 'languages'
+      useValue: ['common', 'languages']
     }
   ]
 })
@@ -90,7 +90,7 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
   youtubeThumbnailUrl = YOUTUBE_THUMBNAIL_URL;
   media?: MediaDetails;
   episodes?: TVEpisode[];
-  previewSource?: SourceInfo;
+  previewStream?: MediaStream;
   addSubtitleForm: FormGroup<AddSubtitleForm>;
   updateMediaForm: FormGroup<UpdateMediaForm>;
   updateMediaInitValue: {} = {};
@@ -122,9 +122,10 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
       overview: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(10), Validators.maxLength(2000)] }),
       originalLanguage: new FormControl(''),
       genres: new FormControl(null),
-      productions: new FormControl(null),
+      producers: new FormControl(null),
+      studios: new FormControl(null),
       tags: new FormControl(null),
-      runtime: new FormControl(null, [Validators.required, Validators.min(0), Validators.max(10000)]),
+      runtime: new FormControl(null, [Validators.required]),
       adult: new FormControl(false, { nonNullable: true, validators: Validators.required }),
       releaseDate: new FormGroup<ShortDateForm>({
         day: new FormControl(null),
@@ -268,17 +269,20 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
     const mediaId = this.config.data!._id;
     const formValue = this.updateMediaForm.getRawValue();
     const genreIds = formValue.genres?.map(g => g._id) || [];
-    const productionIds = formValue.productions?.map(p => p._id) || [];
+    const producerIds = formValue.producers?.map(p => p._id) || [];
+    const studioIds = formValue.studios?.map(p => p._id) || [];
     const tagIds = formValue.tags?.map(p => p._id) || [];
+    const runtimeValue = timeStringToSeconds(formValue.runtime)!;
     const updateMediaDto: UpdateMediaDto = {
       title: formValue.title,
       originalTitle: formValue.originalTitle || null,
       overview: formValue.overview,
       genres: genreIds,
-      originalLanguage: formValue.originalLanguage,
-      productions: productionIds,
+      originalLang: formValue.originalLanguage,
+      studios: studioIds,
+      producers: producerIds,
       tags: tagIds,
-      runtime: formValue.runtime!,
+      runtime: runtimeValue,
       adult: formValue.adult,
       releaseDate: {
         day: formValue.releaseDate.day!,
@@ -362,7 +366,7 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
   editImage(data: any): Observable<string[] | null> {
     const dialogRef = this.dialogService.open(ImageEditorComponent, {
       data: data,
-      header: this.translocoService.translate('admin.configureMedia.editImage'),
+      header: this.translocoService.translate('common.imageEditor.header'),
       width: '700px',
       modal: true,
       dismissableMask: false,
@@ -428,7 +432,7 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
       key: 'inModal',
       message: this.translocoService.translate('admin.media.deletePosterConfirmation', { name: safeMediaTitle }),
       header: this.translocoService.translate('admin.media.deletePosterConfirmationHeader'),
-      icon: 'pi pi-info-circle',
+      icon: 'ms ms-delete',
       defaultFocus: 'reject',
       accept: () => {
         const element = event.target instanceof HTMLButtonElement ? event.target : <HTMLButtonElement>(<HTMLSpanElement>event.target).parentElement;
@@ -457,7 +461,7 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
       key: 'inModal',
       message: this.translocoService.translate('admin.media.deleteBackdropConfirmation', { name: safeMediaTitle }),
       header: this.translocoService.translate('admin.media.deleteBackdropConfirmationHeader'),
-      icon: 'pi pi-info-circle',
+      icon: 'ms ms-delete',
       defaultFocus: 'reject',
       accept: () => {
         const element = event.target instanceof HTMLButtonElement ? event.target : <HTMLButtonElement>(<HTMLSpanElement>event.target).parentElement;
@@ -538,7 +542,7 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
       key: 'inModal',
       message: this.translocoService.translate('admin.media.deleteVideoConfirmation'),
       header: this.translocoService.translate('admin.media.deleteVideoConfirmationHeader'),
-      icon: 'pi pi-info-circle',
+      icon: 'ms ms-delete',
       defaultFocus: 'reject',
       accept: () => {
         const element = event.target instanceof HTMLButtonElement ? event.target : <HTMLButtonElement>(<HTMLSpanElement>event.target).parentElement;
@@ -588,7 +592,7 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
       key: 'inModal',
       message: this.translocoService.translate('admin.media.deleteSubtitleConfirmation'),
       header: this.translocoService.translate('admin.media.deleteSubtitleConfirmationHeader'),
-      icon: 'pi pi-info-circle',
+      icon: 'ms ms-delete',
       defaultFocus: 'reject',
       accept: () => {
         const element = event.target instanceof HTMLButtonElement ? event.target : <HTMLButtonElement>(<HTMLSpanElement>event.target).parentElement;
@@ -637,35 +641,8 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
   showSourcePreview(): void {
     this.showMoviePlayer = true;
     const mediaId = this.config.data!._id;
-    this.translocoService.selectTranslation('languages').pipe(first(), switchMap(t => {
-      return this.mediaService.findMovieStreams(mediaId).pipe(map(movie => ({ movie, t })));
-    })).subscribe(({ movie, t }) => {
-      const sources: Source[] = [];
-      const tracks: Track[] = [];
-      const selectedCodec = 1;
-      movie.streams.forEach(stream => {
-        if (stream.codec === selectedCodec) {
-          sources.push({
-            src: stream.src,
-            type: stream.mimeType,
-            provider: 'html5',
-            size: stream.quality
-          });
-        }
-      });
-      movie.subtitles.forEach(subtitle => {
-        tracks.push({
-          kind: 'subtitles',
-          label: t[subtitle.language],
-          srcLang: subtitle.language,
-          src: subtitle.src
-        });
-      });
-      this.previewSource = {
-        type: 'video',
-        sources: sources,
-        tracks: tracks
-      };
+    this.mediaService.findMovieStreams(mediaId).subscribe((movie) => {
+      this.previewStream = movie;
     });
   }
 
@@ -676,7 +653,7 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
       key: 'inModal',
       message: this.translocoService.translate('admin.media.deleteSourceConfirmation', { name: safeMediaTitle }),
       header: this.translocoService.translate('admin.media.deleteSourceConfirmationHeader'),
-      icon: 'pi pi-info-circle',
+      icon: 'ms ms-delete',
       defaultFocus: 'reject',
       accept: () => {
         const element = event.target instanceof HTMLButtonElement ? event.target : <HTMLButtonElement>(<HTMLSpanElement>event.target).parentElement;
@@ -734,7 +711,9 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
       showHeader: false,
       dismissableMask: false,
       contentStyle: { 'padding': 0, 'overflow-y': 'hidden' },
-      styleClass: '!tw-max-h-full'
+      styleClass: '!tw-max-h-full',
+      maskStyleClass: 'tw-z-[110]',
+      autoZIndex: false
     });
     dialogRef.onClose.pipe(first()).subscribe((updated) => {
       if (!updated || !this.media) return;
@@ -746,9 +725,9 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
   showDeleteEpisodeDialog(episode: TVEpisode): void {
     this.confirmationService.confirm({
       key: 'inModal',
-      message: this.translocoService.translate('admin.media.deleteEpisodeConfirmation', { episodeNumber: episode.episodeNumber }),
+      message: this.translocoService.translate('admin.media.deleteEpisodeConfirmation', { episodeNumber: episode.epNumber }),
       header: this.translocoService.translate('admin.media.deleteEpisodeConfirmationHeader'),
-      icon: 'pi pi-info-circle',
+      icon: 'ms ms-delete',
       defaultFocus: 'reject',
       accept: () => this.deleteEpisode(episode)
     });
@@ -830,15 +809,17 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   patchUpdateMediaForm(media: MediaDetails): void {
+    const runtimeValue = secondsToTimeString(media.runtime);
     this.updateMediaForm.patchValue({
       title: media.title,
       originalTitle: media.originalTitle || '',
       overview: media.overview,
-      originalLanguage: media.originalLanguage || null,
+      originalLanguage: media.originalLang || null,
       genres: media.genres,
-      productions: media.productions,
+      studios: media.studios,
+      producers: media.producers,
       tags: media.tags,
-      runtime: media.runtime,
+      runtime: runtimeValue,
       adult: media.adult,
       releaseDate: {
         day: media.releaseDate.day,

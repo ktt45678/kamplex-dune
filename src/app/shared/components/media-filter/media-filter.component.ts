@@ -20,7 +20,7 @@ interface FilterForm {
   search: FormControl<string | null>;
   type: FormControl<string | null>;
   status: FormControl<string | null>;
-  originalLanguage: FormControl<string | null>;
+  originalLang: FormControl<string | null>;
   year: FormControl<number | null>;
   showAdvanced: FormControl<boolean>;
 }
@@ -60,7 +60,7 @@ export class MediaFilterComponent implements OnInit {
       search: new FormControl(null, { validators: [Validators.minLength(2), Validators.maxLength(100)] }),
       type: new FormControl(),
       status: new FormControl(),
-      originalLanguage: new FormControl(),
+      originalLang: new FormControl(),
       year: new FormControl(),
       showAdvanced: new FormControl(this.showAdvanced, { nonNullable: true })
     }, { updateOn: 'change' });
@@ -119,7 +119,7 @@ export class MediaFilterComponent implements OnInit {
       search: options.search,
       type: options.type,
       status: options.status,
-      originalLanguage: options.originalLanguage,
+      originalLang: options.originalLang,
       year: options.year
     });
   }
@@ -135,7 +135,7 @@ export class MediaFilterComponent implements OnInit {
       tags: tagIds,
       type: formValue.type,
       status: formValue.status,
-      originalLanguage: formValue.originalLanguage,
+      originalLang: formValue.originalLang,
       year: formValue.year
     });
   }

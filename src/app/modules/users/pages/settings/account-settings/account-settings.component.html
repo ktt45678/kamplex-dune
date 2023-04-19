@@ -1,0 +1,65 @@
+<ng-container *transloco="let t">
+  <p class="tw-text-white tw-font-bold tw-text-2xl">{{ t('users.settings.myAccount') }}</p>
+  <!--svg viewBox="0 0 660 100" style="min-width: 660px; min-height: 100px;">
+        <mask id="uid_404">
+          <rect fill="white" x="0" y="0" width="100%" height="100%"></rect>
+          <circle fill="black" cx="62" cy="122" r="46"></circle>
+        </mask>
+        <foreignObject x="0" y="0" width="100%" height="100%" overflow="visible" mask="url(#uid_404)">
+          <div role="banner" aria-label="User banner" *ngIf="currentUser.bannerUrl"
+            class="tw-h-[100px] tw-bg-cover tw-bg-no-repeat tw-bg-centertw-rounded-md" [lazyLoad]="currentUser.bannerUrl"
+            [ngStyle]="{ 'background-color': currentUser.bannerColor ? (currentUser.bannerColor | rgbColor) : '#2b2b2b' }">
+          </div>
+        </foreignObject>
+      </svg-->
+  <div *ngIf="currentUser" class="tw-text-white tw-mt-4">
+    <p class="tw-font-medium">{{ t('users.accountSettings.username') }}</p>
+    <div class="tw-flex tw-items-center">
+      <p>{{ currentUser.username }}</p>
+      <div class="tw-ml-auto">
+        <button pButton [label]="t('users.accountSettings.editUsername')" class="p-button-secondary p-button-sm"
+          (click)="showUpdateUsernameDialog()"></button>
+      </div>
+    </div>
+    <div class="tw-divider tw-my-4"></div>
+
+    <p class="tw-font-medium">{{ t('users.accountSettings.email') }}</p>
+    <div class="tw-flex tw-items-center">
+      <p class="[&>*]:tw-align-middle">
+        <span>{{ currentUser.email }}</span>
+        <i *ngIf="!currentUser.verified" [pTooltip]="t('users.accountSettings.unverifiedEmailStatus')"
+          class="ms ms-error ms-icon-sm ms-fill ms-font-bold tw-text-red-500 tw-ml-2"></i>
+      </p>
+      <div class="tw-ml-auto">
+        <button *ngIf="!currentUser.verified" pButton [label]="t('users.accountSettings.verifyEmail')"
+          icon="ms ms-open-in-new" class="p-button-secondary p-button-sm p-button-xs-icon tw-mr-2"></button>
+        <button pButton [label]="t('users.accountSettings.editEmail')" class="p-button-secondary p-button-sm"
+          (click)="showUpdateEmailDialog()"></button>
+      </div>
+    </div>
+    <div class="tw-divider tw-my-4"></div>
+
+    <p class="tw-font-medium">{{ t('users.accountSettings.dateOfBirth') }}</p>
+    <div class="tw-flex tw-items-center">
+      <p *ngIf="currentUser.birthdate">{{ currentUser.birthdate | shortDate }}</p>
+      <div class="tw-ml-auto">
+        <button pButton [label]="t('users.accountSettings.editDateOfBirth')" class="p-button-secondary p-button-sm"
+          (click)="showUpdateBirthdateDialog()"></button>
+      </div>
+    </div>
+    <div class="tw-divider tw-my-4"></div>
+
+    <p class="tw-font-medium">{{ t('users.accountSettings.password') }}</p>
+    <button pButton [label]="t('users.accountSettings.changePassword')" class="p-button-secondary p-button-sm tw-mt-2"
+      (click)="showUpdatePasswordDialog()"></button>
+    <!-- <div class="tw-divider tw-my-4"></div>
+
+      <p class="tw-font-medium">{{ t('users.accountSettings.accountVerification') }}</p>
+      <p *ngIf="currentUser.verified; else unverifiedEmail">{{ t('users.accountSettings.verifiedEmailStatus') }}</p>
+      <ng-template #unverifiedEmail>
+        <p>{{ t('users.accountSettings.unverifiedEmailStatus') }}</p>
+        <button pButton [label]="t('users.accountSettings.verifyEmail')"
+          class="p-button-secondary p-button-sm"></button>
+      </ng-template> -->
+  </div>
+</ng-container>

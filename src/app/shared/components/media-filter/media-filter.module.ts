@@ -6,11 +6,13 @@ import { TranslocoModule } from '@ngneat/transloco';
 import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
+import { ToggleButtonModule } from 'primeng/togglebutton';
+import { TooltipModule } from 'primeng/tooltip';
 import { ChipModule } from 'primeng/chip';
 
 import { MediaFilterComponent } from './media-filter.component';
 import { MediaFilterService } from './media-filter.service';
-import { AltAutoCompleteModule, AltChipModule, AltToggleButtonModule, AltTooltipModule } from '../../../core/utils/primeng';
+import { AltAutoCompleteModule } from '../../../core/utils/primeng';
 import { CdkMenuCustomModule } from '../../directives/cdk-menu-custom';
 import { FormDirectiveModule } from '../../directives/form-directive';
 
@@ -26,10 +28,9 @@ import { FormDirectiveModule } from '../../directives/form-directive';
     ButtonModule,
     DropdownModule,
     AltAutoCompleteModule,
-    AltToggleButtonModule,
-    AltTooltipModule,
-    AltChipModule,
     InputTextModule,
+    ToggleButtonModule,
+    TooltipModule,
     ChipModule
   ],
   providers: [MediaFilterService],

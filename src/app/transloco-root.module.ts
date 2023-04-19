@@ -28,7 +28,9 @@ export class TranslocoHttpLoader implements TranslocoLoader {
 
 @NgModule({
   imports: [
-    TranslocoMessageFormatModule.forRoot(),
+    TranslocoMessageFormatModule.forRoot({
+      locales: ['en-US', 'vi-VN']
+    }),
     // TranslocoPersistTranslationsModule.forRoot({
     //   loader: TranslocoHttpLoader,
     //   ttl: environment.production ? 3600 : 30,

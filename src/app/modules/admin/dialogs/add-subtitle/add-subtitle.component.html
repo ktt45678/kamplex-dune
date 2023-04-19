@@ -13,14 +13,14 @@
       [invalidControl]="addSubtitleForm.controls.language">{{ addSubtitleForm.controls.language.errors |
       firstErrorKey:'addMediaSubtitle':'language' }}</small>
     <!--input hidden="true" [value]="null" aria-describedby="file-error" /-->
-    <app-file-upload formControlName="file" accept=".vtt" [label]="t('admin.addMediaSubtitle.chooseFile')"
+    <app-file-upload formControlName="file" accept=".vtt, .srt, .ass" [label]="t('admin.addMediaSubtitle.chooseFile')"
       [disabledControl]="isAddingSubtitle" ariaDescribedby="file-error">
     </app-file-upload>
     <!--label for="file" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
       {{ t('admin.addMediaSubtitle.file') }}
     </label>
     <input #inputSubtitle hidden="true" type="file" onclick="this.value = null" (change)="getFileFromInput($event)"
-      accept=".vtt" />
+      accept=".vtt, .srt, .ass" />
     <div class="p-inputgroup">
       <input formControlName="file" class="p-inputtext-sm tw-w-full" id="file" type="text"
         [value]="addSubtitleForm.controls.file.value?.name" aria-describedby="file-error" pInputText readonly

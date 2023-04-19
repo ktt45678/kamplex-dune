@@ -7,7 +7,7 @@ export interface Playlist {
   thumbnailThumbnailUrl?: string;
   smallThumbnailUrl?: string;
   fullThumbnailUrl?: string;
-  thumbnailColor?: string;
+  thumbnailColor?: number;
   thumbnailMedia?: Pick<Media, ThumbnailMediaProps>;
   itemCount: number;
   visibility: number;

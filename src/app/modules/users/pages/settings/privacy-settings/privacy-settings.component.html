@@ -1,0 +1,48 @@
+<ng-container *transloco="let t">
+  <p class="tw-text-white tw-font-bold tw-text-2xl">{{ t('users.settings.privacy') }}</p>
+  <div class="tw-text-white tw-mt-4">
+    <form [formGroup]="updatePrivacyForm" formHandler>
+      <label for="history-visibility" class="tw-inline-block tw-text-base tw-font-medium">{{
+        t('users.updatePrivacy.history') }}</label>
+      <div id="history-visibility" class="tw-mt-2">
+        <p-radioButton name="historyVisibility" [value]="1" [label]="t('users.privacy.everyone')"
+          formControlName="historyVisibility"
+          class="tw-bg-neutral-875 hover:tw-bg-neutral-725 tw-flex tw-px-2 tw-py-4 tw-rounded-md">
+        </p-radioButton>
+        <p-radioButton name="historyVisibility" [value]="2" [label]="t('users.privacy.onlyMe')"
+          formControlName="historyVisibility"
+          class="tw-bg-neutral-875 hover:tw-bg-neutral-725 tw-flex tw-px-2 tw-py-4 tw-rounded-md tw-mt-2">
+        </p-radioButton>
+      </div>
+      <label for="rating-visibility" class="tw-inline-block tw-text-base tw-font-medium tw-mt-4">{{
+        t('users.updatePrivacy.rating') }}</label>
+      <div id="rating-visibility" class="tw-mt-2">
+        <p-radioButton name="ratingVisibility" [value]="1" [label]="t('users.privacy.everyone')"
+          formControlName="ratingVisibility"
+          class="tw-bg-neutral-875 hover:tw-bg-neutral-725 tw-flex tw-px-2 tw-py-4 tw-rounded-md">
+        </p-radioButton>
+        <p-radioButton name="ratingVisibility" [value]="2" [label]="t('users.privacy.onlyMe')"
+          formControlName="ratingVisibility"
+          class="tw-bg-neutral-875 hover:tw-bg-neutral-725 tw-flex tw-px-2 tw-py-4 tw-rounded-md tw-mt-2">
+        </p-radioButton>
+      </div>
+      <label for="default-playlist-visibility" class="tw-inline-block tw-text-base tw-font-medium tw-mt-4">{{
+        t('users.updatePrivacy.playlist') }}</label>
+      <p class="tw-text-gray-400 tw-text-sm tw-mt-2">{{ t('users.updatePrivacy.playlistDescription') }}</p>
+      <div id="default-playlist-visibility" class="tw-mt-2">
+        <p-radioButton name="defaultPlaylistVisibility" [value]="1" [label]="t('media.visibility.public')"
+          formControlName="defaultPlaylistVisibility"
+          class="tw-bg-neutral-875 hover:tw-bg-neutral-725 tw-flex tw-px-2 tw-py-4 tw-rounded-md">
+        </p-radioButton>
+        <p-radioButton name="defaultPlaylistVisibility" [value]="2" [label]="t('media.visibility.unlisted')"
+          formControlName="defaultPlaylistVisibility"
+          class="tw-bg-neutral-875 hover:tw-bg-neutral-725 tw-flex tw-px-2 tw-py-4 tw-rounded-md tw-mt-2">
+        </p-radioButton>
+        <p-radioButton name="defaultPlaylistVisibility" [value]="3" [label]="t('media.visibility.private')"
+          formControlName="defaultPlaylistVisibility"
+          class="tw-bg-neutral-875 hover:tw-bg-neutral-725 tw-flex tw-px-2 tw-py-4 tw-rounded-md tw-mt-2">
+        </p-radioButton>
+      </div>
+    </form>
+  </div>
+</ng-container>

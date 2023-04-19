@@ -53,7 +53,7 @@ export const RADIO_VALUE_ACCESSOR: any = {
   }
 })
 export class AltRadioButton extends RadioButton implements ControlValueAccessor {
-  @Input() icon?: string;
+
 }
 
 @NgModule({

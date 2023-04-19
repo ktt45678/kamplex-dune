@@ -3,7 +3,7 @@ export interface PaginateMediaDto {
   tags?: string[];
   type?: string;
   status?: string;
-  originalLanguage?: string;
+  originalLang?: string;
   year?: number;
   includeHidden?: boolean;
   includeUnprocessed?: boolean;

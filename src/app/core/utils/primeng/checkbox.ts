@@ -57,11 +57,7 @@ export const CHECKBOX_VALUE_ACCESSOR: any = {
   }
 })
 export class AltCheckbox extends Checkbox implements OnInit, ControlValueAccessor {
-  @Input() icon?: string;
 
-  ngOnInit(): void {
-    this.model = this.value;
-  }
 }
 
 @NgModule({

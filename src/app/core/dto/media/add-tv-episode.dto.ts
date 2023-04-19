@@ -1,7 +1,7 @@
 import { MediaExternalStreams, ShortDate } from '../../models';
 
 export interface AddTVEpisodeDto {
-  episodeNumber: number;
+  epNumber: number;
   name?: string;
   overview?: string;
   runtime: number;

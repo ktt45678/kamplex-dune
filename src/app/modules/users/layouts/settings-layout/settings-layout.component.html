@@ -1,0 +1,21 @@
+<ng-container *transloco="let t">
+  <div class="tw-max-w-6xl tw-mx-auto">
+    <p-tabMenu *ngIf="mobileMenu" [model]="settingItems" styleClass="tw-text-white"></p-tabMenu>
+    <div class="tw-flex tw-my-4">
+      <div *ngIf="!mobileMenu" appMenu class="tw-basis-60 tw-shadow-none tw-min-h-screen">
+        <a appMenuItem routerLink="./" routerLinkActive="cdk-menu-item-active"
+          [routerLinkActiveOptions]="{ exact: true }">{{ t('users.settings.myAccount') }}</a>
+        <a appMenuItem routerLink="profile" routerLinkActive="cdk-menu-item-active">{{ t('users.settings.profile')
+          }}</a>
+        <a appMenuItem routerLink="privacy" routerLinkActive="cdk-menu-item-active">{{ t('users.settings.privacy')
+          }}</a>
+        <a appMenuItem routerLink="media" routerLinkActive="cdk-menu-item-active">{{ t('users.settings.media') }}</a>
+        <a appMenuItem routerLink="subtitle" routerLinkActive="cdk-menu-item-active">{{ t('users.settings.subtitle')
+          }}</a>
+      </div>
+      <div class="tw-flex-1 tw-bg-app-backdrop md:tw-ml-4 tw-p-4 tw-rounded">
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+  </div>
+</ng-container>

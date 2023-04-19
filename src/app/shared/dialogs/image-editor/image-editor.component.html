@@ -2,15 +2,16 @@
   <ng-container *ngIf="!loadedImage; then loadingSpinner"></ng-container>
   <div class="tw-flex" [hidden]="!loadedImage">
     <image-cropper [style]="{'max-width': '100%', 'max-height': '500px'}" class="tw-mx-auto"
-      [maintainAspectRatio]="true" [aspectRatio]="aspectRatio" [cropperMinWidth]="minWidth"
+      [maintainAspectRatio]="!!aspectRatio" [aspectRatio]="aspectRatio" [cropperMinWidth]="minWidth"
       [cropperMinHeight]="minHeight" [imageFile]="imageFile" [autoCrop]="false" alignImage="center"
       [transform]="transform" fixAspectRatioBy="width" [fixAspectRatioWidth]="aspectRatioWidth"
       [fixAspectRatioHeight]="aspectRatioHeight" [fixAttempts]="100" [format]="format" backgroundColor="white"
       (imageLoaded)="imageLoaded($event)" (loadImageFailed)="loadImageFailed()" (imageCropped)="imageCropped($event)">
     </image-cropper>
   </div>
-  <p-slider styleClass="tw-mt-4" [min]="0" [max]="100" (onChange)="zoomSliderChange($event)" [disabled]="!loadedImage">
-  </p-slider>
+  <p-sliderAlt styleClass="tw-mt-4" [min]="0" [max]="100" (onChange)="zoomSliderChange($event)"
+    [disabled]="!loadedImage">
+  </p-sliderAlt>
   <div class="tw-flex tw-mt-4">
     <button pButton type="button" [label]="t('common.imageEditor.skip')"
       class="p-button-text p-button-secondary p-button-sm" [disabled]="!loadedImage" (click)="onSkip()">

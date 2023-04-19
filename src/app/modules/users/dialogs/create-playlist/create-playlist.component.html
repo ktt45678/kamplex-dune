@@ -1,5 +1,5 @@
 <ng-container *transloco="let t">
-  <h3 class="tw-text-white tw-text-2xl tw-font-bold tw-text-center tw-mb-4">{{ t('media.playlists.createPlaylist')
+  <h3 class="tw-text-white tw-text-2xl tw-font-bold tw-text-center tw-mb-4">{{ t('media.createPlaylist.formHeader')
     }}</h3>
   <form [formGroup]="createPlaylistForm" formHandler (ngSubmit)="onCreatePlaylistFormSubmit()">
     <label for="name" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{ t('media.createPlaylist.name')
@@ -19,13 +19,13 @@
     <label for="visibility" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
       t('media.createPlaylist.visibility') }}</label>
     <div id="visibility">
-      <p-radioButton name="visibility" [value]="1" [label]="t('media.createPlaylist.visibilityPublic')"
+      <p-radioButton name="visibility" [value]="1" [label]="t('media.visibility.public')"
         formControlName="visibility" class="tw-block tw-mb-2">
       </p-radioButton>
-      <p-radioButton name="visibility" [value]="2" [label]="t('media.createPlaylist.visibilityUnlisted')"
+      <p-radioButton name="visibility" [value]="2" [label]="t('media.visibility.unlisted')"
         formControlName="visibility" class="tw-block tw-mb-2">
       </p-radioButton>
-      <p-radioButton name="visibility" [value]="3" [label]="t('media.createPlaylist.visibilityPrivate')"
+      <p-radioButton name="visibility" [value]="3" [label]="t('media.visibility.private')"
         formControlName="visibility" class="tw-block">
       </p-radioButton>
     </div>

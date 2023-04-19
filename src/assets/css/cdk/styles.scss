@@ -1,49 +1,132 @@
-.cdk-menu {
-  display: inline-flex;
-  flex-direction: column;
-  padding: 0.5rem 0;
+.cdk-overlay-content, .cdk-menu, .slide-menu {
   color: rgba(255, 255, 255, 0.87);
   border-radius: 4px;
   min-width: 12.5rem;
-  background: #2b2b2b;
+  background: #212121;
   border: 0 none;
   box-shadow: 0 2px 4px -1px rgb(0 0 0 / 20%), 0 4px 5px 0 rgb(0 0 0 / 14%), 0 1px 10px 0 rgb(0 0 0 / 12%);
+}
+
+.cdk-overlay-content {
+  padding: 1rem;
+}
+
+@mixin menu {
+  display: inline-flex;
+  flex-direction: column;
+  padding: 0.5rem 0;
+}
+
+@mixin menu-item {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  overflow: hidden;
+  position: relative;
+  padding: 0.75rem 1rem;
+  background-color: #212121;
+  color: rgba(255, 255, 255, 0.87);
+}
+
+@mixin menu-item-hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+@mixin menu-item-focus {
+  background: rgba(255, 255, 255, 0.12);
+  outline: 0;
+}
+
+@mixin menu-item-disabled {
+  opacity: 0.38;
+  pointer-events: none;
+}
+
+@mixin menu-item-active {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+@mixin menu-item-sm {
+  padding: 0.5rem 1rem;
+}
+
+@mixin menu-item-icon {
+  margin-right: 0.5rem;
+}
+
+.cdk-menu {
+  @include menu;
 
   .cdk-menu-item {
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    text-decoration: none;
-    overflow: hidden;
-    position: relative;
-    padding: 0.75rem 1rem;
-    background-color: #2b2b2b;
-    color: rgba(255, 255, 255, 0.87);
+    @include menu-item;
 
-    >i:first-of-type {
-      margin-right: 0.5rem;
+    > i:first-of-type {
+      @include menu-item-icon;
     }
 
     &:hover:not(.cdk-menu-item-active) {
-      background: rgba(255, 255, 255, 0.04);
+      @include menu-item-hover;
     }
 
-    &:focus {
-      background: rgba(255, 255, 255, 0.12);
-      outline: 0;
+    &:focus, &:hover:focus {
+      @include menu-item-focus;
     }
 
     &:disabled {
-      opacity: 0.38;
-      pointer-events: none;
+      @include menu-item-disabled;
     }
   }
 
   .cdk-menu-item-sm {
-    padding: 0.5rem 1rem;
+    @include menu-item-sm;
   }
 
   .cdk-menu-item-active {
-    background: rgba(255, 255, 255, 0.12);
+    @include menu-item-active;
+  }
+}
+
+.slide-menu {
+  @include menu;
+
+  .slide-menu-item {
+    @include menu-item;
+
+    > i:first-of-type {
+      @include menu-item-icon;
+    }
+
+    &.slide-menu-checkbox, &.slide-menu-radio {
+      > i[role="checkbox"] {
+        visibility: hidden;
+      }
+    }
+
+    &.slide-menu-checkbox-checked, &.slide-menu-radio-checked {
+      > i[role="checkbox"] {
+        visibility: visible;
+      }
+    }
+
+    &:hover:not(.slide-menu-item-active) {
+      @include menu-item-hover;
+    }
+
+    &:focus, &:hover:focus {
+      @include menu-item-focus;
+    }
+
+    &:disabled {
+      @include menu-item-disabled;
+    }
+  }
+
+  .slide-menu-item-sm {
+    @include menu-item-sm;
+  }
+
+  .slide-menu-item-active {
+    @include menu-item-active;
   }
 }

@@ -5,6 +5,6 @@ export interface MediaFilterOptionsDto {
   search?: string | null;
   type?: string | null;
   status?: string | null;
-  originalLanguage?: string | null;
+  originalLang?: string | null;
   year?: number | null;
 }

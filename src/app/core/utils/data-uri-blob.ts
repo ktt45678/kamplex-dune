@@ -1,4 +1,20 @@
 export function dataURItoBlob(dataURI: string) {
+  const [ab, mimeString] = parseDataURI(dataURI);
+  let blob = new Blob([ab], { type: mimeString });
+  return blob;
+}
+
+export function dataURItoFile(dataURI: string, name?: string) {
+  const [ab, mimeString] = parseDataURI(dataURI);
+  if (!name) {
+    const ext = getImageExt(mimeString);
+    name = 'image.' + ext;
+  }
+  let blob = new File([ab], name, { type: mimeString });
+  return blob;
+}
+
+export function parseDataURI(dataURI: string): [ArrayBuffer, string] {
   let splitDataURI = dataURI.split(',');
   let byteString = window.atob(splitDataURI[1]);
   let mimeString = splitDataURI[0].split(':')[1].split(';')[0];
@@ -7,15 +23,14 @@ export function dataURItoBlob(dataURI: string) {
   for (let i = 0; i < byteString.length; i++) {
     ia[i] = byteString.charCodeAt(i);
   }
-  let blob = new Blob([ab], { type: mimeString });
-  return blob;
+  return [ab, mimeString];
 }
 
 export function getImageName(file: File | Blob) {
   if (file instanceof File)
     return file.name;
   const blobExt = getImageExt(file.type);
-  return 'unknown.' + blobExt;
+  return 'image.' + blobExt;
 }
 
 export function getImageExt(type: string) {
@@ -29,7 +44,7 @@ export function getImageExt(type: string) {
     case 'image/webp':
       return 'webp';
   }
-  return 'unknown';
+  return 'bin';
 }
 
 export function getImageFormat(type: string) {

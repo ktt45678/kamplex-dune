@@ -1,3 +1,3 @@
 export const RegexPattern = {
-  ACCOUNT_PASSWORD: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]+$/
+  ACCOUNT_PASSWORD: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/
 }

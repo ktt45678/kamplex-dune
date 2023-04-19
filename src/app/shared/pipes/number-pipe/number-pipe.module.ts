@@ -4,12 +4,14 @@ import { CommonModule } from '@angular/common';
 import { ToStringPipe } from './to-string/to-string.pipe';
 import { HexColorPipe } from './hex-color/hex-color.pipe';
 import { RgbColorPipe } from './rgb-color/rgb-color.pipe';
+import { HslColorPipe } from './hsl-color/hsl-color.pipe';
 
 @NgModule({
   declarations: [
     ToStringPipe,
     HexColorPipe,
-    RgbColorPipe
+    RgbColorPipe,
+    HslColorPipe
   ],
   imports: [
     CommonModule
@@ -17,7 +19,8 @@ import { RgbColorPipe } from './rgb-color/rgb-color.pipe';
   exports: [
     ToStringPipe,
     HexColorPipe,
-    RgbColorPipe
+    RgbColorPipe,
+    HslColorPipe
   ]
 })
 export class NumberPipeModule { }

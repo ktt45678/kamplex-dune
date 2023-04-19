@@ -1,5 +1,6 @@
 :root {
   --FILL: 0;
+  --wght: 300;
   --opsz: 24;
 }
 
@@ -18,7 +19,7 @@
   font-feature-settings: "liga";
   -webkit-font-feature-settings: "liga";
   -webkit-font-smoothing: antialiased;
-  font-variation-settings: "FILL" var(--FILL), "opsz" var(--opsz);
+  font-variation-settings: "FILL" var(--FILL), "wght" var(--wght), "opsz" var(--opsz);
 }
 
 .ms-icon-xxs {
@@ -49,8 +50,32 @@
   font-size: 32px;
 }
 
+.ms-icon-3xl {
+  font-size: 36px;
+}
+
+.ms-icon-4xl {
+  font-size: 42px;
+}
+
 .ms-fill {
   --FILL: 1;
+}
+
+.ms-font-base {
+  --wght: 400;
+}
+
+.ms-font-medium {
+  --wght: 500;
+}
+
+.ms-font-semibold {
+  --wght: 600;
+}
+
+.ms-font-bold {
+  --wght: 700;
 }
 
 .ms-opsz-lg {
@@ -59,6 +84,10 @@
 
 .ms-opsz-xl {
   --opsz: 48;
+}
+
+.ms-add-photo-alternate {
+  margin-top: 5.5px;
 }
 
 .ms-10k:before {
@@ -9555,4 +9584,12 @@
 
 .ms-resume:before {
   content: "\f7d0";
+}
+
+.ms-reset-image:before {
+  content: "\f824";
+}
+
+.ms-shield-person:before {
+  content: "\f650";
 }
