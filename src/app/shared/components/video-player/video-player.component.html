@@ -1,7 +1,9 @@
 <ng-container *transloco="let t">
-  <media-player #player aspect-ratio="16/9" autoplay crossorigin keep-alive>
-    <media-outlet></media-outlet>
-    <media-captions></media-captions>
+  <media-player #player aspect-ratio="16/9" autoplay crossorigin>
+    <media-outlet>
+      <media-captions [ngStyle]="subtitleStyles">
+      </media-captions>
+    </media-outlet>
     <ng-container *ngIf="playerStore">
       <div *ngIf="!playerStore.canPlay || playerStore.waiting" class="tw-absolute tw-absolute-center tw-z-1"
         aria-label="Loading media">
@@ -134,7 +136,7 @@
         <button type="button" class="media-subtitle-button tw-w-14 tw-p-2 focus-visible:tw-shadow-focus-box"
           [ngClass]="{ 'tw-opacity-30': !tracks?.length }" aria-label="Enable/disable subtitle" aria-keyshortcuts="c"
           (click)="toggleSubtitle()">
-          <svg *ngIf="!trackDisabled; else trackDisabledTpl" slot="enabled" width="100%" height="100%" version="1.1"
+          <svg *ngIf="enableSubtitle; else trackDisabledTpl" slot="enabled" width="100%" height="100%" version="1.1"
             viewBox="0 0 36 36" fill="white">
             <path
               d="M 26 10 L 10 10 C 8.895 10 8 10.895 8 12 L 8 24 C 8 25.105 8.895 26 10 26 L 26 26 C 27.105 26 28 25.105 28 24 L 28 12 C 28 10.895 27.105 10 26 10 M 10 18 L 14 18 L 14 20 L 10 20 L 10 18 M 20 24 L 10 24 L 10 22 L 20 22 L 20 24 M 26 24 L 22 24 L 22 22 L 26 22 L 26 24 M 26 20 L 16 20 L 16 18 L 26 18 L 26 20 Z" />
@@ -208,12 +210,12 @@
     <ng-template #subtitleMenu>
       <app-slide-menu class="media-menu p-scrollbar tw-max-h-80 tw-overflow-y-auto" [ngClass]="{ 'tw-w-96': isMobile }"
         [backLabel]="t('player.menu.subtitle')">
-        <button slideMenuItemRadio [menuItemChecked]="trackDisabled" (click)="setPlayerTrack(null)">
+        <button slideMenuItemRadio [menuItemChecked]="!enableSubtitle" (click)="setPlayerTrack(null)">
           <i role="checkbox" class="ms ms-icon-sm ms-check"></i>
           <span>{{ t('player.subtitles.off') }}</span>
         </button>
         <button *ngFor="let track of tracks; trackBy: track_Id" slideMenuItemRadio
-          [menuItemChecked]="!trackDisabled && activeTrackValue === track.lang" (click)="setPlayerTrack(track.lang)">
+          [menuItemChecked]="enableSubtitle && activeTrackValue === track.lang" (click)="setPlayerTrack(track.lang)">
           <i role="checkbox" class="ms ms-icon-sm ms-check"></i>
           <span>{{ track.label }}</span>
         </button>

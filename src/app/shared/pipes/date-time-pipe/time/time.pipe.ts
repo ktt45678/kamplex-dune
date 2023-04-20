@@ -10,6 +10,7 @@ type TimeDisplay = 'long' | 'short' | 'shortColon';
 interface TimeOptions {
   format?: string[];
   display?: TimeDisplay;
+  zero?: boolean;
   zeroPad?: boolean;
   fallbackToSeconds?: boolean;
 }
@@ -25,11 +26,11 @@ export class TimePipe implements PipeTransform {
 
   transform(value: number, options?: TimeOptions): string | null {
     options = Object.assign({}, {
-      format: ['hours', 'minutes', 'seconds'], display: 'long', zeroPad: true, fallbackToSeconds: true
+      format: ['hours', 'minutes', 'seconds'], display: 'long', zero: false, zeroPad: true, fallbackToSeconds: true
     }, options);
     if (value == undefined)
       return null;
-    const { format, display, zeroPad, fallbackToSeconds } = options;
+    const { format, display, zero, zeroPad, fallbackToSeconds } = options;
     if (fallbackToSeconds && value < 60000 && !format!.includes('seconds'))
       format!.push('seconds');
     const roundedValue = Math.floor(value / 1000) * 1000;
@@ -43,7 +44,7 @@ export class TimePipe implements PipeTransform {
       };
       return formatDuration(duration, {
         format,
-        zero: false,
+        zero: zero,
         delimiter: ':',
         locale: { formatDistance: (_token, count) => convertToString(count) }
       });

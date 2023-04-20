@@ -101,6 +101,7 @@ export class SubtitleSettingsComponent implements OnInit {
     this.updateSubtitleForm.patchValue({
       fontSize: settings.fontSize || 100,
       fontFamily: settings.fontFamily,
+      fontWeight: settings.fontWeight || 400,
       textColor: textColor,
       textAlpha: textOpacity,
       textEdge: settings.textEdge,
@@ -150,6 +151,7 @@ export class SubtitleSettingsComponent implements OnInit {
     const updateSubtitleOptions: SubtitleOptions = {
       fontSize: formValue.fontSize,
       fontFamily: formValue.fontFamily,
+      fontWeight: formValue.fontWeight,
       textColor,
       textAlpha: formValue.textAlpha != undefined ? formValue.textAlpha : null,
       textEdge: formValue.textEdge != undefined ? formValue.textEdge : null,

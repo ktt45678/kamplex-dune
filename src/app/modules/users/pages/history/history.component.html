@@ -140,7 +140,7 @@
                     </td>
                     <td class="tw-w-40 tw-text-sm">
                       <p-progressBar
-                        [value]="history.watchTime / (history.episode && history.episode.runtime || history.media.runtime) * 100"
+                        [value]="history.time / (history.episode && history.episode.runtime || history.media.runtime) * 100"
                         styleClass="tw-h-2 tw-rounded-full"></p-progressBar>
                     </td>
                     <td class="tw-w-16">
@@ -152,7 +152,7 @@
                     <td class="tw-w-36 tw-text-sm">{{ history.date | dateAlt:'p' }}</td>
                     <td class="tw-w-32">
                       <a [routerLink]="['/watch', history.media._id]" class="tw-inline-block tw-rounded-full"
-                        [queryParams]="{ ep: history.episode?.epNumber, time: history.watchTime }">
+                        [queryParams]="{ ep: history.episode?.epNumber, time: history.time }">
                         <button pButton icon="ms ms-play-arrow" class="p-button-rounded p-button-sm p-button-sm-icon">
                         </button>
                       </a>

@@ -187,13 +187,14 @@
   </footer>
 
   <p-sidebar #sidebar [(visible)]="displaySidebar" [blockScroll]="true" [baseZIndex]="10" position="bottom"
-    styleClass="!tw-h-3/4" contentStyleClass="p-scrollbar [&>*>button]:tw-w-full [&>*>button]:!tw-text-left"
-    contentId="sidebar-menu-content" (visibleChange)="onSidebarVisibleChange($event)" ariaCloseLabel="Close side menu">
+    styleClass="!tw-h-full" contentStyleClass="p-scrollbar [&>*>button]:tw-w-full [&>*>button]:!tw-text-left"
+    contentId="sidebar-menu-content" transitionOptions="200ms cubic-bezier(0, 0, 0.2, 1)"
+    (visibleChange)="onSidebarVisibleChange($event)" ariaCloseLabel="Close side menu">
     <ng-template pTemplate="header">
       <ng-container *ngIf="currentUser; else notLoggedIn">
         <a type="button" role="navigation" aria-label="User profile" class="tw-flex tw-items-center tw-rounded-md
-              tw-p-1 tw-bg-neutral-675 hover:tw-bg-neutral-650 tw-transition-colors tw-duration-200
-              tw-shadow tw-w-full tw-mx-2" [routerLink]="['/users', currentUser._id]">
+          tw-p-1 tw-bg-neutral-675 hover:tw-bg-neutral-650 tw-transition-colors tw-duration-200
+          tw-shadow tw-w-full tw-mx-2" [routerLink]="['/users', currentUser._id]">
           <ng-container *ngTemplateOutlet="userButton; context: { currentUser }"></ng-container>
         </a>
       </ng-container>
@@ -260,6 +261,10 @@
       <a class="tw-block" routerLink="/list/topRated">
         <button role="navigation" pButton class="p-button-text p-button-secondary"
           [label]="t('homeHeader.topRated')"></button>
+      </a>
+      <a *ngIf="currentUser" class="tw-block" routerLink="/users/settings">
+        <button role="navigation" pButton class="p-button-text p-button-secondary"
+          [label]="t('homeHeader.settings')"></button>
       </a>
     </ng-template>
     <ng-template pTemplate="footer">

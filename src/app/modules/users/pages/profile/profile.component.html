@@ -50,7 +50,7 @@
           </div>
           <div class="tw-ml-4 tw-self-center">
             <p class="tw-text-sm">
-              <ng-container *ngIf="history.watchTime < (history.episode ? history.episode.runtime : history.media.runtime);
+              <ng-container *ngIf="history.time < (history.episode ? history.episode.runtime : history.media.runtime);
                 else isWatching">
                 <span>{{ t('users.activity.watching') }} </span>
               </ng-container>
@@ -59,13 +59,13 @@
               </ng-template>
               <ng-container *ngIf="!history.episode; else isTV">
                 <a class="tw-text-blue-400 hover:tw-underline" [routerLink]="['/watch', history.media._id]"
-                  [queryParams]="{ time: history.watchTime }">{{
+                  [queryParams]="{ time: history.time }">{{
                   history.media.title
                   }}</a>
               </ng-container>
               <ng-template #isTV>
                 <a class="tw-text-blue-400 hover:tw-underline" [routerLink]="['/watch', history.media._id]"
-                  [queryParams]="{ ep: history.episode!.epNumber, time: history.watchTime }">{{
+                  [queryParams]="{ ep: history.episode!.epNumber, time: history.time }">{{
                   t('users.activity.episodeLink', { episode: history.episode?.epNumber, title: history.media.title
                   }) }}</a>
               </ng-template>

@@ -116,18 +116,6 @@
                     </div>
                   </button>
                 </div>
-                <p-dialog *ngIf="media.videos[activeVideoIndex]" [header]="media.videos[activeVideoIndex].name"
-                  [(visible)]="displayVideo" [modal]="true"
-                  styleClass="p-dialog-header-sm tw-w-2/3 tw-h-auto !tw-max-h-full" [draggable]="false"
-                  [resizable]="false" [dismissableMask]="true" transitionOptions="0ms linear"
-                  contentStyleClass="!tw-p-0">
-                  <div class="tw-aspect-w-16 tw-aspect-h-9">
-                    <iframe
-                      [src]="youtubeUrl + media.videos[activeVideoIndex].key + '?autoplay=1' | safeUrl: 'resourceUrl'"
-                      allowfullscreen width="100%" height="auto">
-                    </iframe>
-                  </div>
-                </p-dialog>
               </ng-container>
               <ng-template #noVideos>
                 <p class="tw-text-gray-400 tw-text-base tw-italic">{{ t('media.details.noVideos') }}</p>
@@ -165,6 +153,16 @@
         </ng-template>
       </div>
     </div>
+    <p-dialog *ngIf="media.videos[activeVideoIndex]" [header]="media.videos[activeVideoIndex].name"
+      [(visible)]="displayVideo" [modal]="true" styleClass="p-dialog-header-sm tw-w-2/3 tw-h-auto !tw-max-h-full"
+      [draggable]="false" [resizable]="false" [dismissableMask]="true" transitionOptions="0ms linear"
+      contentStyleClass="!tw-p-0">
+      <div class="tw-aspect-w-16 tw-aspect-h-9">
+        <iframe [src]="youtubeUrl + media.videos[activeVideoIndex].key + '?autoplay=1' | safeUrl: 'resourceUrl'"
+          allowfullscreen width="100%" height="auto">
+        </iframe>
+      </div>
+    </p-dialog>
   </ng-container>
 </ng-container>
 <ng-template #loadingMediaTpl>

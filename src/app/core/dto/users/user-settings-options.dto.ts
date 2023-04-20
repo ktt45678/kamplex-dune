@@ -1,11 +1,17 @@
 export interface MediaPlayerOptions {
-  autoNextEpisode?: boolean;
+  muted?: boolean | null;
+  volume?: number | null;
+  quality?: number | null;
+  speed?: number | null;
+  subtitle?: boolean | null;
+  subtitleLang?: string | null;
+  autoNextEp?: boolean | null;
 }
 
 export interface SubtitleOptions {
   fontSize?: number;
   fontFamily?: string | null;
-  fontWeight?: string | null;
+  fontWeight?: number | null;
   textColor?: number | null;
   textAlpha?: number | null;
   textEdge?: number | null;

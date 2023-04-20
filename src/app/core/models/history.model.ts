@@ -4,7 +4,7 @@ export interface History {
   _id: string;
   media: Media;
   episode?: TVEpisode;
-  watchTime: number;
+  time: number;
   date: string;
   paused: boolean;
   watched: boolean;
