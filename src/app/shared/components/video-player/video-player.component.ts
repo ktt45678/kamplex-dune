@@ -316,7 +316,7 @@ export class VideoPlayerComponent implements OnInit, OnDestroy {
     const windowAlpha = settings.winAlpha != undefined ? settings.winAlpha : 100;
     this.subtitleStyles = {
       'font-family': getFontFamily(settings.fontFamily),
-      '--cue-font-size-normal': scaleFontSize(32, settings.fontSize || 100),
+      '--cue-font-size-scale': (settings.fontSize || 100) / 100,
       '--cue-color': prepareColor(textColor, textAlpha),
       '--cue-font-weight': scaleFontWeight(settings.fontWeight),
       '--cue-text-shadow': getTextEdgeStyle(settings.textEdge),
