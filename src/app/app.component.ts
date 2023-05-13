@@ -25,10 +25,11 @@ export class AppComponent implements OnInit {
   }
 
   private handleScrollOnNavigation(): void {
+    type ScrollNavigationEnd = Scroll & { routerEvent: NavigationEnd };
     this.router.events.pipe(
-      filter((e: Event): e is Scroll => e instanceof Scroll),
+      filter((e: Event): e is ScrollNavigationEnd => e instanceof Scroll && e.routerEvent instanceof NavigationEnd),
       pairwise()
-    ).subscribe((e: Scroll[]) => {
+    ).subscribe((e: ScrollNavigationEnd[]) => {
       const previous = e[0];
       const current = e[1];
       if (current.position) {
@@ -55,7 +56,7 @@ export class AppComponent implements OnInit {
 
   private handlePageTitle(): void {
     this.router.events.pipe(
-      filter((event) => event instanceof NavigationEnd),
+      filter((e: Event) => e instanceof NavigationEnd),
       map(() => {
         let route: ActivatedRoute = this.router.routerState.root;
         while (route.firstChild && !route.snapshot.data['applyToChildren'])

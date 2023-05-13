@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, CanDeactivate, RouterStateSnapshot, UrlTree } from '@angular/router';
+import { ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { Observable, tap } from 'rxjs';
 
 import { WsService } from '../../shared/modules/ws';
 import { AuthService } from '../services';
 
 @Injectable()
-export class WsActivatorGuard implements CanActivate, CanDeactivate<any> {
+export class WsActivatorGuard {
   constructor(private wsService: WsService, private authService: AuthService) { }
 
   canActivate(

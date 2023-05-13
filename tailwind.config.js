@@ -1,11 +1,11 @@
-const { guessProductionMode } = require('@ngneat/tailwind');
-const plugin = require('tailwindcss/plugin');
-const defaultTheme = require('tailwindcss/defaultTheme');
-const _ = require('lodash');
+/** @type {import('tailwindcss').Config} */
+import { guessProductionMode } from '@ngneat/tailwind';
+import plugin from 'tailwindcss/plugin';
+import _ from 'lodash-es';
 
 process.env.TAILWIND_MODE = guessProductionMode() ? 'build' : 'watch';
 
-module.exports = {
+export default {
   prefix: 'tw-',
   mode: 'jit',
   content: [

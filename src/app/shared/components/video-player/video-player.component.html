@@ -1,8 +1,7 @@
 <ng-container *transloco="let t">
-  <media-player #player aspect-ratio="16/9" preload="metadata" key-target="player" playsinline="true" crossorigin
-    [attr.data-menu-open]="isMenuOpen ? '' : null" [attr.thumbnails]="previewThumbnail"
-    image-cdn="https://wsrv.nl/?url={url}" log-level="debug">
-    <!--autoplay-->
+  <media-player #player aspect-ratio="16/9" preload="metadata" key-target="player" playsinline="true" autoplay
+    crossorigin [attr.data-menu-open]="isMenuOpen ? '' : null" [attr.thumbnails]="previewThumbnail"
+    image-cdn="https://wsrv.nl/?url={url}">
     <media-outlet class="tw-h-full">
       <media-captions [ngStyle]="subtitleStyles"></media-captions>
     </media-outlet>
