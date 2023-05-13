@@ -10,9 +10,10 @@ import { InjectionToken } from '@angular/core';
 import { FocusOrigin } from '@angular/cdk/a11y';
 
 import { SlideMenuStackItem } from './slide-menu-stack/slide-menu-stack';
+import { SlideMenuOverlay } from './slide-menu-overlay/slide-menu-overlay';
 
 /** Injection token used to return classes implementing the Menu interface */
-export const SLIDE_MENU = new InjectionToken<SlideMenu>('slide-menu');
+export const SLIDE_MENU = new InjectionToken<SlideMenu & SlideMenuOverlay>('slide-menu');
 
 /** Interface which specifies Menu operations and used to break circular dependency issues */
 export interface SlideMenu extends SlideMenuStackItem {

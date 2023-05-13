@@ -1,4 +1,5 @@
 export * from './app-error-code.enum';
+export * from './audio-codec.enum';
 export * from './cache-key.enum';
 export * from './ext-media-provider.enum';
 export * from './font-family.enum';
@@ -13,8 +14,8 @@ export * from './queue-upload-status.enum';
 export * from './regex-pattern.enum';
 export * from './socket-message.enum';
 export * from './socket-room.enum';
-export * from './stream-codec.enum';
 export * from './text-edge-style.enum';
 export * from './toast-key.enum';
 export * from './user-permission.enum';
 export * from './user-visibility.enum';
+export * from './video-codec.enum';

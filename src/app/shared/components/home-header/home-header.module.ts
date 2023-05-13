@@ -10,12 +10,14 @@ import { SidebarModule } from 'primeng/sidebar';
 
 import { HomeHeaderComponent } from './home-header.component';
 import { SkeletonModule } from '../skeleton';
+import { AvatarModule } from '../avatar';
 import { CdkMenuCustomModule } from '../../directives/cdk-menu-custom';
 import { CommonDirectiveModule } from '../../directives/common-directive';
 import { LazyloadImageExtraModule } from '../../directives/lazyload-image-extra';
 import { PermissionPipeModule } from '../../pipes/permission-pipe';
 import { NumberPipeModule } from '../../pipes/number-pipe';
 import { DateTimePipeModule } from '../../pipes/date-time-pipe';
+import { StringPipeModule } from '../../pipes/string-pipe';
 
 @NgModule({
   declarations: [HomeHeaderComponent],
@@ -26,12 +28,14 @@ import { DateTimePipeModule } from '../../pipes/date-time-pipe';
     LazyLoadImageModule,
     InfiniteScrollModule,
     SkeletonModule,
+    AvatarModule,
     CdkMenuCustomModule,
     CommonDirectiveModule,
     LazyloadImageExtraModule,
     PermissionPipeModule,
     NumberPipeModule,
     DateTimePipeModule,
+    StringPipeModule,
     AutoCompleteModule,
     ButtonModule,
     SidebarModule

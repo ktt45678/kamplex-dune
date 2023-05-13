@@ -1,4 +1,4 @@
-import { AfterContentInit, Component, ContentChildren, ElementRef, EventEmitter, inject, Input, NgZone, OnDestroy, Output, QueryList } from '@angular/core';
+import { AfterContentInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ContentChildren, ElementRef, EventEmitter, inject, Input, NgZone, OnDestroy, Output, QueryList, ViewChild } from '@angular/core';
 import { FocusKeyManager, FocusOrigin } from '@angular/cdk/a11y';
 import { Directionality } from '@angular/cdk/bidi';
 import { CdkMenuGroup, FocusNext } from '@angular/cdk/menu';
@@ -8,6 +8,7 @@ import { merge, Subject, mergeAll, mergeMap, startWith, switchMap, takeUntil, ma
 
 import { SlideMenuItem } from '../slide-menu-item/slide-menu-item';
 import { SLIDE_MENU_TRIGGER } from '../slide-menu-trigger-base/slide-menu-trigger-base';
+import { SlideMenuTriggerDirective } from '../slide-menu-trigger/slide-menu-trigger';
 import { PARENT_OR_NEW_INLINE_SLIDE_MENU_STACK_PROVIDER, SLIDE_MENU_STACK, SlideMenuStack, SlideMenuStackItem } from '../slide-menu-stack/slide-menu-stack';
 import { SLIDE_MENU, SlideMenu } from '../slide-menu-interface';
 
@@ -18,7 +19,7 @@ let nextId = 0;
   exportAs: 'appSlideMenu',
   template: `
     <ng-container *ngIf="menuStack.parentMenuRefs.length">
-      <button class="slide-menu-previous" slideMenuItem
+      <button #previousButton="slideMenuTriggerFor" class="slide-menu-previous" slideMenuItem
         [slideMenuTriggerFor]="menuStack.parentMenuRefs[menuStack.parentMenuRefs.length - 1]">
         <i class="ms ms-icon-sm ms-navigate-before"></i>
         <span>{{ backLabel }}</span>
@@ -39,6 +40,7 @@ let nextId = 0;
     '(focusout)': 'menuStack.setHasFocus(false)',
     '(keydown)': '_handleKeyEvent($event)'
   },
+  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     { provide: CdkMenuGroup, useExisting: SlideMenuOverlay },
     { provide: SLIDE_MENU, useExisting: SlideMenuOverlay },
@@ -68,6 +70,8 @@ export class SlideMenuOverlay extends CdkMenuGroup implements SlideMenu, AfterCo
 
   /** Event emitted when the menu is closed. */
   @Output() readonly closed: EventEmitter<void> = new EventEmitter();
+
+  @ViewChild('previousButton') previousButton?: SlideMenuTriggerDirective;
 
   /** All child MenuItem elements nested in this Menu. */
   @ContentChildren(SlideMenuItem, { descendants: true })
@@ -103,7 +107,7 @@ export class SlideMenuOverlay extends CdkMenuGroup implements SlideMenu, AfterCo
     player.play();
   }
 
-  constructor(private animationBuilder: AnimationBuilder, private el: ElementRef) {
+  constructor(public cd: ChangeDetectorRef, private animationBuilder: AnimationBuilder, private el: ElementRef) {
     super();
     this.destroyed.subscribe(this.closed);
     this._parentTrigger?.registerChildMenu(this);
@@ -234,6 +238,13 @@ export class SlideMenuOverlay extends CdkMenuGroup implements SlideMenu, AfterCo
     const keyManager = this.keyManager;
     switch (event.code) {
       case 'ArrowLeft':
+        if (this.previousButton) {
+          event.preventDefault();
+          this.previousButton.open();
+          this.previousButton.getMenu()?.focusFirstItem('keyboard');
+        }
+        break;
+
       case 'ArrowRight':
         if (!hasModifierKey(event)) {
           event.preventDefault();
@@ -245,10 +256,7 @@ export class SlideMenuOverlay extends CdkMenuGroup implements SlideMenu, AfterCo
       case 'Escape':
         if (!hasModifierKey(event)) {
           event.preventDefault();
-          this.menuStack.close(this, {
-            focusNextOnEmpty: FocusNext.currentItem,
-            focusParentTrigger: true,
-          });
+          this.menuStack.closeAll({ focusParentTrigger: true, });
         }
         break;
 

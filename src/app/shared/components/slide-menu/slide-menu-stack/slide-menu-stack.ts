@@ -8,7 +8,7 @@
 
 import { FocusNext } from '@angular/cdk/menu';
 import { Overlay, OverlayConfig, OverlayRef } from '@angular/cdk/overlay';
-import { ElementRef, Inject, Injectable, InjectionToken, Optional, SkipSelf, TemplateRef, inject } from '@angular/core';
+import { ElementRef, Inject, Injectable, InjectionToken, Injector, Optional, SkipSelf, TemplateRef, ViewContainerRef, inject } from '@angular/core';
 import { Observable, Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, startWith } from 'rxjs/operators';
 
@@ -111,6 +111,10 @@ export class SlideMenuStack {
 
   primaryTrigger: ElementRef<unknown> | null = null;
 
+  primaryViewContainerRef: ViewContainerRef | null = null;
+
+  primaryInjector: Injector | null = null;
+
   overlayRef: OverlayRef | null = null;
 
   outsideClickSubscription?: Subscription;
@@ -123,8 +127,8 @@ export class SlideMenuStack {
   }
 
   /**
- * Set the first menu trigger as the primary trigger
- */
+   * Set the first menu trigger as the primary trigger
+   */
   registerTrigger(element: ElementRef) {
     if (this.primaryTrigger === null)
       this.primaryTrigger = element;
@@ -132,6 +136,16 @@ export class SlideMenuStack {
 
   isPrimaryTrigger(element: ElementRef) {
     return this.primaryTrigger === element;
+  }
+
+  /**
+   * Set the first injector and viewContainerRef (usually from the primary trigger) as the primary ones
+   */
+  registerViewRef(injector: Injector, viewContainerRef: ViewContainerRef) {
+    if (this.primaryViewContainerRef === null)
+      this.primaryViewContainerRef = viewContainerRef;
+    if (this.primaryInjector === null)
+      this.primaryInjector = injector;
   }
 
   /**
@@ -242,8 +256,8 @@ export class SlideMenuStack {
       this.overlayRef.dispose();
       this.overlayRef = null;
     }
-    if (this.primaryTrigger) {
-      this.primaryTrigger = null;
-    }
+    this.primaryTrigger = null;
+    this.primaryInjector = null;
+    this.primaryViewContainerRef = null;
   }
 }

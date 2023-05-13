@@ -5,5 +5,4 @@ export interface MediaStreamFile {
   codec: number;
   mimeType: string;
   size: number;
-  src: string;
 }

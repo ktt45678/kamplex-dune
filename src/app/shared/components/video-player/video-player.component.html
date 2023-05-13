@@ -1,23 +1,46 @@
 <ng-container *transloco="let t">
-  <media-player #player aspect-ratio="16/9" autoplay crossorigin>
-    <media-outlet>
-      <media-captions [ngStyle]="subtitleStyles">
-      </media-captions>
+  <media-player #player aspect-ratio="16/9" preload="metadata" key-target="player" playsinline="true" crossorigin
+    [attr.data-menu-open]="isMenuOpen ? '' : null" [attr.thumbnails]="previewThumbnail"
+    image-cdn="https://wsrv.nl/?url={url}" log-level="debug">
+    <!--autoplay-->
+    <media-outlet class="tw-h-full">
+      <media-captions [ngStyle]="subtitleStyles"></media-captions>
     </media-outlet>
-    <ng-container *ngIf="playerStore">
-      <div *ngIf="!playerStore.canPlay || playerStore.waiting" class="tw-absolute tw-absolute-center tw-z-1"
-        aria-label="Loading media">
-        <p-progressSpinner strokeWidth="3px"></p-progressSpinner>
+    <ng-container *ngIf="playerStore && playerStoreAudio && playerStoreQuality">
+      <div *ngIf="!playerStore.canPlay || playerStore.waiting" class="tw-absolute tw-absolute-center tw-z-1
+        tw-pointer-events-none" aria-label="Loading media">
+        <p-progressSpinner strokeWidth="3px" styleClass="max-sm:!tw-w-20 max-sm:!tw-h-20"></p-progressSpinner>
       </div>
-      <div *ngIf="isMobile" class="media-controls player-center-controls tw-absolute tw-absolute-center tw-z-3
-        tw-transition-opacity tw-ease-linear tw-duration-200" aria-label="Mobile center controls">
-        <ng-container *ngTemplateOutlet="playButtonTpl; context: { styleClass: 'tw-w-24 sm:tw-w-32' }">
+      <div *ngIf="isMobile; else statusToast" class="media-controls player-center-controls tw-flex tw-items-center
+        tw-absolute tw-absolute-center tw-z-3 tw-transition-opacity tw-ease-linear tw-duration-200"
+        aria-label="Mobile center controls">
+        <ng-container
+          *ngTemplateOutlet="prevEpButtonTpl; context:
+          { styleClass: 'tw-w-8 tw-h-8 xs:tw-w-10 xs:tw-h-10 sm:tw-w-12 sm:tw-h-12 tw-bg-black/40 tw-rounded-full tw-p-1' }">
+        </ng-container>
+        <ng-container
+          *ngTemplateOutlet="playButtonTpl; context:
+          { styleClass: 'tw-w-10 xs:tw-w-12 sm:tw-w-16 tw-mx-8 sm:tw-mx-14 md:tw-mx-20 tw-bg-black/40 tw-rounded-full tw-p-1' }">
+        </ng-container>
+        <ng-container
+          *ngTemplateOutlet="nextEpButtonTpl; context:
+          { styleClass: 'tw-w-8 tw-h-8 xs:tw-w-10 xs:tw-h-10 sm:tw-w-12 sm:tw-h-12 tw-bg-black/40 tw-rounded-full tw-p-1' }">
         </ng-container>
       </div>
+      <ng-template #statusToast>
+        <div class="media-controls media-toast tw-absolute tw-absolute-center tw-pointer-events-none tw-z-3"
+          [attr.data-paused]="playerStore.paused ? '' : null" aria-hidden="true">
+          <svg #mediaToast aria-hidden="true" width="64px" height="64px" viewBox="0 0 36 36"
+            class="tw-bg-black/40 tw-rounded-full tw-p-2 tw-opacity-0">
+            <path fill="white" />
+          </svg>
+        </div>
+      </ng-template>
       <div class="media-controls tw-text-white tw-absolute tw-inset-0 tw-flex tw-flex-col tw-justify-between tw-z-2
-        tw-transition-opacity tw-duration-200 tw-ease-linear focus-within:tw-opacity-100" role="group"
-        aria-label="Media controls">
-        <div class="tw-flex" [ngClass]="{ 'tw-h-32 tw-bg-gradient-to-b tw-from-black/60 tw-to-transparent': isMobile }">
+        tw-pointer-events-none tw-transition-opacity tw-duration-200 tw-ease-linear focus-within:tw-opacity-100"
+        role="group" aria-label="Media controls">
+        <div class="tw-flex"
+          [ngClass]="{ 'tw-h-32 tw-bg-gradient-to-b tw-from-black/60 tw-to-transparent tw-pointer-events-auto': isMobile }">
           <div class="tw-ml-auto">
             <ng-container *ngIf="isMobile">
               <ng-container *ngTemplateOutlet="subtitleButtonTpl"></ng-container>
@@ -29,17 +52,26 @@
           </div>
         </div>
         <div class="tw-flex tw-flex-wrap tw-content-end tw-h-64 tw-bg-gradient-to-t tw-from-black/60 tw-to-transparent">
-          <media-time-slider step="1">
+          <media-time-slider step="1" key-step="5" shift-key-multiplier="2" class="tw-pointer-events-auto">
+            <div part="track track-hover"></div>
             <div slot="preview">
-              <media-slider-thumbnail [attr.src]="previewThumbnail" cdn="https://wsrv.nl/?url={url}&q=90" />
-              <media-slider-value type="pointer" format="time" />
+              <media-slider-thumbnail class="tw-z-4" />
+              <media-slider-value type="pointer" format="time">
+              </media-slider-value>
             </div>
           </media-time-slider>
-          <div #bottomControls role="group" class="player-bottom-controls tw-flex tw-justify-between tw-w-full"
+          <div #bottomControls role="group"
+            class="player-bottom-controls tw-flex tw-justify-between tw-w-full tw-pointer-events-auto"
             (mouseleave)="isVolumeCtrlActive = false">
             <div class="tw-flex tw-items-center" aria-label="Left controls">
               <ng-container *ngIf="!isMobile">
+                <ng-container *ngIf="canReqPrevEp || canReqNextEp" [ngTemplateOutlet]="prevEpButtonTpl"
+                  [ngTemplateOutletContext]="{ styleClass: 'tw-w-14 tw-p-2' }">
+                </ng-container>
                 <ng-container *ngTemplateOutlet="playButtonTpl; context: { styleClass: 'tw-w-14 tw-p-2' }">
+                </ng-container>
+                <ng-container *ngIf="canReqPrevEp || canReqNextEp" [ngTemplateOutlet]="nextEpButtonTpl"
+                  [ngTemplateOutletContext]="{ styleClass: 'tw-w-14 tw-p-2' }">
                 </ng-container>
               </ng-container>
               <div *ngIf="!isMobile" class="player-volume-area tw-flex tw-items-center"
@@ -80,9 +112,24 @@
                 <ng-container *ngTemplateOutlet="subtitleButtonTpl"></ng-container>
                 <ng-container *ngTemplateOutlet="settingsButtonTpl; context: {
                   menuPosition: [ { originX: 'end', originY: 'top', overlayX: 'end', overlayY: 'bottom' } ],
-                  menuRelativeTo: bottomControls, offsetX: -10, offsetY: -20, flexibleDimensions: false
+                  menuRelativeTo: bottomControls, offsetX: -10, offsetY: -10, flexibleDimensions: false
                 }"></ng-container>
               </ng-container>
+              <button *ngIf="canFullWindow" type="button"
+                class="media-full-window-button tw-w-14 tw-p-2 focus-visible:tw-shadow-focus-box"
+                aria-label="Full window" (click)="toggleFullwindow()">
+                <svg *ngIf="!fullWindow; else isFullWindowTpl" slot="enter" width="100%" height="100%" version="1.1"
+                  viewBox="0 0 36 36" fill="white">
+                  <path
+                    d="M 10 12.266 L 10 23.734 L 26 23.734 L 26 12.266 L 10 12.266 M 24 21.734 L 12 21.734 L 12 14.266 L 24 14.266 L 24 21.734 Z" />
+                </svg>
+                <ng-template #isFullWindowTpl>
+                  <svg slot="exit" width="100%" height="100%" version="1.1" viewBox="0 0 36 36" fill="white">
+                    <path
+                      d="M 10 13.458 L 10 22.543 L 26 22.543 L 26 13.458 L 10 13.458 M 24 20.543 L 12 20.543 L 12 15.458 L 24 15.458 L 24 20.543 Z" />
+                  </svg>
+                </ng-template>
+              </button>
               <button type="button" class="media-fullscreen-button tw-w-14 tw-p-2 focus-visible:tw-shadow-focus-box"
                 aria-label="Fullscreen" aria-keyshortcuts="f"
                 [attr.data-fullscreen]="playerStore.fullscreen ? '' : null" (click)="toggleFullscreen()">
@@ -122,19 +169,35 @@
           </div>
         </div>
       </div>
+      <ng-template #nextEpButtonTpl let-tplStyleClass="styleClass">
+        <button type="button" class="media-next-button focus-visible:tw-shadow-focus-box" aria-label="Next"
+          [class]="tplStyleClass" [ngClass]="{ 'p-disabled': !canReqNextEp }" (click)="toggleNext()">
+          <svg slot="next" aria-hidden="true" viewBox="0 0 36 36" fill="white">
+            <path d="M 22 24 L 24 24 L 24 12 L 22 12 M 12 24 L 20.5 18 L 12 12 L 12 24 Z" />
+          </svg>
+        </button>
+      </ng-template>
+      <ng-template #prevEpButtonTpl let-tplStyleClass="styleClass">
+        <button type="button" class="media-prev-button focus-visible:tw-shadow-focus-box" aria-label="Previous"
+          [class]="tplStyleClass" [ngClass]="{ 'p-disabled': !canReqPrevEp }" (click)="togglePrev()">
+          <svg slot="prev" aria-hidden="true" viewBox="0 0 36 36" fill="white">
+            <path d="M 12 24 L 12 12 L 14 12 L 14 24 L 12 24 M 15.5 18 L 24 12 L 24 24 L 15.5 18 Z" />
+          </svg>
+        </button>
+      </ng-template>
       <ng-template #playButtonTpl let-tplStyleClass="styleClass">
         <button type="button" class="media-play-button focus-visible:tw-shadow-focus-box" aria-label="Play/Pause"
           [class]="tplStyleClass" aria-keyshortcuts="k Space" [attr.data-paused]="playerStore.paused ? '' : null"
           (click)="togglePlay()">
           <svg slot="play" aria-hidden="true" viewBox="0 0 36 36" fill="white">
             <path d="M 12,26 18.5,22 18.5,14 12,10 z M 18.5,22 25,18 25,18 18.5,14 z"
-              class="tw-transition-all tw-duration-200" />
+              class="tw-transition-[d] tw-duration-200" />
           </svg>
         </button>
       </ng-template>
       <ng-template #subtitleButtonTpl>
         <button type="button" class="media-subtitle-button tw-w-14 tw-p-2 focus-visible:tw-shadow-focus-box"
-          [ngClass]="{ 'tw-opacity-30': !tracks?.length }" aria-label="Enable/disable subtitle" aria-keyshortcuts="c"
+          [ngClass]="{ 'p-disabled': !tracks?.length }" aria-label="Enable/disable subtitle" aria-keyshortcuts="c"
           (click)="toggleSubtitle()">
           <svg *ngIf="enableSubtitle; else trackDisabledTpl" slot="enabled" width="100%" height="100%" version="1.1"
             viewBox="0 0 36 36" fill="white">
@@ -153,11 +216,11 @@
         let-tplOffsetX="offsetX" let-tplOffsetY="offsetY" let-tplLockedPosition="lockedPosition"
         let-tplFlexibleDimensions="flexibleDimensions">
         <button type="button" class="media-settings-button tw-w-14 tw-p-2 focus-visible:tw-shadow-focus-box"
-          aria-label="Settings" [slideMenuTriggerFor]="settingsMenu" [menuRelativeTo]="tplMenuRelativeTo"
-          [offsetX]="tplOffsetX" [offsetY]="tplOffsetY" [lockedPosition]="tplLockedPosition"
-          [flexibleDimensions]="tplFlexibleDimensions" #settingsMenuButton #settingsMenuTrigger="slideMenuTriggerFor"
-          [menuPosition]="tplMenuPosition" (menuOpened)="onSettingsMenuClick(settingsMenuButton, true)"
-          (menuClosed)="onSettingsMenuClick(settingsMenuButton, false)">
+          [ngClass]="{ 'media-settings-button-active': isMenuOpen }" aria-label="Settings"
+          [slideMenuTriggerFor]="settingsMenu" [menuRelativeTo]="tplMenuRelativeTo" [offsetX]="tplOffsetX"
+          [offsetY]="tplOffsetY" [lockedPosition]="tplLockedPosition" [flexibleDimensions]="tplFlexibleDimensions"
+          #settingsMenuButton #settingsMenuTrigger="slideMenuTriggerFor" [menuPosition]="tplMenuPosition"
+          (menuOpened)="isMenuOpen = true" (menuClosed)="isMenuOpen = false">
           <svg slot="show" width="100%" height="100%" version="1.1" viewBox="0 0 36 36" fill="white"
             class="tw-transition-transform tw-duration-200">
             <path
@@ -165,61 +228,82 @@
           </svg>
         </button>
       </ng-template>
+      <ng-template #settingsMenu>
+        <app-slide-menu class="media-menu" [ngClass]="{ 'media-menu-mobile tw-w-96': isMobile }">
+          <button slideMenuItemCheckbox>
+            <!-- <i class="ms ms-queue-play-next"></i>
+            <span>{{ t('player.menu.autoNext') }}</span> -->
+            <p-inputSwitch label="Auto next"></p-inputSwitch>
+          </button>
+          <button slideMenuItem [slideMenuTriggerFor]="playbackSpeedMenu">
+            <i class="ms ms-slow-motion-video"></i>
+            <span>{{ t('player.menu.speed') }}</span>
+          </button>
+          <button slideMenuItem [slideMenuTriggerFor]="audioMenu" [disabled]="!playerStore.canPlay">
+            <i class="ms ms-speaker"></i>
+            <span>{{ t('player.menu.audio') }}</span>
+          </button>
+          <button slideMenuItem [slideMenuTriggerFor]="qualityMenu" [disabled]="!playerStore.canPlay">
+            <i class="ms ms-tune"></i>
+            <span>{{ t('player.menu.quality') }}</span>
+          </button>
+          <button *ngIf="tracks?.length" slideMenuItem [slideMenuTriggerFor]="subtitleMenu">
+            <i class="ms ms-subtitles"></i>
+            <span>{{ t('player.menu.subtitle') }}</span>
+          </button>
+        </app-slide-menu>
+      </ng-template>
+      <ng-template #playbackSpeedMenu>
+        <app-slide-menu class="media-menu p-scrollbar tw-overflow-y-auto"
+          [ngClass]="{ 'media-menu-mobile tw-w-96': isMobile }" [backLabel]="t('player.menu.speed')">
+          <button *ngFor="let speed of playbackSpeeds" slideMenuItemRadio [menuItemChecked]="activeSpeedValue === speed"
+            (menuItemTriggered)="setPlaybackSpeed(speed)">
+            <i role="checkbox" class="ms ms-icon-sm ms-check"></i>
+            <span>{{ speed === 1 ? t('player.speed.normal') : speed }}</span>
+          </button>
+        </app-slide-menu>
+      </ng-template>
+      <ng-template #audioMenu>
+        <app-slide-menu class="media-menu p-scrollbar tw-max-h-80 tw-overflow-y-auto"
+          [ngClass]="{ 'media-menu-mobile tw-w-96': isMobile }" [backLabel]="t('player.menu.audio')">
+          <button *ngFor="let audio of playerStoreAudio.audioTracks; let i = index; trackBy: track_Id"
+            slideMenuItemRadio [menuItemChecked]="audio.selected" (menuItemTriggered)="changeAudioTrack(i)">
+            <i role="checkbox" class="ms ms-icon-sm ms-check"></i>
+            <span>{{ audio.label }}</span>
+          </button>
+        </app-slide-menu>
+      </ng-template>
+      <ng-template #qualityMenu>
+        <app-slide-menu class="media-menu p-scrollbar tw-max-h-80 tw-overflow-y-auto"
+          [ngClass]="{ 'media-menu-mobile tw-w-96': isMobile }" [backLabel]="t('player.menu.quality')">
+          <button *ngFor="let quality of playerStoreQuality.qualities; let i = index; trackBy: track_Id"
+            slideMenuItemRadio [menuItemChecked]="quality.selected && !playerStoreQuality.autoQuality"
+            (menuItemTriggered)="changeVideoQuality(i)">
+            <i role="checkbox" class="ms ms-icon-sm ms-check"></i>
+            <span>{{ quality.height }}p ({{ (quality.bitrate / 1024) | number:'1.0-0' }}Kbps)</span>
+          </button>
+          <button slideMenuItemRadio [menuItemChecked]="player.qualities.auto"
+            (menuItemTriggered)="changeVideoQuality(-1)">
+            <i role="checkbox" class="ms ms-icon-sm ms-check"></i>
+            <span>{{ t('player.qualities.auto') }}</span>
+          </button>
+        </app-slide-menu>
+      </ng-template>
+      <ng-template #subtitleMenu>
+        <app-slide-menu class="media-menu p-scrollbar tw-max-h-80 tw-overflow-y-auto"
+          [ngClass]="{ 'media-menu-mobile tw-w-96': isMobile }" [backLabel]="t('player.menu.subtitle')">
+          <button slideMenuItemRadio [menuItemChecked]="!enableSubtitle" (menuItemTriggered)="setPlayerTrack(null)">
+            <i role="checkbox" class="ms ms-icon-sm ms-check"></i>
+            <span>{{ t('player.subtitles.off') }}</span>
+          </button>
+          <button *ngFor="let track of tracks; trackBy: track_Id" slideMenuItemRadio
+            [menuItemChecked]="enableSubtitle && activeTrackValue === track.lang"
+            (menuItemTriggered)="setPlayerTrack(track.lang)">
+            <i role="checkbox" class="ms ms-icon-sm ms-check"></i>
+            <span>{{ track.label }}</span>
+          </button>
+        </app-slide-menu>
+      </ng-template>
     </ng-container>
-    <ng-template #settingsMenu>
-      <app-slide-menu class="media-menu" [ngClass]="{ 'tw-w-96': isMobile }">
-        <!--button slideMenuItemCheckbox [menuItemChecked]="true">
-          <i class="ms ms-queue-play-next"></i>
-          <span>{{ t('player.menu.autoNext') }}</span>
-          <i role="checkbox" class="ms ms-icon-sm ms-check tw-ml-auto"></i>
-        </button-->
-        <button slideMenuItem [slideMenuTriggerFor]="playbackSpeedMenu">
-          <i class="ms ms-slow-motion-video"></i>
-          <span>{{ t('player.menu.speed') }}</span>
-        </button>
-        <button slideMenuItem [slideMenuTriggerFor]="qualityMenu">
-          <i class="ms ms-tune"></i>
-          <span>{{ t('player.menu.quality') }}</span>
-        </button>
-        <button *ngIf="tracks?.length" slideMenuItem [slideMenuTriggerFor]="subtitleMenu">
-          <i class="ms ms-subtitles"></i>
-          <span>{{ t('player.menu.subtitle') }}</span>
-        </button>
-      </app-slide-menu>
-    </ng-template>
-    <ng-template #playbackSpeedMenu>
-      <app-slide-menu class="media-menu p-scrollbar tw-overflow-y-auto" [ngClass]="{ 'tw-w-96': isMobile }"
-        [backLabel]="t('player.menu.speed')">
-        <button *ngFor="let speed of playbackSpeeds" slideMenuItemRadio [menuItemChecked]="activeSpeedValue === speed"
-          (click)="setPlaybackSpeed(speed)">
-          <i role="checkbox" class="ms ms-icon-sm ms-check"></i>
-          <span>{{ speed === 1 ? t('player.speed.normal') : speed }}</span>
-        </button>
-      </app-slide-menu>
-    </ng-template>
-    <ng-template #qualityMenu>
-      <app-slide-menu class="media-menu p-scrollbar tw-max-h-80 tw-overflow-y-auto" [ngClass]="{ 'tw-w-96': isMobile }"
-        [backLabel]="t('player.menu.quality')">
-        <button *ngFor="let source of sources; let i = index; trackBy: track_Id" slideMenuItemRadio
-          [menuItemChecked]="activeSourceIndex === i" (click)="changePlayerQuality(i)">
-          <i role="checkbox" class="ms ms-icon-sm ms-check"></i>
-          <span>{{ source.size }}p</span>
-        </button>
-      </app-slide-menu>
-    </ng-template>
-    <ng-template #subtitleMenu>
-      <app-slide-menu class="media-menu p-scrollbar tw-max-h-80 tw-overflow-y-auto" [ngClass]="{ 'tw-w-96': isMobile }"
-        [backLabel]="t('player.menu.subtitle')">
-        <button slideMenuItemRadio [menuItemChecked]="!enableSubtitle" (click)="setPlayerTrack(null)">
-          <i role="checkbox" class="ms ms-icon-sm ms-check"></i>
-          <span>{{ t('player.subtitles.off') }}</span>
-        </button>
-        <button *ngFor="let track of tracks; trackBy: track_Id" slideMenuItemRadio
-          [menuItemChecked]="enableSubtitle && activeTrackValue === track.lang" (click)="setPlayerTrack(track.lang)">
-          <i role="checkbox" class="ms ms-icon-sm ms-check"></i>
-          <span>{{ track.label }}</span>
-        </button>
-      </app-slide-menu>
-    </ng-template>
   </media-player>
 </ng-container>

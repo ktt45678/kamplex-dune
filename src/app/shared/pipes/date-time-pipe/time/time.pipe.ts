@@ -4,6 +4,7 @@ import { formatDuration, intervalToDuration } from 'date-fns';
 import { enUS, vi } from 'date-fns/locale';
 
 import { enUSShort } from '../../../../core/utils/date-fns-locales';
+import { formatDurationZero } from '../../../../core/utils';
 
 type TimeDisplay = 'long' | 'short' | 'shortColon';
 
@@ -42,8 +43,8 @@ export class TimePipe implements PipeTransform {
         if (zeroPad) return result.padStart(2, '0');
         return result;
       };
-      return formatDuration(duration, {
-        format,
+      return formatDurationZero(duration, {
+        format: format!,
         zero: zero,
         delimiter: ':',
         locale: { formatDistance: (_token, count) => convertToString(count) }

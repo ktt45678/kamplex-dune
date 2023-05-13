@@ -46,3 +46,10 @@ function getFilesFromPath(dir, extension) {
   let files = fs.readdirSync(dir);
   return files.filter(e => path.extname(e).toLowerCase() === extension);
 }
+
+console.log('Copy Service Workers file...');
+
+fs.copyFile('./src/assets/js/ngsw/ngsw-worker.js', `./dist/${defaultProject}/ngsw-worker.js`, (err) => {
+  if (err) throw err;
+  console.log('File copied');
+});

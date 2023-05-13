@@ -1,8 +1,8 @@
 import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Translation, TranslocoService } from '@ngneat/transloco';
-import { combineLatest, filter, first, interval, map, of, switchMap, takeUntil, timer } from 'rxjs';
+import { TranslocoService } from '@ngneat/transloco';
+import { Subscription, combineLatest, filter, first, interval, map, of, switchMap, takeUntil, timer } from 'rxjs';
 
 import { UpdateWatchTimeDto } from '../../../../core/dto/history';
 import { AuthService, MediaService, HistoryService, RatingsService, DestroyService } from '../../../../core/services';
@@ -11,8 +11,7 @@ import { VideoPlayerComponent } from '../../../../shared/components/video-player
 import { StarRatingComponent } from '../../../../shared/components/star-rating';
 import { MediaType } from '../../../../core/enums';
 import { toHexColor } from '../../../../core/utils';
-import { SITE_NAME } from '../../../../../environments/config';
-
+import { SITE_NAME, SITE_THEME_COLOR } from '../../../../../environments/config';
 
 @Component({
   selector: 'app-watch',
@@ -44,9 +43,11 @@ export class WatchComponent implements OnInit, OnDestroy {
   ratingCount: number = 0;
   showingMore: boolean = false;
   autoNext: boolean = false;
+  fullWindow: boolean = false;
   loadingRating: boolean = false;
   prevEpIndex: number = -1;
   nextEpIndex: number = -1;
+  watchTimeUpdateSub: Subscription = new Subscription();
 
   constructor(private ref: ChangeDetectorRef, private title: Title, private meta: Meta, private authService: AuthService,
     private mediaService: MediaService, private historyService: HistoryService, private ratingsService: RatingsService,
@@ -55,9 +56,9 @@ export class WatchComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.initWatch();
-    this.initWatchTimeUpdater();
     this.authService.currentUser$.pipe(takeUntil(this.destroyService)).subscribe(user => {
       this.currentUser = user;
+      this.initWatchTimeUpdater();
       this.ref.markForCheck();
     });
   }
@@ -102,13 +103,19 @@ export class WatchComponent implements OnInit, OnDestroy {
   }
 
   initWatchTimeUpdater(): void {
-    interval(3000).pipe(takeUntil(this.destroyService)).subscribe(() => {
-      this.updateLocalWatchTime();
-    });
+    this.watchTimeUpdateSub.unsubscribe();
+    if (this.currentUser?.settings?.history.paused) return;
+    this.watchTimeUpdateSub.add(
+      interval(3000).pipe(takeUntil(this.destroyService)).subscribe(() => {
+        this.updateLocalWatchTime();
+      })
+    );
     if (this.currentUser) {
-      timer(5000, 60000).pipe(takeUntil(this.destroyService)).subscribe(() => {
-        this.updateWatchTimeToServer();
-      });
+      this.watchTimeUpdateSub.add(
+        timer(5000, 60000).pipe(takeUntil(this.destroyService)).subscribe(() => {
+          this.updateWatchTimeToServer();
+        })
+      );
     }
   }
 
@@ -132,12 +139,10 @@ export class WatchComponent implements OnInit, OnDestroy {
   watchMovie(media: MediaDetails): void {
     this.title.setTitle(`${media.title} - ${SITE_NAME}`);
     this.setMediaMeta(media);
-    this.translocoService.selectTranslation('languages').pipe(first(), switchMap(languages => {
-      return this.mediaService.findMovieStreams(media._id).pipe(map(movieStreams => ({ movieStreams, languages })));
-    })).subscribe(({ movieStreams, languages }) => {
+    this.mediaService.findMovieStreams(media._id).subscribe(movieStreams => {
       this.streams = movieStreams;
       this.ref.markForCheck();
-      this.setPlayerSource(movieStreams, languages);
+      this.setPlayerSource(movieStreams);
     });
   }
 
@@ -150,12 +155,10 @@ export class WatchComponent implements OnInit, OnDestroy {
     });
     this.setMediaMeta(media);
     this.findPrevAndNextEpisodes(media.tv.episodes, epNumber);
-    this.translocoService.selectTranslation('languages').pipe(first(), switchMap(languages => {
-      return this.mediaService.findTVStreams(media._id, epNumber).pipe(map(episodeStreams => ({ episodeStreams, languages })));
-    })).subscribe(({ episodeStreams, languages }) => {
+    this.mediaService.findTVStreams(media._id, epNumber).subscribe(episodeStreams => {
       this.streams = episodeStreams;
       this.ref.markForCheck();
-      this.setPlayerSource(episodeStreams, languages);
+      this.setPlayerSource(episodeStreams);
     });
   }
 
@@ -170,40 +173,29 @@ export class WatchComponent implements OnInit, OnDestroy {
     this.router.navigate([], { queryParams: { ep } });
   }
 
+  toggleFullwindow(event: boolean): void {
+    this.fullWindow = event;
+  }
+
   setMediaMeta(media: MediaDetails): void {
     this.meta.updateTag({ name: 'description', content: media.overview });
     this.meta.updateTag({ property: 'og:site_name', content: SITE_NAME });
     this.meta.updateTag({ property: 'og:title', content: media.title });
     this.meta.updateTag({ property: 'og:description', content: media.overview });
     media.posterColor && this.meta.updateTag({ name: 'theme-color', content: toHexColor(media.posterColor) });
-    media.thumbnailBackdropUrl && this.meta.updateTag({ property: 'og:description', content: media.thumbnailBackdropUrl });
+    if (media.posterUrl) {
+      this.meta.updateTag({ property: 'og:image', content: media.posterUrl });
+      this.meta.updateTag({ property: 'og:image:url', content: media.posterUrl });
+      this.meta.updateTag({ property: 'og:image:secure_url', content: media.posterUrl });
+      this.meta.updateTag({ property: 'og:image:width', content: '500' });
+      this.meta.updateTag({ property: 'og:image:height', content: '750' });
+      this.meta.updateTag({ property: 'og:image:type', content: 'image/jpeg' });
+      this.meta.updateTag({ property: 'og:image:alt', content: media.title });
+    }
   }
 
-  setPlayerSource(data: MediaStream, languages: Translation): void {
+  setPlayerSource(data: MediaStream): void {
     this.playerStreamData = data;
-    /*
-    const sources: KPVideoSource[] = [];
-    const tracks: KPTrack[] = [];
-    data.streams?.forEach(file => {
-      if (file.codec === this.selectedCodec) {
-        sources.push({
-          src: file.src,
-          type: file.mimeType,
-          size: file.quality
-        });
-      }
-    });
-    data.subtitles?.forEach(subtitle => {
-      tracks.push({
-        label: languages[subtitle.lang],
-        lang: subtitle.lang,
-        src: subtitle.src
-      });
-    });
-    this.playerSources = sources;
-    this.playerTracks = tracks;
-    this.playerPreviewThumbnail = data.previewThumbnail;
-    */
     this.ref.markForCheck();
   }
 
@@ -265,6 +257,14 @@ export class WatchComponent implements OnInit, OnDestroy {
     this.meta.removeTag('property="og:site_name"');
     this.meta.removeTag('property="og:title"');
     this.meta.removeTag('property="og:description"');
+    this.meta.removeTag('property="og:image"');
+    this.meta.removeTag('property="og:image:url"');
+    this.meta.removeTag('property="og:image:secure_url"');
+    this.meta.removeTag('property="og:image:width"');
+    this.meta.removeTag('property="og:image:height"');
+    this.meta.removeTag('property="og:image:type"');
+    this.meta.removeTag('property="og:image:alt"');
+    this.meta.updateTag({ name: 'theme-color', content: SITE_THEME_COLOR });
     this.currentUser && this.updateWatchTimeToServer();
   }
 }

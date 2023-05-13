@@ -35,8 +35,11 @@
     "producers": "Productions",
     "noProducers": "No producers found",
     "releaseDate": "Release date",
+    "status": "Status",
+    "tags": "Tags",
     "videos": "Videos",
     "noVideos": "No videos found",
+    "episodes": "Episodes",
     "episodeCountValue": "{{ episodeCount }} episodes",
     "noEpisodes": "No episodes found",
     "originalTitle": "Original title",
@@ -104,7 +107,7 @@
     "upcoming": "Upcoming",
     "released": "Released",
     "airing": "Airing",
-    "aired": "Aired"
+    "aired": "Finished airing"
   },
   "watch": {
     "prevEpisode": "Prev",

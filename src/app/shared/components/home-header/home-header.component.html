@@ -1,7 +1,8 @@
 <ng-container *transloco="let t">
   <header>
-    <nav id="navbar" class="tw-z-10 tw-bg-neutral-900" [ngClass]="{ 'tw-fixed tw-top-0 tw-left-0 tw-right-0 tw-transition-top':
-      isFixedNavbar, 'tw-bg-opacity-60': !isMobileMenuOpened, 'tw-bg-opacity-100': isMobileMenuOpened }">
+    <nav id="navbar" class="tw-z-10 tw-bg-neutral-900 hover:tw-bg-opacity-100 tw-transition-all tw-duration-200"
+      [ngClass]="{ 'tw-fixed tw-top-0 tw-left-0 tw-right-0': isFixedNavbar,
+      'tw-bg-opacity-100': displayMobileSearch, 'tw-bg-opacity-60': !displayMobileSearch }">
       <div class="tw-max-w-8xl tw-mx-auto tw-px-4 sm:tw-px-6 lg:tw-px-8">
         <div class="tw-relative tw-flex tw-justify-between tw-h-14">
           <div class="tw-flex tw-items-center tw-flex-initial tw-basis-full">
@@ -193,8 +194,8 @@
     <ng-template pTemplate="header">
       <ng-container *ngIf="currentUser; else notLoggedIn">
         <a type="button" role="navigation" aria-label="User profile" class="tw-flex tw-items-center tw-rounded-md
-          tw-p-1 tw-bg-neutral-675 hover:tw-bg-neutral-650 tw-transition-colors tw-duration-200
-          tw-shadow tw-w-full tw-mx-2" [routerLink]="['/users', currentUser._id]">
+          tw-p-1 hover:tw-bg-neutral-650 tw-transition-colors tw-duration-200 tw-w-full tw-mx-2"
+          [routerLink]="['/users', currentUser._id]">
           <ng-container *ngTemplateOutlet="userButton; context: { currentUser }"></ng-container>
         </a>
       </ng-container>
@@ -203,31 +204,61 @@
       </ng-template>
     </ng-template>
     <ng-template pTemplate="content">
-      <a class="tw-block" routerLink="/">
-        <button role="navigation" pButton class="p-button-text p-button-secondary"
-          [label]="t('homeHeader.home')"></button>
-      </a>
-      <a class="tw-block" routerLink="/search">
-        <button role="navigation" pButton class="p-button-text p-button-secondary"
-          [label]="t('homeHeader.search')"></button>
-      </a>
-      <a class="tw-block" routerLink="/list/movie">
-        <button role="navigation" pButton class="p-button-text p-button-secondary"
-          [label]="t('homeHeader.movies')"></button>
-      </a>
-      <a class="tw-block" routerLink="/list/tv">
-        <button role="navigation" pButton class="p-button-text p-button-secondary"
-          [label]="t('homeHeader.tvShows')"></button>
-      </a>
-      <button pButton class="p-button-text p-button-secondary tw-w-full tw-text-left" [label]="t('homeHeader.genres')"
-        [icon]="'ms ms-' + (displaySidebarGenres ? 'expand-less' : 'expand-more')" iconPos="right"
-        (click)="displaySidebarGenres = !displaySidebarGenres"></button>
-      <div *ngIf="displaySidebarGenres" class="tw-px-2">
-        <div infiniteScroll [infiniteScrollDistance]="2"
+      <div class="tw-flex tw-flex-wrap [&>*]:tw-w-full [&>*]:xs:tw-w-[calc(50%-8px)] [&>*]:tw-my-1 [&>*]:xs:tw-m-1">
+        <a class="tw-block" routerLink="/list/movie">
+          <button role="navigation" pButton class="p-button-secondary tw-flex-wrap tw-w-full">
+            <i class="ms ms-movie tw-w-full"></i>
+            <p class="tw-w-full tw-mt-1">{{ t('homeHeader.movies') }}</p>
+          </button>
+        </a>
+        <a class="tw-block" routerLink="/list/tv">
+          <button role="navigation" pButton class="p-button-secondary tw-flex-wrap tw-w-full">
+            <i class="ms ms-tv tw-w-full"></i>
+            <p class="tw-w-full tw-mt-1">{{ t('homeHeader.tvShows') }}</p>
+          </button>
+        </a>
+        <a class="tw-block" routerLink="/list/added">
+          <button role="navigation" pButton class="p-button-secondary tw-flex-wrap tw-w-full">
+            <i class="ms ms-schedule tw-w-full"></i>
+            <p class="tw-w-full tw-mt-1">{{ t('homeHeader.added') }}</p>
+          </button>
+        </a>
+        <a class="tw-block" routerLink="/list/newReleases">
+          <button role="navigation" pButton class="p-button-secondary tw-flex-wrap tw-w-full">
+            <i class="ms ms-new-releases tw-w-full"></i>
+            <p class="tw-w-full tw-mt-1">{{ t('homeHeader.newReleases') }}</p>
+          </button>
+        </a>
+        <a class="tw-block" routerLink="/list/updated">
+          <button role="navigation" pButton class="p-button-secondary tw-flex-wrap tw-w-full">
+            <i class="ms ms-update tw-w-full"></i>
+            <p class="tw-w-full tw-mt-1">{{ t('homeHeader.updated') }}</p>
+          </button>
+        </a>
+        <a class="tw-block" routerLink="/list/mostViewed">
+          <button role="navigation" pButton class="p-button-secondary tw-flex-wrap tw-w-full">
+            <i class="ms ms-monitoring tw-w-full"></i>
+            <p class="tw-w-full tw-mt-1">{{ t('homeHeader.mostViewed') }}</p>
+          </button>
+        </a>
+        <a class="tw-block" routerLink="/list/topRated">
+          <button role="navigation" pButton class="p-button-secondary tw-flex-wrap tw-w-full">
+            <i class="ms ms-stars tw-w-full"></i>
+            <p class="tw-w-full tw-mt-1">{{ t('homeHeader.topRated') }}</p>
+          </button>
+        </a>
+      </div>
+      <button pButton class="p-button-secondary tw-w-full tw-text-left tw-my-1 xs:tw-m-1"
+        [label]="t('homeHeader.genres')" [icon]="'ms ms-' + (displaySidebarGenres ? 'expand-less' : 'expand-more')"
+        iconPos="right" (click)="displaySidebarGenres = !displaySidebarGenres">
+        <i class="ms ms-sell tw-mr-2"></i>
+      </button>
+      <div *ngIf="displaySidebarGenres">
+        <div infiniteScroll [infiniteScrollDistance]="2" class="tw-flex tw-flex-wrap"
           [infiniteScrollDisabled]="!genreList?.hasNextPage || !displaySidebarGenres" [fromRoot]="true"
           infiniteScrollContainer="#sidebar-menu-content" (scrolled)="onScroll()">
           <ng-container *ngIf="!loadingGenres && genreList; else loadingGenresTpl">
-            <a *ngFor="let genre of genreList.results; trackBy: track_Id" class="tw-block"
+            <a *ngFor="let genre of genreList.results; trackBy: track_Id" class="tw-block tw-w-full xs:tw-w-1/2"
               [routerLink]="['/list', 'genre', genre._id]">
               <button role="navigation" pButton
                 class="p-button-text p-button-secondary tw-block tw-w-full tw-text-left tw-text-sm tw-truncate"
@@ -237,37 +268,40 @@
           <ng-container *ngIf="loadingMoreGenres; then loadingGenresTpl"></ng-container>
         </div>
         <ng-template #loadingGenresTpl>
-          <div class="tw-px-3 tw-py-3.5" *ngFor="let item of skeletonArray">
+          <div class="tw-px-3 tw-py-3.5 tw-w-full xs:tw-w-1/2" *ngFor="let item of skeletonArray">
             <app-skeleton width="100%" height="14.83px"></app-skeleton>
           </div>
         </ng-template>
       </div>
-      <a class="tw-block" routerLink="/list/added">
-        <button role="navigation" pButton class="p-button-text p-button-secondary"
-          [label]="t('homeHeader.added')"></button>
-      </a>
-      <a class="tw-block" routerLink="/list/newReleases">
-        <button role="navigation" pButton class="p-button-text p-button-secondary"
-          [label]="t('homeHeader.newReleases')"></button>
-      </a>
-      <a class="tw-block" routerLink="/list/updated">
-        <button role="navigation" pButton class="p-button-text p-button-secondary"
-          [label]="t('homeHeader.updated')"></button>
-      </a>
-      <a class="tw-block" routerLink="/list/mostViewed">
-        <button role="navigation" pButton class="p-button-text p-button-secondary"
-          [label]="t('homeHeader.mostViewed')"></button>
-      </a>
-      <a class="tw-block" routerLink="/list/topRated">
-        <button role="navigation" pButton class="p-button-text p-button-secondary"
-          [label]="t('homeHeader.topRated')"></button>
-      </a>
-      <a *ngIf="currentUser" class="tw-block" routerLink="/users/settings">
-        <button role="navigation" pButton class="p-button-text p-button-secondary"
-          [label]="t('homeHeader.settings')"></button>
-      </a>
+      <ng-container *ngIf="currentUser; else notLoggedIn">
+        <a class="tw-inline-block tw-w-full tw-my-1 xs:tw-m-1" [routerLink]="['/users', currentUser._id]">
+          <button role="navigation" pButton class="p-button-secondary" icon="ms ms-person"
+            [label]="t('homeHeader.profile')"></button>
+        </a>
+        <a class="tw-inline-block tw-w-full tw-my-1 xs:tw-m-1" routerLink="/users/settings">
+          <button role="navigation" pButton class="p-button-secondary" icon="ms ms-settings"
+            [label]="t('homeHeader.settings')"></button>
+        </a>
+        <a *ngIf="currentUser | isGranted:UserPermission.MANAGE_MEDIA"
+          class="tw-inline-block tw-w-full tw-my-1 xs:tw-m-1" routerLink="/admin/media">
+          <button role="navigation" pButton class="p-button-secondary" icon="ms ms-shield-person"
+            [label]="t('homeHeader.adminPanel')"></button>
+        </a>
+        <button role="button" pButton (click)="onSignOut()"
+          class="p-button-secondary tw-w-full tw-text-left tw-my-1 xs:tw-m-1" icon="ms ms-logout"
+          [label]="t('homeHeader.signOut')">
+        </button>
+      </ng-container>
+      <ng-template #notLoggedIn>
+        <a class="tw-inline-block tw-w-full tw-my-1 xs:tw-m-1" routerLink="/sign-in">
+          <button role="navigation" pButton class="p-button-secondary" icon="ms ms-logout"
+            [label]="t('homeHeader.signIn')"></button>
+        </a>
+      </ng-template>
+      <!-- Space between footer menu and this sidebar -->
+      <div class="tw-h-12"></div>
     </ng-template>
-    <ng-template pTemplate="footer">
+    <!--ng-template pTemplate="footer">
       <button *ngIf="currentUser; else notLoggedIn" role="button" pButton (click)="onSignOut()"
         class="p-button-sm p-button-secondary p-button-shrink tw-w-full" icon="ms ms-logout"
         [label]="t('homeHeader.signOut')"></button>
@@ -277,9 +311,7 @@
             icon="ms ms-logout" [label]="t('homeHeader.signIn')"></button>
         </a>
       </ng-template>
-      <!-- Space between footer menu and this sidebar -->
-      <div class="tw-h-12"></div>
-    </ng-template>
+    </ng-template-->
   </p-sidebar>
 
   <ng-template #userButton let-currentUser="currentUser">
@@ -290,7 +322,8 @@
           [lazyLoad]="currentUser.smallAvatarUrl" [lazyLoadPlaceholder]="currentUser.avatarColor | rgbColor"
           [alt]="currentUser.username">
         <ng-template #noAvatar>
-          <span class="tw-text-white ms ms-account-circle ms-opsz-lg tw-text-4xl tw-leading-9"></span>
+          <app-avatar [label]="(currentUser.nickname || currentUser.username) | substring" styleClass="tw-rounded-full"
+            labelStyleClass="tw-text-lg"></app-avatar>
         </ng-template>
       </div>
     </div>

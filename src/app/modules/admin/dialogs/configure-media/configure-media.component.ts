@@ -776,7 +776,6 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
           label: t['configureMedia.deleteEpisode'],
           icon: 'ms ms-delete',
           data: episode,
-          disabled: episode.status === MediaPStatus.PROCESSING,
           command: (event) => this.showDeleteEpisodeDialog(event.item.data)
         }
       );

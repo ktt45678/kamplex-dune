@@ -25,6 +25,7 @@ module.exports = {
     }),
     screens: {
       'xs': '360px',
+      '2xs': '460px',
       'sm': '640px',
       'md': '768px',
       '2md': '1018px',
@@ -123,7 +124,6 @@ module.exports = {
   },
   plugins: [
     require('@tailwindcss/aspect-ratio'),
-    require('@tailwindcss/line-clamp'),
     require('@tailwindcss/typography'),
     require('vidstack/tailwind.cjs'),
     plugin(function ({ addComponents, addUtilities, addVariant, config, e }) {

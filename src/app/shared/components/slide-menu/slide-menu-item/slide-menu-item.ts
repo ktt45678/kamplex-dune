@@ -40,7 +40,7 @@ export class SlideMenuItem implements FocusableOption, FocusableElement, Toggler
   private readonly _menuStack = inject(SLIDE_MENU_STACK);
 
   /** The parent menu in which this menuitem resides. */
-  private readonly _parentMenu = inject(SLIDE_MENU, { optional: true });
+  protected readonly _parentMenu = inject(SLIDE_MENU, { optional: true });
 
   /** Reference to the CdkMenuItemTrigger directive if one is added to the same element */
   private readonly _menuTrigger = inject(SlideMenuTriggerDirective, { optional: true, self: true });
@@ -112,12 +112,18 @@ export class SlideMenuItem implements FocusableOption, FocusableElement, Toggler
    * @param options Options the configure how the item is triggered
    *   - keepOpen: specifies that the menu should be kept open after triggering the item.
    */
-  trigger(options?: { keepOpen: boolean }) {
-    const { keepOpen } = { ...options };
+  trigger(options?: { keepOpen: boolean, keepFocus?: boolean }) {
+    const { keepOpen, keepFocus } = { ...options };
     if (!this.disabled && !this.hasMenu) {
       this.triggered.next();
       if (!keepOpen) {
-        this._menuStack.closeAll({ focusParentTrigger: true });
+        if (this._parentMenu?.previousButton) {
+          this._parentMenu.previousButton.toggle();
+          if (keepFocus)
+            this._parentMenu.previousButton.getMenu()?.focusFirstItem('keyboard');
+        } else {
+          this._menuStack.closeAll({ focusParentTrigger: true });
+        }
       }
     }
   }
@@ -176,36 +182,39 @@ export class SlideMenuItem implements FocusableOption, FocusableElement, Toggler
   _onKeydown(event: KeyboardEvent) {
     switch (event.code) {
       case 'Space':
-        //case 'Enter':
-        //case 'NumpadEnter':
+      case 'Enter':
+      case 'NumpadEnter':
         if (!hasModifierKey(event)) {
-          this.trigger({ keepOpen: event.code === 'Space' && !this.closeOnSpacebarTrigger });
+          this.trigger({
+            keepOpen: this.keepOpen,
+            keepFocus: true
+          });
         }
         break;
 
-      case 'ArrowRight':
-        if (!hasModifierKey(event)) {
-          if (this._parentMenu && this._isParentVertical()) {
-            if (this._dir?.value !== 'rtl') {
-              this._forwardArrowPressed(event);
-            } else {
-              this._backArrowPressed(event);
-            }
-          }
-        }
-        break;
+      // case 'ArrowRight':
+      //   if (!hasModifierKey(event)) {
+      //     if (this._parentMenu && this._isParentVertical()) {
+      //       if (this._dir?.value !== 'rtl') {
+      //         this._forwardArrowPressed(event);
+      //       } else {
+      //         this._backArrowPressed(event);
+      //       }
+      //     }
+      //   }
+      //   break;
 
-      case 'ArrowLeft':
-        if (!hasModifierKey(event)) {
-          if (this._parentMenu && this._isParentVertical()) {
-            if (this._dir?.value !== 'rtl') {
-              this._backArrowPressed(event);
-            } else {
-              this._forwardArrowPressed(event);
-            }
-          }
-        }
-        break;
+      // case 'ArrowLeft':
+      //   if (!hasModifierKey(event)) {
+      //     if (this._parentMenu && this._isParentVertical()) {
+      //       if (this._dir?.value !== 'rtl') {
+      //         this._backArrowPressed(event);
+      //       } else {
+      //         this._forwardArrowPressed(event);
+      //       }
+      //     }
+      //   }
+      //   break;
     }
   }
 

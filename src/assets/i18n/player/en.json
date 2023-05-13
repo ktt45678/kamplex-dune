@@ -2,6 +2,7 @@
   "menu": {
     "autoNext": "Auto next",
     "speed": "Playback speed",
+    "audio": "Audio track",
     "quality": "Quality",
     "subtitle": "Subtitle",
     "back": "Back"
@@ -11,5 +12,14 @@
   },
   "subtitles": {
     "off": "Off"
+  },
+  "audioTracks": {
+    "AAC": "AAC",
+    "Opus": "Opus",
+    "AACSurround": "AAC (Surround sound)",
+    "Unknown": "Unknwon"
+  },
+  "qualities": {
+    "auto": "Auto"
   }
 }

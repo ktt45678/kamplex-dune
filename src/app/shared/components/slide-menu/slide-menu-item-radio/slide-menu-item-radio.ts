@@ -60,7 +60,7 @@ export class SlideMenuItemRadio extends SlideMenuItemSelectable implements OnDes
    * @param options Options the configure how the item is triggered
    *   - keepOpen: specifies that the menu should be kept open after triggering the item.
    */
-  override trigger(options?: { keepOpen: boolean }) {
+  override trigger(options?: { keepOpen: boolean, keepFocus?: boolean }) {
     super.trigger(options);
 
     if (!this.disabled) {

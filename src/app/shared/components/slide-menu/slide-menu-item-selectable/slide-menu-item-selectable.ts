@@ -28,7 +28,4 @@ export abstract class SlideMenuItemSelectable extends SlideMenuItem {
     this._checked = coerceBooleanProperty(value);
   }
   private _checked = false;
-
-  /** Whether the item should close the menu if triggered by the spacebar. */
-  protected override closeOnSpacebarTrigger = false;
 }

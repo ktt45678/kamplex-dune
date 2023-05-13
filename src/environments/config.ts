@@ -1,4 +1,5 @@
 export const SITE_NAME = 'KamPlex';
+export const SITE_THEME_COLOR = '#1976d2';
 export const IMAGE_PREVIEW_SIZE = 8388608; // 8MiB
 export const IMAGE_PREVIEW_MIMES = ['image/jpeg', 'image/png'];
 export const UPLOAD_POSTER_SIZE = 3145728; // 3MiB

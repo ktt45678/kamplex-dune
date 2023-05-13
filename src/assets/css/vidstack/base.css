@@ -14,10 +14,11 @@ media-player:not([data-can-play]) .media-controls, media-player[data-user-idle] 
 }
 
 /* Show controls if autoplay fails or paused. */
-media-player[data-autoplay-error] .media-controls, media-player[data-paused] .media-controls
+media-player[data-autoplay-error] .media-controls, media-player[data-paused] .media-controls,
+media-player[data-menu-open] .media-controls
 /*, media-player:focus .media-controls */ {
-  opacity: 1;
-  visibility: visible;
+  opacity: 1 !important;
+  visibility: visible !important;
 }
 
 /* Apply outline */

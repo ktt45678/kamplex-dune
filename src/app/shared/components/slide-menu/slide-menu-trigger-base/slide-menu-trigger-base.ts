@@ -94,7 +94,7 @@ export abstract class SlideMenuTriggerBase implements OnDestroy {
     if (this.menuTemplateRef && (!this._menuPortal || hasMenuContentChanged)) {
       this._menuPortal = new TemplatePortal(
         this.menuTemplateRef,
-        this.viewContainerRef,
+        this.menuStack.primaryViewContainerRef || this.viewContainerRef,
         this.menuData,
         this._getChildMenuInjector(),
       );
@@ -126,7 +126,7 @@ export abstract class SlideMenuTriggerBase implements OnDestroy {
           { provide: SLIDE_MENU_TRIGGER, useValue: this },
           { provide: SLIDE_MENU_STACK, useValue: this.menuStack },
         ],
-        parent: this.injector,
+        parent: this.menuStack.primaryInjector || this.injector,
       });
     return this._childMenuInjector;
   }

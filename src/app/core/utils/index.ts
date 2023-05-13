@@ -1,5 +1,6 @@
 export * from './blob-builder';
 export * from './data-uri-blob';
+export * from './date-fns-helper';
 export * from './date-fns-locales';
 export * from './device-helper';
 export * from './file-upload-info';
@@ -8,6 +9,7 @@ export * from './ng-track-by';
 export * from './number-helper';
 export * from './primeng';
 export * from './primeng-helper';
+export * from './stream-manifest-helper';
 export * from './subtitle-style-helper';
 export * from './time-helper';
 export * from './transloco-escape';

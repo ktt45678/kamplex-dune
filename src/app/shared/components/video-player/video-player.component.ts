@@ -1,15 +1,18 @@
 import { Component, OnInit, ChangeDetectionStrategy, Input, OnDestroy, Output, EventEmitter, ViewChild, ElementRef, ChangeDetectorRef, ViewEncapsulation, Renderer2 } from '@angular/core';
 import { Platform } from '@angular/cdk/platform';
+import { NgStyle } from '@angular/common';
 import { TRANSLOCO_SCOPE, TranslocoService } from '@ngneat/transloco';
-import { MediaPlayerElement, MediaStore, MediaVolumeChangeEvent, TextTrackInit } from 'vidstack';
+import { MediaPlayerElement, MediaVolumeChangeEvent, MediaPlayEvent, MediaPauseEvent, TextTrackInit } from 'vidstack';
 import { Dispose } from 'maverick.js';
-import { debounceTime, first, fromEvent, takeUntil } from 'rxjs';
+import { Subscription, debounceTime, first, fromEvent, merge, switchMap, takeUntil, timer } from 'rxjs';
 
 import { UpdateUserSettingsDto } from '../../../core/dto/users';
 import { MediaStream, UserSettings } from '../../../core/models';
 import { AuthService, DestroyService, UsersService } from '../../../core/services';
-import { KPTrack, KPVideoSource } from './interfaces';
-import { getFontFamily, getTextEdgeStyle, prepareColor, scaleFontSize, scaleFontWeight, track_Id } from '../../../core/utils';
+import { VideoPlayerService } from './video-player.service';
+import { KPTrack, PlayerStore, PlayerStoreAudio, PlayerStoreQuality } from './interfaces';
+import { AudioCodec, VideoCodec } from '../../../core/enums';
+import { getFontFamily, getTextEdgeStyle, prepareColor, scaleFontWeight, track_Id } from '../../../core/utils';
 
 import 'vidstack/define/media-player.js';
 import 'vidstack/define/media-time.js';
@@ -19,7 +22,6 @@ import 'vidstack/define/media-time-slider.js';
 import 'vidstack/define/media-volume-slider.js';
 import 'vidstack/define/media-slider-value.js';
 import 'vidstack/define/media-slider-thumbnail.js';
-import { NgStyle } from '@angular/common';
 
 @Component({
   selector: 'app-video-player',
@@ -28,6 +30,7 @@ import { NgStyle } from '@angular/common';
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   providers: [
+    VideoPlayerService,
     DestroyService,
     UsersService,
     {
@@ -38,33 +41,48 @@ import { NgStyle } from '@angular/common';
 })
 export class VideoPlayerComponent implements OnInit, OnDestroy {
   track_Id = track_Id;
+  AudioCodec = AudioCodec;
+  @Input() canFullWindow: boolean = false;
+  @Input() canReqNextEp: boolean = false;
+  @Input() canReqPrevEp: boolean = false;
   @Output() onEnded = new EventEmitter<void>();
-  player!: MediaPlayerElement;
+  @Output() requestFullWindow = new EventEmitter<boolean>();
+  @Output() requestNextEp = new EventEmitter<void>();
+  @Output() requestPrevEp = new EventEmitter<void>();
   readonly playbackSpeeds: number[];
-  currentStream?: MediaStream;
-  sources?: KPVideoSource[];
+  player!: MediaPlayerElement;
+  mediaToast?: HTMLElement;
+  streamData?: MediaStream;
   tracks?: KPTrack[];
   playerDisposeFn: Dispose[] = [];
-  playerStore?: MediaStore;
+  playerStore?: PlayerStore;
+  playerStoreQuality?: PlayerStoreQuality;
+  playerStoreAudio?: PlayerStoreAudio;
   userSettings: UserSettings | null = null;
+  sourceBaseUrl: string = '';
   previewThumbnail?: string;
-  activeSourceIndex: number = 0;
+  activeQuality: number = 1;
   activeSpeedValue: number = 1;
   activeTrackValue: string | null = null;
   enableSubtitle: boolean = false;
+  fullWindow: boolean = false;
   initVolume: number = 1;
   initMuted: boolean = false;
   isVolumeCtrlActive: boolean = false;
   isMobile: boolean = false;
+  isMenuOpen: boolean = false;
   subtitleStyles: NgStyle['ngStyle'];
+  pendingUpdateSettings: UpdateUserSettingsDto = {};
+  toastAnimEndSub?: Subscription;
+  updateSettingsSub?: Subscription;
 
   @Input('stream') set setStreamData(value: MediaStream | undefined) {
-    if (!value || this.currentStream === value) return;
-    this.currentStream = value;
+    if (!value || this.streamData === value) return;
+    this.streamData = value;
     this.setPlayerData(value);
   }
 
-  @ViewChild('player') set setPlayer(value: ElementRef<MediaPlayerElement>) {
+  @ViewChild('player') set setPlayer(value: ElementRef<MediaPlayerElement> | undefined) {
     if (!this.player && value) {
       this.player = value.nativeElement;
       this.player.onAttach(() => {
@@ -73,9 +91,19 @@ export class VideoPlayerComponent implements OnInit, OnDestroy {
     }
   }
 
+  @ViewChild('mediaToast') set setMediaToast(value: ElementRef<HTMLElement> | undefined) {
+    if (this.toastAnimEndSub)
+      this.toastAnimEndSub.unsubscribe();
+    this.mediaToast = value?.nativeElement;
+    if (!this.mediaToast) return;
+    this.toastAnimEndSub = fromEvent(this.mediaToast, 'animationend').subscribe(() => {
+      this.renderer.removeClass(this.mediaToast, 'media-toast-active');
+    });
+  }
+
   constructor(private ref: ChangeDetectorRef, private renderer: Renderer2, private platform: Platform,
     private translocoService: TranslocoService, private authService: AuthService, private usersService: UsersService,
-    private destroyService: DestroyService) {
+    private videoPlayerService: VideoPlayerService, private destroyService: DestroyService) {
     this.isMobile = this.platform.ANDROID || this.platform.IOS;
     this.playbackSpeeds = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
   }
@@ -89,18 +117,8 @@ export class VideoPlayerComponent implements OnInit, OnDestroy {
   }
 
   setPlayerData(data: MediaStream): void {
-    const sources: KPVideoSource[] = [];
     const tracks: KPTrack[] = [];
-    data.streams?.forEach(file => {
-      if (file.codec === 1) {
-        sources.push({
-          _id: file._id,
-          src: file.src,
-          type: file.mimeType,
-          size: file.quality
-        });
-      }
-    });
+    this.sourceBaseUrl = data.baseUrl;
     if (data.subtitles?.length) {
       this.translocoService.selectTranslation('languages').pipe(first()).subscribe(t => {
         data.subtitles.sort().forEach(subtitle => {
@@ -113,9 +131,8 @@ export class VideoPlayerComponent implements OnInit, OnDestroy {
         });
       });
     }
-    this.sources = sources;
     this.tracks = tracks;
-    this.previewThumbnail = data.previewThumbnail;
+    this.previewThumbnail = this.sourceBaseUrl.replace(':path', data.previewThumbnail);
     this.applyUserSettings();
     this.setPlayerTrackList();
     this.setPlayerSource();
@@ -129,11 +146,8 @@ export class VideoPlayerComponent implements OnInit, OnDestroy {
     if (this.userSettings.player.muted) {
       this.initMuted = this.userSettings.player.muted;
     }
-    if (this.userSettings.player.quality) {
-      const savedSourceIndex = this.sources!.findIndex(s => s.size === this.userSettings!.player.quality);
-      if (savedSourceIndex > -1) {
-        this.activeSourceIndex = savedSourceIndex;
-      }
+    if (this.userSettings.player.quality != undefined) {
+      this.activeQuality = this.userSettings.player.quality;
     }
     if (this.userSettings.player.subtitle != undefined) {
       this.enableSubtitle = this.userSettings.player.subtitle;
@@ -147,12 +161,13 @@ export class VideoPlayerComponent implements OnInit, OnDestroy {
     this.player.muted = this.initMuted;
     this.player.volume = this.initVolume;
     this.player.playbackRate = this.activeSpeedValue;
-    if (this.sources?.length && this.activeSourceIndex > -1) {
-      this.player.src = {
-        src: this.sources[this.activeSourceIndex].src,
-        type: this.sources[this.activeSourceIndex].type
-      };
+    if (this.activeQuality) {
+      const qualityIndex = this.player.qualities.toArray().findIndex(q => q.height === this.activeQuality);
+      this.changeVideoQuality(qualityIndex);
     }
+    if (!this.player.src)
+      this.setPlayerSource();
+    // Set track list for the player, it's different from the track list in the menu
     this.setPlayerTrackList();
     this.player.keyShortcuts = {
       togglePaused: 'k Space',
@@ -165,21 +180,43 @@ export class VideoPlayerComponent implements OnInit, OnDestroy {
       volumeUp: 'ArrowUp',
       volumeDown: 'ArrowDown',
     };
+    // Update user volume setting when user changes the volume
     fromEvent<MediaVolumeChangeEvent>(this.player, 'volume-change')
       .pipe(debounceTime(1000), takeUntil(this.destroyService)).subscribe(event => {
         if (!this.userSettings || event.detail.volume * 100 === this.userSettings.player.volume) return;
         this.updateUserSettings({ player: { muted: event.detail.muted, volume: Math.round(event.detail.volume * 100) } });
       });
+    // Show play or pause icon toast when user plays/pauses the video
+    merge(
+      fromEvent<MediaPlayEvent>(this.player, 'play'),
+      fromEvent<MediaPauseEvent>(this.player, 'pause')
+    ).pipe(takeUntil(this.destroyService)).subscribe(event => {
+      if (!event.isOriginTrusted || !this.mediaToast) return;
+      //this.renderer.removeClass(this.mediaToast, 'media-toast-active');
+      this.renderer.addClass(this.mediaToast, 'media-toast-active');
+    });
+    // Subscribe to the media store
     this.playerDisposeFn.push(
-      this.player.subscribe((store => {
-        this.playerStore = store;
+      this.player.subscribe(({ canPlay, waiting, playing, paused, muted, volume, fullscreen, canFullscreen, currentTime }) => {
+        this.playerStore = { canPlay, waiting, playing, paused, muted, volume, fullscreen, canFullscreen, currentTime };
         this.ref.detectChanges();
       })),
+      this.player.subscribe(({ qualities, quality, autoQuality, canSetQuality }) => {
+        this.playerStoreQuality = { qualities, quality, autoQuality, canSetQuality };
+        this.ref.detectChanges();
+      }),
+      this.player.subscribe(({ audioTracks, audioTrack }) => {
+        this.playerStoreAudio = { audioTracks, audioTrack };
+        this.ref.detectChanges();
+      }),
       this.player.subscribe((({ ended }) => {
         if (!ended) return;
         this.onEnded.emit();
-      }))
-    );
+      }));
+  }
+
+  onMenuCheckBoxClick(): void {
+    this.ref.detectChanges();
   }
 
   setPlayerTrackList(): void {
@@ -205,11 +242,6 @@ export class VideoPlayerComponent implements OnInit, OnDestroy {
     });
   }
 
-  onSettingsMenuClick(button: HTMLButtonElement, opened: boolean): void {
-    this.renderer[opened ? 'removeClass' : 'addClass'](button, 'media-settings-button-active');
-    this.renderer[opened ? 'addClass' : 'removeClass'](button, 'media-settings-button-active');
-  }
-
   setPlaybackSpeed(speed: number = 1): void {
     if (!this.player) return;
     this.player.playbackRate = speed;
@@ -217,27 +249,45 @@ export class VideoPlayerComponent implements OnInit, OnDestroy {
     this.updateUserSettings({ player: { speed: speed * 100 } });
   }
 
-  setPlayerSource(index?: number): void {
-    if (!this.player || !this.playerStore) return;
-    index != undefined && (this.activeSourceIndex = index);
-    this.player.src = {
-      src: this.sources![this.activeSourceIndex].src,
-      type: this.sources![this.activeSourceIndex].type
-    };
+  setPlayerSource(): void {
+    if (!this.player || !this.streamData?.streams) return;
+    const playlist = this.streamData.streams.find(s => s.name === `manifest_${VideoCodec.H264}.json`);
+    if (!playlist) return;
+    const playlistSrc = this.sourceBaseUrl.replace(':path', `${playlist._id}/${playlist.name}`);
+    this.videoPlayerService.generateM3U8(playlistSrc, this.sourceBaseUrl)
+      .subscribe(uri => {
+        this.player.src = {
+          src: uri,
+          type: 'application/x-mpegurl'
+        };
+      });
   }
 
-  changePlayerQuality(index: number): void {
-    if (!this.player || !this.playerStore) return;
-    const time = this.playerStore.currentTime;
-    const isPlaying = this.playerStore.playing;
-    // Set selected source
-    this.setPlayerSource(index);
-    // Resume playing media
-    this.player.addEventListener('can-play', () => {
-      this.player.currentTime = time;
-      isPlaying && this.player.play();
-    }, { once: true });
-    this.updateUserSettings({ player: { quality: this.sources![index].size } });
+  unsetPlayerSource(): void {
+    if (!this.player) return;
+    this.player.src = [];
+  }
+
+  changeAudioTrack(index: number): void {
+    if (!this.player || this.player.audioTracks.readonly) return;
+    const audioTrack = this.player.audioTracks[index];
+    if (!audioTrack) return;
+    audioTrack.selected = true;
+    //this.updateUserSettings({ player: { quality: quality.height } });
+  }
+
+  changeVideoQuality(index: number): void {
+    if (!this.player || this.player.qualities.readonly) return;
+    // Set selected quality
+    if (index === -1) {
+      this.player.qualities.autoSelect();
+      this.updateUserSettings({ player: { quality: 0 } });
+    } else {
+      const quality = this.player.qualities[index];
+      if (!quality) return;
+      quality.selected = true;
+      this.updateUserSettings({ player: { quality: quality.height } });
+    }
   }
 
   setPlayerTrack(lang: string | null): void {
@@ -262,11 +312,26 @@ export class VideoPlayerComponent implements OnInit, OnDestroy {
     this.player.paused = !this.player.paused;
   }
 
+  toggleNext(): void {
+    this.unsetPlayerSource();
+    this.requestNextEp.emit();
+  }
+
+  togglePrev(): void {
+    this.unsetPlayerSource();
+    this.requestPrevEp.emit();
+  }
+
   toggleMute(): void {
     if (this.player.muted && this.player.volume === 0)
       this.player.volume = 0.25; // Workaround
     this.player.muted = !this.player.muted;
     this.updateUserSettings({ player: { muted: !this.player.muted } });
+  }
+
+  toggleFullwindow(): void {
+    this.fullWindow = !this.fullWindow;
+    this.requestFullWindow.next(this.fullWindow);
   }
 
   toggleFullscreen(): void {
@@ -294,13 +359,28 @@ export class VideoPlayerComponent implements OnInit, OnDestroy {
     this.updateUserSettings({ player: { subtitle: this.enableSubtitle } });
   }
 
+  seekTime(value: number): void {
+    if (!this.player) return;
+    this.player.currentTime += value;
+  }
+
   updateUserSettings(updateUserSettingsDto: UpdateUserSettingsDto): void {
     if (!this.authService.currentUser) return;
-    this.usersService.updateSettings(this.authService.currentUser._id, updateUserSettingsDto).subscribe(settings => {
+    this.pendingUpdateSettings = {
+      player: { ...this.pendingUpdateSettings.player, ...updateUserSettingsDto.player },
+      subtitle: { ...this.pendingUpdateSettings.subtitle, ...updateUserSettingsDto.subtitle }
+    };
+    if (this.updateSettingsSub) {
+      this.updateSettingsSub.unsubscribe();
+    }
+    this.updateSettingsSub = timer(5000).pipe(switchMap(() => {
+      return this.usersService.updateSettings(this.authService.currentUser!._id, this.pendingUpdateSettings);
+    })).subscribe(settings => {
       this.authService.currentUser = {
         ...this.authService.currentUser!,
         settings: { ...settings }
       };
+      this.pendingUpdateSettings = {};
       this.ref.markForCheck();
     });
   }

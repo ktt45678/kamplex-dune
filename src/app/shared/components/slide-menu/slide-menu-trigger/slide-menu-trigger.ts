@@ -72,6 +72,7 @@ export class SlideMenuTriggerDirective extends SlideMenuTriggerBase implements O
     this._subscribeToMenuStackClosed();
     this._setType();
     this.menuStack.registerTrigger(this._elementRef);
+    this.menuStack.registerViewRef(this.injector, this.viewContainerRef);
   }
 
   /** Toggle the attached menu. */

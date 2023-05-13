@@ -307,7 +307,7 @@
           </form>
         </div>
         <ng-template appPanelToast tabId="general"
-          styleClass="tw-bg-neutral-850 tw-bg-opacity-80 tw-bottom-4 tw-left-8 tw-right-34 tw-rounded-md"
+          styleClass="tw-bg-neutral-850 tw-bg-opacity-80 tw-bottom-4 tw-left-8 tw-right-34 tw-rounded-md tw-z-[101]"
           [visible]="updateMediaFormChanged">
           <div class="tw-flex tw-mx-4 tw-my-2 tw-items-center">
             <p class="tw-text-white tw-font-medium">{{ t('admin.configureMedia.unsavedChanges') }}</p>
@@ -612,8 +612,8 @@
               responsiveLayout="scroll" [rowTrackBy]="trackId" [rowHover]="true" [loading]="loadingEpisodes">
               <ng-template pTemplate="header">
                 <tr>
-                  <th class="tw-w-20" pSortableColumn="episodeNumber">
-                    {{ t('admin.episode.episodeNumber') }} <p-sortIcon field="episodeNumber"></p-sortIcon>
+                  <th class="tw-w-20" pSortableColumn="epNumber">
+                    {{ t('admin.episode.episodeNumber') }} <p-sortIcon field="epNumber"></p-sortIcon>
                   </th>
                   <th class="tw-w-80" pSortableColumn="name">
                     {{ t('admin.episode.name') }} <p-sortIcon field="name"></p-sortIcon>
@@ -632,7 +632,7 @@
               </ng-template>
               <ng-template pTemplate="body" let-episode>
                 <tr>
-                  <td class="tw-w-20">{{ episode.episodeNumber }}</td>
+                  <td class="tw-w-20">{{ episode.epNumber }}</td>
                   <td class="tw-w-80">
                     <div class="tw-flex">
                       <div class="tw-w-24 tw-flex-shrink-0">
