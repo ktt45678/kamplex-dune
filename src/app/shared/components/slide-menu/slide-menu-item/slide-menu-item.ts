@@ -117,13 +117,14 @@ export class SlideMenuItem implements FocusableOption, FocusableElement, Toggler
     if (!this.disabled && !this.hasMenu) {
       this.triggered.next();
       if (!keepOpen) {
-        if (this._parentMenu?.previousButton) {
-          this._parentMenu.previousButton.toggle();
-          if (keepFocus)
-            this._parentMenu.previousButton.getMenu()?.focusFirstItem('keyboard');
-        } else {
-          this._menuStack.closeAll({ focusParentTrigger: true });
-        }
+        // if (this._parentMenu?.previousButton) {
+        //   this._parentMenu.previousButton.toggle();
+        //   if (keepFocus)
+        //     this._parentMenu.previousButton.getMenu()?.focusFirstItem('keyboard');
+        // } else {
+        //   this._menuStack.closeAll({ focusParentTrigger: true });
+        // }
+        this._menuStack.closeAll({ focusParentTrigger: true });
       }
     }
   }

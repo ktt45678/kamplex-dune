@@ -1,22 +1,22 @@
-import { Component, OnInit, ChangeDetectionStrategy, Input, OnDestroy, Output, EventEmitter, ViewChild, ElementRef, ChangeDetectorRef, ViewEncapsulation, Renderer2 } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, Input, OnDestroy, Output, EventEmitter, ViewChild, ElementRef, ChangeDetectorRef, ViewEncapsulation, Renderer2, OnChanges, SimpleChanges } from '@angular/core';
+import { BreakpointObserver } from '@angular/cdk/layout';
 import { Platform } from '@angular/cdk/platform';
-import { NgStyle } from '@angular/common';
 import { TRANSLOCO_SCOPE, TranslocoService } from '@ngneat/transloco';
-import { MediaPlayerElement, MediaVolumeChangeEvent, MediaPlayEvent, MediaPauseEvent, TextTrackInit } from 'vidstack';
-import { Dispose } from 'maverick.js';
-import { Subscription, debounceTime, first, fromEvent, merge, switchMap, takeUntil, timer } from 'rxjs';
+import { type MediaPlayerElement, type MediaVolumeChangeEvent, type TextTrackInit, type MediaPlayRequestEvent, type MediaPauseRequestEvent, type MediaSeekRequestEvent, isVideoProvider, type MediaProviderSetupEvent, type MediaPlayEvent, HLSAudioTrackLoadedEvent } from 'vidstack';
+import { Subject, buffer, debounceTime, filter, first, fromEvent, merge, switchMap, takeUntil, timer } from 'rxjs';
 
 import { UpdateUserSettingsDto } from '../../../core/dto/users';
 import { MediaStream, UserSettings } from '../../../core/models';
 import { AuthService, DestroyService, UsersService } from '../../../core/services';
 import { VideoPlayerService } from './video-player.service';
-import { KPTrack, PlayerStore, PlayerStoreAudio, PlayerStoreQuality } from './interfaces';
-import { AudioCodec, VideoCodec } from '../../../core/enums';
+import { KPTrack, PlayerSettings, PlayerStore, PlayerSupports } from './interfaces';
+import { AudioCodec, MediaBreakpoints, MediaStorageType } from '../../../core/enums';
 import { getFontFamily, getTextEdgeStyle, prepareColor, scaleFontWeight, track_Id } from '../../../core/utils';
 
 import 'vidstack/define/media-player.js';
 import 'vidstack/define/media-time.js';
 import 'vidstack/define/media-slider.js';
+import 'vidstack/define/media-gesture.js';
 import 'vidstack/define/media-captions.js';
 import 'vidstack/define/media-time-slider.js';
 import 'vidstack/define/media-volume-slider.js';
@@ -39,45 +39,33 @@ import 'vidstack/define/media-slider-thumbnail.js';
     }
   ]
 })
-export class VideoPlayerComponent implements OnInit, OnDestroy {
+export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
   track_Id = track_Id;
   AudioCodec = AudioCodec;
-  @Input() canFullWindow: boolean = false;
-  @Input() canReqNextEp: boolean = false;
-  @Input() canReqPrevEp: boolean = false;
+  canNavigateMedia: boolean = false;
+  @Input() canFitWindow: boolean = false;
+  @Input() canReqNext: boolean = false;
+  @Input() canReqPrev: boolean = false;
   @Output() onEnded = new EventEmitter<void>();
-  @Output() requestFullWindow = new EventEmitter<boolean>();
-  @Output() requestNextEp = new EventEmitter<void>();
-  @Output() requestPrevEp = new EventEmitter<void>();
-  readonly playbackSpeeds: number[];
+  @Output() requestFitWindow = new EventEmitter<boolean>();
+  @Output() requestNext = new EventEmitter<void>();
+  @Output() requestPrev = new EventEmitter<void>();
+  @Output() requestAutoNext = new EventEmitter<void>();
   player!: MediaPlayerElement;
-  mediaToast?: HTMLElement;
+  playerSettings: PlayerSettings;
+  playerSupports: PlayerSupports;
+  mediaPlayToast?: HTMLElement;
   streamData?: MediaStream;
-  tracks?: KPTrack[];
-  playerDisposeFn: Dispose[] = [];
-  playerStore?: PlayerStore;
-  playerStoreQuality?: PlayerStoreQuality;
-  playerStoreAudio?: PlayerStoreAudio;
+  playerStore: PlayerStore;
   userSettings: UserSettings | null = null;
-  sourceBaseUrl: string = '';
-  previewThumbnail?: string;
-  activeQuality: number = 1;
-  activeSpeedValue: number = 1;
-  activeTrackValue: string | null = null;
-  enableSubtitle: boolean = false;
-  fullWindow: boolean = false;
-  initVolume: number = 1;
-  initMuted: boolean = false;
-  isVolumeCtrlActive: boolean = false;
-  isMobile: boolean = false;
-  isMenuOpen: boolean = false;
-  subtitleStyles: NgStyle['ngStyle'];
   pendingUpdateSettings: UpdateUserSettingsDto = {};
-  toastAnimEndSub?: Subscription;
-  updateSettingsSub?: Subscription;
 
   @Input('stream') set setStreamData(value: MediaStream | undefined) {
-    if (!value || this.streamData === value) return;
+    if (!value) {
+      this.unsetPlayerSource();
+      return;
+    }
+    if (this.streamData === value) return;
     this.streamData = value;
     this.setPlayerData(value);
   }
@@ -91,34 +79,97 @@ export class VideoPlayerComponent implements OnInit, OnDestroy {
     }
   }
 
-  @ViewChild('mediaToast') set setMediaToast(value: ElementRef<HTMLElement> | undefined) {
-    if (this.toastAnimEndSub)
-      this.toastAnimEndSub.unsubscribe();
-    this.mediaToast = value?.nativeElement;
-    if (!this.mediaToast) return;
-    this.toastAnimEndSub = fromEvent(this.mediaToast, 'animationend').subscribe(() => {
-      this.renderer.removeClass(this.mediaToast, 'media-toast-active');
+  @ViewChild('mediaPlayToast') set setMediaPlayToast(value: ElementRef<HTMLElement> | undefined) {
+    if (this.playerSettings.playToastAnimEndSub)
+      this.playerSettings.playToastAnimEndSub.unsubscribe();
+    this.mediaPlayToast = value?.nativeElement;
+    if (!this.mediaPlayToast) return;
+    this.playerSettings.playToastAnimEndSub = fromEvent(this.mediaPlayToast, 'animationend').subscribe(() => {
+      this.renderer.removeClass(this.mediaPlayToast, 'media-play-toast-active');
     });
   }
 
-  constructor(private ref: ChangeDetectorRef, private renderer: Renderer2, private platform: Platform,
-    private translocoService: TranslocoService, private authService: AuthService, private usersService: UsersService,
-    private videoPlayerService: VideoPlayerService, private destroyService: DestroyService) {
-    this.isMobile = this.platform.ANDROID || this.platform.IOS;
-    this.playbackSpeeds = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
+  constructor(private ref: ChangeDetectorRef, private renderer: Renderer2, private breakpointObserver: BreakpointObserver,
+    private platform: Platform, private translocoService: TranslocoService, private authService: AuthService,
+    private usersService: UsersService, private videoPlayerService: VideoPlayerService, private destroyService: DestroyService) {
+    this.playerSettings = {
+      playbackSpeeds: [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2],
+      tracks: [],
+      sourceBaseUrl: '',
+      previewThumbnail: null,
+      activeQualityValue: 0,
+      activeSpeedValue: 1,
+      activeTrackValue: null,
+      initAudioValue: null,
+      autoNext: false,
+      showSubtitle: false,
+      showFastForward: false,
+      showRewind: false,
+      fullWindow: false,
+      initVolume: 1,
+      initMuted: false,
+      expandVolumeSlider: false,
+      isMenuOpen: false,
+      hasError: false,
+      subtitleStyles: null,
+      playerDestroyed: new Subject(),
+      storeDisposeFn: []
+    };
+    const isTouchDevice = (('ontouchstart' in window) || (navigator.maxTouchPoints > 0));
+    const isMinMobileScreen = this.breakpointObserver.isMatched(MediaBreakpoints.SMALL);
+    this.playerSupports = {
+      isMobile: this.platform.ANDROID || this.platform.IOS || (isTouchDevice && isMinMobileScreen),
+      isSafari: this.platform.SAFARI,
+      isTouchDevice: isTouchDevice,
+      hlsOpus: this.platform.FIREFOX
+    };
+    this.playerStore = {
+      autoplayError: undefined,
+      audioTracks: [],
+      audioTrack: null,
+      textTrack: null,
+      canFullscreen: false,
+      canPlay: false,
+      currentTime: 0,
+      error: undefined,
+      fullscreen: false,
+      loop: false,
+      muted: false,
+      paused: true,
+      playing: false,
+      qualities: [],
+      quality: null,
+      autoQuality: false,
+      canSetQuality: true,
+      volume: 1,
+      waiting: false
+    };
   }
 
   ngOnInit(): void {
     this.authService.currentUser$.pipe(takeUntil(this.destroyService)).subscribe(user => {
       this.userSettings = user?.settings || null;
+      this.applyUserSettings();
       this.updateSubtitleStyles();
+      this.ref.markForCheck();
+    });
+    this.breakpointObserver.observe(MediaBreakpoints.LANDSCAPE).pipe(takeUntil(this.destroyService)).subscribe(state => {
+      const isMobilePlatform = this.platform.ANDROID || this.platform.IOS;
+      const isTouchDevice = (('ontouchstart' in window) || (navigator.maxTouchPoints > 0));
+      this.playerSupports.isMobile = (state.matches && isTouchDevice) || isMobilePlatform;
       this.ref.markForCheck();
     });
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['canReqPrevEp'] || changes['canReqNextEp']) {
+      this.canNavigateMedia = changes['canReqPrevEp']?.currentValue || changes['canReqNextEp']?.currentValue;
+      this.ref.markForCheck();
+    }
+  }
+
   setPlayerData(data: MediaStream): void {
     const tracks: KPTrack[] = [];
-    this.sourceBaseUrl = data.baseUrl;
     if (data.subtitles?.length) {
       this.translocoService.selectTranslation('languages').pipe(first()).subscribe(t => {
         data.subtitles.sort().forEach(subtitle => {
@@ -129,42 +180,37 @@ export class VideoPlayerComponent implements OnInit, OnDestroy {
             src: subtitle.src
           });
         });
+        this.playerSettings.tracks = tracks;
+        this.setPlayerTrackList();
       });
     }
-    this.tracks = tracks;
-    this.previewThumbnail = this.sourceBaseUrl.replace(':path', data.previewThumbnail);
-    this.applyUserSettings();
-    this.setPlayerTrackList();
+    this.playerSettings.sourceBaseUrl = data.baseUrl;
+    this.playerSettings.previewThumbnail = data.baseUrl.replace(':path', data.previewThumbnail);
     this.setPlayerSource();
   }
 
   applyUserSettings(): void {
     if (!this.userSettings) return;
-    if (this.userSettings.player.speed != undefined && this.userSettings.player.speed >= 0) {
-      this.activeSpeedValue = this.userSettings.player.speed / 100;
-    }
-    if (this.userSettings.player.muted) {
-      this.initMuted = this.userSettings.player.muted;
-    }
-    if (this.userSettings.player.quality != undefined) {
-      this.activeQuality = this.userSettings.player.quality;
-    }
-    if (this.userSettings.player.subtitle != undefined) {
-      this.enableSubtitle = this.userSettings.player.subtitle;
-    }
-    if (this.userSettings.player.volume != undefined) {
-      this.initVolume = this.userSettings.player.volume / 100;
-    }
+    if (this.userSettings.player.speed != undefined && this.userSettings.player.speed >= 0)
+      this.playerSettings.activeSpeedValue = this.userSettings.player.speed / 100;
+    if (this.userSettings.player.muted)
+      this.playerSettings.initMuted = this.userSettings.player.muted;
+    if (this.userSettings.player.audioTrack != undefined)
+      this.playerSettings.initAudioValue = this.userSettings.player.audioTrack;
+    if (this.userSettings.player.quality != undefined)
+      this.playerSettings.activeQualityValue = this.userSettings.player.quality;
+    if (this.userSettings.player.subtitle != undefined)
+      this.playerSettings.showSubtitle = this.userSettings.player.subtitle;
+    if (this.userSettings.player.volume != undefined)
+      this.playerSettings.initVolume = this.userSettings.player.volume / 100;
   }
 
-  onPlayerAttach() {
-    this.player.muted = this.initMuted;
-    this.player.volume = this.initVolume;
-    this.player.playbackRate = this.activeSpeedValue;
-    if (this.activeQuality) {
-      const qualityIndex = this.player.qualities.toArray().findIndex(q => q.height === this.activeQuality);
-      this.changeVideoQuality(qualityIndex);
-    }
+  private onPlayerAttach() {
+    this.player.muted = this.playerSettings.initMuted;
+    this.player.volume = this.playerSettings.initVolume;
+    this.player.playbackRate = this.playerSettings.activeSpeedValue;
+    if (this.playerSettings.activeQualityValue)
+      this.changeVideoQuality(this.playerSettings.activeQualityValue);
     if (!this.player.src)
       this.setPlayerSource();
     // Set track list for the player, it's different from the track list in the menu
@@ -182,52 +228,158 @@ export class VideoPlayerComponent implements OnInit, OnDestroy {
     };
     // Update user volume setting when user changes the volume
     fromEvent<MediaVolumeChangeEvent>(this.player, 'volume-change')
-      .pipe(debounceTime(1000), takeUntil(this.destroyService)).subscribe(event => {
+      .pipe(debounceTime(1000), takeUntil(this.playerSettings.playerDestroyed)).subscribe(event => {
         if (!this.userSettings || event.detail.volume * 100 === this.userSettings.player.volume) return;
         this.updateUserSettings({ player: { muted: event.detail.muted, volume: Math.round(event.detail.volume * 100) } });
       });
     // Show play or pause icon toast when user plays/pauses the video
     merge(
-      fromEvent<MediaPlayEvent>(this.player, 'play'),
-      fromEvent<MediaPauseEvent>(this.player, 'pause')
-    ).pipe(takeUntil(this.destroyService)).subscribe(event => {
-      if (!event.isOriginTrusted || !this.mediaToast) return;
-      //this.renderer.removeClass(this.mediaToast, 'media-toast-active');
-      this.renderer.addClass(this.mediaToast, 'media-toast-active');
+      fromEvent<MediaPlayRequestEvent>(this.player, 'media-play-request'),
+      fromEvent<MediaPauseRequestEvent>(this.player, 'media-pause-request')
+    ).pipe(takeUntil(this.playerSettings.playerDestroyed)).subscribe(event => {
+      if (!event.isOriginTrusted || !this.mediaPlayToast) return;
+      //this.renderer.removeClass(this.mediaToast, 'media-play-toast-active');
+      this.renderer.addClass(this.mediaPlayToast, 'media-play-toast-active');
     });
+    fromEvent<MediaSeekRequestEvent>(this.player, 'media-seek-request')
+      .pipe(
+        filter(event => event.trigger instanceof PointerEvent || event.originEvent instanceof KeyboardEvent),
+        takeUntil(this.playerSettings.playerDestroyed)
+      ).subscribe(event => {
+        this.handleUserSeekGesture(event);
+      });
+    if (this.playerSupports.isTouchDevice) {
+      fromEvent<MediaProviderSetupEvent>(this.player, 'provider-setup')
+        .pipe(takeUntil(this.playerSettings.playerDestroyed)).subscribe(() => {
+          this.handleTouchUserIdle();
+        });
+    }
+    // Set init audio track when track list is available
+    fromEvent<HLSAudioTrackLoadedEvent>(this.player, 'hls-audio-track-loaded').pipe(first()).subscribe(() => {
+      if (this.playerSettings.initAudioValue === null) return;
+      this.setInitAudioTrack(this.playerSettings.initAudioValue);
+    });
+    const setPlayerStoreProp = (props: Partial<PlayerStore>) => {
+      this.playerStore = { ...this.playerStore, ...props };
+      this.ref.markForCheck();
+    };
     // Subscribe to the media store
-    this.playerDisposeFn.push(
-      this.player.subscribe(({ canPlay, waiting, playing, paused, muted, volume, fullscreen, canFullscreen, currentTime }) => {
-        this.playerStore = { canPlay, waiting, playing, paused, muted, volume, fullscreen, canFullscreen, currentTime };
-        this.ref.detectChanges();
-      })),
-      this.player.subscribe(({ qualities, quality, autoQuality, canSetQuality }) => {
-        this.playerStoreQuality = { qualities, quality, autoQuality, canSetQuality };
-        this.ref.detectChanges();
+    this.playerSettings.storeDisposeFn.push(
+      this.player.subscribe(({ autoplayError }) => { setPlayerStoreProp({ autoplayError }); }),
+      this.player.subscribe(({ canPlay }) => { setPlayerStoreProp({ canPlay }); }),
+      this.player.subscribe(({ waiting }) => { setPlayerStoreProp({ waiting }); }),
+      this.player.subscribe(({ playing }) => { setPlayerStoreProp({ playing }); }),
+      this.player.subscribe(({ paused }) => { setPlayerStoreProp({ paused }); }),
+      this.player.subscribe(({ muted }) => { setPlayerStoreProp({ muted }); }),
+      this.player.subscribe(({ volume }) => { setPlayerStoreProp({ volume }); }),
+      this.player.subscribe(({ fullscreen }) => { setPlayerStoreProp({ fullscreen }); }),
+      this.player.subscribe(({ canFullscreen }) => { setPlayerStoreProp({ canFullscreen }); }),
+      this.player.subscribe(({ currentTime }) => { setPlayerStoreProp({ currentTime }); }),
+      this.player.subscribe(({ quality }) => { setPlayerStoreProp({ quality }); }),
+      this.player.subscribe(({ autoQuality }) => { setPlayerStoreProp({ autoQuality }); }),
+      this.player.subscribe(({ canSetQuality }) => { setPlayerStoreProp({ canSetQuality }); }),
+      this.player.subscribe(({ audioTracks }) => { setPlayerStoreProp({ audioTracks }); }),
+      this.player.subscribe(({ audioTrack }) => { setPlayerStoreProp({ audioTrack }); }),
+      this.player.subscribe(({ textTrack }) => { setPlayerStoreProp({ textTrack }); }),
+      this.player.subscribe(({ error }) => { setPlayerStoreProp({ error }); }),
+      this.player.subscribe(({ loop }) => { setPlayerStoreProp({ loop }); }),
+      this.player.subscribe(({ qualities }) => {
+        const sortedQualities = [...qualities].reverse();
+        setPlayerStoreProp({ qualities: sortedQualities });
       }),
-      this.player.subscribe(({ audioTracks, audioTrack }) => {
-        this.playerStoreAudio = { audioTracks, audioTrack };
-        this.ref.detectChanges();
-      }),
-      this.player.subscribe((({ ended }) => {
+      this.player.subscribe(({ ended }) => {
         if (!ended) return;
         this.onEnded.emit();
-      }));
+      })
+    );
+    fromEvent(this.player, 'destroy', { once: true }).pipe(first()).subscribe(() => {
+      this.playerSettings.playerDestroyed.next();
+      this.playerSettings.playerDestroyed.complete();
+      this.playerSettings.playerDestroyed = new Subject();
+      this.playerSettings.storeDisposeFn.forEach(fn => {
+        fn();
+      });
+    });
   }
 
-  onMenuCheckBoxClick(): void {
-    this.ref.detectChanges();
+  private handleTouchUserIdle(): void {
+    if (!isVideoProvider(this.player.provider)) return;
+    const idleAttributeName = 'data-touch-user-idle';
+    const idleTimeoutValue = 4000;
+    const click$ = fromEvent<MouseEvent>(this.player.provider.video, 'click');
+    const clearIdleTimeoutFn = () => {
+      if (this.playerSettings.touchIdleTimeout) {
+        window.clearTimeout(this.playerSettings.touchIdleTimeout);
+        this.playerSettings.touchIdleTimeout = undefined;
+      }
+    };
+    // Toggle user idle attribute on tap
+    click$.pipe(
+      buffer(click$.pipe(debounceTime(200))),
+      takeUntil(this.playerSettings.playerDestroyed)
+    ).subscribe(events => {
+      // Only accept single click, ignore seek gestures
+      if (events.length > 1) return;
+      if (this.player.hasAttribute(idleAttributeName)) {
+        this.renderer.removeAttribute(this.player, idleAttributeName);
+        // Set idle after timeout, clear current timeout if exist
+        clearIdleTimeoutFn();
+        this.playerSettings.touchIdleTimeout = window.setTimeout(() => {
+          this.renderer.setAttribute(this.player, idleAttributeName, 'true');
+        }, idleTimeoutValue);
+      }
+      else {
+        this.renderer.setAttribute(this.player, idleAttributeName, 'true');
+        clearIdleTimeoutFn();
+      }
+    });
+    // Keep idle attribute when started playing
+    fromEvent<MediaPlayEvent>(this.player, 'play').pipe(takeUntil(this.playerSettings.playerDestroyed)).subscribe(() => {
+      this.renderer.removeAttribute(this.player, idleAttributeName);
+      this.playerSettings.touchIdleTimeout = window.setTimeout(() => {
+        this.renderer.setAttribute(this.player, idleAttributeName, 'true');
+      }, idleTimeoutValue);
+    });
+  }
+
+  private handleUserSeekGesture(event: MediaSeekRequestEvent): void {
+    if (this.playerSettings.fastForwardToastTimeout) {
+      window.clearTimeout(this.playerSettings.fastForwardToastTimeout);
+      this.playerSettings.fastForwardToastTimeout = undefined;
+    }
+    if (this.playerSettings.rewindToastTimeout) {
+      window.clearTimeout(this.playerSettings.rewindToastTimeout);
+      this.playerSettings.rewindToastTimeout = undefined;
+    }
+    const seekTime = event.detail - this.playerStore.currentTime;
+    if (seekTime > 0) {
+      this.playerSettings.showFastForward = true;
+      this.playerSettings.showRewind = false;
+      this.playerSettings.fastForwardToastTimeout = window.setTimeout(() => {
+        this.playerSettings.showFastForward = false;
+        this.ref.markForCheck();
+      }, 800);
+    }
+    else {
+      this.playerSettings.showRewind = true;
+      this.playerSettings.showFastForward = false;
+      this.playerSettings.rewindToastTimeout = window.setTimeout(() => {
+        this.playerSettings.showRewind = false;
+        this.ref.markForCheck();
+      }, 800);
+    }
+    this.ref.markForCheck();
   }
 
   setPlayerTrackList(): void {
     if (!this.player || !this.player.textTracks) return;
     const defaultLanguage = this.userSettings?.player.subtitleLang || this.translocoService.getActiveLang();
     this.player.textTracks.clear();
-    this.tracks?.forEach((track) => {
+    this.playerSettings.tracks.forEach((track) => {
       const trackType = <'vtt' | 'srt' | 'ass' | 'ssa'>track.src.substring(track.src.lastIndexOf('.') + 1);
       const textTrack: TextTrackInit = {
         id: track._id,
-        label: track.lang,
+        label: track.label,
         language: track.lang,
         src: track.src,
         kind: 'subtitles',
@@ -235,8 +387,8 @@ export class VideoPlayerComponent implements OnInit, OnDestroy {
       };
       if (this.userSettings?.player.subtitle && track.lang === defaultLanguage) {
         textTrack.default = true;
-        this.activeTrackValue = textTrack.language!;
-        this.enableSubtitle = true;
+        this.playerSettings.activeTrackValue = textTrack.language!;
+        this.playerSettings.showSubtitle = true;
       }
       this.player.textTracks.add(textTrack);
     });
@@ -245,16 +397,16 @@ export class VideoPlayerComponent implements OnInit, OnDestroy {
   setPlaybackSpeed(speed: number = 1): void {
     if (!this.player) return;
     this.player.playbackRate = speed;
-    this.activeSpeedValue = speed;
+    this.playerSettings.activeSpeedValue = speed;
     this.updateUserSettings({ player: { speed: speed * 100 } });
   }
 
   setPlayerSource(): void {
     if (!this.player || !this.streamData?.streams) return;
-    const playlist = this.streamData.streams.find(s => s.name === `manifest_${VideoCodec.H264}.json`);
+    const playlist = this.streamData.streams.find(s => s.type === MediaStorageType.MANIFEST);
     if (!playlist) return;
-    const playlistSrc = this.sourceBaseUrl.replace(':path', `${playlist._id}/${playlist.name}`);
-    this.videoPlayerService.generateM3U8(playlistSrc, this.sourceBaseUrl)
+    const playlistSrc = this.playerSettings.sourceBaseUrl.replace(':path', `${playlist._id}/${playlist.name}`);
+    this.videoPlayerService.generateM3U8(playlistSrc, this.playerSettings.sourceBaseUrl, { opus: this.playerSupports.hlsOpus })
       .subscribe(uri => {
         this.player.src = {
           src: uri,
@@ -273,18 +425,21 @@ export class VideoPlayerComponent implements OnInit, OnDestroy {
     const audioTrack = this.player.audioTracks[index];
     if (!audioTrack) return;
     audioTrack.selected = true;
-    //this.updateUserSettings({ player: { quality: quality.height } });
+    const audioTrackCodec = Number(audioTrack.label.split('-').pop()) || 1;
+    this.updateUserSettings({ player: { audioTrack: audioTrackCodec } });
   }
 
-  changeVideoQuality(index: number): void {
-    if (!this.player || this.player.qualities.readonly) return;
+  changeVideoQuality(height: number): void {
+    if (!this.player || !this.playerStore.canSetQuality) return;
     // Set selected quality
-    if (index === -1) {
+    if (height === 0) {
       this.player.qualities.autoSelect();
       this.updateUserSettings({ player: { quality: 0 } });
     } else {
-      const quality = this.player.qualities[index];
-      if (!quality) return;
+      const quality = this.playerStore.qualities.find(q => q.height === height);
+      // Fallback to auto if quality not found
+      if (!quality)
+        return this.player.qualities.autoSelect();
       quality.selected = true;
       this.updateUserSettings({ player: { quality: quality.height } });
     }
@@ -292,34 +447,43 @@ export class VideoPlayerComponent implements OnInit, OnDestroy {
 
   setPlayerTrack(lang: string | null): void {
     if (!this.player) return;
-    if (this.enableSubtitle && this.player.textTracks.selected) {
+    if (this.playerSettings.showSubtitle && this.player.textTracks.selected) {
       this.player.textTracks.selected.mode = 'disabled';
-      this.enableSubtitle = false;
+      this.playerSettings.showSubtitle = false;
     }
     if (lang !== null) {
-      const nextTrack = this.tracks!.find(t => t.lang === lang)!;
+      const nextTrack = this.playerSettings.tracks.find(t => t.lang === lang)!;
       this.player.textTracks.getById(nextTrack._id)!.mode = 'showing';
-      this.activeTrackValue = lang;
-      this.enableSubtitle = true;
+      this.playerSettings.activeTrackValue = lang;
+      this.playerSettings.showSubtitle = true;
       this.updateUserSettings({ player: { subtitle: true, subtitleLang: lang } });
     } else {
-      this.enableSubtitle = false;
+      this.playerSettings.showSubtitle = false;
       this.updateUserSettings({ player: { subtitle: false } });
     }
   }
 
+  setInitAudioTrack(codec: number) {
+    if (!this.player || this.player.audioTracks.readonly) return;
+    const audioTrack = this.player.audioTracks.toArray().find(a => Number(a.label.split('-').pop()) === codec);
+    if (!audioTrack) return;
+    audioTrack.selected = true;
+  }
+
   togglePlay(): void {
-    this.player.paused = !this.player.paused;
+    if (!this.playerStore.canPlay) return;
+    if (this.playerStore.playing)
+      this.player.pause();
+    else
+      this.player.play();
   }
 
   toggleNext(): void {
-    this.unsetPlayerSource();
-    this.requestNextEp.emit();
+    this.requestNext.emit();
   }
 
   togglePrev(): void {
-    this.unsetPlayerSource();
-    this.requestPrevEp.emit();
+    this.requestPrev.emit();
   }
 
   toggleMute(): void {
@@ -330,8 +494,10 @@ export class VideoPlayerComponent implements OnInit, OnDestroy {
   }
 
   toggleFullwindow(): void {
-    this.fullWindow = !this.fullWindow;
-    this.requestFullWindow.next(this.fullWindow);
+    this.playerSettings.fullWindow = !this.playerSettings.fullWindow;
+    this.player.focus();
+    this.player.scrollIntoView();
+    this.requestFitWindow.next(this.playerSettings.fullWindow);
   }
 
   toggleFullscreen(): void {
@@ -345,18 +511,25 @@ export class VideoPlayerComponent implements OnInit, OnDestroy {
 
   toggleSubtitle(): void {
     if (!this.player.textTracks.length) return;
-    if (this.enableSubtitle) {
+    if (this.playerSettings.showSubtitle) {
       // This will also set enableSubtitle to false
       this.setPlayerTrack(null);
-    } else if (this.tracks) {
-      const nextTrack = this.activeTrackValue ? this.tracks.find(t => t.lang === this.activeTrackValue) : this.tracks[0];
+    } else if (this.playerSettings.tracks) {
+      const nextTrack = this.playerSettings.activeTrackValue ?
+        this.playerSettings.tracks.find(t => t.lang === this.playerSettings.activeTrackValue) :
+        this.playerSettings.tracks[0];
       if (nextTrack) {
         this.player.textTracks.getById(nextTrack._id)!.mode = 'showing';
-        this.activeTrackValue = nextTrack.lang;
+        this.playerSettings.activeTrackValue = nextTrack.lang;
       }
-      this.enableSubtitle = true;
+      this.playerSettings.showSubtitle = true;
     }
-    this.updateUserSettings({ player: { subtitle: this.enableSubtitle } });
+    this.updateUserSettings({ player: { subtitle: this.playerSettings.showSubtitle } });
+  }
+
+  toggleAutoNext(value: boolean): void {
+    this.playerSettings.autoNext = value;
+    this.updateUserSettings({ player: { autoNext: this.playerSettings.autoNext } });
   }
 
   seekTime(value: number): void {
@@ -370,10 +543,10 @@ export class VideoPlayerComponent implements OnInit, OnDestroy {
       player: { ...this.pendingUpdateSettings.player, ...updateUserSettingsDto.player },
       subtitle: { ...this.pendingUpdateSettings.subtitle, ...updateUserSettingsDto.subtitle }
     };
-    if (this.updateSettingsSub) {
-      this.updateSettingsSub.unsubscribe();
+    if (this.playerSettings.updateSettingsSub) {
+      this.playerSettings.updateSettingsSub.unsubscribe();
     }
-    this.updateSettingsSub = timer(5000).pipe(switchMap(() => {
+    this.playerSettings.updateSettingsSub = timer(5000).pipe(switchMap(() => {
       return this.usersService.updateSettings(this.authService.currentUser!._id, this.pendingUpdateSettings);
     })).subscribe(settings => {
       this.authService.currentUser = {
@@ -394,20 +567,22 @@ export class VideoPlayerComponent implements OnInit, OnDestroy {
     const textAlpha = settings.textAlpha != undefined ? settings.textAlpha : 100;
     const backgroundAlpha = settings.bgAlpha != undefined ? settings.bgAlpha : 100;
     const windowAlpha = settings.winAlpha != undefined ? settings.winAlpha : 100;
-    this.subtitleStyles = {
-      'font-family': getFontFamily(settings.fontFamily),
-      '--cue-font-size-scale': (settings.fontSize || 100) / 100,
-      '--cue-color': prepareColor(textColor, textAlpha),
-      '--cue-font-weight': scaleFontWeight(settings.fontWeight),
-      '--cue-text-shadow': getTextEdgeStyle(settings.textEdge),
-      '--cue-bg-color': prepareColor(backgroundColor, backgroundAlpha, 'transparent'),
-      '--cue-window-color': prepareColor(windowColor, windowAlpha, 'transparent')
+    this.playerSettings = {
+      ...this.playerSettings,
+      subtitleStyles: {
+        'font-family': getFontFamily(settings.fontFamily),
+        '--cue-font-size-scale': (settings.fontSize || 100) / 100,
+        '--cue-color': prepareColor(textColor, textAlpha),
+        '--cue-font-weight': scaleFontWeight(settings.fontWeight),
+        '--cue-text-shadow': getTextEdgeStyle(settings.textEdge),
+        '--cue-bg-color': prepareColor(backgroundColor, backgroundAlpha, 'transparent'),
+        '--cue-window-color': prepareColor(windowColor, windowAlpha, 'transparent')
+      }
     };
   }
 
   ngOnDestroy(): void {
-    this.playerDisposeFn.forEach(fn => {
-      fn();
-    });
+    this.playerSettings.playerDestroyed.next();
+    this.playerSettings.playerDestroyed.complete();
   }
 }

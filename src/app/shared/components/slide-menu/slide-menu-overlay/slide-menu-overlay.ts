@@ -1,4 +1,4 @@
-import { AfterContentInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ContentChildren, ElementRef, EventEmitter, inject, Input, NgZone, OnDestroy, Output, QueryList, ViewChild } from '@angular/core';
+import { AfterContentInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ContentChildren, ElementRef, EventEmitter, inject, Input, NgZone, OnDestroy, Output, QueryList, Renderer2, ViewChild } from '@angular/core';
 import { FocusKeyManager, FocusOrigin } from '@angular/cdk/a11y';
 import { Directionality } from '@angular/cdk/bidi';
 import { CdkMenuGroup, FocusNext } from '@angular/cdk/menu';
@@ -30,7 +30,7 @@ let nextId = 0;
   `,
   host: {
     'role': 'menu',
-    'class': 'slide-menu',
+    'class': 'slide-menu p-scrollbar tw-overflow-y-auto',
     '[class.slide-menu-inline]': 'isInline',
     '[tabindex]': '_getTabIndex()',
     '[id]': 'id',
@@ -101,13 +101,36 @@ export class SlideMenuOverlay extends CdkMenuGroup implements SlideMenu, AfterCo
   setAnimation() {
     const factory = this.animationBuilder.build([
       style({ opacity: 0 }),
-      animate('100ms ease-in', style({ opacity: 1 })),
+      animate('100ms ease-in-out', style({ opacity: 1 }))
     ]);
     const player = factory.create(this.el.nativeElement);
+    player.onDone(() => {
+      // Somehow this works
+      setTimeout(() => player.destroy(), 0);
+    });
     player.play();
   }
 
-  constructor(public cd: ChangeDetectorRef, private animationBuilder: AnimationBuilder, private el: ElementRef) {
+  setSlideAnimation(fromWidth: string, fromHeight: string) {
+    const toWidth = this.el.nativeElement.clientWidth + 'px';
+    const toHeight = this.el.nativeElement.clientHeight + 'px';
+    const factory = this.animationBuilder.build([
+      style({ width: fromWidth, height: fromHeight }),
+      animate('150ms ease-in-out', style({ width: toWidth, height: toHeight }))
+    ]);
+    const player = factory.create(this.el.nativeElement);
+    player.onStart(() => {
+      this.renderer.setStyle(this.el.nativeElement, 'overflow-y', 'hidden');
+    });
+    player.onDone(() => {
+      this.renderer.removeStyle(this.el.nativeElement, 'overflow-y');
+      setTimeout(() => player.destroy(), 0);
+    });
+    player.play();
+  }
+
+  constructor(public cd: ChangeDetectorRef, private animationBuilder: AnimationBuilder, private renderer: Renderer2,
+    private el: ElementRef<HTMLElement>) {
     super();
     this.destroyed.subscribe(this.closed);
     this._parentTrigger?.registerChildMenu(this);

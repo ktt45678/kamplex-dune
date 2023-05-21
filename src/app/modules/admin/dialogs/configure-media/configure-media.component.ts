@@ -643,6 +643,7 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
     const mediaId = this.config.data!._id;
     this.mediaService.findMovieStreams(mediaId).subscribe((movie) => {
       this.previewStream = movie;
+      this.ref.markForCheck();
     });
   }
 
@@ -663,6 +664,7 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
             if (!this.media) return;
             this.media.movie.status = MediaSourceStatus.PENDING;
             this.media.pStatus = MediaPStatus.PENDING;
+            this.checkUploadInQueue();
             this.isUpdated = true;
           }
         }).add(() => {

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, Renderer2 } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnInit, Output, Renderer2, SimpleChanges } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { takeUntil } from 'rxjs';
 
@@ -11,11 +11,13 @@ import { AuthService, DestroyService } from '../../../../core/services';
   styleUrls: ['./playlist-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PlaylistCardComponent implements OnInit {
+export class PlaylistCardComponent implements OnInit, OnChanges {
   @Input() playlist!: Playlist;
   @Output() onAddAllToPlaylist = new EventEmitter<Playlist>();
   @Output() onPlaylistSettings = new EventEmitter<Playlist>();
   @Output() onDelete = new EventEmitter<Playlist>();
+  thumbnailUrl: string | null = null;
+  thumbnailBgColor: number = 0;
   userId: string | null = null;
   currentUser!: UserDetails | null;
 
@@ -31,6 +33,15 @@ export class PlaylistCardComponent implements OnInit {
       this.currentUser = user;
       this.ref.markForCheck();
     });
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['playlist']) {
+      const playlist = <Playlist>changes['playlist'].currentValue;
+      this.thumbnailUrl = playlist.thumbnailThumbnailUrl || playlist.thumbnailMedia?.smallBackdropUrl || null;
+      this.thumbnailBgColor = playlist.thumbnailColor || playlist.thumbnailMedia?.backdropColor || 0;
+      this.ref.markForCheck();
+    }
   }
 
   onPlaylistMenuClick(button: HTMLButtonElement, opened: boolean): void {

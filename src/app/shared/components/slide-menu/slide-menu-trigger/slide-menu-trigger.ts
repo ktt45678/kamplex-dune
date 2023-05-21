@@ -31,6 +31,7 @@ import { DOCUMENT } from '@angular/common';
     'offsetY: offsetY',
     'lockedPosition: lockedPosition',
     'flexibleDimensions: flexibleDimensions',
+    'backdropClass: backdropClass',
     'menuData: menuTriggerData',
   ],
   outputs: ['opened: menuOpened', 'closed: menuClosed'],
@@ -55,16 +56,6 @@ export class SlideMenuTriggerDirective extends SlideMenuTriggerBase implements O
   /** The directionality of the page. */
   private readonly _directionality = inject(Directionality, { optional: true });
 
-  menuRelativeTo?: HTMLElement | 'body';
-
-  offsetX: number = 0;
-
-  offsetY: number = 0;
-
-  lockedPosition: boolean = true;
-
-  flexibleDimensions: boolean = true;
-
   constructor() {
     super();
     this._setRole();
@@ -81,7 +72,6 @@ export class SlideMenuTriggerDirective extends SlideMenuTriggerBase implements O
       this.close();
     } else {
       this.open();
-      this.getMenu()?.setAnimation();
     }
   }
 
@@ -91,9 +81,14 @@ export class SlideMenuTriggerDirective extends SlideMenuTriggerBase implements O
       this.opened.next();
     }
 
+    let lastMenuWidth: string | undefined;
+    let lastMenuHeight: string | undefined;
+
     this.menuStack.overlayRef = this.menuStack.overlayRef || this.menuStack.createOverlay(this._getOverlayConfig());
 
     if (this.menuStack.overlayRef.hasAttached()) {
+      lastMenuWidth = this.menuStack.overlayRef.overlayElement.clientWidth + 'px';
+      lastMenuHeight = this.menuStack.overlayRef.overlayElement.clientHeight + 'px';
       this.menuStack.overlayRef.detach();
       if (this.menuTemplateRef === this.menuStack.parentMenuRefs[this.menuStack.parentMenuRefs.length - 1])
         this.menuStack.parentMenuRefs.pop();
@@ -105,6 +100,12 @@ export class SlideMenuTriggerDirective extends SlideMenuTriggerBase implements O
     this.menuStack.overlayRef.attach(this.getMenuContentPortal());
     this.menuStack.activeMenuRef = this.menuTemplateRef;
     this._subscribeToOutsideClicks();
+
+    if (this.menuStack.isPrimaryTrigger(this._elementRef)) {
+      this.getMenu()?.setAnimation();
+    } else if (lastMenuWidth && lastMenuHeight) {
+      this.getMenu()?.setSlideAnimation(lastMenuWidth, lastMenuHeight);
+    }
   }
 
   /** Close the opened menu. */
@@ -218,6 +219,8 @@ export class SlideMenuTriggerDirective extends SlideMenuTriggerBase implements O
       positionStrategy: this._getOverlayPositionStrategy(),
       scrollStrategy: this._overlay.scrollStrategies.reposition(),
       direction: this._directionality || undefined,
+      hasBackdrop: !!this.backdropClass,
+      backdropClass: this.backdropClass || ''
     });
   }
 

@@ -15,7 +15,7 @@ import { AddSubtitleForm, ShortDateForm } from '../../../../core/interfaces/form
 import { FileUploadComponent } from '../../../../shared/components/file-upload';
 import { AddSubtitleComponent } from '../add-subtitle';
 import { ImageEditorComponent } from '../../../../shared/dialogs/image-editor';
-import { AppErrorCode, MediaSourceStatus } from '../../../../core/enums';
+import { AppErrorCode, MediaPStatus, MediaSourceStatus } from '../../../../core/enums';
 import { dataURItoBlob, translocoEscape, fixNestedDialogFocus, replaceDialogHideMethod, detectFormChange, secondsToTimeString, timeStringToSeconds } from '../../../../core/utils';
 import {
   IMAGE_PREVIEW_SIZE, UPLOAD_STILL_ASPECT_HEIGHT, UPLOAD_STILL_ASPECT_WIDTH, UPLOAD_STILL_MIN_HEIGHT,
@@ -319,6 +319,7 @@ export class ConfigureEpisodeComponent implements OnInit, AfterViewInit {
     const episodeNumber = this.config.data!.episode.epNumber;
     this.mediaService.findTVStreams(mediaId, episodeNumber).subscribe((episode) => {
       this.previewStream = episode;
+      this.ref.markForCheck();
     });
   }
 
@@ -338,7 +339,8 @@ export class ConfigureEpisodeComponent implements OnInit, AfterViewInit {
         this.mediaService.deleteTVSource(mediaId, episodeId).subscribe({
           next: () => {
             if (!this.episode) return;
-            this.episode = { ...this.episode, status: MediaSourceStatus.PENDING };
+            this.episode = { ...this.episode, status: MediaSourceStatus.PENDING, pStatus: MediaPStatus.PENDING };
+            this.checkUploadInQueue();
             this.isUpdated = true;
           }
         }).add(() => {

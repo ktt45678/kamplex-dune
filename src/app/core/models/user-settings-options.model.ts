@@ -1,6 +1,7 @@
 export interface MediaPlayerOptions {
   muted?: boolean;
   volume?: number;
+  audioTrack?: number;
   quality?: number;
   speed?: number;
   subtitle?: boolean;

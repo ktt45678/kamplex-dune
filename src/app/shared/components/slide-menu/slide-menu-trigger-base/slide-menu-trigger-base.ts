@@ -70,6 +70,18 @@ export abstract class SlideMenuTriggerBase implements OnDestroy {
   /** The injector to use for the child menu opened by this trigger. */
   private _childMenuInjector?: Injector;
 
+  menuRelativeTo?: HTMLElement | 'body';
+
+  offsetX: number = 0;
+
+  offsetY: number = 0;
+
+  lockedPosition: boolean = true;
+
+  flexibleDimensions: boolean = true;
+
+  backdropClass: string | null = null;
+
   ngOnDestroy() {
     this.destroyed.next();
     this.destroyed.complete();

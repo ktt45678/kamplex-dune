@@ -3,16 +3,19 @@ import { CommonModule } from '@angular/common';
 
 import { SubstringPipe } from './substring/substring.pipe';
 import { CharColorPipe } from './char-color/char-color.pipe';
+import { SplitPipe } from './split/split.pipe';
 
 @NgModule({
   declarations: [
     SubstringPipe,
-    CharColorPipe
+    CharColorPipe,
+    SplitPipe
   ],
   imports: [CommonModule],
   exports: [
     SubstringPipe,
-    CharColorPipe
+    CharColorPipe,
+    SplitPipe
   ]
 })
 export class StringPipeModule { }

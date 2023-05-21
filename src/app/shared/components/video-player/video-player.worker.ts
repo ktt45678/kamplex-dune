@@ -5,7 +5,7 @@ addEventListener('message', ({ data }) => {
   let response = null;
   switch (data.type) {
     case 'manifest-to-m3u8': {
-      response = convertToM3U8(data.manifest, data.baseUrl);
+      response = convertToM3U8(data.manifest, data.baseUrl, data.options);
     }
   }
   postMessage(response);

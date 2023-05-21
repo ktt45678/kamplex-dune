@@ -45,7 +45,7 @@
     "socket.io-client": "^4.6.1",
     "swiper": "^8.4.7",
     "tslib": "^2.5.0",
-    "vidstack": "npm:@ktt45678/vidstack@^0.5.2-F2",
+    "vidstack": "npm:@ktt45678/vidstack@^0.5.6-F1",
     "zone.js": "^0.13.0"
   },
   "devDependencies": {

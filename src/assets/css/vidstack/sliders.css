@@ -5,6 +5,7 @@
   --track-focus-height: calc(var(--track-height) * 1.25);
   display: flex;
   align-items: center;
+  width: 100%;
   height: 16px;
   /** Prevent thumb flowing out of slider. */
   margin: 0 calc(var(--thumb-size) / 2);
@@ -22,7 +23,7 @@
   top: 50%;
   left: 0;
   transform: translateY(-50%);
-  background-color: rgb(255 255 255 /0.3);
+  background-color: rgb(255 255 255 / 0.3);
   backdrop-filter: blur(2px);
   border-radius: 1px;
 }
@@ -98,11 +99,12 @@ media-time-slider [part~='track'][part~='track-progress'] {
 [data-media-slider] [slot='preview'] {
   display: flex;
   position: absolute;
-  top: var(--preview-top);
   left: var(--preview-left);
+  bottom: calc(100% + var(--media-slider-preview-gap, -2px));
   flex-direction: column;
   align-items: center;
   opacity: 0;
+  background-color: var(--media-slider-preview-bg);
   border-radius: 2px;
   pointer-events: none;
   transform: translateX(-50%);
@@ -169,13 +171,13 @@ media-volume-slider [part~='track'][part~='track-fill'], media-volume-slider [pa
 }
 
 media-slider-thumbnail {
-  width: 160px;
-  height: 90px;
+  max-width: 160px;
+  max-height: 90px;
   background-color: #525252;
   border: 2px solid hsl(0, 0%, 80%);
   border-radius: 4px;
 }
 
-media-slider-thumbnail[data-loading] img[part='img'] {
+media-slider-thumbnail[data-loading] img[part='img'], media-slider-thumbnail[aria-hidden='true'] {
   display: none;
 }

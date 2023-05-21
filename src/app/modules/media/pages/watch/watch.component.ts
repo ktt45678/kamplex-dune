@@ -1,4 +1,5 @@
 import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, ChangeDetectorRef, ViewChild } from '@angular/core';
+import { BreakpointObserver } from '@angular/cdk/layout';
 import { Meta, Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslocoService } from '@ngneat/transloco';
@@ -9,7 +10,7 @@ import { AuthService, MediaService, HistoryService, RatingsService, DestroyServi
 import { MediaDetails, MediaStream, Rating, TVEpisode, UserDetails } from '../../../../core/models';
 import { VideoPlayerComponent } from '../../../../shared/components/video-player';
 import { StarRatingComponent } from '../../../../shared/components/star-rating';
-import { MediaType } from '../../../../core/enums';
+import { MediaBreakpoints, MediaType } from '../../../../core/enums';
 import { toHexColor } from '../../../../core/utils';
 import { SITE_NAME, SITE_THEME_COLOR } from '../../../../../environments/config';
 
@@ -31,7 +32,6 @@ export class WatchComponent implements OnInit, OnDestroy {
   MediaType = MediaType;
   loading: boolean = false;
   currentUser!: UserDetails | null;
-  playerStreamData?: MediaStream;
   playerPreviewThumbnail?: string;
   selectedCodec: number = 1;
   media?: MediaDetails;
@@ -43,22 +43,27 @@ export class WatchComponent implements OnInit, OnDestroy {
   ratingCount: number = 0;
   showingMore: boolean = false;
   autoNext: boolean = false;
-  fullWindow: boolean = false;
+  canFitWindow: boolean = true;
+  fitWindow: boolean = false;
   loadingRating: boolean = false;
   prevEpIndex: number = -1;
   nextEpIndex: number = -1;
   watchTimeUpdateSub: Subscription = new Subscription();
 
-  constructor(private ref: ChangeDetectorRef, private title: Title, private meta: Meta, private authService: AuthService,
-    private mediaService: MediaService, private historyService: HistoryService, private ratingsService: RatingsService,
-    private route: ActivatedRoute, private router: Router, private translocoService: TranslocoService,
-    private destroyService: DestroyService) { }
+  constructor(private ref: ChangeDetectorRef, private title: Title, private meta: Meta, private breakpointObserver: BreakpointObserver,
+    private authService: AuthService, private mediaService: MediaService, private historyService: HistoryService,
+    private ratingsService: RatingsService, private route: ActivatedRoute, private router: Router,
+    private translocoService: TranslocoService, private destroyService: DestroyService) { }
 
   ngOnInit(): void {
     this.initWatch();
     this.authService.currentUser$.pipe(takeUntil(this.destroyService)).subscribe(user => {
       this.currentUser = user;
       this.initWatchTimeUpdater();
+      this.ref.markForCheck();
+    });
+    this.breakpointObserver.observe(MediaBreakpoints.MEDIUM_2).pipe(takeUntil(this.destroyService)).subscribe(state => {
+      this.canFitWindow = state.matches;
       this.ref.markForCheck();
     });
   }
@@ -68,8 +73,11 @@ export class WatchComponent implements OnInit, OnDestroy {
       map(([params, queryParams]) => ({ id: params.get('id'), epNumber: queryParams.get('ep') })),
       filter((params): params is { id: string, epNumber: string | null } => params.id !== null),
       switchMap(params => {
-        if (params.id === this.media?._id) return of(this.media).pipe(map(media => ({ media, params })));
+        // Unset current source and start loading
+        this.streams = undefined;
         this.loading = true;
+        this.ref.markForCheck();
+        if (params.id === this.media?._id) return of(this.media).pipe(map(media => ({ media, params })));
         return this.mediaService.findOne(params.id).pipe(map(media => ({ media, params })));
       }),
       takeUntil(this.destroyService)
@@ -142,7 +150,6 @@ export class WatchComponent implements OnInit, OnDestroy {
     this.mediaService.findMovieStreams(media._id).subscribe(movieStreams => {
       this.streams = movieStreams;
       this.ref.markForCheck();
-      this.setPlayerSource(movieStreams);
     });
   }
 
@@ -151,14 +158,13 @@ export class WatchComponent implements OnInit, OnDestroy {
     if (this.media && media._id === this.media._id && this.streams?.episode
       && this.streams.episode.epNumber === epNumber) return;
     this.translocoService.selectTranslation('media').pipe(first()).subscribe(t => {
-      this.title.setTitle(`${t['episode.episodePrefix']} ${epNumber} - ${media.title} - ${SITE_NAME}`);
+      this.title.setTitle(`${media.title} ${t['episode.episodePrefix']} ${epNumber} - ${SITE_NAME}`);
     });
     this.setMediaMeta(media);
     this.findPrevAndNextEpisodes(media.tv.episodes, epNumber);
     this.mediaService.findTVStreams(media._id, epNumber).subscribe(episodeStreams => {
       this.streams = episodeStreams;
       this.ref.markForCheck();
-      this.setPlayerSource(episodeStreams);
     });
   }
 
@@ -173,8 +179,8 @@ export class WatchComponent implements OnInit, OnDestroy {
     this.router.navigate([], { queryParams: { ep } });
   }
 
-  toggleFullwindow(event: boolean): void {
-    this.fullWindow = event;
+  toggleFitWindow(event: boolean): void {
+    this.fitWindow = event;
   }
 
   setMediaMeta(media: MediaDetails): void {
@@ -192,11 +198,6 @@ export class WatchComponent implements OnInit, OnDestroy {
       this.meta.updateTag({ property: 'og:image:type', content: 'image/jpeg' });
       this.meta.updateTag({ property: 'og:image:alt', content: media.title });
     }
-  }
-
-  setPlayerSource(data: MediaStream): void {
-    this.playerStreamData = data;
-    this.ref.markForCheck();
   }
 
   findMediaRating(media: MediaDetails): void {

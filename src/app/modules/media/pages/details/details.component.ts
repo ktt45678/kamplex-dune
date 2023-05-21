@@ -10,7 +10,7 @@ import { AddToPlaylistComponent } from '../../../../shared/dialogs/add-to-playli
 import { MediaDetails } from '../../../../core/models';
 import { AuthService, MediaService } from '../../../../core/services';
 import { DestroyService } from '../../../../core/services';
-import { MediaStatus, MediaType } from '../../../../core/enums';
+import { MediaBreakpoints, MediaStatus, MediaType } from '../../../../core/enums';
 import { SITE_NAME, SITE_THEME_COLOR, YOUTUBE_EMBED_URL, YOUTUBE_THUMBNAIL_URL } from '../../../../../environments/config';
 import { toHexColor, track_Id } from '../../../../core/utils';
 
@@ -42,7 +42,7 @@ export class DetailsComponent implements OnInit, OnDestroy {
       if (!id) return;
       this.loadMedia(id);
     });
-    this.breakpointObserver.observe('(min-width: 640px)').pipe(takeUntil(this.destroyService)).subscribe(state => {
+    this.breakpointObserver.observe(MediaBreakpoints.SMALL).pipe(takeUntil(this.destroyService)).subscribe(state => {
       this.isMobile = !state.matches;
       this.ref.markForCheck();
     });

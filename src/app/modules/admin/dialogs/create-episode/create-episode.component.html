@@ -245,8 +245,6 @@
           [desciption]="t('admin.createEpisode.addEpisodeSourceDescription')" [disabled]="isUploadingSource"
           (fileChange)="uploadSource($event)">
         </app-file-upload>
-        <p class="tw-text-lg tw-font-medium tw-my-2">{{ t('admin.createEpisode.addEpisodeSourceAltLabel') }}</p>
-        <app-add-ext-streams (onSelect)="updateExtStreams($event)"></app-add-ext-streams>
       </div>
       <div class="tw-flex tw-my-4 tw-px-7">
         <div class="tw-ml-auto">

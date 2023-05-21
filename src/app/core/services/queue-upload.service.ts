@@ -59,7 +59,8 @@ export class QueueUploadService {
   }
 
   public isMediaInQueue(id: string): boolean {
-    const index = this._files.findIndex(f => f.id === id);
+    const index = this._files.findIndex(f => f.id === id &&
+      [QueueUploadStatus.PENDING, QueueUploadStatus.UPLOADING].includes(f.status));
     return index > -1;
   }
 

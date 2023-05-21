@@ -14,9 +14,11 @@ export interface HlsAudioTrack {
   default: boolean;
   autoselect: boolean;
   language: string;
+  format: string;
   channels: number;
   samplingRate: number;
   codec: string;
+  codecID: number;
   bandwidth: number;
   duration: number;
   mimeType: string;
@@ -26,11 +28,14 @@ export interface HlsAudioTrack {
 }
 
 export interface HlsVideoTrack {
-  codecs: string;
+  codec: string;
+  codecID: number;
   width: number;
   height: number;
+  par: string;
   bandwidth: number;
   duration: number;
+  format: string;
   mimeType: string;
   frameRate: number;
   hlsSegment: HlsSegmentGroup;

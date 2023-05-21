@@ -1,11 +1,12 @@
 export interface MediaPlayerOptions {
   muted?: boolean | null;
   volume?: number | null;
+  audioTrack?: number | null;
   quality?: number | null;
   speed?: number | null;
   subtitle?: boolean | null;
   subtitleLang?: string | null;
-  autoNextEp?: boolean | null;
+  autoNext?: boolean | null;
 }
 
 export interface SubtitleOptions {

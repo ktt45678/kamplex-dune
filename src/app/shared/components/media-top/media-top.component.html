@@ -5,12 +5,12 @@
       <ul class="tw-bg-neutral-875 tw-overflow-hidden tw-rounded-md tw-list-none">
         <li *ngFor="let media of mediaList.results; let index = index; trackBy: track_Id">
           <a [routerLink]="['/details', media._id]" class="tw-bg-neutral-875 hover:tw-bg-neutral-800
-          focus-visible:tw-bg-neutral-800 tw-transition-colors tw-duration-200 tw-p-1 tw-block">
+            focus-visible:tw-bg-neutral-800 tw-transition-colors tw-duration-200 tw-p-1 tw-block">
             <div class="tw-flex">
               <!--p class="tw-text-gray-400 tw-text-base tw-text-center tw-self-center tw-flex-grow-1 tw-flex-shrink-0
-              tw-ml-1 tw-mr-2 tw-p-1 tw-border-2 tw-rounded-full tw-w-10 tw-h-10">
-              <span>{{ index + 1 }}</span>
-            </p-->
+                tw-ml-1 tw-mr-2 tw-p-1 tw-border-2 tw-rounded-full tw-w-10 tw-h-10">
+                <span>{{ index + 1 }}</span>
+              </p-->
               <div class="tw-flex-grow-0 tw-flex-shrink-0 tw-basis-16">
                 <div class="tw-aspect-w-2 tw-aspect-h-3 tw-rounded-md tw-overflow-hidden">
                   <img *ngIf="media.thumbnailPosterUrl; else noPoster" class="tw-object-cover"

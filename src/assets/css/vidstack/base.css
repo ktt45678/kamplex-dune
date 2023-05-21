@@ -6,44 +6,69 @@ media-player {
 
 /* Avoid double controls on iOS when in fullscreen. */
 media-player[data-ios-controls] .media-controls,
+/* Hide controls if autoplay fails */
+media-player[data-autoplay-error] .media-controls,
 /* Hide controls while media is loading, or user is idle. */
-media-player:not([data-can-play]) .media-controls, media-player[data-user-idle] .media-controls
-/*, media-player:focus[data-user-idle] .media-controls, media-player:not(:focus) .media-controls */ {
+media-player .media-controls, media-player[data-user-idle] .media-controls {
   opacity: 0;
-  visibility: hidden;
 }
 
-/* Show controls if autoplay fails or paused. */
-media-player[data-autoplay-error] .media-controls, media-player[data-paused] .media-controls,
-media-player[data-menu-open] .media-controls
-/*, media-player:focus .media-controls */ {
+/* Show controls if paused */
+media-player[data-paused]:not([data-autoplay-error]) .media-controls {
+  opacity: 1;
+}
+
+/* Show controls if menu is open or sliders are interactive. */
+media-player[data-menu-open] .media-controls,
+media-player:not([data-autoplay-error]) .media-controls:has([data-media-slider][data-interactive]) {
   opacity: 1 !important;
-  visibility: visible !important;
+}
+
+/* Hide mouse on fullscreen */
+media-player[data-user-idle]:hover, media-player[data-fullscreen][data-user-idle] {
+  cursor: none;
 }
 
 /* Apply outline */
-[data-media-slider][data-focus] [part='track'], [data-media-button][data-focus] {
+media-player [data-media-slider][data-focus] [part='track'], [data-media-button][data-focus] {
   outline: none;
   @apply tw-shadow-focus-box;
 }
 
 @media (hover: hover) and (pointer: fine) {
   /* mouse or touchpad */
-  media-player:not([data-hocus]):not([data-paused]) .media-controls {
+  /* Hide controls when playing or not focused */
+  media-player[data-playing]:not(:focus) .media-controls {
     opacity: 0;
-    visibility: hidden;
+  }
+
+  /* Show controls when not idling */
+  media-player:not([data-user-idle]):not([data-autoplay-error]):hover .media-controls {
+    opacity: 1;
+  }
+
+  /* Show controls if the container has focus visible */
+  media-player[data-playing] .media-controls:has(:focus-visible) {
+    opacity: 1;
   }
 }
 
 @media (hover: none) and (pointer: coarse) {
   /* smartphones or touchscreens */
-  media-player:not(:focus):not([data-paused]) .media-controls, media-player:not(:focus-within):not([data-paused]) .media-controls {
+  /* Hide controls when idling */
+  media-player[data-touch-user-idle][data-playing] .media-controls {
     opacity: 0;
-    visibility: hidden;
+    pointer-events: none;
   }
 
-  media-player:focus:not([data-user-idle]) .media-controls, media-player:focus-within:not([data-user-idle]) .media-controls {
+  /* Show controls when not idling or has focus within */
+  media-player:not([data-touch-user-idle]):not([data-autoplay-error]) .media-controls {
     opacity: 1;
-    visibility: visible;
+  }
+
+  /* Set pointer events to none when idling */
+  media-player[data-touch-user-idle][data-playing] [data-media-slider],
+  media-player[data-touch-user-idle][data-playing] button {
+    pointer-events: none;
   }
 }

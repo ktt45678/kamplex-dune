@@ -220,12 +220,16 @@
           <div *ngSwitchCase="MediaSourceStatus.PROCESSING" class="tw-text-center">
             <i class="ms ms-hourglass-empty tw-text-5xl"></i>
             <p class="tw-text-lg tw-mt-2">{{ t('admin.media.statusProcessingDescription') }}</p>
+            <div class="tw-mt-2">
+              <ng-container [ngTemplateOutlet]="deleteSourceButtonTpl"></ng-container>
+            </div>
           </div>
           <ng-container *ngSwitchCase="MediaSourceStatus.READY">
             <div class="tw-flex tw-mb-4">
               <p class="tw-text-base">{{ t('admin.media.statusReadyDescription') }}</p>
               <div class="tw-ml-auto">
                 <ng-container *ngIf="!showEpisodePlayer; then sourcePreviewButton"></ng-container>
+                <ng-container [ngTemplateOutlet]="deleteSourceButtonTpl"></ng-container>
               </div>
             </div>
           </ng-container>
@@ -234,14 +238,17 @@
               <p class="tw-text-base">{{ t('admin.media.statusDoneDescription') }}</p>
               <div class="tw-ml-auto">
                 <ng-container *ngIf="!showEpisodePlayer; then sourcePreviewButton"></ng-container>
-                <button pButton type="button" class="p-button-danger p-button-outlined tw-ml-2"
-                  [label]="t('admin.configureEpisode.deleteSource')" (click)="deleteSource($event)">
-                </button>
+                <ng-container [ngTemplateOutlet]="deleteSourceButtonTpl"></ng-container>
               </div>
             </div>
             <ng-container *ngIf="showEpisodePlayer; then sourcePreview"></ng-container>
           </ng-container>
         </div>
+        <ng-template #deleteSourceButtonTpl>
+          <button pButton type="button" class="p-button-danger p-button-outlined tw-ml-2"
+            [label]="t('admin.configureEpisode.deleteSource')" (click)="deleteSource($event)">
+          </button>
+        </ng-template>
         <ng-template #sourcePreviewButton>
           <button *ngIf="!showEpisodePlayer" pButton type="button" class="p-button-secondary"
             [label]="t('admin.configureEpisode.previewSource')" (click)="showSourcePreview()">
@@ -250,9 +257,6 @@
         <ng-template #sourcePreview>
           <app-video-player [stream]="previewStream"></app-video-player>
         </ng-template>
-        <p class="tw-text-base tw-font-medium tw-mt-4 tw-mb-2">{{ t('admin.configureEpisode.addEpisodeSourceAltLabel')
-          }}</p>
-        <app-add-ext-streams (onSelect)="updateExtStreams($event)"></app-add-ext-streams>
       </ng-template>
     </app-vertical-tab>
     <p-confirmDialog [blockScroll]="false" key="inModalEpisode" [style]="{width: '500px'}" [baseZIndex]="1000"

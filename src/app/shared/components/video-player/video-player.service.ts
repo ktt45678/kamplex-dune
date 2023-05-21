@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
 import { Observable, switchMap } from 'rxjs';
 
-import { StreamManifest } from '../../../core/interfaces/video-player';
+import { M3U8Options, StreamManifest } from '../../../core/interfaces/video-player';
 import { convertToM3U8 } from '../../../core/utils';
 
 @Injectable()
@@ -16,15 +16,16 @@ export class VideoPlayerService implements OnDestroy {
     }
   }
 
-  generateM3U8(manifestUrl: string, baseUrl: string) {
+  generateM3U8(manifestUrl: string, baseUrl: string, options?: M3U8Options) {
+    options = Object.assign({}, { opus: false }, options)
     return this.http.get<StreamManifest>(manifestUrl, {
       headers: { 'x-ng-intercept': 'http-error' }
     }).pipe(switchMap(manifest => {
-      return this.manifestToM3U8(manifest, baseUrl);
+      return this.manifestToM3U8(manifest, baseUrl, options!);
     }));
   }
 
-  private manifestToM3U8(manifest: StreamManifest, baseUrl: string) {
+  private manifestToM3U8(manifest: StreamManifest, baseUrl: string, options: M3U8Options) {
     return new Observable<string>(observer => {
       if (this.worker) {
         this.worker.onmessage = ({ data }) => {
@@ -32,9 +33,9 @@ export class VideoPlayerService implements OnDestroy {
           observer.next(data);
           observer.complete();
         };
-        this.worker.postMessage({ type: 'manifest-to-m3u8', manifest, baseUrl });
+        this.worker.postMessage({ type: 'manifest-to-m3u8', manifest, baseUrl, options });
       } else {
-        const result = convertToM3U8(manifest, baseUrl);
+        const result = convertToM3U8(manifest, baseUrl, options);
         observer.next(result);
         observer.complete();
       }
