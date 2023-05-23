@@ -2,7 +2,7 @@
   <div class="tw-mb-8 2md:tw-mt-8" [ngClass]="{ 'tw-max-w-8xl tw-mx-auto': !fitWindow }">
     <div class="tw-flex tw-flex-wrap" [ngClass]="{ '2md:tw-flex-nowrap': !fitWindow }">
       <div class="tw-w-full" [ngClass]="{ '2md:tw-w-9/12': !fitWindow }">
-        <app-video-player #videoPlayer [stream]="streams" [canReqNext]="this.nextEpIndex > -1"
+        <app-video-player #videoPlayer [media]="media" [stream]="streams" [canReqNext]="this.nextEpIndex > -1"
           [canReqPrev]="this.prevEpIndex > -1" [canFitWindow]="canFitWindow"
           (onEnded)="autoNext && changeEpisode(nextEpIndex)" (requestFitWindow)="toggleFitWindow($event)"
           (requestNext)="changeEpisode(this.nextEpIndex)" (requestPrev)="changeEpisode(this.prevEpIndex)">

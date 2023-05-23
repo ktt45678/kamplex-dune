@@ -8,10 +8,10 @@
 
 /* Vidstack */
 @import "../node_modules/vidstack/styles/base.css";
-@import "./assets/css/vidstack/base.css";
-@import "./assets/css/vidstack/gesture.css";
-@import "./assets/css/vidstack/sliders.css";
-@import "./assets/css/vidstack/captions.css";
+@import "./assets/css/vidstack/base.scss";
+@import "./assets/css/vidstack/gesture.scss";
+@import "./assets/css/vidstack/sliders.scss";
+@import "./assets/css/vidstack/captions.scss";
 
 /* PrimeNG */
 @import "../node_modules/primeicons/primeicons.css";

@@ -1,12 +1,12 @@
 import { HlsSegmentGroup, M3U8Options, StreamManifest } from '../interfaces/video-player';
 
 export function convertToM3U8(manifest: StreamManifest, baseUrl: string, options: M3U8Options) {
-  let masterStr = `#EXTM3U\n#EXT-X-VERSION:${manifest.version}\n`;
+  let masterStr = `#EXTM3U\n#EXT-X-VERSION:${manifest.hlsVersion}\n`;
   let defaultAudioGroup = manifest.audioTracks[0]?.group || 'audio';
 
   function generatePlaylist(segmentGroup: HlsSegmentGroup, uri: string) {
     const fileUrl = baseUrl.replace(':path', uri);
-    let playlistStr = `#EXTM3U\n#EXT-X-VERSION:${manifest.version}\n#EXT-X-TARGETDURATION:${manifest.segmentDuration}\n`;
+    let playlistStr = `#EXTM3U\n#EXT-X-VERSION:${manifest.hlsVersion}\n#EXT-X-TARGETDURATION:${manifest.targetDuration}\n`;
     playlistStr += `#EXT-X-MEDIA-SEQUENCE:${manifest.mediaSequence}\n#EXT-X-PLAYLIST-TYPE:${manifest.playlistType}\n`;
     playlistStr += `#EXT-X-MAP:URI="${fileUrl}",BYTERANGE="${segmentGroup.byterange.length}@${segmentGroup.byterange.offset}"\n`;
     for (let j = 0; j < segmentGroup.segments.length; j++) {

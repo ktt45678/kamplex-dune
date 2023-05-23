@@ -1,6 +1,7 @@
 <ng-container *transloco="let t; loadingTpl: loadingPlayerTpl">
   <media-player #player aspect-ratio="16/9" preload="metadata" key-target="player" playsinline user-idle-delay="4000"
     autoplay crossorigin [attr.data-menu-open]="playerSettings.isMenuOpen || null"
+    [attr.data-mobile]="playerSupports.isMobile || null" [attr.data-touch-device]="playerSupports.isTouchDevice || null"
     [attr.thumbnails]="playerSettings.previewThumbnail" image-cdn="https://wsrv.nl/?url={url}">
     <media-outlet class="tw-h-full">
       <ng-container *ngIf="!playerSupports.isTouchDevice; else touchGestures">

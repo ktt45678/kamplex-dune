@@ -2,15 +2,15 @@ import { Component, OnInit, ChangeDetectionStrategy, Input, OnDestroy, Output, E
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { Platform } from '@angular/cdk/platform';
 import { TRANSLOCO_SCOPE, TranslocoService } from '@ngneat/transloco';
-import { type MediaPlayerElement, type MediaVolumeChangeEvent, type TextTrackInit, type MediaPlayRequestEvent, type MediaPauseRequestEvent, type MediaSeekRequestEvent, isVideoProvider, type MediaProviderSetupEvent, type MediaPlayEvent, HLSAudioTrackLoadedEvent } from 'vidstack';
-import { Subject, buffer, debounceTime, filter, first, fromEvent, merge, switchMap, takeUntil, timer } from 'rxjs';
+import { type MediaPlayerElement, type MediaVolumeChangeEvent, type TextTrackInit, type MediaPlayRequestEvent, type MediaPauseRequestEvent, type MediaSeekRequestEvent, isVideoProvider, type MediaProviderSetupEvent, type MediaPlayEvent, type HLSAudioTrackLoadedEvent, type MediaLoadStartEvent } from 'vidstack';
+import { Subject, buffer, debounceTime, filter, first, forkJoin, fromEvent, map, merge, switchMap, takeUntil, timer } from 'rxjs';
 
 import { UpdateUserSettingsDto } from '../../../core/dto/users';
-import { MediaStream, UserSettings } from '../../../core/models';
+import { MediaDetails, MediaStream, UserSettings } from '../../../core/models';
 import { AuthService, DestroyService, UsersService } from '../../../core/services';
 import { VideoPlayerService } from './video-player.service';
 import { KPTrack, PlayerSettings, PlayerStore, PlayerSupports } from './interfaces';
-import { AudioCodec, MediaBreakpoints, MediaStorageType } from '../../../core/enums';
+import { AudioCodec, MediaBreakpoints, MediaStorageType, MediaType } from '../../../core/enums';
 import { getFontFamily, getTextEdgeStyle, prepareColor, scaleFontWeight, track_Id } from '../../../core/utils';
 
 import 'vidstack/define/media-player.js';
@@ -35,7 +35,7 @@ import 'vidstack/define/media-slider-thumbnail.js';
     UsersService,
     {
       provide: TRANSLOCO_SCOPE,
-      useValue: ['languages', 'player']
+      useValue: ['languages', 'media', 'player']
     }
   ]
 })
@@ -43,6 +43,7 @@ export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
   track_Id = track_Id;
   AudioCodec = AudioCodec;
   canNavigateMedia: boolean = false;
+  @Input() media?: MediaDetails;
   @Input() canFitWindow: boolean = false;
   @Input() canReqNext: boolean = false;
   @Input() canReqPrev: boolean = false;
@@ -226,6 +227,11 @@ export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
       volumeUp: 'ArrowUp',
       volumeDown: 'ArrowDown',
     };
+    // Register media session when the media starts playing
+    fromEvent<MediaLoadStartEvent>(this.player, 'load-start')
+      .pipe(takeUntil(this.playerSettings.playerDestroyed)).subscribe(() => {
+        this.registerMediaSession();
+      });
     // Update user volume setting when user changes the volume
     fromEvent<MediaVolumeChangeEvent>(this.player, 'volume-change')
       .pipe(debounceTime(1000), takeUntil(this.playerSettings.playerDestroyed)).subscribe(event => {
@@ -292,13 +298,14 @@ export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
         this.onEnded.emit();
       })
     );
-    fromEvent(this.player, 'destroy', { once: true }).pipe(first()).subscribe(() => {
+    fromEvent(this.player, 'destroy').pipe(first()).subscribe(() => {
       this.playerSettings.playerDestroyed.next();
       this.playerSettings.playerDestroyed.complete();
       this.playerSettings.playerDestroyed = new Subject();
       this.playerSettings.storeDisposeFn.forEach(fn => {
         fn();
       });
+      this.unregisterMediaSession();
     });
   }
 
@@ -580,6 +587,49 @@ export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
       }
     };
   }
+
+  registerMediaSession(): void {
+    // Check browser support and media data
+    if (!('mediaSession' in navigator) || this.platform.FIREFOX || !this.media) return;
+    // Set metadata
+    const artwork: MediaImage[] = [];
+    this.media.smallPosterUrl && artwork.push({ src: this.media.smallPosterUrl, sizes: '167x250' });
+    this.media.thumbnailPosterUrl && artwork.push({ src: this.media.thumbnailPosterUrl, sizes: '300x450' });
+    this.media.posterUrl && artwork.push({ src: this.media.posterUrl, sizes: '500x750' });
+    const typeKey = this.media.type === MediaType.MOVIE ? 'mediaTypes.movie' : 'mediaTypes.tvShow';
+    forkJoin([
+      this.translocoService.selectTranslate(typeKey, {}, 'media').pipe(first()),
+      this.translocoService.selectTranslate('episode.episodePrefix', {}, 'media').pipe(first())
+    ]).pipe(first()).subscribe(([mediaType, episodePrefix]) => {
+      let artistValue = mediaType;
+      if (this.media!.type === MediaType.TV && this.streamData?.episode)
+        artistValue += ' - ' + episodePrefix + ' ' + this.streamData.episode.epNumber;
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: this.media!.title,
+        artist: artistValue,
+        artwork: artwork
+      });
+    });
+    // Set action handlers
+    const nextTrackFn = this.canReqNext ? () => { this.requestNext.emit() } : null;
+    const prevTrackFn = this.canReqPrev ? () => { this.requestPrev.emit() } : null;
+    try {
+      navigator.mediaSession.setActionHandler('nexttrack', nextTrackFn);
+      navigator.mediaSession.setActionHandler('previoustrack', prevTrackFn);
+    } catch { }
+    try {
+      navigator.mediaSession.setActionHandler('seekto', (details) => {
+        details.seekTime && (this.player.currentTime = details.seekTime);
+      });
+    } catch { }
+  }
+
+  unregisterMediaSession(): void {
+    navigator.mediaSession.metadata = null;
+    navigator.mediaSession.setActionHandler('nexttrack', null);
+    navigator.mediaSession.setActionHandler('previoustrack', null);
+    navigator.mediaSession.setActionHandler('seekto', null);
+  };
 
   ngOnDestroy(): void {
     this.playerSettings.playerDestroyed.next();

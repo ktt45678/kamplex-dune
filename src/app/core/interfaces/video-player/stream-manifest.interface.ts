@@ -1,9 +1,9 @@
 export interface StreamManifest {
-  version: number;
+  hlsVersion: number;
   videoTracks: HlsVideoTrack[];
   audioTracks: HlsAudioTrack[];
+  totalDuration: number;
   targetDuration: number;
-  segmentDuration: number;
   mediaSequence: number;
   playlistType: string;
 }
@@ -44,6 +44,7 @@ export interface HlsVideoTrack {
 }
 
 export interface HlsSegmentGroup {
+  targetDuration: number;
   byterange: HlsByterange;
   segments: HlsSegment[];
 }

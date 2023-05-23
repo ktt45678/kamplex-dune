@@ -89,20 +89,8 @@ media-captions [part='region'] {
   min-height: 0px;
   max-height: var(--region-height);
   writing-mode: horizontal-tb;
-  top: calc(
-    var(
-      --region-top,
-      var(--overlay-height) * var(--region-viewport-anchor-y) / 100 - var(--region-height) *
-        var(--region-anchor-y) / 100
-    )
-  );
-  left: var(
-    --region-left,
-    calc(
-      calc(var(--region-viewport-anchor-x) * 1%) -
-        calc(var(--region-width) * var(--region-anchor-x) / 100)
-    )
-  );
+  top: var(--region-top, calc(var(--overlay-height) * var(--region-viewport-anchor-y) / 100 - var(--region-height) * var(--region-anchor-y) / 100));
+  left: var(--region-left, calc(calc(var(--region-viewport-anchor-x) * 1%) - calc(var(--region-width) * var(--region-anchor-x) / 100)));
   right: var(--region-right);
   bottom: var(--region-bottom);
   overflow: hidden;
@@ -110,8 +98,10 @@ media-captions [part='region'] {
   box-sizing: border-box;
 }
 
+/*
 media-captions [part='region'][data-active] {
 }
+*/
 
 media-captions [part='region'][data-scroll='up'] {
   justify-content: end;

@@ -35,40 +35,40 @@ media-player [data-media-slider][data-focus] [part='track'], [data-media-button]
   @apply tw-shadow-focus-box;
 }
 
-@media (hover: hover) and (pointer: fine) {
-  /* mouse or touchpad */
+/* mouse or touchpad */
+media-player:not([data-touch-device]) {
   /* Hide controls when playing or not focused */
-  media-player[data-playing]:not(:focus) .media-controls {
+  &[data-playing]:not(:focus) .media-controls {
     opacity: 0;
   }
 
   /* Show controls when not idling */
-  media-player:not([data-user-idle]):not([data-autoplay-error]):hover .media-controls {
+  &:not([data-user-idle]):not([data-autoplay-error]):hover .media-controls {
     opacity: 1;
   }
 
   /* Show controls if the container has focus visible */
-  media-player[data-playing] .media-controls:has(:focus-visible) {
+  &[data-playing] .media-controls:has(:focus-visible) {
     opacity: 1;
   }
 }
 
-@media (hover: none) and (pointer: coarse) {
-  /* smartphones or touchscreens */
+/* smartphones or touchscreens */
+media-player[data-touch-device] {
   /* Hide controls when idling */
-  media-player[data-touch-user-idle][data-playing] .media-controls {
+  &[data-touch-user-idle][data-playing] .media-controls {
     opacity: 0;
     pointer-events: none;
   }
 
   /* Show controls when not idling or has focus within */
-  media-player:not([data-touch-user-idle]):not([data-autoplay-error]) .media-controls {
+  &:not([data-touch-user-idle]):not([data-autoplay-error]) .media-controls {
     opacity: 1;
   }
 
   /* Set pointer events to none when idling */
-  media-player[data-touch-user-idle][data-playing] [data-media-slider],
-  media-player[data-touch-user-idle][data-playing] button {
+  &[data-touch-user-idle][data-playing] [data-media-slider],
+  &[data-touch-user-idle][data-playing] button {
     pointer-events: none;
   }
 }
