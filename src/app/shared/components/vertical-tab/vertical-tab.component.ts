@@ -61,10 +61,12 @@ export class VerticalTabComponent implements AfterViewInit, AfterContentInit {
       this.selectedMenu = firstMenuItem;
     }
     if (this.tabMenu) {
-      const firstMenuItem = this.tabMenu.content.nativeElement.querySelector('.p-menuitem-link');
-      this.renderer.addClass(firstMenuItem, 'p-menuitem-link-active');
-      firstMenuItem.focus();
-      this.selectedTabMenu = firstMenuItem;
+      const firstMenuItem = this.tabMenu.content?.nativeElement.querySelector('.p-menuitem-link');
+      if (firstMenuItem) {
+        this.renderer.addClass(firstMenuItem, 'p-menuitem-link-active');
+        firstMenuItem.focus();
+        this.selectedTabMenu = firstMenuItem;
+      }
     }
   }
 

@@ -51,7 +51,8 @@ export default {
         app: {
           'body': '#111111',
           'primary': '#526ED3',
-          'backdrop': '#212121'
+          'backdrop': '#212121',
+          'link': '#58a6ff'
         },
         neutral: {
           '620': '#575757',
@@ -65,7 +66,8 @@ export default {
         }
       },
       content: {
-        'invisible': '\'\\200b\''
+        'invisible': '\'\\200b\'',
+        'dot': '\'\\2022\''
       },
       lineHeight: {
         '5xl': '1.1'

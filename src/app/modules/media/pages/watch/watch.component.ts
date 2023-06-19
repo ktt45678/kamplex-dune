@@ -3,13 +3,16 @@ import { BreakpointObserver } from '@angular/cdk/layout';
 import { Meta, Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslocoService } from '@ngneat/transloco';
+import { DialogService } from 'primeng/dynamicdialog';
 import { Subscription, combineLatest, filter, first, interval, map, of, switchMap, takeUntil, timer } from 'rxjs';
 
 import { UpdateWatchTimeDto } from '../../../../core/dto/history';
 import { AuthService, MediaService, HistoryService, RatingsService, DestroyService } from '../../../../core/services';
-import { MediaDetails, MediaStream, Rating, TVEpisode, UserDetails } from '../../../../core/models';
+import { CursorPaginated, Media, MediaDetails, MediaStream, Rating, TVEpisode, UserDetails } from '../../../../core/models';
 import { VideoPlayerComponent } from '../../../../shared/components/video-player';
 import { StarRatingComponent } from '../../../../shared/components/star-rating';
+import { AddToPlaylistComponent } from '../../../../shared/dialogs/add-to-playlist';
+import { ShareMediaLinkComponent, SharingOption } from '../../../../shared/dialogs/share-media-link';
 import { MediaBreakpoints, MediaType } from '../../../../core/enums';
 import { toHexColor } from '../../../../core/utils';
 import { SITE_NAME, SITE_THEME_COLOR } from '../../../../../environments/config';
@@ -31,29 +34,31 @@ export class WatchComponent implements OnInit, OnDestroy {
   starRating?: StarRatingComponent;
   MediaType = MediaType;
   loading: boolean = false;
+  loadingMoreRelatedMedia: boolean = false;
   currentUser!: UserDetails | null;
   playerPreviewThumbnail?: string;
-  selectedCodec: number = 1;
   media?: MediaDetails;
+  relatedMediaList?: CursorPaginated<Media>;
   episodes?: TVEpisode[];
   streams?: MediaStream;
   userRating?: Rating;
   ratingAverage: number = 0;
   ratingScore: number = 0;
   ratingCount: number = 0;
-  showingMore: boolean = false;
+  showMoreDetails: boolean = false;
   autoNext: boolean = false;
   canFitWindow: boolean = true;
   fitWindow: boolean = false;
   loadingRating: boolean = false;
   prevEpIndex: number = -1;
   nextEpIndex: number = -1;
+  relatedMediaLimit: number = 20;
   watchTimeUpdateSub: Subscription = new Subscription();
 
   constructor(private ref: ChangeDetectorRef, private title: Title, private meta: Meta, private breakpointObserver: BreakpointObserver,
-    private authService: AuthService, private mediaService: MediaService, private historyService: HistoryService,
-    private ratingsService: RatingsService, private route: ActivatedRoute, private router: Router,
-    private translocoService: TranslocoService, private destroyService: DestroyService) { }
+    private dialogService: DialogService, private authService: AuthService, private mediaService: MediaService,
+    private historyService: HistoryService, private ratingsService: RatingsService, private route: ActivatedRoute,
+    private router: Router, private translocoService: TranslocoService, private destroyService: DestroyService) { }
 
   ngOnInit(): void {
     this.initWatch();
@@ -89,6 +94,8 @@ export class WatchComponent implements OnInit, OnDestroy {
       this.ratingCount = media.ratingCount;
       this.ratingScore = media.ratingScore;
       this.ratingAverage = media.ratingAverage;
+      // Find relasted media list
+      this.findRelatedMedia(true);
       // Start watching
       if (media.type === MediaType.MOVIE) {
         this.watchMovie(media);
@@ -200,6 +207,45 @@ export class WatchComponent implements OnInit, OnDestroy {
     }
   }
 
+  showAddToPlaylistDialog() {
+    if (!this.media) return;
+    if (!this.authService.currentUser) {
+      this.router.navigate(['/sign-in'], { queryParams: { continue: `/details/${this.media._id}` } });
+      return;
+    }
+    this.dialogService.open(AddToPlaylistComponent, {
+      data: { ...this.media },
+      header: this.translocoService.translate('media.playlists.addToPlaylists'),
+      width: '320px',
+      modal: true,
+      dismissableMask: true,
+      styleClass: 'p-dialog-header-sm'
+    });
+  }
+
+  showShareMediaLinkDialog() {
+    if (!this.media) return;
+    const currentTimeUrl = new URL(window.location.href);
+    currentTimeUrl.searchParams.append('t', Math.trunc(this.videoPlayer?.playerStore.currentTime || 0).toString());
+    const sharingOptions: SharingOption[] = [{
+      label: this.translocoService.translate('media.sharing.url'),
+      content: window.location.href,
+      type: 'url'
+    }, {
+      label: this.translocoService.translate('media.sharing.currentTimeUrl'),
+      content: currentTimeUrl.toString(),
+      type: 'url'
+    }];
+    this.dialogService.open(ShareMediaLinkComponent, {
+      data: sharingOptions,
+      header: this.translocoService.translate('media.sharing.shareMedia'),
+      width: '500px',
+      modal: true,
+      dismissableMask: true,
+      styleClass: 'p-dialog-header-sm'
+    });
+  }
+
   findMediaRating(media: MediaDetails): void {
     if (!this.authService.currentUser) return;
     this.ratingsService.findMedia({ media: media._id }).subscribe({
@@ -250,6 +296,43 @@ export class WatchComponent implements OnInit, OnDestroy {
     }).add(() => {
       this.loadingRating = false;
     });
+  }
+
+  findRelatedMedia(resetList: boolean, pageToken?: string): void {
+    if (!this.media) return;
+    const tagIds = this.media.tags.map(t => t._id);
+    if (!tagIds.length) return;
+    this.loadingMoreRelatedMedia = true;
+    this.mediaService.findPageCursor({
+      pageToken,
+      limit: this.relatedMediaLimit,
+      tags: tagIds,
+      tagMatch: 'any',
+      excludeIds: this.media._id
+    }).subscribe(mediaList => {
+      this.appendRelatedMedia(mediaList, resetList);
+    }).add(() => {
+      this.loadingMoreRelatedMedia = false;
+      this.ref.markForCheck();
+    });
+  }
+
+  appendRelatedMedia(newList: CursorPaginated<Media>, resetList?: boolean): void {
+    if (!this.relatedMediaList || resetList) {
+      this.relatedMediaList = newList;
+      return;
+    }
+    this.relatedMediaList = {
+      hasNextPage: newList.hasNextPage,
+      nextPageToken: newList.nextPageToken,
+      prevPageToken: newList.prevPageToken,
+      totalResults: newList.totalResults,
+      results: [...this.relatedMediaList.results, ...newList.results]
+    };
+  }
+
+  toggleShowMoreDetails(): void {
+    this.showMoreDetails = !this.showMoreDetails;
   }
 
   ngOnDestroy(): void {

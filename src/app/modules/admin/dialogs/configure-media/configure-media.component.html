@@ -698,8 +698,7 @@
       [dismissableMask]="true">
     </p-confirmDialog>
   </div>
-  <p-menu #episodeMenu [popup]="true" [appendTo]="episodeMenuZone" [model]="episodeMenuItems"></p-menu>
-  <div #episodeMenuZone></div>
+  <p-menu #episodeMenu [popup]="true" appendTo="body" [model]="episodeMenuItems"></p-menu>
 </ng-container>
 <ng-template #loadingSpinner>
   <div class="tw-flex tw-justify-center tw-items-center tw-h-full">

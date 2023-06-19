@@ -32,6 +32,7 @@ import { DOCUMENT } from '@angular/common';
     'lockedPosition: lockedPosition',
     'flexibleDimensions: flexibleDimensions',
     'backdropClass: backdropClass',
+    'fixedBottom: fixedBottom',
     'menuData: menuTriggerData',
   ],
   outputs: ['opened: menuOpened', 'closed: menuClosed'],
@@ -62,7 +63,7 @@ export class SlideMenuTriggerDirective extends SlideMenuTriggerBase implements O
     this._registerCloseHandler();
     this._subscribeToMenuStackClosed();
     this._setType();
-    this.menuStack.registerTrigger(this._elementRef);
+    this.menuStack.registerTrigger(this, this._elementRef);
     this.menuStack.registerViewRef(this.injector, this.viewContainerRef);
   }
 
@@ -81,14 +82,12 @@ export class SlideMenuTriggerDirective extends SlideMenuTriggerBase implements O
       this.opened.next();
     }
 
-    let lastMenuWidth: string | undefined;
-    let lastMenuHeight: string | undefined;
+    let lastMenuHeight: number | undefined;
 
     this.menuStack.overlayRef = this.menuStack.overlayRef || this.menuStack.createOverlay(this._getOverlayConfig());
 
     if (this.menuStack.overlayRef.hasAttached()) {
-      lastMenuWidth = this.menuStack.overlayRef.overlayElement.clientWidth + 'px';
-      lastMenuHeight = this.menuStack.overlayRef.overlayElement.clientHeight + 'px';
+      lastMenuHeight = this.menuStack.overlayRef.overlayElement.clientHeight;
       this.menuStack.overlayRef.detach();
       if (this.menuTemplateRef === this.menuStack.parentMenuRefs[this.menuStack.parentMenuRefs.length - 1])
         this.menuStack.parentMenuRefs.pop();
@@ -103,8 +102,12 @@ export class SlideMenuTriggerDirective extends SlideMenuTriggerBase implements O
 
     if (this.menuStack.isPrimaryTrigger(this._elementRef)) {
       this.getMenu()?.setAnimation();
-    } else if (lastMenuWidth && lastMenuHeight) {
-      this.getMenu()?.setSlideAnimation(lastMenuWidth, lastMenuHeight);
+    } else if (lastMenuHeight) {
+      if (!this.menuStack.primaryTrigger?.fixedBottom) {
+        this.getMenu()?.setSlideAnimation(lastMenuHeight);
+      } else {
+        this.getMenu()?.setFixedSlideAnimation();
+      }
     }
   }
 
@@ -191,8 +194,9 @@ export class SlideMenuTriggerDirective extends SlideMenuTriggerBase implements O
 
   override ngOnDestroy(): void {
     super.ngOnDestroy();
-    if (this.menuStack.isPrimaryTrigger(this._elementRef))
+    if (this.menuStack.isPrimaryTrigger(this._elementRef)) {
       this.menuStack.destroyOverlay();
+    }
   }
 
   /** Close out any sibling menu trigger menus. */
@@ -226,7 +230,9 @@ export class SlideMenuTriggerDirective extends SlideMenuTriggerBase implements O
 
   /** Build the position strategy for the overlay which specifies where to place the menu. */
   private _getOverlayPositionStrategy(): FlexibleConnectedPositionStrategy {
-    const flexibleConnectedTo = this.menuRelativeTo === 'body' ? this._document.body : (this.menuRelativeTo || this._elementRef);
+    const flexibleConnectedTo = this.menuRelativeTo === 'body' || this.fixedBottom ?
+      this._document.body :
+      (this.menuRelativeTo || this._elementRef);
     return this._overlay
       .position()
       .flexibleConnectedTo(flexibleConnectedTo)
@@ -240,6 +246,9 @@ export class SlideMenuTriggerDirective extends SlideMenuTriggerBase implements O
 
   /** Get the preferred positions for the opened menu relative to the menu item. */
   private _getOverlayPositions(): ConnectedPosition[] {
+    if (this.fixedBottom) {
+      return [{ originX: 'center', originY: 'bottom', overlayX: 'center', overlayY: 'bottom' }];
+    }
     return (
       this.menuPosition ??
       (!this._parentMenu || this._parentMenu.orientation === 'horizontal'
@@ -279,6 +288,13 @@ export class SlideMenuTriggerDirective extends SlideMenuTriggerBase implements O
 
           if (target !== element && !element.contains(target)) {
             if (!this.isElementInsideMenuStack(target)) {
+              if (event instanceof PointerEvent) {
+                // Stop event on outside click (left mouse and touch)
+                if ((event.pointerType === 'mouse' || event.pointerType === 'touch') && event.button === 0) {
+                  event.preventDefault();
+                  event.stopPropagation();
+                }
+              }
               this.menuStack.closeAll();
             } else {
               this._closeSiblingTriggers();

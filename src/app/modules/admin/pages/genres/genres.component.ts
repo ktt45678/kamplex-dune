@@ -36,8 +36,8 @@ export class GenresComponent implements OnInit, OnDestroy {
   loadGenres(): void {
     const params: PaginateGenresDto = {};
     if (this.genreTable) {
-      params.limit = this.genreTable.rows;
-      params.page = this.genreTable.first ? this.genreTable.first / this.genreTable.rows + 1 : 1;
+      params.limit = this.genreTable.rows || 0;
+      params.page = this.genreTable.first ? this.genreTable.first / params.limit + 1 : 1;
       const sortOrder = this.genreTable.sortOrder === -1 ? 'desc' : 'asc';
       if (this.genreTable.sortField) {
         params.sort = `${sortOrder}(${this.genreTable.sortField})`;

@@ -1,10 +1,8 @@
 import { Renderer2 } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { DialogService, DynamicDialogComponent, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { AutoComplete } from 'primeng/autocomplete';
 import { InputNumber } from 'primeng/inputnumber';
 import { TabMenu } from 'primeng/tabmenu';
-import { Tooltip } from 'primeng/tooltip';
 import { ZIndexUtils } from 'primeng/utils';
 import { first } from 'rxjs';
 import { InputSwitch } from 'primeng/inputswitch';
@@ -72,35 +70,6 @@ export function applyPrimeNGPatches() {
       return this.max;
     }
     return value;
-  }
-  AutoComplete.prototype.selectItem = function (option: any, focus: boolean = true) {
-    if (this.forceSelectionUpdateModelTimeout) {
-      clearTimeout(this.forceSelectionUpdateModelTimeout);
-      this.forceSelectionUpdateModelTimeout = null;
-    }
-
-    if (this.multiple) {
-      this.multiInputEL.nativeElement.value = '';
-      this.value = this.value || [];
-      if (!this.isSelected(option) || !this.unique) {
-        this.value = [...this.value, option];
-        this.onModelChange(this.value);
-      }
-    } else {
-      this.inputEL.nativeElement.value = this.resolveFieldData(option);
-      this.value = option;
-      this.onModelChange(this.value);
-    }
-
-    this.onSelect.emit(option);
-    this.updateFilledState();
-
-    //if (focus) {
-    //this.itemClicked = true;
-    //this.focusInput();
-    //}
-
-    //this.hide();
   }
   InputSwitch.prototype.onClick = function (event: Event, cb: HTMLInputElement) {
     if (!this.disabled && !this.readonly) {

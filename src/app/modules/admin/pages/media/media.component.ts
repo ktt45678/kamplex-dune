@@ -86,8 +86,8 @@ export class MediaComponent implements OnInit, OnDestroy {
     params.includeHidden = true;
     params.includeUnprocessed = true;
     if (this.mediaTable) {
-      params.limit = this.mediaTable.rows;
-      params.page = this.mediaTable.first ? this.mediaTable.first / this.mediaTable.rows + 1 : 1;
+      params.limit = this.mediaTable.rows || 0;
+      params.page = this.mediaTable.first ? this.mediaTable.first / params.limit + 1 : 1;
       const sortOrder = this.mediaTable.sortOrder === -1 ? 'desc' : 'asc';
       if (this.mediaTable.sortField) {
         params.sort = `${sortOrder}(${this.mediaTable.sortField})`;
@@ -295,7 +295,7 @@ export class MediaComponent implements OnInit, OnDestroy {
       menuItems.push({
         label: t['configureMedia.addVideo'],
         data: media,
-        command: (event) => this.showAddMediaVideoDialog(event.item.data)
+        command: (event) => this.showAddMediaVideoDialog((<DataMenuItem<Media>>event.item)!.data!)
       });
       if (media.type === MediaType.MOVIE) {
         // Movie menu
@@ -303,13 +303,13 @@ export class MediaComponent implements OnInit, OnDestroy {
           {
             label: t['configureMedia.addSubtitle'],
             data: media,
-            command: (event) => this.showAddSubtitleDialog(event.item.data)
+            command: (event) => this.showAddSubtitleDialog((<DataMenuItem<Media>>event.item)!.data!)
           },
           {
             label: t['configureMedia.addSource'],
             data: media,
             disabled: media.movie.status !== MediaSourceStatus.PENDING || this.queueUploadService.isMediaInQueue(media._id),
-            command: (event) => this.showAddSourceDialog(event.item.data)
+            command: (event) => this.showAddSourceDialog((<DataMenuItem<Media>>event.item)!.data!)
           }
         );
       } else {
@@ -318,7 +318,7 @@ export class MediaComponent implements OnInit, OnDestroy {
           {
             label: t['configureMedia.addEpisode'],
             data: media,
-            command: (event) => this.showDeleteMediaDialog(event.item.data)
+            command: (event) => this.showDeleteMediaDialog((<DataMenuItem<Media>>event.item)!.data!)
           }
         );
       }
@@ -329,7 +329,7 @@ export class MediaComponent implements OnInit, OnDestroy {
           icon: 'ms ms-delete',
           data: media,
           disabled: media.pStatus === MediaPStatus.PROCESSING,
-          command: (event) => this.showDeleteMediaDialog(event.item.data)
+          command: (event) => this.showDeleteMediaDialog((<DataMenuItem<Media>>event.item)!.data!)
         }
       );
       return menuItems;

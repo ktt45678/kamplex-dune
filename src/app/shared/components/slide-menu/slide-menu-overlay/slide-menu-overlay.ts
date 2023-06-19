@@ -111,12 +111,12 @@ export class SlideMenuOverlay extends CdkMenuGroup implements SlideMenu, AfterCo
     player.play();
   }
 
-  setSlideAnimation(fromWidth: string, fromHeight: string) {
-    const toWidth = this.el.nativeElement.clientWidth + 'px';
-    const toHeight = this.el.nativeElement.clientHeight + 'px';
+  setSlideAnimation(fromHeight: number) {
+    //const toWidth = this.el.nativeElement.clientWidth + 'px';
+    const toHeight = this.el.nativeElement.clientHeight;
     const factory = this.animationBuilder.build([
-      style({ width: fromWidth, height: fromHeight }),
-      animate('150ms ease-in-out', style({ width: toWidth, height: toHeight }))
+      style({ height: fromHeight + 'px' }),
+      animate('150ms ease-in-out', style({ height: toHeight + 'px' }))
     ]);
     const player = factory.create(this.el.nativeElement);
     player.onStart(() => {
@@ -124,6 +124,19 @@ export class SlideMenuOverlay extends CdkMenuGroup implements SlideMenu, AfterCo
     });
     player.onDone(() => {
       this.renderer.removeStyle(this.el.nativeElement, 'overflow-y');
+      setTimeout(() => player.destroy(), 0);
+    });
+    player.play();
+  }
+
+  setFixedSlideAnimation() {
+    const toHeight = this.el.nativeElement.clientHeight;
+    const factory = this.animationBuilder.build([
+      style({ transform: 'translateY(' + toHeight + 'px)' }),
+      animate('200ms ease-in-out', style({ transform: 'translateY(0)' }))
+    ]);
+    const player = factory.create(this.el.nativeElement);
+    player.onDone(() => {
       setTimeout(() => player.destroy(), 0);
     });
     player.play();

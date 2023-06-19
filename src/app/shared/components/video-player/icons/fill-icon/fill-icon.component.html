@@ -1,0 +1,8 @@
+<svg viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" fill="white">
+  <path *ngIf="!active; else disableIconTpl"
+    d="M16,27 V25 H12.41 L16.91,20.5 L15.5,19.09 L11,23.59 V20 H9 V27 H16 M20.5,16.91 L25,12.41 V16 H27 V9 H20 V11 H23.59 L19.09,15.5 L20.5,16.91 z" />
+  <ng-template #disableIconTpl>
+    <path
+      d="M25.5,9.09 L21,13.59 V10 H19 V17 H26 V15 H22.41 L26.91,10.5 L25.5,9.09 M10,19 V21 H13.59 L9.09,25.5 L10.5,26.91 L15,22.41 V26 H17 V19 H10 z" />
+  </ng-template>
+</svg>

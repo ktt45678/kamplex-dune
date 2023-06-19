@@ -3,7 +3,7 @@
     <div class="tw-flex">
       <p-toggleButton styleClass="p-button-sm p-togglebutton-dark !tw-border-none" [onIcon]="'ms ms-expand-less'"
         offIcon="ms ms-expand-more" [initValue]="true" [pTooltip]="t('users.filterHistory.toggleButton')"
-        (onChange)="showFilterForm = $event.checked">
+        (onChange)="showFilterForm = !!$event.checked">
       </p-toggleButton>
       <p-selectButton [options]="[ { icon: 'ms ms-grid-view', value: 1 }, { icon: 'ms ms-list', value: 2 } ]"
         [initValue]="listViewMode" optionLabel="label" optionValue="value" class="tw-ml-auto" styleClass="p-button-sm"

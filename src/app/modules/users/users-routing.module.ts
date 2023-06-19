@@ -73,16 +73,25 @@ const routes: Routes = [
       },
       {
         path: 'history',
-        component: HistoryComponent
+        component: HistoryComponent,
+        data: {
+          shouldReuse: true
+        }
       },
 
       {
         path: 'playlists',
-        component: PlaylistsComponent
+        component: PlaylistsComponent,
+        data: {
+          shouldReuse: true
+        }
       },
       {
         path: 'rated',
-        component: RatedComponent
+        component: RatedComponent,
+        data: {
+          shouldReuse: true
+        }
       }
     ]
   }

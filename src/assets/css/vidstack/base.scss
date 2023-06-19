@@ -4,23 +4,31 @@ media-player {
   display: block;
 }
 
+media-player:not([controls]) > media-outlet video {
+  pointer-events: auto;
+}
+
+media-player[data-fill-screen] > media-outlet video {
+  object-fit: cover;
+}
+
 /* Avoid double controls on iOS when in fullscreen. */
 media-player[data-ios-controls] .media-controls,
 /* Hide controls if autoplay fails */
-media-player[data-autoplay-error] .media-controls,
+/*media-player[data-autoplay-error] .media-controls,*/
 /* Hide controls while media is loading, or user is idle. */
 media-player .media-controls, media-player[data-user-idle] .media-controls {
   opacity: 0;
 }
 
 /* Show controls if paused */
-media-player[data-paused]:not([data-autoplay-error]) .media-controls {
+media-player[data-paused] .media-controls {
   opacity: 1;
 }
 
 /* Show controls if menu is open or sliders are interactive. */
 media-player[data-menu-open] .media-controls,
-media-player:not([data-autoplay-error]) .media-controls:has([data-media-slider][data-interactive]) {
+media-player .media-controls:has([data-media-slider][data-interactive]) {
   opacity: 1 !important;
 }
 
@@ -43,7 +51,7 @@ media-player:not([data-touch-device]) {
   }
 
   /* Show controls when not idling */
-  &:not([data-user-idle]):not([data-autoplay-error]):hover .media-controls {
+  &:not([data-user-idle]):hover .media-controls {
     opacity: 1;
   }
 
@@ -62,13 +70,13 @@ media-player[data-touch-device] {
   }
 
   /* Show controls when not idling or has focus within */
-  &:not([data-touch-user-idle]):not([data-autoplay-error]) .media-controls {
+  &:not([data-touch-user-idle]) .media-controls {
     opacity: 1;
   }
 
   /* Set pointer events to none when idling */
   &[data-touch-user-idle][data-playing] [data-media-slider],
-  &[data-touch-user-idle][data-playing] button {
+  &[data-touch-user-idle][data-playing] .media-controls button {
     pointer-events: none;
   }
 }

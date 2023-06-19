@@ -36,8 +36,8 @@ export class ProductionsComponent implements OnInit, OnDestroy {
   loadProductions(): void {
     const params: PaginateProductionsDto = {};
     if (this.productionTable) {
-      params.limit = this.productionTable.rows;
-      params.page = this.productionTable.first ? this.productionTable.first / this.productionTable.rows + 1 : 1;
+      params.limit = this.productionTable.rows || 0;
+      params.page = this.productionTable.first ? this.productionTable.first / params.limit + 1 : 1;
       const sortOrder = this.productionTable.sortOrder === -1 ? 'desc' : 'asc';
       if (this.productionTable.sortField) {
         params.sort = `${sortOrder}(${this.productionTable.sortField})`;

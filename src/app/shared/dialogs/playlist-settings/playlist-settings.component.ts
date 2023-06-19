@@ -4,6 +4,7 @@ import { FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
 import { TranslocoService, TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { finalize, first, forkJoin, map, of, takeUntil } from 'rxjs';
+import { isEqual } from 'lodash-es';
 
 import { ImageEditorComponent } from '../image-editor';
 import { Playlist, PlaylistDetails } from '../../../core/models';
@@ -15,7 +16,6 @@ import {
 import { AppErrorCode } from '../../../core/enums';
 import { dataURItoFile, fixNestedDialogFocus } from '../../../core/utils';
 import { UpdatePlaylistDto } from '../../../core/dto/playlists';
-import { isEqual } from 'lodash-es';
 
 interface UpdatePlaylistForm {
   name: FormControl<string>;

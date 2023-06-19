@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { DynamicDialogConfig } from 'primeng/dynamicdialog';
+import { Checkbox } from 'primeng/checkbox';
 
 import { Media, PlaylistToAdd } from '../../../core/models';
 import { PlaylistsService } from '../../../core/services';
 import { MediaVisibility } from '../../../core/enums';
 import { CreatePlaylistForm } from '../../../core/interfaces/forms';
-import { AltCheckbox } from '../../../core/utils/primeng';
 import { debounceTime, distinctUntilChanged, fromEvent, Subscription } from 'rxjs';
 
 @Component({
@@ -61,7 +61,7 @@ export class AddToPlaylistComponent implements OnInit, OnDestroy {
     });
   }
 
-  addOrRemoveMedia(playlist: PlaylistToAdd, cbPlaylist: AltCheckbox) {
+  addOrRemoveMedia(playlist: PlaylistToAdd, cbPlaylist: Checkbox) {
     cbPlaylist.disabled = true;
     cbPlaylist.cd.markForCheck();
     if (!playlist.hasMedia) {

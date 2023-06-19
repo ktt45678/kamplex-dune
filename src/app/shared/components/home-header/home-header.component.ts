@@ -163,7 +163,7 @@ export class HomeHeaderComponent implements OnInit {
     this.ref.markForCheck();
     if (this.displayMobileSearch) {
       setTimeout(() => {
-        this.mediaSearch?.inputEL.nativeElement.focus();
+        this.mediaSearch?.inputEL?.nativeElement.focus();
       }, 0);
     }
   }
@@ -171,7 +171,7 @@ export class HomeHeaderComponent implements OnInit {
   clearSearchInput(): void {
     this.mediaSearch?.clear();
     setTimeout(() => {
-      this.mediaSearch?.inputEL.nativeElement.focus();
+      this.mediaSearch?.inputEL?.nativeElement.focus();
     }, 0);
   }
 
@@ -186,7 +186,7 @@ export class HomeHeaderComponent implements OnInit {
     });
   }
 
-  loadAdvancedSearch(search: string): void {
+  loadAdvancedSearch(search: string | null | undefined): void {
     this.router.navigate(['/search'], { queryParams: { search: search || undefined } });
   }
 

@@ -70,7 +70,7 @@
         <p-toggleButton formControlName="showAdvanced" class="tw-inline-block tw-ml-2"
           styleClass="p-button-sm p-togglebutton-dark !tw-border-none" [onIcon]="'ms ms-expand-less'"
           offIcon="ms ms-expand-more" [pTooltip]="t('media.filter.toggleAdvanced')"
-          (onChange)="showAdvanced = $event.checked">
+          (onChange)="showAdvanced = !!$event.checked">
         </p-toggleButton>
       </div>
     </div>

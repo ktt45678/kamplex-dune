@@ -21,7 +21,8 @@
               </button>
             </a>
             <a routerLink="/" [ngClass]="displayMobileSearch ? 'tw-hidden lg:tw-block' : 'tw-block'">
-              <img class="tw-h-3 md:tw-h-4 tw-w-auto" src="assets/images/logo-text.png" alt="KamPlex">
+              <img height="12px" width="auto" class="tw-h-3 md:tw-h-4 tw-w-auto" src="assets/images/logo-text.png"
+                alt="KamPlex">
             </a>
             <button *ngIf="displayMobileSearch" pButton type="button" icon="ms ms-arrow-back"
               aria-label="Hide mobile search"
@@ -45,7 +46,7 @@
                     (onKeyUp)="onMediaSearchKeyUp($event, mediaSearch)">
                     <ng-template let-media pTemplate="item">
                       <a class="tw-flex" [routerLink]="['/details', media._id]">
-                        <div class="tw-w-12">
+                        <div class="tw-w-14">
                           <div class="tw-aspect-w-2 tw-aspect-h-3 tw-rounded-sm tw-overflow-hidden">
                             <img *ngIf="media.smallPosterUrl; else noPoster" class="tw-object-cover"
                               [lazyLoad]="media.smallPosterUrl" [lazyLoadPlaceholder]="media.posterColor | rgbColor"
@@ -58,11 +59,13 @@
                         </div>
                         <div class="tw-text-white tw-flex-1 tw-mx-2 tw-text-sm">
                           <p class="tw-font-bold tw-whitespace-normal tw-line-clamp-2">{{ media.title }}</p>
-                          <div class="tw-flex tw-items-center tw-text-gray-300 tw-mt-2">
-                            <i class="ms ms-calendar-today ms-icon-sm tw-mr-1.5"></i>
-                            <p class="tw-font-semibold tw-mr-2">{{ media.releaseDate.year }}</p>
-                            <i class="ms ms-schedule ms-icon-sm tw-mr-1.5"></i>
-                            <p class="tw-font-semibold tw-mr-2">{{ media.runtime * 1000 | time:{ display:'short' }
+                          <p class="tw-text-gray-400 tw-text-xs tw-font-bold tw-mt-1">{{ media.type ===
+                            MediaType.MOVIE ? t('media.mediaTypes.movie') : t('media.mediaTypes.tvShow') }}</p>
+                          <div class="tw-flex tw-items-center tw-text-xs tw-text-gray-400 tw-mt-1">
+                            <i class="ms ms-calendar-today ms-icon-xs tw-mr-1.5"></i>
+                            <p class="tw-font-bold tw-mr-2">{{ media.releaseDate.year }}</p>
+                            <i class="ms ms-schedule ms-icon-xs tw-mr-1.5"></i>
+                            <p class="tw-font-bold tw-mr-2">{{ media.runtime * 1000 | time:{ display:'short' }
                               }}</p>
                           </div>
                         </div>

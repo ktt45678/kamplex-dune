@@ -82,6 +82,8 @@ export abstract class SlideMenuTriggerBase implements OnDestroy {
 
   backdropClass: string | null = null;
 
+  fixedBottom: boolean = false;
+
   ngOnDestroy() {
     this.destroyed.next();
     this.destroyed.complete();

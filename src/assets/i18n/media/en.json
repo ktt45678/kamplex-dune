@@ -2,13 +2,17 @@
   "actions": {
     "play": "Play",
     "details": "Details",
-    "playlist": "Playlist"
+    "playlist": "Playlist",
+    "share": "Share",
+    "showMore": "Show more",
+    "showLess": "Show less"
   },
   "list": {
     "runtimeValue": "{{ runtime }} min",
     "noGenres": "No genres found",
     "episodeCountValue": "{{ episodeCount }} Ep",
-    "noResults": "No results were found"
+    "noResults": "No results were found",
+    "relatedShows": "Related shows"
   },
   "listPaths": {
     "genre": "Genre",
@@ -41,9 +45,10 @@
     "noVideos": "No videos found",
     "episodes": "Episodes",
     "episodeCountValue": "{{ episodeCount }} episodes",
+    "viewCountValue": "{{ viewCount }} views",
+    "viewCount": "views",
     "noEpisodes": "No episodes found",
-    "originalTitle": "Original title",
-    "similarMedia": "Similar shows"
+    "originalTitle": "Original title"
   },
   "video": {
     "name": "Name",
@@ -112,8 +117,7 @@
   "watch": {
     "prevEpisode": "Prev",
     "nextEpisode": "Next",
-    "autoNextEpisode": "Auto next",
-    "showMore": "Show More"
+    "autoNextEpisode": "Auto next"
   },
   "rating": {
     "anonUsers": "Sign in to rate",
@@ -121,6 +125,11 @@
     "clear": "clear",
     "delete": "Delete rating",
     "noRatings": "No ratings found"
+  },
+  "sharing": {
+    "shareMedia": "Share",
+    "url": "URL",
+    "currentTimeUrl": "URL to current time"
   },
   "playlists": {
     "search": "Search",
@@ -135,6 +144,7 @@
     "noPlaylist": "Playlist not found",
     "playlistItemUnavailable": "Unavailable",
     "addToPlaylist": "Add to playlist",
+    "addToPlaylistShort": "Playlist",
     "addToPlaylists": "Add to playlists",
     "addToRecentPlaylist": "Add to recent playlist",
     "addAllToPlaylists": "Add all to playlists",

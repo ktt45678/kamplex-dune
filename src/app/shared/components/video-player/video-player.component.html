@@ -1,11 +1,12 @@
 <ng-container *transloco="let t; loadingTpl: loadingPlayerTpl">
-  <media-player #player aspect-ratio="16/9" preload="metadata" key-target="player" playsinline user-idle-delay="4000"
+  <media-player #player aspect-ratio="16/9" preload="metadata" key-target="player" playsinline user-idle-delay="2500"
     autoplay crossorigin [attr.data-menu-open]="playerSettings.isMenuOpen || null"
-    [attr.data-mobile]="playerSupports.isMobile || null" [attr.data-touch-device]="playerSupports.isTouchDevice || null"
-    [attr.thumbnails]="playerSettings.previewThumbnail" image-cdn="https://wsrv.nl/?url={url}">
+    [attr.data-fill-screen]="playerSettings.fillScreen || null" [attr.data-mobile]="playerSupports.isMobile || null"
+    [attr.data-touch-device]="playerSupports.isTouchDevice || null" [attr.thumbnails]="playerSettings.previewThumbnail">
+    <!--image-cdn="https://wsrv.nl/?url={url}"-->
     <media-outlet class="tw-h-full">
       <ng-container *ngIf="!playerSupports.isTouchDevice; else touchGestures">
-        <media-gesture event="click" action="toggle:paused"></media-gesture>
+        <media-gesture *ngIf="playerStore.canPlay" event="click" action="toggle:paused"></media-gesture>
         <media-gesture event="dblclick" action="toggle:fullscreen"></media-gesture>
       </ng-container>
       <ng-template #touchGestures>
@@ -35,7 +36,7 @@
       </div>
     </ng-container>
     <ng-template #playStatusToast>
-      <div class="media-play-toast tw-absolute tw-absolute-center tw-pointer-events-none tw-z-3"
+      <div class="media-play-toast tw-absolute tw-absolute-center tw-pointer-events-none tw-z-4"
         [attr.data-paused]="playerStore.paused ? '' : null" aria-hidden="true">
         <svg #mediaPlayToast aria-hidden="true" width="64px" height="64px" viewBox="0 0 36 36"
           class="tw-bg-black/40 tw-rounded-full tw-p-2 tw-opacity-0">
@@ -44,7 +45,7 @@
       </div>
     </ng-template>
     <div class="media-seek-toast tw-text-white tw-flex tw-w-3/4 tw-absolute tw-absolute-center tw-pointer-events-none
-      tw-z-3" aria-hidden="true">
+      tw-z-4" aria-hidden="true">
       <div *ngIf="playerSettings.showRewind"
         class="tw-flex tw-items-center tw-justify-center tw-w-28 tw-h-28 tw-bg-black/40 tw-rounded-full">
         <div class="tw-block">
@@ -69,15 +70,13 @@
       </div>
     </div>
     <button *ngIf="playerStore.autoplayError"
-      class="tw-bg-black/60 tw-absolute tw-inset-0 tw-flex tw-items-center tw-justify-center tw-w-full tw-h-full tw-z-4"
+      class="tw-bg-black/60 tw-absolute tw-inset-0 tw-flex tw-items-center tw-justify-center tw-w-full tw-h-full tw-z-3"
       aria-label="Autoplay failed" (click)="togglePlay()">
       <div class="tw-w-24 md:tw-w-32">
-        <svg slot="play" aria-hidden="true" viewBox="0 0 36 36" fill="white">
-          <use xlink:href="assets/icons/svg/media-player.svg#play-circle-outline" />
-        </svg>
+        <player-play-circle-icon></player-play-circle-icon>
       </div>
     </button>
-    <div class="media-controls tw-text-white tw-absolute tw-inset-0 tw-flex tw-flex-col tw-justify-between tw-z-3
+    <div class="media-controls tw-text-white tw-absolute tw-inset-0 tw-flex tw-flex-col tw-justify-between tw-z-4
       tw-pointer-events-none tw-transition-opacity tw-duration-150 tw-ease-linear" role="group"
       aria-label="Media controls">
       <div class="tw-flex tw-pointer-events-none" aria-label="Media top controls"
@@ -85,9 +84,8 @@
         <div class="tw-ml-auto">
           <ng-container *ngIf="playerSupports.isMobile">
             <ng-container *ngTemplateOutlet="subtitleButtonTpl"></ng-container>
-            <ng-container *ngTemplateOutlet="settingsButtonTpl; context: {
-              menuPosition: [ { originX: 'center', originY: 'bottom', overlayX: 'center', overlayY: 'bottom' } ],
-              menuRelativeTo: 'body', lockedPosition: false, backdropClass: 'tw-bg-black/30' }">
+            <ng-container
+              *ngTemplateOutlet="settingsButtonTpl; context: { lockedPosition: false, backdropClass: 'tw-bg-black/30' }">
             </ng-container>
           </ng-container>
         </div>
@@ -121,21 +119,7 @@
               <button
                 class="media-mute-button tw-w-12 sm:tw-w-14 tw-p-2 tw-pointer-events-auto focus-visible:tw-shadow-focus-box"
                 aria-label="Mute audio" aria-keyshortcuts="m" (click)="toggleMute()">
-                <svg *ngIf="playerStore.muted || playerStore.volume === 0; else notMutedTpl" slot="volume-muted"
-                  viewBox="0 0 36 36" fill="white">
-                  <use xlink:href="assets/icons/svg/media-player.svg#volume-muted" />
-                </svg>
-                <ng-template #notMutedTpl>
-                  <svg *ngIf="playerStore.volume < 0.5; else highVolumeTpl" slot="volume-low" viewBox="0 0 36 36"
-                    fill="white">
-                    <use xlink:href="assets/icons/svg/media-player.svg#volume-low" />
-                  </svg>
-                </ng-template>
-                <ng-template #highVolumeTpl>
-                  <svg slot="volume-high" viewBox="0 0 36 36" fill="white">
-                    <use xlink:href="assets/icons/svg/media-player.svg#volume-high" />
-                  </svg>
-                </ng-template>
+                <player-mute-icon [muted]="playerStore.muted" [volume]="playerStore.volume"></player-mute-icon>
               </button>
               <media-volume-slider class="tw-w-0 tw-pointer-events-auto tw-transition-width-height tw-duration-200"
                 key-step="5">
@@ -156,32 +140,21 @@
                 menuRelativeTo: bottomControls, offsetX: -10, offsetY: -10, flexibleDimensions: false }">
               </ng-container>
             </ng-container>
+            <button *ngIf="playerSupports.isMobile && playerStore.fullscreen" type="button"
+              class="media-fill-screen-button tw-w-12 sm:tw-w-14 tw-p-2 tw-pointer-events-auto focus-visible:tw-shadow-focus-box"
+              aria-label="Full window" (click)="toggleFillScreen()">
+              <player-fill-icon [active]="playerSettings.fillScreen"></player-fill-icon>
+            </button>
             <button *ngIf="canFitWindow" type="button"
               class="media-full-window-button tw-w-12 sm:tw-w-14 tw-p-2 tw-pointer-events-auto focus-visible:tw-shadow-focus-box"
               aria-label="Full window" (click)="toggleFullwindow()">
-              <svg *ngIf="!playerSettings.fullWindow; else isFullWindowTpl" slot="enter" width="100%" height="100%"
-                version="1.1" viewBox="0 0 36 36" fill="white">
-                <use xlink:href="assets/icons/svg/media-player.svg#theater-mode-enter" />
-              </svg>
-              <ng-template #isFullWindowTpl>
-                <svg slot="exit" width="100%" height="100%" version="1.1" viewBox="0 0 36 36" fill="white">
-                  <use xlink:href="assets/icons/svg/media-player.svg#theater-mode-exit" />
-                </svg>
-              </ng-template>
+              <player-fit-window-icon [active]="playerSettings.fullWindow"></player-fit-window-icon>
             </button>
             <button type="button"
               class="media-fullscreen-button tw-w-12 sm:tw-w-14 tw-p-2 tw-pointer-events-auto focus-visible:tw-shadow-focus-box"
               aria-label="Fullscreen" aria-keyshortcuts="f" [attr.data-fullscreen]="playerStore.fullscreen ? '' : null"
               (click)="toggleFullscreen()">
-              <svg *ngIf="!playerStore.fullscreen; else isFullscreenTpl" slot="enter" width="100%" height="100%"
-                version="1.1" viewBox="0 0 36 36" fill="white">
-                <use xlink:href="assets/icons/svg/media-player.svg#fullscreen" />
-              </svg>
-              <ng-template #isFullscreenTpl>
-                <svg slot="exit" width="100%" height="100%" version="1.1" viewBox="0 0 36 36" fill="white">
-                  <use xlink:href="assets/icons/svg/media-player.svg#fullscreen-exit" />
-                </svg>
-              </ng-template>
+              <player-fullscreen-icon [active]="playerStore.fullscreen"></player-fullscreen-icon>
             </button>
           </div>
         </div>
@@ -190,17 +163,13 @@
     <ng-template #nextEpButtonTpl let-tplStyleClass="styleClass">
       <button type="button" class="media-next-button focus-visible:tw-shadow-focus-box" aria-label="Next"
         [class]="tplStyleClass" [ngClass]="canReqNext ? 'tw-pointer-events-auto' : 'p-disabled'" (click)="toggleNext()">
-        <svg slot="next" aria-hidden="true" viewBox="0 0 36 36" fill="white">
-          <use xlink:href="assets/icons/svg/media-player.svg#skip-next" />
-        </svg>
+        <player-skip-next-icon></player-skip-next-icon>
       </button>
     </ng-template>
     <ng-template #prevEpButtonTpl let-tplStyleClass="styleClass">
       <button type="button" class="media-prev-button focus-visible:tw-shadow-focus-box" aria-label="Previous"
         [class]="tplStyleClass" [ngClass]="canReqPrev ? 'tw-pointer-events-auto' : 'p-disabled'" (click)="togglePrev()">
-        <svg slot="prev" aria-hidden="true" viewBox="0 0 36 36" fill="white">
-          <use xlink:href="assets/icons/svg/media-player.svg#skip-previous" />
-        </svg>
+        <player-skip-previous-icon></player-skip-previous-icon>
       </button>
     </ng-template>
     <ng-template #playButtonTpl let-tplStyleClass="styleClass">
@@ -218,26 +187,15 @@
           </svg>
         </ng-template>
         <ng-template #safariPausedIconTpl>
-          <svg slot="play" aria-hidden="true" viewBox="0 0 36 36" fill="white">
-            <use xlink:href="assets/icons/svg/media-player.svg#pause" />
-          </svg>
+          <player-play-icon [paused]="true"></player-play-icon>
         </ng-template>
       </button>
     </ng-template>
     <ng-template #subtitleButtonTpl>
-      <button type="button"
+      <button type="button" *ngIf="playerSettings.tracks.length"
         class="media-subtitle-button tw-w-12 sm:tw-w-14 tw-p-2 tw-pointer-events-auto focus-visible:tw-shadow-focus-box"
-        [ngClass]="{ 'p-disabled': !playerSettings.tracks.length }" aria-label="Enable/disable subtitle"
-        aria-keyshortcuts="c" (click)="toggleSubtitle()">
-        <svg *ngIf="playerSettings.showSubtitle; else trackDisabledTpl" slot="enabled" width="100%" height="100%"
-          version="1.1" viewBox="0 0 36 36" fill="white">
-          <use xlink:href="assets/icons/svg/media-player.svg#subtitle" />
-        </svg>
-        <ng-template #trackDisabledTpl>
-          <svg slot="disabled" width="100%" height="100%" version="1.1" viewBox="0 0 36 36" fill="white">
-            <use xlink:href="assets/icons/svg/media-player.svg#subtitle-outline" />
-          </svg>
-        </ng-template>
+        aria-label="Enable/disable subtitle" aria-keyshortcuts="c" (click)="toggleSubtitle()">
+        <player-subtitle-icon [enabled]="playerSettings.showSubtitle"></player-subtitle-icon>
       </button>
     </ng-template>
     <ng-template #settingsButtonTpl let-tplMenuPosition="menuPosition" let-tplMenuRelativeTo="menuRelativeTo"
@@ -248,12 +206,10 @@
         [ngClass]="{ 'media-settings-button-active': playerSettings.isMenuOpen }" aria-label="Settings"
         [slideMenuTriggerFor]="settingsMenu" [menuRelativeTo]="tplMenuRelativeTo" [offsetX]="tplOffsetX"
         [offsetY]="tplOffsetY" [lockedPosition]="tplLockedPosition" [flexibleDimensions]="tplFlexibleDimensions"
-        [backdropClass]="tplBackdropClass" [menuPosition]="tplMenuPosition" #settingsMenuTrigger="slideMenuTriggerFor"
-        (menuOpened)="playerSettings.isMenuOpen = true" (menuClosed)="playerSettings.isMenuOpen = false">
-        <svg slot="show" width="100%" height="100%" version="1.1" viewBox="0 0 36 36" fill="white"
-          class="tw-transition-transform tw-duration-200">
-          <use xlink:href="assets/icons/svg/media-player.svg#settings" />
-        </svg>
+        [backdropClass]="tplBackdropClass" [menuPosition]="tplMenuPosition" [fixedBottom]="playerSupports.isMobile"
+        #settingsMenuTrigger="slideMenuTriggerFor" (menuOpened)="playerSettings.isMenuOpen = true"
+        (menuClosed)="playerSettings.isMenuOpen = false">
+        <player-settings-icon></player-settings-icon>
       </button>
     </ng-template>
     <ng-template #settingsMenu>

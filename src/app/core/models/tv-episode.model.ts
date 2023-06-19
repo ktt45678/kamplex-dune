@@ -8,6 +8,7 @@ export interface TVEpisode {
   name?: string;
   overview?: string;
   visibility: number;
+  views: number;
   stillUrl?: string;
   thumbnailStillUrl?: string;
   smallStillUrl?: string;

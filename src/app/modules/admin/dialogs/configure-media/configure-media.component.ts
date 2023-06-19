@@ -765,20 +765,23 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
         {
           label: t['configureMedia.addSubtitle'],
           data: episode,
-          command: (event) => this.showAddSubtitleDialog(undefined, event.item.data)
+          command: (event) => this.showAddSubtitleDialog(undefined, (<DataMenuItem<TVEpisode | undefined>>event.item)?.data)
         },
         {
           label: t['configureMedia.addSource'],
           data: episode,
           disabled: episode.status !== MediaSourceStatus.PENDING || this.queueUploadService.isMediaInQueue(`${mediaId}:${episode._id}`),
-          command: (event) => this.showAddSourceDialog(event.item.data)
+          command: (event) => this.showAddSourceDialog((<DataMenuItem<TVEpisode | undefined>>event.item)?.data)
         },
         { separator: true },
         {
           label: t['configureMedia.deleteEpisode'],
           icon: 'ms ms-delete',
           data: episode,
-          command: (event) => this.showDeleteEpisodeDialog(event.item.data)
+          command: (event) => {
+            if ((<DataMenuItem<TVEpisode | undefined>>event.item)?.data)
+              this.showDeleteEpisodeDialog((<DataMenuItem<TVEpisode>>event.item).data!)
+          }
         }
       );
       return menuItems;

@@ -22,6 +22,7 @@ import { VideoPlayerModule } from '../../shared/components/video-player';
 import { StarRatingModule } from '../../shared/components/star-rating';
 import { SkeletonModule } from '../../shared/components/skeleton';
 import { AddToPlaylistModule } from '../../shared/dialogs/add-to-playlist';
+import { ShareMediaLinkModule } from '../../shared/dialogs/share-media-link';
 import { SearchComponent } from './pages/search/search.component';
 import { WatchComponent } from './pages/watch/watch.component';
 import { DetailsComponent } from './pages/details/details.component';
@@ -55,6 +56,7 @@ import { TypePipeModule } from '../../shared/pipes/type-pipe';
     StarRatingModule,
     SkeletonModule,
     AddToPlaylistModule,
+    ShareMediaLinkModule,
     TranslocoModule,
     LazyLoadImageModule,
     InfiniteScrollModule,

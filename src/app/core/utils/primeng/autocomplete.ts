@@ -10,7 +10,6 @@ import { OverlayModule } from 'primeng/overlay';
 import { RippleModule } from 'primeng/ripple';
 import { ScrollerModule } from 'primeng/scroller';
 import { AutoComplete } from 'primeng/autocomplete';
-import { ObjectUtils } from 'primeng/utils';
 
 export const AUTOCOMPLETE_VALUE_ACCESSOR: any = {
   provide: NG_VALUE_ACCESSOR,
@@ -21,7 +20,7 @@ export const AUTOCOMPLETE_VALUE_ACCESSOR: any = {
 @Component({
   selector: 'p-altAutoComplete',
   template: `
-        <span #container [ngClass]="{ 'tw-w-full': true, 'p-autocomplete p-component': true, 'p-autocomplete-dd': dropdown, 'p-autocomplete-multiple': multiple }" [ngStyle]="style" [class]="styleClass">
+        <span #container [ngClass]="{ 'tw-w-full': true, 'p-autocomplete p-component': true, 'p-autocomplete-dd': dropdown, 'p-autocomplete-multiple': multiple }" [ngStyle]="style" [class]="styleClass!">
             <input
                 pAutoFocus
                 [autofocus]="autofocus"
@@ -30,7 +29,7 @@ export const AUTOCOMPLETE_VALUE_ACCESSOR: any = {
                 [attr.type]="type"
                 [attr.id]="inputId"
                 [ngStyle]="inputStyle"
-                [class]="inputStyleClass"
+                [class]="inputStyleClass!"
                 [autocomplete]="autocomplete"
                 [attr.required]="required"
                 [attr.name]="name"
@@ -61,7 +60,7 @@ export const AUTOCOMPLETE_VALUE_ACCESSOR: any = {
             <i *ngIf="multiple && filled && !disabled && showClear" class="p-autocomplete-clear-icon pi pi-times" (click)="clear()"></i>
             <ul *ngIf="multiple" #multiContainer class="p-autocomplete-multiple-container p-component p-inputtext !tw-flex-nowrap" [ngClass]="{ 'p-disabled': disabled, 'p-focus': focus }" (click)="multiIn.focus()">
                 <li *ngIf="!focus && value?.length" class="p-autocomplete-token">
-                    <ng-container *ngTemplateOutlet="selectedItemTemplate; context: { $implicit: value }"></ng-container>
+                    <ng-container *ngTemplateOutlet="selectedItemTemplate!; context: { $implicit: value }"></ng-container>
                     <span *ngIf="!selectedItemTemplate" class="p-autocomplete-token-label">+{{ value.length }}</span>
                 </li>
                 <li class="p-autocomplete-input-token">
@@ -104,7 +103,7 @@ export const AUTOCOMPLETE_VALUE_ACCESSOR: any = {
                 #ddBtn
                 type="button"
                 pButton
-                [icon]="dropdownIcon"
+                [icon]="dropdownIcon!"
                 [attr.aria-label]="dropdownAriaLabel"
                 class="p-autocomplete-dropdown"
                 [disabled]="disabled"
@@ -122,17 +121,17 @@ export const AUTOCOMPLETE_VALUE_ACCESSOR: any = {
                 [showTransitionOptions]="showTransitionOptions"
                 [hideTransitionOptions]="hideTransitionOptions"
                 (onAnimationStart)="onOverlayAnimationStart($event)"
-                (onShow)="show($event)"
+                (onShow)="show($any($event))"
                 (onHide)="hide($event)"
             >
-                <div [ngClass]="['p-autocomplete-panel p-component tw-max-w-[100vw]']" [style.max-height]="virtualScroll ? 'auto' : scrollHeight" [ngStyle]="panelStyle" [class]="panelStyleClass">
-                    <ng-container *ngTemplateOutlet="headerTemplate"></ng-container>
+                <div [ngClass]="['p-autocomplete-panel p-component tw-max-w-[100vw]']" [style.max-height]="virtualScroll ? 'auto' : scrollHeight" [ngStyle]="panelStyle" [class]="panelStyleClass!">
+                    <ng-container *ngTemplateOutlet="headerTemplate!"></ng-container>
                     <p-scroller
                         *ngIf="virtualScroll"
                         #scroller
                         [items]="suggestions"
                         [style]="{ height: scrollHeight }"
-                        [itemSize]="virtualScrollItemSize || _itemSize"
+                        [itemSize]="virtualScrollItemSize || _itemSize!"
                         [autoSize]="true"
                         [lazy]="lazy"
                         (onLazyLoad)="onLazyLoad.emit($event)"
@@ -157,7 +156,7 @@ export const AUTOCOMPLETE_VALUE_ACCESSOR: any = {
                                 <ng-template ngFor let-optgroup [ngForOf]="items">
                                     <li class="p-autocomplete-item-group" [ngStyle]="{ height: scrollerOptions.itemSize + 'px' }">
                                         <span *ngIf="!groupTemplate">{{ getOptionGroupLabel(optgroup) || 'empty' }}</span>
-                                        <ng-container *ngTemplateOutlet="groupTemplate; context: { $implicit: optgroup }"></ng-container>
+                                        <ng-container *ngTemplateOutlet="groupTemplate!; context: { $implicit: optgroup }"></ng-container>
                                     </li>
                                     <ng-container *ngTemplateOutlet="itemslist; context: { $implicit: getOptionGroupChildren(optgroup) }"></ng-container>
                                 </ng-template>
@@ -180,7 +179,7 @@ export const AUTOCOMPLETE_VALUE_ACCESSOR: any = {
                                     <span >{{ resolveFieldData(option) }}</span>
                                   </div>
                                   <ng-template #hasItemTemplate>
-                                    <ng-container *ngTemplateOutlet="itemTemplate; context: { $implicit: option, index: scrollerOptions.getOptions ? scrollerOptions.getOptions(idx) : idx }"></ng-container>
+                                    <ng-container *ngTemplateOutlet="itemTemplate!; context: { $implicit: option, index: scrollerOptions.getOptions ? scrollerOptions.getOptions(idx) : idx }"></ng-container>
                                   </ng-template>
                                   <i *ngIf="isSelected(option)" class="ms ms-check ms-icon-md tw-ml-auto"></i>
                                 </li>
@@ -190,12 +189,12 @@ export const AUTOCOMPLETE_VALUE_ACCESSOR: any = {
                                     {{ emptyMessageLabel }}
                                 </ng-container>
                                 <ng-template #empty>
-                                  <ng-container *ngTemplateOutlet="emptyTemplate"></ng-container>
+                                  <ng-container *ngTemplateOutlet="emptyTemplate!"></ng-container>
                                 </ng-template>
                             </li>
                         </ul>
                     </ng-template>
-                    <ng-container *ngTemplateOutlet="footerTemplate"></ng-container>
+                    <ng-container *ngTemplateOutlet="footerTemplate!"></ng-container>
                 </div>
             </p-overlay>
         </span>

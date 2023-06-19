@@ -1,0 +1,12 @@
+<ng-container *ngFor="let option of options; let i = index; let first = first; trackBy: trackLabel">
+  <label [for]="'sharing-content-' + i" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5"
+    [ngClass]="{ 'tw-mt-4': !first }">{{ option.label }}</label>
+  <div class="tw-flex">
+    <input [id]="'sharing-content-' + i" class="p-inputtext-sm tw-flex-1" type="url" readonly [value]="option.content"
+      [attr.aria-label]="option.label" pInputText>
+    <button type="button" role="button" aria-label="Copy this url" pButton icon="ms ms-content-copy"
+      class="p-button p-button-sm tw-ml-2" [cdkCopyToClipboard]="option.content">
+    </button>
+  </div>
+</ng-container>
+<div class="tw-mb-4"></div>

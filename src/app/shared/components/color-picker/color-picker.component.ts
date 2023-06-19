@@ -64,7 +64,8 @@ export class ColorPickerComponent implements ControlValueAccessor {
     this.onChange(null);
   }
 
-  setCustomColor(color: string): void {
+  setCustomColor(color: string | object): void {
+    if (typeof color === 'object') return;
     this.value = color;
     this.selectedColorIndex = undefined;
     this.onChange(color);

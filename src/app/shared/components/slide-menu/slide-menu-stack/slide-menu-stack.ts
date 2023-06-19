@@ -12,6 +12,8 @@ import { ElementRef, Inject, Injectable, InjectionToken, Injector, Optional, Ski
 import { Observable, Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, startWith } from 'rxjs/operators';
 
+import { SlideMenuTriggerDirective } from '../slide-menu-trigger/slide-menu-trigger';
+
 /** A single item (menu) in the menu stack. */
 export interface SlideMenuStackItem {
   /** A reference to the menu stack this menu stack item belongs to. */
@@ -109,7 +111,9 @@ export class SlideMenuStack {
 
   activeMenuRef: TemplateRef<unknown> | null = null;
 
-  primaryTrigger: ElementRef<unknown> | null = null;
+  primaryTrigger: SlideMenuTriggerDirective | null = null;
+
+  primaryTriggerEl: ElementRef<HTMLElement> | null = null;
 
   primaryViewContainerRef: ViewContainerRef | null = null;
 
@@ -129,13 +133,15 @@ export class SlideMenuStack {
   /**
    * Set the first menu trigger as the primary trigger
    */
-  registerTrigger(element: ElementRef) {
+  registerTrigger(directive: SlideMenuTriggerDirective, element: ElementRef) {
     if (this.primaryTrigger === null)
-      this.primaryTrigger = element;
+      this.primaryTrigger = directive;
+    if (this.primaryTriggerEl === null)
+      this.primaryTriggerEl = element;
   }
 
   isPrimaryTrigger(element: ElementRef) {
-    return this.primaryTrigger === element;
+    return this.primaryTriggerEl && this.primaryTriggerEl.nativeElement.isEqualNode(element.nativeElement);
   }
 
   /**
@@ -257,6 +263,7 @@ export class SlideMenuStack {
       this.overlayRef = null;
     }
     this.primaryTrigger = null;
+    this.primaryTriggerEl = null;
     this.primaryInjector = null;
     this.primaryViewContainerRef = null;
   }

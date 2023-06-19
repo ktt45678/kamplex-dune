@@ -37,7 +37,10 @@ import 'vidstack/define/media-slider-thumbnail.js';
       provide: TRANSLOCO_SCOPE,
       useValue: ['languages', 'media', 'player']
     }
-  ]
+  ],
+  host: {
+    class: 'tw-block'
+  }
 })
 export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
   track_Id = track_Id;
@@ -107,6 +110,7 @@ export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
       showFastForward: false,
       showRewind: false,
       fullWindow: false,
+      fillScreen: false,
       initVolume: 1,
       initMuted: false,
       expandVolumeSlider: false,
@@ -305,14 +309,13 @@ export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
       this.playerSettings.storeDisposeFn.forEach(fn => {
         fn();
       });
-      this.unregisterMediaSession();
     });
   }
 
   private handleTouchUserIdle(): void {
     if (!isVideoProvider(this.player.provider)) return;
     const idleAttributeName = 'data-touch-user-idle';
-    const idleTimeoutValue = 4000;
+    const idleTimeoutValue = 2500;
     const click$ = fromEvent<MouseEvent>(this.player.provider.video, 'click');
     const clearIdleTimeoutFn = () => {
       if (this.playerSettings.touchIdleTimeout) {
@@ -500,6 +503,10 @@ export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
     this.updateUserSettings({ player: { muted: !this.player.muted } });
   }
 
+  toggleFillScreen(): void {
+    this.playerSettings.fillScreen = !this.playerSettings.fillScreen;
+  }
+
   toggleFullwindow(): void {
     this.playerSettings.fullWindow = !this.playerSettings.fullWindow;
     this.player.focus();
@@ -624,12 +631,12 @@ export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
     } catch { }
   }
 
-  unregisterMediaSession(): void {
-    navigator.mediaSession.metadata = null;
-    navigator.mediaSession.setActionHandler('nexttrack', null);
-    navigator.mediaSession.setActionHandler('previoustrack', null);
-    navigator.mediaSession.setActionHandler('seekto', null);
-  };
+  // unregisterMediaSession(): void {
+  //   navigator.mediaSession.metadata = null;
+  //   navigator.mediaSession.setActionHandler('nexttrack', null);
+  //   navigator.mediaSession.setActionHandler('previoustrack', null);
+  //   navigator.mediaSession.setActionHandler('seekto', null);
+  // };
 
   ngOnDestroy(): void {
     this.playerSettings.playerDestroyed.next();

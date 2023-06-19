@@ -1,4 +1,5 @@
 import { APP_INITIALIZER, ErrorHandler, NgModule } from '@angular/core';
+import { RouteReuseStrategy } from '@angular/router';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserModule } from '@angular/platform-browser';
 import { FullscreenOverlayContainer, OverlayContainer } from '@angular/cdk/overlay';
@@ -20,6 +21,7 @@ import { HttpErrorInterceptor } from './core/interceptors/http-error.interceptor
 import { GlobalErrorHandler } from './core/handlers/global-error-handler';
 import { AppInitializer } from './core/initializers/app.initializer';
 import { AuthService } from './core/services';
+import { CustomRouteReuseStrategy } from './core/strategies';
 import { HTTP_CACHE_TTL } from '../environments/config';
 
 @NgModule({
@@ -76,6 +78,10 @@ import { HTTP_CACHE_TTL } from '../environments/config';
     {
       provide: OverlayContainer,
       useClass: FullscreenOverlayContainer,
+    },
+    {
+      provide: RouteReuseStrategy,
+      useClass: CustomRouteReuseStrategy
     }
   ],
   bootstrap: [AppComponent]

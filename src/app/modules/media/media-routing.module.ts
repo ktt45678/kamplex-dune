@@ -12,21 +12,27 @@ const routes: Routes = [
     path: 'search',
     component: SearchComponent,
     data: {
-      title: 'search'
+      title: 'search',
+      shouldReuse: true,
+      reuseRoutesFrom: ['details/:id']
     }
   },
   {
     path: 'list/:path',
     component: ListComponent,
     data: {
-      disableTitleStrategy: true
+      disableTitleStrategy: true,
+      shouldReuse: true,
+      reuseRoutesFrom: ['details/:id']
     }
   },
   {
     path: 'list/:path/:sub_path',
     component: ListComponent,
     data: {
-      disableTitleStrategy: true
+      disableTitleStrategy: true,
+      shouldReuse: true,
+      reuseRoutesFrom: ['details/:id']
     }
   },
   {
@@ -41,7 +47,9 @@ const routes: Routes = [
     path: 'playlists/:id',
     component: PlaylistsComponent,
     data: {
-      disableTitleStrategy: true
+      disableTitleStrategy: true,
+      shouldReuse: true,
+      reuseRoutesFrom: ['watch/:id']
     }
   },
   {

@@ -20,7 +20,7 @@ media-time-slider {
   @apply tw-w-14;
 }
 
-.media-settings-button.media-settings-button-active > svg {
+.media-settings-button.media-settings-button-active > player-settings-icon > svg {
   transform: rotate(30deg);
 }
 
@@ -96,21 +96,27 @@ media-time-slider {
   0% {
     opacity: 0;
   }
+
   20% {
     opacity: 0.3;
   }
+
   35% {
     opacity: 0.6;
   }
+
   50% {
     opacity: 0.9;
   }
+
   70% {
     opacity: 0.6;
   }
+
   85% {
     opacity: 0.3;
   }
+
   100% {
     opacity: 0;
   }
@@ -120,21 +126,27 @@ media-time-slider {
   0% {
     opacity: 0;
   }
+
   20% {
     opacity: 0.6;
   }
+
   35% {
     opacity: 0.9;
   }
+
   50% {
     opacity: 0.6;
   }
+
   70% {
     opacity: 0.3;
   }
+
   85% {
     opacity: 0.3;
   }
+
   100% {
     opacity: 0;
   }
@@ -144,21 +156,27 @@ media-time-slider {
   0% {
     opacity: 0;
   }
+
   20% {
     opacity: 0.9;
   }
+
   35% {
     opacity: 0.6;
   }
+
   50% {
     opacity: 0.3;
   }
+
   70% {
     opacity: 0.3;
   }
+
   85% {
     opacity: 0.3;
   }
+
   100% {
     opacity: 0;
   }

@@ -40,13 +40,17 @@ export class MediaService {
   findPageCursor(paginateMediaDto?: CursorPageMediaDto, context?: HttpContext) {
     const params: { [key: string]: any } = {};
     if (paginateMediaDto) {
-      const { pageToken, limit, search, sort, genres, tags, type, status, originalLang, year, includeHidden, includeUnprocessed } = paginateMediaDto;
+      const { pageToken, limit, search, sort, genres, tags, genreMatch, tagMatch, excludeIds, type, status, originalLang, year,
+        includeHidden, includeUnprocessed } = paginateMediaDto;
       pageToken && (params['page'] = pageToken);
       limit && (params['limit'] = limit);
       search && (params['search'] = search);
       sort && (params['sort'] = sort);
       genres?.length && (params['genres'] = genres);
       tags?.length && (params['tags'] = tags);
+      genreMatch && (params['genreMatch'] = genreMatch);
+      tagMatch && (params['tagMatch'] = tagMatch);
+      excludeIds && (params['excludeIds'] = excludeIds);
       type && (params['type'] = type);
       status && (params['status'] = status);
       originalLang && (params['originalLang'] = originalLang);

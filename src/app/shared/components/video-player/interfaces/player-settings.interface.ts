@@ -20,6 +20,7 @@ export interface PlayerSettings {
   touchIdleTimeout?: number;
   showRewind: boolean;
   fullWindow: boolean;
+  fillScreen: boolean;
   initAudioValue: number | null;
   initVolume: number;
   initMuted: boolean;
