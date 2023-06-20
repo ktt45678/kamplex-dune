@@ -2,7 +2,7 @@ import { Component, OnInit, ChangeDetectionStrategy, Input, OnDestroy, Output, E
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { Platform } from '@angular/cdk/platform';
 import { TRANSLOCO_SCOPE, TranslocoService } from '@ngneat/transloco';
-import { type MediaPlayerElement, type MediaVolumeChangeEvent, type TextTrackInit, type MediaPlayRequestEvent, type MediaPauseRequestEvent, type MediaSeekRequestEvent, isVideoProvider, type MediaProviderSetupEvent, type MediaPlayEvent, type HLSAudioTrackLoadedEvent, type MediaLoadStartEvent } from 'vidstack';
+import { type MediaPlayerElement, type MediaVolumeChangeEvent, type TextTrackInit, type MediaPlayRequestEvent, type MediaPauseRequestEvent, type MediaSeekRequestEvent, isVideoProvider, type MediaProviderSetupEvent, type MediaPlayEvent, type HLSAudioTrackLoadedEvent, type MediaLoadStartEvent, isHLSProvider } from 'vidstack';
 import { Subject, buffer, debounceTime, filter, first, forkJoin, fromEvent, map, merge, switchMap, takeUntil, timer } from 'rxjs';
 
 import { UpdateUserSettingsDto } from '../../../core/dto/users';
@@ -74,6 +74,10 @@ export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
     this.setPlayerData(value);
   }
 
+  @Input('initPlaytime') set initPlaytime(value: number) {
+    this.playerSettings.initPlaytime = value;
+  }
+
   @ViewChild('player') set setPlayer(value: ElementRef<MediaPlayerElement> | undefined) {
     if (!this.player && value) {
       this.player = value.nativeElement;
@@ -111,6 +115,7 @@ export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
       showRewind: false,
       fullWindow: false,
       fillScreen: false,
+      initPlaytime: 0,
       initVolume: 1,
       initMuted: false,
       expandVolumeSlider: false,
@@ -118,7 +123,8 @@ export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
       hasError: false,
       subtitleStyles: null,
       playerDestroyed: new Subject(),
-      storeDisposeFn: []
+      storeDisposeFn: [],
+      touchIdleTimeoutValue: 2500
     };
     const isTouchDevice = (('ontouchstart' in window) || (navigator.maxTouchPoints > 0));
     const isMinMobileScreen = this.breakpointObserver.isMatched(MediaBreakpoints.SMALL);
@@ -211,6 +217,7 @@ export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   private onPlayerAttach() {
+    this.player.currentTime = this.playerSettings.initPlaytime;
     this.player.muted = this.playerSettings.initMuted;
     this.player.volume = this.playerSettings.initVolume;
     this.player.playbackRate = this.playerSettings.activeSpeedValue;
@@ -313,9 +320,8 @@ export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   private handleTouchUserIdle(): void {
-    if (!isVideoProvider(this.player.provider)) return;
+    if (!isHLSProvider(this.player.provider)) return;
     const idleAttributeName = 'data-touch-user-idle';
-    const idleTimeoutValue = 2500;
     const click$ = fromEvent<MouseEvent>(this.player.provider.video, 'click');
     const clearIdleTimeoutFn = () => {
       if (this.playerSettings.touchIdleTimeout) {
@@ -336,7 +342,7 @@ export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
         clearIdleTimeoutFn();
         this.playerSettings.touchIdleTimeout = window.setTimeout(() => {
           this.renderer.setAttribute(this.player, idleAttributeName, 'true');
-        }, idleTimeoutValue);
+        }, this.playerSettings.touchIdleTimeoutValue);
       }
       else {
         this.renderer.setAttribute(this.player, idleAttributeName, 'true');
@@ -345,11 +351,19 @@ export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
     });
     // Keep idle attribute when started playing
     fromEvent<MediaPlayEvent>(this.player, 'play').pipe(takeUntil(this.playerSettings.playerDestroyed)).subscribe(() => {
-      this.renderer.removeAttribute(this.player, idleAttributeName);
-      this.playerSettings.touchIdleTimeout = window.setTimeout(() => {
-        this.renderer.setAttribute(this.player, idleAttributeName, 'true');
-      }, idleTimeoutValue);
+      this.resetTouchIdleTimeout();
     });
+  }
+
+  private resetTouchIdleTimeout(): void {
+    if (!this.playerSupports.isTouchDevice) return;
+    const idleAttributeName = 'data-touch-user-idle';
+    this.renderer.removeAttribute(this.player, idleAttributeName);
+    if (this.playerSettings.touchIdleTimeout)
+      window.clearTimeout(this.playerSettings.touchIdleTimeout);
+    this.playerSettings.touchIdleTimeout = window.setTimeout(() => {
+      this.renderer.setAttribute(this.player, idleAttributeName, 'true');
+    }, this.playerSettings.touchIdleTimeoutValue);
   }
 
   private handleUserSeekGesture(event: MediaSeekRequestEvent): void {
@@ -490,10 +504,12 @@ export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
 
   toggleNext(): void {
     this.requestNext.emit();
+    this.resetTouchIdleTimeout();
   }
 
   togglePrev(): void {
     this.requestPrev.emit();
+    this.resetTouchIdleTimeout();
   }
 
   toggleMute(): void {
@@ -505,6 +521,7 @@ export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
 
   toggleFillScreen(): void {
     this.playerSettings.fillScreen = !this.playerSettings.fillScreen;
+    this.resetTouchIdleTimeout();
   }
 
   toggleFullwindow(): void {
@@ -520,6 +537,7 @@ export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
         this.player.enterFullscreen();
       else
         this.player.exitFullscreen();
+      this.resetTouchIdleTimeout();
     }
   }
 

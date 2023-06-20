@@ -2,7 +2,7 @@
   <div class="tw-group tw-bg-transparent hover:tw-bg-neutral-725 focus-within:tw-bg-neutral-725
     tw-transition-colors tw-duration-200 tw-rounded-sm tw-px-1.5 tw-py-2" [appContextMenuTriggerFor]="historyMenu">
     <a #mediaLink [routerLink]="['/watch', history.media._id]"
-      [queryParams]="{ ep: history.episode?.epNumber, time: history.time }" class="tw-block">
+      [queryParams]="{ ep: history.episode?.epNumber, t: history.time }" class="tw-block">
       <div class="tw-relative">
         <div class="tw-aspect-w-2 tw-aspect-h-3 [&>*]:tw-rounded-md">
           <img *ngIf="history.media.thumbnailPosterUrl; else noPoster" class="tw-object-cover"

@@ -18,10 +18,12 @@ export interface PlayerSettings {
   fastForwardToastTimeout?: number;
   rewindToastTimeout?: number;
   touchIdleTimeout?: number;
+  touchIdleTimeoutValue: number;
   showRewind: boolean;
   fullWindow: boolean;
   fillScreen: boolean;
   initAudioValue: number | null;
+  initPlaytime: number;
   initVolume: number;
   initMuted: boolean;
   expandVolumeSlider: boolean;

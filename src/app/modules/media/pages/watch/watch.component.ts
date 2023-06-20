@@ -42,6 +42,7 @@ export class WatchComponent implements OnInit, OnDestroy {
   episodes?: TVEpisode[];
   streams?: MediaStream;
   userRating?: Rating;
+  initPlayTime: number = 0;
   ratingAverage: number = 0;
   ratingScore: number = 0;
   ratingCount: number = 0;
@@ -53,7 +54,8 @@ export class WatchComponent implements OnInit, OnDestroy {
   prevEpIndex: number = -1;
   nextEpIndex: number = -1;
   relatedMediaLimit: number = 20;
-  watchTimeUpdateSub: Subscription = new Subscription();
+  watchTimeUpdateSub?: Subscription;
+  serverWatchTimeUpdateSub?: Subscription;
 
   constructor(private ref: ChangeDetectorRef, private title: Title, private meta: Meta, private breakpointObserver: BreakpointObserver,
     private dialogService: DialogService, private authService: AuthService, private mediaService: MediaService,
@@ -62,9 +64,10 @@ export class WatchComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.initWatch();
+    this.initWatchTimeUpdater();
     this.authService.currentUser$.pipe(takeUntil(this.destroyService)).subscribe(user => {
       this.currentUser = user;
-      this.initWatchTimeUpdater();
+      this.initServerWatchTimeUpdater();
       this.ref.markForCheck();
     });
     this.breakpointObserver.observe(MediaBreakpoints.MEDIUM_2).pipe(takeUntil(this.destroyService)).subscribe(state => {
@@ -75,11 +78,12 @@ export class WatchComponent implements OnInit, OnDestroy {
 
   initWatch(): void {
     combineLatest([this.route.paramMap, this.route.queryParamMap]).pipe(
-      map(([params, queryParams]) => ({ id: params.get('id'), epNumber: queryParams.get('ep') })),
-      filter((params): params is { id: string, epNumber: string | null } => params.id !== null),
+      map(([params, queryParams]) => ({ id: params.get('id'), epNumber: queryParams.get('ep'), time: Number(queryParams.get('t')) })),
+      filter((params): params is { id: string, epNumber: string | null, time: number } => params.id !== null),
       switchMap(params => {
         // Unset current source and start loading
         this.streams = undefined;
+        this.initPlayTime = params.time;
         this.loading = true;
         this.ref.markForCheck();
         if (params.id === this.media?._id) return of(this.media).pipe(map(media => ({ media, params })));
@@ -118,19 +122,24 @@ export class WatchComponent implements OnInit, OnDestroy {
   }
 
   initWatchTimeUpdater(): void {
-    this.watchTimeUpdateSub.unsubscribe();
-    if (this.currentUser?.settings?.history.paused) return;
-    this.watchTimeUpdateSub.add(
-      interval(3000).pipe(takeUntil(this.destroyService)).subscribe(() => {
-        this.updateLocalWatchTime();
-      })
-    );
+    if (this.watchTimeUpdateSub && !this.watchTimeUpdateSub.closed)
+      this.watchTimeUpdateSub.unsubscribe();
+    this.watchTimeUpdateSub = interval(2000).subscribe(() => {
+      this.updateLocalWatchTime();
+    });
+  }
+
+  initServerWatchTimeUpdater(): void {
     if (this.currentUser) {
-      this.watchTimeUpdateSub.add(
-        timer(5000, 60000).pipe(takeUntil(this.destroyService)).subscribe(() => {
-          this.updateWatchTimeToServer();
-        })
-      );
+      if (this.currentUser.settings?.history.paused) {
+        this.watchTimeUpdateSub?.unsubscribe();
+        return
+      };
+      if (this.serverWatchTimeUpdateSub && !this.serverWatchTimeUpdateSub.closed)
+        this.serverWatchTimeUpdateSub.unsubscribe();
+      this.serverWatchTimeUpdateSub = timer(5000, 60000).subscribe(() => {
+        this.updateWatchTimeToServer();
+      });
     }
   }
 
@@ -350,5 +359,7 @@ export class WatchComponent implements OnInit, OnDestroy {
     this.meta.removeTag('property="og:image:alt"');
     this.meta.updateTag({ name: 'theme-color', content: SITE_THEME_COLOR });
     this.currentUser && this.updateWatchTimeToServer();
+    this.watchTimeUpdateSub?.unsubscribe();
+    this.serverWatchTimeUpdateSub?.unsubscribe();
   }
 }

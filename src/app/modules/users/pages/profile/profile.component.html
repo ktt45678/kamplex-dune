@@ -59,13 +59,13 @@
               </ng-template>
               <ng-container *ngIf="!history.episode; else isTV">
                 <a class="tw-text-blue-400 hover:tw-underline" [routerLink]="['/watch', history.media._id]"
-                  [queryParams]="{ time: history.time }">{{
+                  [queryParams]="{ t: history.time }">{{
                   history.media.title
                   }}</a>
               </ng-container>
               <ng-template #isTV>
                 <a class="tw-text-blue-400 hover:tw-underline" [routerLink]="['/watch', history.media._id]"
-                  [queryParams]="{ ep: history.episode!.epNumber, time: history.time }">{{
+                  [queryParams]="{ ep: history.episode!.epNumber, t: history.time }">{{
                   t('users.activity.episodeLink', { episode: history.episode?.epNumber, title: history.media.title
                   }) }}</a>
               </ng-template>

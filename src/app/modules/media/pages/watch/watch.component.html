@@ -3,11 +3,12 @@
     <div class="tw-flex tw-flex-wrap" [ngClass]="{ '2md:tw-flex-nowrap': !fitWindow }">
       <div class="tw-w-full" [ngClass]="{ '2md:tw-w-9/12': !fitWindow }">
         <app-video-player #videoPlayer [media]="media" [stream]="streams" [canReqNext]="this.nextEpIndex > -1"
-          [canReqPrev]="this.prevEpIndex > -1" [canFitWindow]="canFitWindow" [ngClass]="{ '2md:tw-mx-4': !fitWindow }"
-          (onEnded)="autoNext && changeEpisode(nextEpIndex)" (requestFitWindow)="toggleFitWindow($event)"
-          (requestNext)="changeEpisode(this.nextEpIndex)" (requestPrev)="changeEpisode(this.prevEpIndex)">
+          [canReqPrev]="this.prevEpIndex > -1" [canFitWindow]="canFitWindow" [initPlaytime]="initPlayTime"
+          [ngClass]="{ '2md:tw-mx-4': !fitWindow }" (onEnded)="autoNext && changeEpisode(nextEpIndex)"
+          (requestFitWindow)="toggleFitWindow($event)" (requestNext)="changeEpisode(this.nextEpIndex)"
+          (requestPrev)="changeEpisode(this.prevEpIndex)">
         </app-video-player>
-        <div *ngIf="media" class="tw-text-white tw-mx-4">
+        <div *ngIf="media" class="tw-text-white tw-mx-2 sm:tw-mx-4">
           <div *ngIf="media.type === MediaType.TV && streams?.episode as episode" class="tw-mt-2">
             <p class="tw-text-sm sm:tw-text-base md:tw-text-lg tw-font-bold tw-truncate">{{
               t('media.episode.episodePrefix') + ' ' + episode.epNumber }}{{ episode.name ? ': ' + episode.name : ''
@@ -80,7 +81,7 @@
                 </ng-template>
               </div>
             </div>
-            <div class="tw-text-white tw-flex-1 tw-mx-4">
+            <div class="tw-text-white tw-flex-1 tw-mx-2 sm:tw-mx-4">
               <div class="tw-flex tw-flex-wrap">
                 <div class="tw-flex-1 max-md:tw-w-full">
                   <p class="tw-text-lg sm:tw-text-2xl tw-font-semibold tw-leading-6">{{ media.title }}</p>
@@ -102,7 +103,7 @@
           </div>
         </div>
       </div>
-      <div *ngIf="media" class="tw-w-full 2md:tw-w-3/12 tw-mt-4" [ngClass]="{ '2md:tw-pl-4 2md:tw-mt-0': !fitWindow }">
+      <div *ngIf="media" class="tw-w-full 2md:tw-w-3/12 tw-mt-4 tw-mx-2" [ngClass]="{ '2md:tw-mt-0': !fitWindow }">
         <div class="p-scrollbar tw-bg-neutral-850 tw-max-h-[600px] tw-overflow-y-auto tw-rounded-md">
           <app-episode-list *ngIf="media.type === MediaType.TV" [media]="media" [episodeList]="media.tv.episodes"
             stillStyleClass="tw-w-28 tw-flex-shrink-0" infoStyleClass="tw-w-full xs:tw-w-3/5 tw-pl-2">
