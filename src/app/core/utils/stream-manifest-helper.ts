@@ -24,6 +24,8 @@ export function convertToM3U8(manifest: StreamManifest, baseUrl: string, options
     const track = manifest.audioTracks[i];
     if (!options.opus && track.name.toLowerCase().startsWith('opus')) // Do not add opus audio tracks
       continue;
+    if (track.channels > 6)
+      continue;
     const segmentGroup = track.hlsSegment;
     const playlistUri = generatePlaylist(segmentGroup, track.uri);
     const defaultAudio = track.default ? 'YES' : 'NO';

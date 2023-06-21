@@ -1,5 +1,5 @@
 <ng-container *transloco="let t; loadingTpl: loadingPlayerTpl">
-  <media-player #player aspect-ratio="16/9" preload="metadata" key-target="player" playsinline user-idle-delay="2500"
+  <media-player #player aspect-ratio="16/9" preload="metadata" key-target="document" playsinline user-idle-delay="2500"
     autoplay crossorigin [attr.data-menu-open]="playerSettings.isMenuOpen || null"
     [attr.data-fill-screen]="playerSettings.fillScreen || null" [attr.data-mobile]="playerSupports.isMobile || null"
     [attr.data-touch-device]="playerSupports.isTouchDevice || null" [attr.thumbnails]="playerSettings.previewThumbnail">
