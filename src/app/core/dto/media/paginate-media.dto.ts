@@ -8,6 +8,8 @@ export interface PaginateMediaDto {
   status?: string;
   originalLang?: string;
   year?: number;
+  preset?: 'related';
+  presetParams?: string | string[];
   includeHidden?: boolean;
   includeUnprocessed?: boolean;
 }

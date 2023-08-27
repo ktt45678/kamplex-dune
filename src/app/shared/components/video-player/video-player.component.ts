@@ -2,8 +2,8 @@ import { Component, OnInit, ChangeDetectionStrategy, Input, OnDestroy, Output, E
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { Platform } from '@angular/cdk/platform';
 import { TRANSLOCO_SCOPE, TranslocoService } from '@ngneat/transloco';
-import { type MediaPlayerElement, type MediaVolumeChangeEvent, type TextTrackInit, type MediaPlayRequestEvent, type MediaPauseRequestEvent, type MediaSeekRequestEvent, isVideoProvider, type MediaProviderSetupEvent, type MediaPlayEvent, type HLSAudioTrackLoadedEvent, type MediaLoadStartEvent, isHLSProvider } from 'vidstack';
-import { Subject, buffer, debounceTime, filter, first, forkJoin, fromEvent, map, merge, switchMap, takeUntil, timer } from 'rxjs';
+import { type MediaPlayerElement, type MediaVolumeChangeEvent, type TextTrackInit, type MediaPlayRequestEvent, type MediaPauseRequestEvent, type MediaSeekRequestEvent, isVideoProvider, type MediaProviderSetupEvent, type MediaPlayEvent, type HLSAudioTrackLoadedEvent, type MediaLoadStartEvent, isHLSProvider, LibASSTextRenderer } from 'vidstack';
+import { Subject, buffer, debounceTime, filter, first, forkJoin, fromEvent, merge, switchMap, takeUntil, timer } from 'rxjs';
 
 import { UpdateUserSettingsDto } from '../../../core/dto/users';
 import { MediaDetails, MediaStream, UserSettings } from '../../../core/models';
@@ -54,7 +54,6 @@ export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
   @Output() requestFitWindow = new EventEmitter<boolean>();
   @Output() requestNext = new EventEmitter<void>();
   @Output() requestPrev = new EventEmitter<void>();
-  @Output() requestAutoNext = new EventEmitter<void>();
   player!: MediaPlayerElement;
   playerSettings: PlayerSettings;
   playerSupports: PlayerSupports;
@@ -238,6 +237,12 @@ export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
       volumeUp: 'ArrowUp',
       volumeDown: 'ArrowDown',
     };
+    // Set libass renderer
+    const renderer = new LibASSTextRenderer(() => import('jassub') as any, {
+      workerUrl: '../../../../assets/js/jassub/jassub-worker.js',
+      legacyWorkerUrl: '../../../../assets/js/jassub/jassub-worker-legacy.js'
+    });
+    this.player.textRenderers.add(renderer);
     // Register media session when the media starts playing
     fromEvent<MediaLoadStartEvent>(this.player, 'load-start')
       .pipe(takeUntil(this.playerSettings.playerDestroyed)).subscribe(() => {
@@ -307,6 +312,8 @@ export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
       this.player.subscribe(({ ended }) => {
         if (!ended) return;
         this.onEnded.emit();
+        if (this.playerSettings.autoNext && this.canReqNext)
+          this.requestNext.emit();
       })
     );
     fromEvent(this.player, 'destroy').pipe(first()).subscribe(() => {

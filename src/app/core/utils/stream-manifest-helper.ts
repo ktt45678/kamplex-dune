@@ -30,7 +30,7 @@ export function convertToM3U8(manifest: StreamManifest, baseUrl: string, options
     const playlistUri = generatePlaylist(segmentGroup, track.uri);
     const defaultAudio = track.default ? 'YES' : 'NO';
     const autoSelectAudio = track.autoselect ? 'YES' : 'NO';
-    masterStr += `#EXT-X-MEDIA:TYPE=AUDIO,GROUP-ID="${track.group}",NAME="${track.name} - ${track.codecID}",`;
+    masterStr += `#EXT-X-MEDIA:TYPE=AUDIO,GROUP-ID="${track.group}",NAME="${track.name} - ${track.codecID} - ${track.language}",`;
     masterStr += `DEFAULT=${defaultAudio},AUTOSELECT=${autoSelectAudio},LANGUAGE="${track.language}",CHANNELS="${track.channels}",`;
     masterStr += `URI="${playlistUri}"\n`;
   }

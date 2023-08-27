@@ -41,7 +41,7 @@ export class MediaService {
     const params: { [key: string]: any } = {};
     if (paginateMediaDto) {
       const { pageToken, limit, search, sort, genres, tags, genreMatch, tagMatch, excludeIds, type, status, originalLang, year,
-        includeHidden, includeUnprocessed } = paginateMediaDto;
+        preset, presetParams, includeHidden, includeUnprocessed } = paginateMediaDto;
       pageToken && (params['page'] = pageToken);
       limit && (params['limit'] = limit);
       search && (params['search'] = search);
@@ -55,6 +55,8 @@ export class MediaService {
       status && (params['status'] = status);
       originalLang && (params['originalLang'] = originalLang);
       year && (params['year'] = year);
+      preset && (params['preset'] = preset);
+      presetParams && (params['presetParams'] = presetParams);
       includeHidden && (params['includeHidden'] = includeHidden);
       includeUnprocessed && (params['includeUnprocessed'] = includeUnprocessed);
     }

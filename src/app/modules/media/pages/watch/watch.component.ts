@@ -144,7 +144,7 @@ export class WatchComponent implements OnInit, OnDestroy {
   }
 
   updateLocalWatchTime() {
-    if (this.media && this.videoPlayer?.player) {
+    if (!this.loading && this.media && this.videoPlayer?.player) {
       const updateWatchTimeDto: UpdateWatchTimeDto = {
         media: this.media._id,
         time: ~~this.videoPlayer.player.currentTime
@@ -156,7 +156,7 @@ export class WatchComponent implements OnInit, OnDestroy {
   }
 
   updateWatchTimeToServer() {
-    if (!this.currentUser) return;
+    if (!this.currentUser || this.loading) return;
     this.historyService.updateToServer();
   }
 
@@ -315,9 +315,8 @@ export class WatchComponent implements OnInit, OnDestroy {
     this.mediaService.findPageCursor({
       pageToken,
       limit: this.relatedMediaLimit,
-      tags: tagIds,
-      tagMatch: 'any',
-      excludeIds: this.media._id
+      preset: 'related',
+      presetParams: this.media._id
     }).subscribe(mediaList => {
       this.appendRelatedMedia(mediaList, resetList);
     }).add(() => {

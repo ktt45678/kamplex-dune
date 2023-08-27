@@ -1,5 +1,5 @@
 <ng-container *transloco="let t; loadingTpl: loadingPlayerTpl">
-  <media-player #player aspect-ratio="16/9" preload="metadata" key-target="document" playsinline user-idle-delay="2500"
+  <media-player #player aspect-ratio="16/9" preload="metadata" key-target="player" playsinline user-idle-delay="2500"
     autoplay crossorigin [attr.data-menu-open]="playerSettings.isMenuOpen || null"
     [attr.data-fill-screen]="playerSettings.fillScreen || null" [attr.data-mobile]="playerSupports.isMobile || null"
     [attr.data-touch-device]="playerSupports.isTouchDevice || null" [attr.thumbnails]="playerSettings.previewThumbnail">
@@ -214,12 +214,12 @@
     </ng-template>
     <ng-template #settingsMenu>
       <app-slide-menu class="media-menu" [ngClass]="{ 'media-menu-mobile tw-w-96': playerSupports.isMobile }">
-        <p-inputSwitch slideMenuItemCheckbox [ngModel]="playerSettings.autoNext" [label]="t('player.menu.autoNext')"
-          styleClass="p-inputswitch-sm" icon="ms ms-queue-play-next"
+        <p-inputSwitch *ngIf="canReqNext" slideMenuItemCheckbox [ngModel]="playerSettings.autoNext"
+          [label]="t('player.menu.autoNext')" styleClass="p-inputswitch-sm" icon="ms ms-queue-play-next"
           (onChange)="toggleAutoNext($event.checked)"></p-inputSwitch>
         <button slideMenuItem [slideMenuTriggerFor]="playbackSpeedMenu">
           <i class="ms ms-slow-motion-video"></i>
-          <span>{{ t('player.menu.speed') }}</span>
+          <span class="tw-mr-8">{{ t('player.menu.speed') }}</span>
           <span [ngSwitch]="playerSettings.activeSpeedValue"
             class="tw-ml-auto tw-min-w-24 tw-text-sm tw-font-normal tw-text-right">
             <ng-container *ngSwitchCase="1">{{ t('player.speed.normal') }}</ng-container>
@@ -229,15 +229,16 @@
         </button>
         <button slideMenuItem [slideMenuTriggerFor]="audioMenu" [disabled]="!playerStore.canPlay">
           <i class="ms ms-speaker"></i>
-          <span>{{ t('player.menu.audio') }}</span>
+          <span class="tw-mr-8">{{ t('player.menu.audio') }}</span>
           <span class="tw-ml-auto tw-min-w-24 tw-text-sm tw-font-normal tw-text-right">
-            <ng-container *ngIf="playerStore.audioTrack">{{ playerStore.audioTrack.label | split:'-':0 }}</ng-container>
+            <ng-container *ngIf="playerStore.audioTrack">{{ playerStore.audioTrack.label | split:'-':0 }} -
+              {{ t('languages.' + playerStore.audioTrack.language) }}</ng-container>
           </span>
           <i class="ms ms-navigate-next ms-icon-sm tw-ml-1"></i>
         </button>
         <button slideMenuItem [slideMenuTriggerFor]="qualityMenu" [disabled]="!playerStore.canPlay">
           <i class="ms ms-tune"></i>
-          <span>{{ t('player.menu.quality') }}</span>
+          <span class="tw-mr-8">{{ t('player.menu.quality') }}</span>
           <span class="tw-ml-auto tw-min-w-24 tw-text-sm tw-font-normal tw-text-right">
             <ng-container *ngIf="!playerStore.autoQuality && playerStore.quality; else autoQualityTpl">{{
               playerStore.quality.height }}p</ng-container>
@@ -249,7 +250,7 @@
         </button>
         <button *ngIf="playerSettings.tracks.length" slideMenuItem [slideMenuTriggerFor]="subtitleMenu">
           <i class="ms ms-subtitles"></i>
-          <span>{{ t('player.menu.subtitle') }}</span>
+          <span class="tw-mr-8">{{ t('player.menu.subtitle') }}</span>
           <span class="tw-ml-auto tw-min-w-24 tw-text-sm tw-font-normal tw-text-right">
             <ng-container *ngIf="playerStore.textTrack; else noTextTrackTpl">{{ playerStore.textTrack.label
               }}</ng-container>
@@ -278,7 +279,7 @@
         <button *ngFor="let audio of playerStore.audioTracks; let i = index; trackBy: track_Id" slideMenuItemRadio
           [menuItemChecked]="audio.selected" (menuItemTriggered)="changeAudioTrack(i)">
           <i role="checkbox" class="ms ms-icon-sm ms-check"></i>
-          <span>{{ audio.label | split:'-':0 }}</span>
+          <span>{{ (audio.label | split:'-':0) }} - {{ t('languages.' + audio.language) }}</span>
         </button>
       </app-slide-menu>
     </ng-template>
