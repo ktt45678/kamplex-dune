@@ -180,11 +180,15 @@ media-volume-slider [part~='track'][part~='track-fill'], media-volume-slider [pa
 }
 
 media-slider-thumbnail {
-  max-width: 160px;
-  max-height: 160px;
-  background-color: #525252;
   border: 2px solid hsl(0, 0%, 80%);
   border-radius: 4px;
+}
+
+media-thumbnail {
+  --media-thumbnail-bg: #525252;
+  /* Applies when scaling thumbnails down. */
+  --media-thumbnail-max-width: 240px;
+  --media-thumbnail-max-height: 240px;
 }
 
 media-slider-thumbnail[data-loading] img[part='img'], media-slider-thumbnail[aria-hidden='true'] {

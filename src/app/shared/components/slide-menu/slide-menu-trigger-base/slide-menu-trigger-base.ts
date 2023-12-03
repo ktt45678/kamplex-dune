@@ -97,6 +97,9 @@ export abstract class SlideMenuTriggerBase implements OnDestroy {
   /** Registers a child menu as having been opened by this trigger. */
   registerChildMenu(child: SlideMenuOverlay) {
     this.childMenu = child;
+    if (this.menuStack.primaryTrigger) {
+      this.menuStack.primaryTrigger.childMenu = child;
+    }
   }
 
   /**

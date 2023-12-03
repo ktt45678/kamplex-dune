@@ -1,6 +1,5 @@
-import { ShortDate, TVEpisode, TVShowLastEpisode } from '.';
+import { TVEpisode, TVShowListInfo } from '.';
 
-export interface TVShow extends TVShowLastEpisode {
-  lastAirDate: ShortDate;
+export interface TVShow extends TVShowListInfo {
   episodes: TVEpisode[];
 }

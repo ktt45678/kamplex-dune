@@ -5,7 +5,7 @@ import { _getEventTarget } from '@angular/cdk/platform';
 import { CDK_MENU, PARENT_OR_NEW_MENU_STACK_PROVIDER, MENU_AIM, CdkMenuTriggerBase, MENU_TRIGGER, Menu } from '@angular/cdk/menu';
 import { ConnectedPosition, FlexibleConnectedPositionStrategy, Overlay, OverlayConfig, STANDARD_DROPDOWN_ADJACENT_POSITIONS, STANDARD_DROPDOWN_BELOW_POSITIONS } from '@angular/cdk/overlay';
 import { hasModifierKey } from '@angular/cdk/keycodes';
-import { fromEvent, filter, takeUntil } from 'rxjs';
+import { fromEvent, filter, takeUntil, take, delay, asapScheduler } from 'rxjs';
 
 import { MenuDirective } from '../menu/menu.directive';
 
@@ -23,8 +23,8 @@ import { MenuDirective } from '../menu/menu.directive';
   },
   inputs: [
     'menuTemplateRef: appMenuTriggerFor',
-    'menuPosition: cdkMenuPosition',
-    'menuData: cdkMenuTriggerData',
+    'menuPosition: appMenuPosition',
+    'menuData: appMenuTriggerData',
   ],
   outputs: ['opened: cdkMenuOpened', 'closed: cdkMenuClosed'],
   providers: [
@@ -63,31 +63,46 @@ export class MenuTriggerDirective extends CdkMenuTriggerBase implements OnDestro
 
   /** Toggle the attached menu. */
   toggle() {
-    if (this.isOpen()) {
+    const isNotClosing = !this.getMenu()?.isAnimatingHide;
+    if (this.isOpen() && isNotClosing) {
       this.close();
     } else {
       this.open();
-      (this.getMenu() as MenuDirective).setAnimation();
     }
   }
 
-  /** Open the attached menu. */
   open() {
+    // Handle if the hide animation is running
+    const isClosing = this.getMenu()?.isAnimatingHide;
+    if (isClosing) {
+      const menu = this.getMenu()!;
+      menu.hideAnimationDone.pipe(take(1), delay(0, asapScheduler)).subscribe(() => {
+        this.open();
+      });
+      return;
+    }
+    // If the menu is completely closed
     if (!this.isOpen() && this.menuTemplateRef != null) {
       this.opened.next();
 
       this.overlayRef = this.overlayRef || this._overlay.create(this._getOverlayConfig());
       this.overlayRef.attach(this.getMenuContentPortal());
       this._subscribeToOutsideClicks();
+
+      const menu = this.getMenu()!;
+      menu.playShowAnimation();
     }
   }
 
-  /** Close the opened menu. */
   close() {
     if (this.isOpen()) {
-      this.closed.next();
-
-      this.overlayRef!.detach();
+      const menu = this.getMenu()!;
+      menu.playHideAnimation();
+      menu.hideAnimationDone.pipe(take(1), delay(0, asapScheduler)).subscribe(() => {
+        this.closed.next();
+        // Detach overlay
+        this.overlayRef!.detach();
+      });
     }
     this._closeSiblingTriggers();
   }
@@ -95,8 +110,8 @@ export class MenuTriggerDirective extends CdkMenuTriggerBase implements OnDestro
   /**
    * Get a reference to the rendered Menu if the Menu is open and rendered in the DOM.
    */
-  getMenu(): Menu | undefined {
-    return this.childMenu;
+  getMenu(): MenuDirective | undefined {
+    return <MenuDirective | undefined>this.childMenu;
   }
 
   /**
@@ -106,13 +121,25 @@ export class MenuTriggerDirective extends CdkMenuTriggerBase implements OnDestro
   _toggleOnKeydown(event: KeyboardEvent) {
     const isParentVertical = this._parentMenu?.orientation === 'vertical';
     const keyCode = event.code;
+
+    const invokeFocusItem = (cb: () => void) => {
+      const menu = this.getMenu();
+      if (menu?.isAnimatingHide) {
+        menu.hideAnimationDone.pipe(take(1), delay(0, asapScheduler)).subscribe(() => {
+          cb();
+        });
+      } else {
+        cb();
+      }
+    }
+
     switch (keyCode) {
       case 'Space':
       case 'Enter':
         if (!hasModifierKey(event)) {
           event.preventDefault();
           this.toggle();
-          this.childMenu?.focusFirstItem('keyboard');
+          invokeFocusItem(() => this.childMenu?.focusFirstItem('keyboard'));
         }
         break;
 
@@ -121,7 +148,7 @@ export class MenuTriggerDirective extends CdkMenuTriggerBase implements OnDestro
           if (this._parentMenu && isParentVertical && this._directionality?.value !== 'rtl') {
             event.preventDefault();
             this.open();
-            this.childMenu?.focusFirstItem('keyboard');
+            invokeFocusItem(() => this.childMenu?.focusFirstItem('keyboard'));
           }
         }
         break;
@@ -131,7 +158,7 @@ export class MenuTriggerDirective extends CdkMenuTriggerBase implements OnDestro
           if (this._parentMenu && isParentVertical && this._directionality?.value === 'rtl') {
             event.preventDefault();
             this.open();
-            this.childMenu?.focusFirstItem('keyboard');
+            invokeFocusItem(() => this.childMenu?.focusFirstItem('keyboard'));
           }
         }
         break;
@@ -143,8 +170,8 @@ export class MenuTriggerDirective extends CdkMenuTriggerBase implements OnDestro
             event.preventDefault();
             this.open();
             keyCode === 'ArrowDown'
-              ? this.childMenu?.focusFirstItem('keyboard')
-              : this.childMenu?.focusLastItem('keyboard');
+              ? invokeFocusItem(() => this.childMenu?.focusFirstItem('keyboard'))
+              : invokeFocusItem(() => this.childMenu?.focusLastItem('keyboard'));
           }
         }
         break;
@@ -169,7 +196,10 @@ export class MenuTriggerDirective extends CdkMenuTriggerBase implements OnDestro
     this._ngZone.runOutsideAngular(() => {
       fromEvent<PointerEvent>(this._elementRef.nativeElement, 'pointerenter')
         .pipe(
-          filter((event) => event.pointerType === 'mouse' && !this.menuStack.isEmpty() && !this.isOpen()),
+          filter((event) => event.pointerType === 'mouse' && !this.menuStack.isEmpty() &&
+            // If not opening or the hide animation is running
+            (!this.isOpen() || !!this.getMenu()?.isAnimatingHide)
+          ),
           takeUntil(this.destroyed),
         )
         .subscribe(() => {
@@ -244,6 +274,8 @@ export class MenuTriggerDirective extends CdkMenuTriggerBase implements OnDestro
     if (!this._parentMenu) {
       this.menuStack.closed.pipe(takeUntil(this.destroyed)).subscribe(({ item }) => {
         if (item === this.childMenu) {
+          if (this.getMenu()?.isAnimatingHide)
+            return;
           this.close();
         }
       });

@@ -5,13 +5,17 @@
       <ng-container *ngSwitchCase="1" [ngTemplateOutlet]="gridMediaList"></ng-container>
       <ng-container *ngSwitchCase="2" [ngTemplateOutlet]="vertMediaList"></ng-container>
     </ng-container>
+    <!-- Grid list -->
     <ng-template #gridMediaList>
       <div class="tw-text-white tw-grid tw-grid-cols-2 xs:tw-grid-cols-3 md:tw-grid-cols-4 lg:tw-grid-cols-5
         xl:tw-grid-cols-6">
-        <div class="tw-group tw-bg-transparent hover:tw-bg-neutral-725 focus-visible:tw-bg-neutral-725
-          tw-transition-colors tw-duration-200 tw-rounded-sm tw-px-1.5 tw-py-2"
-          *ngFor="let media of mediaList!.results; trackBy: track_Id" [appContextMenuTriggerFor]="mediaMenu">
-          <a #mediaLink class="tw-block" [routerLink]="['/details', media._id]">
+        <a class="tw-group tw-block tw-bg-transparent hover:tw-bg-neutral-725 focus-visible:tw-bg-neutral-725
+          tw-transition-colors tw-duration-200 tw-rounded-sm tw-px-1.5 tw-py-2" [routerLink]="['/details', media._id]"
+          *ngFor="let media of mediaList!.results; trackBy: track_Id" [appOverlayOrigin]="overlayMediaInfo"
+          [overlayData]="media" overlayShowDelay="500" overlayHideDelay="0" [overlayOffsetY]="100"
+          overlayTriggerOn="hover" overlayTouchGestures="off">
+          <!-- [appContextMenuTriggerFor]="mediaMenu" -->
+          <div>
             <div class="tw-aspect-w-2 tw-aspect-h-3 tw-rounded-t-md tw-overflow-hidden">
               <img *ngIf="media.thumbnailPosterUrl; else noPoster" class="tw-object-cover"
                 [lazyLoad]="media.thumbnailPosterUrl" [lazyLoadPlaceholder]="media.posterColor | rgbColor"
@@ -38,30 +42,16 @@
                 </ng-template>
               </span>
             </p>
-          </a>
+          </div>
           <div class="tw-flex tw-mt-2">
-            <div class="tw-flex-grow tw-cursor-pointer" (click)="mediaLink.click()">
+            <div class="tw-flex-grow tw-cursor-pointer">
               <p class="tw-text-xs sm:tw-text-sm tw-font-bold tw-line-clamp-2">{{ media.title }}</p>
             </div>
-            <button pButton [appMenuTriggerFor]="mediaMenu" icon="ms ms-more-vert" type="button"
-              aria-label="Toggle media menu" class="p-button-rounded p-button-text p-button-secondary p-button-sm p-button-sm-icon
-              tw-ml-auto tw-flex-shrink-0 focus-visible:!tw-shadow-focus-box tw-invisible group-hover:tw-visible"
-              #mediaMenuButton #mediaMenuTrigger="appMenuTriggerFor"
-              (cdkMenuOpened)="onMediaMenuClick(mediaMenuButton, true)"
-              (cdkMenuClosed)="onMediaMenuClick(mediaMenuButton, false)">
-            </button>
           </div>
-          <ng-template #mediaMenu>
-            <div appMenu>
-              <button appMenuItem (click)="showAddToPlaylistDialog(media)">
-                <i class="ms ms-playlist-add"></i>
-                <span>{{ t('media.playlists.addToPlaylist') }}</span>
-              </button>
-            </div>
-          </ng-template>
-        </div>
+        </a>
       </div>
     </ng-template>
+    <!-- Vertical list -->
     <ng-template #vertMediaList>
       <ul class="tw-list-none">
         <li *ngFor="let media of mediaList!.results; trackBy: track_Id">
@@ -99,8 +89,8 @@
               </div>
             </a>
             <div class="tw-ml-auto">
-              <button pButton [appMenuTriggerFor]="mediaMenu" icon="ms ms-more-vert" type="button"
-                aria-label="Toggle media menu" class="p-button-rounded p-button-text p-button-secondary p-button-sm p-button-sm-icon
+              <button pButton [appMenuTriggerFor]="mediaMenuTpl" [appMenuTriggerData]="{media}" icon="ms ms-more-vert"
+                type="button" aria-label="Toggle media menu" class="p-button-rounded p-button-text p-button-secondary p-button-sm p-button-sm-icon
                 tw-ml-auto tw-flex-shrink-0 focus-visible:!tw-shadow-focus-box tw-invisible group-hover:tw-visible"
                 #mediaMenuButton #mediaMenuTrigger="appMenuTriggerFor"
                 (cdkMenuOpened)="onMediaMenuClick(mediaMenuButton, true)"
@@ -108,23 +98,69 @@
               </button>
             </div>
           </div>
-          <ng-template #mediaMenu>
-            <div appMenu>
-              <button appMenuItem (click)="showAddToPlaylistDialog(media)">
-                <i class="ms ms-playlist-add"></i>
-                <span>{{ t('media.playlists.addToPlaylist') }}</span>
-              </button>
-            </div>
-          </ng-template>
         </li>
       </ul>
     </ng-template>
+    <!-- No results -->
     <ng-template #noResults>
       <p class="tw-text-gray-400 tw-text-center">{{ t('media.list.noResults') }}</p>
     </ng-template>
   </ng-template>
+  <!-- Media info overlay -->
+  <ng-template #overlayMediaInfo appConnectedOverlay let-media="overlayData">
+    <div class="tw-p-4 tw-w-80">
+      <p class="tw-text-base sm:tw-text-lg tw-font-semibold">{{ media.title }}</p>
+      <div class="tw-flex tw-text-base tw-mt-2">
+        <p class="[&>*]:tw-align-middle">
+          <i class="ms ms-star tw-text-xl tw-text-yellow-500 -tw-mt-0.5"></i>
+          <span class="tw-font-medium tw-ml-1.5">{{ media.ratingAverage }}</span>
+        </p>
+        <p class="[&>*]:tw-align-middle tw-ml-2">
+          <i class="ms ms-visibility tw-text-xl tw-text-green-500"></i>
+          <span class="tw-font-medium tw-ml-1.5">{{ media.views | number }}</span>
+        </p>
+      </div>
+      <p class="tw-text-sm tw-line-clamp-5">{{ media.overview }}</p>
+      <p class="tw-text-sm tw-mt-2">
+        <span class="tw-font-light">{{ t('media.details.releaseDate') }}: </span>
+        <span>{{ media.releaseDate | shortDate }}</span>
+        <span *ngIf="media.type === MediaType.TV"> {{ t('media.details.releaseDateTo') }}
+          <ng-container *ngIf="media.tv.lastAirDate; else airDateNowTpl">{{ media.tv.lastAirDate | shortDate
+            }}</ng-container>
+          <ng-template #airDateNowTpl>{{ t('media.details.releaseDateToNow') }}</ng-template>
+        </span>
+      </p>
+      <p *ngIf="media.genres.length" class="tw-text-sm">
+        <span class="tw-font-light">{{ t('media.details.genres') }}: </span>
+        <ng-container *ngFor="let genre of media.genres; let first = first; let last = last; trackBy: track_Id">
+          <a class="hover:tw-underline focus-visible:tw-underline" [class.tw-ml-2]="!first"
+            [routerLink]="['/list', 'genre', genre._id]">{{ genre.name }}</a>
+          <span *ngIf="!last">,</span>
+        </ng-container>
+      </p>
+      <div class="tw-flex tw-mt-4">
+        <button type="button" role="navigation" aria-label="Play media" pButton icon="ms ms-play-arrow" iconPos="left"
+          [label]="t('media.actions.play')" [routerLink]="['/watch', media._id]"
+          class="p-button-shrink tw-flex-1 tw-text-lg">
+        </button>
+        <button type="button" role="button" aria-label="Add media to playlist" pButton icon="ms ms-playlist-add"
+          class="p-button-secondary p-button-shrink tw-text-lg tw-ml-2" (click)="showAddToPlaylistDialog(media)">
+        </button>
+      </div>
+    </div>
+  </ng-template>
+  <ng-template #mediaMenuTpl let-media="media">
+    <div appMenu>
+      <button appMenuItem (click)="showAddToPlaylistDialog(media)">
+        <i class="ms ms-playlist-add"></i>
+        <span>{{ t('media.playlists.addToPlaylist') }}</span>
+      </button>
+    </div>
+  </ng-template>
+  <!-- Loading media list -->
   <ng-container *ngIf="loadingMore; then loadingMediaTpl"></ng-container>
 </ng-container>
+<!-- Media skeleton loading -->
 <ng-template #loadingMediaTpl>
   <ng-container [ngSwitch]="viewMode">
     <div *ngSwitchCase="1"

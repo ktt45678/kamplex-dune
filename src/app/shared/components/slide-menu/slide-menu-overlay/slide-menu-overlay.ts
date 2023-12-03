@@ -2,7 +2,7 @@ import { AfterContentInit, ChangeDetectionStrategy, ChangeDetectorRef, Component
 import { FocusKeyManager, FocusOrigin } from '@angular/cdk/a11y';
 import { Directionality } from '@angular/cdk/bidi';
 import { CdkMenuGroup, FocusNext } from '@angular/cdk/menu';
-import { animate, AnimationBuilder, style } from '@angular/animations';
+import { animate, AnimationBuilder, AnimationFactory, style } from '@angular/animations';
 import { hasModifierKey } from '@angular/cdk/keycodes';
 import { merge, Subject, mergeAll, mergeMap, startWith, switchMap, takeUntil, map } from 'rxjs';
 
@@ -98,55 +98,38 @@ export class SlideMenuOverlay extends CdkMenuGroup implements SlideMenu, AfterCo
   /** Whether this menu's menu stack has focus. */
   private _menuStackHasFocus = false;
 
-  setAnimation() {
-    const factory = this.animationBuilder.build([
-      style({ opacity: 0 }),
-      animate('100ms ease-in-out', style({ opacity: 1 }))
-    ]);
-    const player = factory.create(this.el.nativeElement);
-    player.onDone(() => {
-      // Somehow this works
-      setTimeout(() => player.destroy(), 0);
-    });
-    player.play();
-  }
+  /** Emits whenever an animation on the menu completes. */
+  readonly hideAnimationDone = new Subject<void>();
 
-  setSlideAnimation(fromHeight: number) {
-    //const toWidth = this.el.nativeElement.clientWidth + 'px';
-    const toHeight = this.el.nativeElement.clientHeight;
-    const factory = this.animationBuilder.build([
-      style({ height: fromHeight + 'px' }),
-      animate('150ms ease-in-out', style({ height: toHeight + 'px' }))
-    ]);
-    const player = factory.create(this.el.nativeElement);
-    player.onStart(() => {
-      this.renderer.setStyle(this.el.nativeElement, 'overflow-y', 'hidden');
-    });
-    player.onDone(() => {
-      this.renderer.removeStyle(this.el.nativeElement, 'overflow-y');
-      setTimeout(() => player.destroy(), 0);
-    });
-    player.play();
-  }
+  /** Whether the menu is animating. */
+  isAnimatingHide: boolean = false;
 
-  setFixedSlideAnimation() {
-    const toHeight = this.el.nativeElement.clientHeight;
-    const factory = this.animationBuilder.build([
-      style({ transform: 'translateY(' + toHeight + 'px)' }),
-      animate('200ms ease-in-out', style({ transform: 'translateY(0)' }))
-    ]);
-    const player = factory.create(this.el.nativeElement);
-    player.onDone(() => {
-      setTimeout(() => player.destroy(), 0);
-    });
-    player.play();
-  }
+  private showAnimation: AnimationFactory;
+  private hideAnimation: AnimationFactory;
+  private slideAnimation: AnimationFactory;
+  private fixedSlideAnimation: AnimationFactory;
 
   constructor(public cd: ChangeDetectorRef, private animationBuilder: AnimationBuilder, private renderer: Renderer2,
     private el: ElementRef<HTMLElement>) {
     super();
     this.destroyed.subscribe(this.closed);
     this._parentTrigger?.registerChildMenu(this);
+    this.showAnimation = this.animationBuilder.build([
+      style({ opacity: 0 }),
+      animate('200ms ease', style({ opacity: 1 })),
+    ]);
+    this.hideAnimation = this.animationBuilder.build([
+      style({ opacity: 1 }),
+      animate('200ms ease', style({ opacity: 0 })),
+    ]);
+    this.slideAnimation = this.animationBuilder.build([
+      style({ height: '{{ fromHeight }}' }),
+      animate('200ms ease', style({ height: '{{ toHeight }}' }))
+    ]);
+    this.fixedSlideAnimation = this.animationBuilder.build([
+      style({ transform: 'translateY({{ toHeight }})' }),
+      animate('200ms ease', style({ transform: 'translateY(0)' }))
+    ]);
   }
 
   ngAfterContentInit() {
@@ -165,6 +148,50 @@ export class SlideMenuOverlay extends CdkMenuGroup implements SlideMenu, AfterCo
     this.destroyed.next();
     this.destroyed.complete();
     this.closed.complete();
+    this.hideAnimationDone.complete();
+  }
+
+  playShowAnimation() {
+    const player = this.showAnimation.create(this.el.nativeElement);
+    player.play();
+  }
+
+  playHideAnimation() {
+    const player = this.hideAnimation.create(this.el.nativeElement);
+    player.onDone(() => {
+      this.hideAnimationDone.next();
+      this.isAnimatingHide = false;
+    });
+    player.play();
+    this.isAnimatingHide = true;
+  }
+
+  playSlideAnimation(fromHeight: number) {
+    //const toWidth = this.el.nativeElement.clientWidth + 'px';
+    const toHeight = this.el.nativeElement.clientHeight;
+    const player = this.slideAnimation.create(this.el.nativeElement, {
+      params: {
+        fromHeight: fromHeight + 'px',
+        toHeight: toHeight + 'px'
+      }
+    });
+    player.onStart(() => {
+      this.renderer.setStyle(this.el.nativeElement, 'overflow-y', 'hidden');
+    });
+    player.onDone(() => {
+      this.renderer.removeStyle(this.el.nativeElement, 'overflow-y');
+    });
+    player.play();
+  }
+
+  playFixedSlideAnimation() {
+    const toHeight = this.el.nativeElement.clientHeight;
+    const player = this.fixedSlideAnimation.create(this.el.nativeElement, {
+      params: {
+        toHeight: toHeight + 'px'
+      }
+    });
+    player.play();
   }
 
   /**

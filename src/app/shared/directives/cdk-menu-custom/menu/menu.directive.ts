@@ -1,9 +1,9 @@
 // https://github.com/angular/components/blob/main/src/cdk/menu/menu.ts
 import { AfterContentInit, Directive, ElementRef, EventEmitter, inject, OnDestroy, Output } from '@angular/core';
-import { animate, AnimationBuilder, style } from '@angular/animations';
+import { animate, AnimationBuilder, AnimationFactory, style } from '@angular/animations';
 import { hasModifierKey } from '@angular/cdk/keycodes';
 import { CdkMenuGroup, CDK_MENU, FocusNext, PARENT_OR_NEW_INLINE_MENU_STACK_PROVIDER, MENU_TRIGGER } from '@angular/cdk/menu';
-import { takeUntil } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 
 import { MenuBase } from '../menu-base/menu-base.directive';
 
@@ -34,19 +34,27 @@ export class MenuDirective extends MenuBase implements AfterContentInit, OnDestr
   /** Whether the menu is displayed inline (i.e. always present vs a conditional popup that the user triggers with a trigger element). */
   override readonly isInline = !this._parentTrigger;
 
-  setAnimation() {
-    const factory = this.animationBuilder.build([
-      style({ opacity: 0 }),
-      animate('100ms ease-in', style({ opacity: 1 })),
-    ]);
-    const player = factory.create(this.el.nativeElement);
-    player.play();
-  }
+  /** Emits whenever an animation on the menu completes. */
+  readonly hideAnimationDone = new Subject<void>();
+
+  /** Whether the menu is animating. */
+  isAnimatingHide: boolean = false;
+
+  private showAnimation: AnimationFactory;
+  private hideAnimation: AnimationFactory;
 
   constructor(private animationBuilder: AnimationBuilder, private el: ElementRef) {
     super();
     this.destroyed.subscribe(this.closed);
     this._parentTrigger?.registerChildMenu(this);
+    this.showAnimation = this.animationBuilder.build([
+      style({ opacity: 0 }),
+      animate('200ms ease', style({ opacity: 1 })),
+    ]);
+    this.hideAnimation = this.animationBuilder.build([
+      style({ opacity: 1 }),
+      animate('200ms ease', style({ opacity: 0 })),
+    ]);
   }
 
   override ngAfterContentInit() {
@@ -57,6 +65,22 @@ export class MenuDirective extends MenuBase implements AfterContentInit, OnDestr
   override ngOnDestroy() {
     super.ngOnDestroy();
     this.closed.complete();
+    this.hideAnimationDone.complete();
+  }
+
+  playShowAnimation() {
+    const player = this.showAnimation.create(this.el.nativeElement);
+    player.play();
+  }
+
+  playHideAnimation() {
+    const player = this.hideAnimation.create(this.el.nativeElement);
+    player.onDone(() => {
+      this.hideAnimationDone.next();
+      this.isAnimatingHide = false;
+    });
+    player.play();
+    this.isAnimatingHide = true;
   }
 
   /**

@@ -11,6 +11,7 @@ import { VideoPlayerComponent } from './video-player.component';
 import { SlideMenuModule } from '../../components/slide-menu';
 import { SkeletonModule } from '../skeleton';
 import { StringPipeModule } from "../../pipes/string-pipe";
+import { CommonDirectiveModule } from '../../directives/common-directive';
 import { PlayIconComponent } from './icons/play-icon/play-icon.component';
 import { MuteIconComponent } from './icons/mute-icon/mute-icon.component';
 import { FitWindowIconComponent } from './icons/fit-window-icon/fit-window-icon.component';
@@ -47,6 +48,7 @@ import { PlayCircleIconComponent } from './icons/play-circle-icon/play-circle-ic
     SkeletonModule,
     SlideMenuModule,
     StringPipeModule,
+    CommonDirectiveModule,
     InputSwitchModule,
     ProgressSpinnerModule
   ]

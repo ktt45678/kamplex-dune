@@ -11,6 +11,7 @@ import { MediaDetails } from '../../../../core/models';
 import { AuthService, MediaService } from '../../../../core/services';
 import { DestroyService } from '../../../../core/services';
 import { MediaBreakpoints, MediaStatus, MediaType } from '../../../../core/enums';
+import { TextResizeOption } from '../../../../shared/directives/text-directive/text-resize/text-resize.directive';
 import { SITE_NAME, SITE_THEME_COLOR, YOUTUBE_EMBED_URL, YOUTUBE_THUMBNAIL_URL } from '../../../../../environments/config';
 import { toHexColor, track_Id } from '../../../../core/utils';
 
@@ -29,6 +30,8 @@ export class DetailsComponent implements OnInit, OnDestroy {
   isMobile: boolean = false;
   displayVideo: boolean = false;
   activeVideoIndex: number = 0;
+  titleResizes: TextResizeOption[] = [];
+  originalTitleResizes: TextResizeOption[] = [];
   youtubeUrl = YOUTUBE_EMBED_URL;
   youtubeThumbnailUrl = YOUTUBE_THUMBNAIL_URL;
 
@@ -44,6 +47,7 @@ export class DetailsComponent implements OnInit, OnDestroy {
     });
     this.breakpointObserver.observe(MediaBreakpoints.SMALL).pipe(takeUntil(this.destroyService)).subscribe(state => {
       this.isMobile = !state.matches;
+      this.updateTitleResizeOptions();
       this.ref.markForCheck();
     });
   }
@@ -89,6 +93,30 @@ export class DetailsComponent implements OnInit, OnDestroy {
       dismissableMask: true,
       styleClass: 'p-dialog-header-sm'
     });
+  }
+
+  updateTitleResizeOptions() {
+    if (!this.isMobile) {
+      this.titleResizes = [
+        { length: 50, size: '28px', lineHeight: '32px' },
+        { length: 75, size: '24px', lineHeight: '28px' },
+        { length: 100, size: '18px', lineHeight: '22px' }
+      ];
+      this.originalTitleResizes = [
+        { length: 75, size: '20px', lineHeight: '24px' },
+        { length: 100, size: '16px', lineHeight: '20px' }
+      ];
+    } else {
+      this.titleResizes = [
+        { length: 50, size: '18px', lineHeight: '22px' },
+        { length: 75, size: '14px', lineHeight: '18px' },
+        { length: 100, size: '12px', lineHeight: '16px' }
+      ];
+      this.originalTitleResizes = [
+        { length: 50, size: '16px', lineHeight: '20px' },
+        { length: 75, size: '12px', lineHeight: '16px' }
+      ];
+    }
   }
 
   ngOnDestroy(): void {

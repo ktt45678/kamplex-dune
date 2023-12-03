@@ -1,15 +1,14 @@
 // https://github.com/angular/components/blob/main/src/cdk/menu/context-menu-trigger.ts
-import { Directive, inject, Injectable, Input, OnDestroy } from '@angular/core';
+import { Directive, ElementRef, inject, Injectable, Input, OnDestroy } from '@angular/core';
 import { Directionality } from '@angular/cdk/bidi';
 import { FlexibleConnectedPositionStrategy, Overlay, OverlayConfig, STANDARD_DROPDOWN_BELOW_POSITIONS, } from '@angular/cdk/overlay';
 import { BooleanInput, coerceBooleanProperty } from '@angular/cdk/coercion';
 import { _getEventTarget } from '@angular/cdk/platform';
 import { MENU_STACK, MenuStack, CdkMenuTriggerBase, MENU_TRIGGER, ContextMenuCoordinates } from '@angular/cdk/menu';
-import { merge, partition } from 'rxjs';
-import { skip, takeUntil } from 'rxjs/operators';
-
-import { MenuDirective } from '../menu/menu.directive';
 import { hasModifierKey } from '@angular/cdk/keycodes';
+import { asapScheduler, merge, partition } from 'rxjs';
+import { delay, skip, take, takeUntil } from 'rxjs/operators';
+import { MenuDirective } from '../menu/menu.directive';
 
 /** The preferred menu positions for the context menu. */
 const CONTEXT_MENU_POSITIONS = STANDARD_DROPDOWN_BELOW_POSITIONS.map(position => {
@@ -81,7 +80,7 @@ export class ContextMenuTriggerDirective extends CdkMenuTriggerBase implements O
   }
   private _disabled = false;
 
-  constructor() {
+  constructor(private el: ElementRef<HTMLElement>) {
     super();
     this._setMenuStackCloseListener();
   }
@@ -92,12 +91,16 @@ export class ContextMenuTriggerDirective extends CdkMenuTriggerBase implements O
    */
   open(coordinates: ContextMenuCoordinates) {
     this._open(coordinates, false);
-    this.childMenu && (this.childMenu as MenuDirective).setAnimation();
   }
 
   /** Close the currently opened context menu. */
   close() {
-    this.menuStack.closeAll();
+    const menu = this.getMenu()!;
+    menu.playHideAnimation();
+    menu.hideAnimationDone.pipe(take(1), delay(0, asapScheduler)).subscribe(() => {
+      // Detach overlay
+      this.menuStack.closeAll();
+    });
   }
 
   /**
@@ -105,17 +108,11 @@ export class ContextMenuTriggerDirective extends CdkMenuTriggerBase implements O
    * @param event the mouse event which opens the context menu.
    */
   _openOnContextMenu(event: MouseEvent) {
-    if (!this.disabled && !event.shiftKey) {
-      // Prevent the native context menu from opening because we're opening a custom one.
-      event.preventDefault();
-
-      // Stop event propagation to ensure that only the closest enabled context menu opens.
-      // Otherwise, any context menus attached to containing elements would *also* open,
-      // resulting in multiple stacked context menus being displayed.
-      event.stopPropagation();
-
-      this._contextMenuTracker.update(this);
+    const openMenu = () => {
       this._open({ x: event.clientX, y: event.clientY }, true);
+
+      const menu = this.getMenu()!;
+      menu.playShowAnimation();
 
       // A context menu can be triggered via a mouse right click or a keyboard shortcut.
       /*
@@ -134,12 +131,42 @@ export class ContextMenuTriggerDirective extends CdkMenuTriggerBase implements O
         this.childMenu?.focusFirstItem('program');
       }
     }
+
+    if (!this.disabled && !event.shiftKey) {
+      // Prevent the native context menu from opening because we're opening a custom one.
+      event.preventDefault();
+
+      // Stop event propagation to ensure that only the closest enabled context menu opens.
+      // Otherwise, any context menus attached to containing elements would *also* open,
+      // resulting in multiple stacked context menus being displayed.
+      event.stopPropagation();
+
+      this._contextMenuTracker.update(this);
+
+      // Handle if the hide animation is running
+      const isClosing = this.getMenu()?.isAnimatingHide;
+      if (isClosing) {
+        const menu = this.getMenu()!;
+        menu.hideAnimationDone.pipe(take(1), delay(0, asapScheduler)).subscribe(() => {
+          openMenu();
+        });
+      } else {
+        openMenu();
+      }
+    }
   }
 
   /**
- * Handles keyboard events for the menu item.
- * @param event The keyboard event to handle
- */
+   * Get a reference to the rendered Menu if the Menu is open and rendered in the DOM.
+   */
+  getMenu(): MenuDirective | undefined {
+    return this.getMenu();
+  }
+
+  /**
+   * Handles keyboard events for the menu item.
+   * @param event The keyboard event to handle
+   */
   _toggleOnKeydown(event: KeyboardEvent) {
     const keyCode = event.code;
     switch (keyCode) {
@@ -207,7 +234,12 @@ export class ContextMenuTriggerDirective extends CdkMenuTriggerBase implements O
         outsideClicks = merge(nonAuxClicks, auxClicks.pipe(skip(1)));
       }
       outsideClicks.pipe(takeUntil(this.stopOutsideClicksListener)).subscribe(event => {
-        if (!this.isElementInsideMenuStack(_getEventTarget(event)!)) {
+        const eventTarget = _getEventTarget<Element>(event)!;
+        if (eventTarget === this.el.nativeElement || this.el.nativeElement.contains(eventTarget)) {
+          this._openOnContextMenu(event);
+          return;
+        }
+        if (!this.isElementInsideMenuStack(eventTarget)) {
           if (event instanceof PointerEvent) {
             // Stop event on outside click (left mouse and touch)
             if ((event.pointerType === 'mouse' || event.pointerType === 'touch') && event.button === 0) {
@@ -215,7 +247,7 @@ export class ContextMenuTriggerDirective extends CdkMenuTriggerBase implements O
               event.stopPropagation();
             }
           }
-          this.menuStack.closeAll();
+          this.close();
         }
       });
     }

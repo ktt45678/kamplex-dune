@@ -12,6 +12,9 @@ export interface PlayerSettings {
   activeQualityValue: number;
   activeSpeedValue: number;
   activeTrackValue: string | null;
+  activeAudioLang: string | null;
+  activeVolume: number;
+  isMuted: boolean;
   autoNext: boolean;
   showSubtitle: boolean;
   showFastForward: boolean;
@@ -23,9 +26,8 @@ export interface PlayerSettings {
   fullWindow: boolean;
   fillScreen: boolean;
   initAudioValue: number | null;
+  initAudioSurround: boolean | null;
   initPlaytime: number;
-  initVolume: number;
-  initMuted: boolean;
   expandVolumeSlider: boolean;
   isMenuOpen: boolean;
   hasError: boolean;

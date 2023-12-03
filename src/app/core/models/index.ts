@@ -37,7 +37,7 @@ export * from './tag-details.model';
 export * from './tag.model';
 export * from './tv-episode-details.model';
 export * from './tv-episode.model';
-export * from './tv-show-last-episode.model';
+export * from './tv-show-list-info.model';
 export * from './tv-show.model';
 export * from './upload-session.model';
 export * from './user-details.model';

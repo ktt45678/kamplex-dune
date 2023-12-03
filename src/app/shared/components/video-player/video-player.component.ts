@@ -2,8 +2,9 @@ import { Component, OnInit, ChangeDetectionStrategy, Input, OnDestroy, Output, E
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { Platform } from '@angular/cdk/platform';
 import { TRANSLOCO_SCOPE, TranslocoService } from '@ngneat/transloco';
-import { type MediaPlayerElement, type MediaVolumeChangeEvent, type TextTrackInit, type MediaPlayRequestEvent, type MediaPauseRequestEvent, type MediaSeekRequestEvent, isVideoProvider, type MediaProviderSetupEvent, type MediaPlayEvent, type HLSAudioTrackLoadedEvent, type MediaLoadStartEvent, isHLSProvider, LibASSTextRenderer } from 'vidstack';
+import { type MediaPlayerElement, type MediaVolumeChangeEvent, type TextTrackInit, type MediaPlayRequestEvent, type MediaPauseRequestEvent, type MediaSeekRequestEvent, type MediaProviderSetupEvent, type MediaPlayEvent, type HLSAudioTrackLoadedEvent, type MediaLoadStartEvent, isHLSProvider, LibASSTextRenderer, type MediaProviderChangeEvent, type AudioTrack, MediaLoadedMetadataEvent } from 'vidstack';
 import { Subject, buffer, debounceTime, filter, first, forkJoin, fromEvent, merge, switchMap, takeUntil, timer } from 'rxjs';
+import HLS from 'hls.js/dist/hls.js';
 
 import { UpdateUserSettingsDto } from '../../../core/dto/users';
 import { MediaDetails, MediaStream, UserSettings } from '../../../core/models';
@@ -107,7 +108,9 @@ export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
       activeQualityValue: 0,
       activeSpeedValue: 1,
       activeTrackValue: null,
+      activeAudioLang: null,
       initAudioValue: null,
+      initAudioSurround: true,
       autoNext: false,
       showSubtitle: false,
       showFastForward: false,
@@ -115,8 +118,8 @@ export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
       fullWindow: false,
       fillScreen: false,
       initPlaytime: 0,
-      initVolume: 1,
-      initMuted: false,
+      activeVolume: 1,
+      isMuted: false,
       expandVolumeSlider: false,
       isMenuOpen: false,
       hasError: false,
@@ -131,7 +134,7 @@ export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
       isMobile: this.platform.ANDROID || this.platform.IOS || (isTouchDevice && isMinMobileScreen),
       isSafari: this.platform.SAFARI,
       isTouchDevice: isTouchDevice,
-      hlsOpus: this.platform.FIREFOX
+      hlsOpus: !this.platform.SAFARI
     };
     this.playerStore = {
       autoplayError: undefined,
@@ -178,6 +181,7 @@ export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
+  //** Run when stream input changed */
   setPlayerData(data: MediaStream): void {
     const tracks: KPTrack[] = [];
     if (data.subtitles?.length) {
@@ -204,24 +208,22 @@ export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
     if (this.userSettings.player.speed != undefined && this.userSettings.player.speed >= 0)
       this.playerSettings.activeSpeedValue = this.userSettings.player.speed / 100;
     if (this.userSettings.player.muted)
-      this.playerSettings.initMuted = this.userSettings.player.muted;
+      this.playerSettings.isMuted = this.userSettings.player.muted;
     if (this.userSettings.player.audioTrack != undefined)
       this.playerSettings.initAudioValue = this.userSettings.player.audioTrack;
+    if (this.userSettings.player.audioSurround != undefined)
+      this.playerSettings.initAudioSurround = this.userSettings.player.audioSurround;
     if (this.userSettings.player.quality != undefined)
       this.playerSettings.activeQualityValue = this.userSettings.player.quality;
     if (this.userSettings.player.subtitle != undefined)
       this.playerSettings.showSubtitle = this.userSettings.player.subtitle;
     if (this.userSettings.player.volume != undefined)
-      this.playerSettings.initVolume = this.userSettings.player.volume / 100;
+      this.playerSettings.activeVolume = this.userSettings.player.volume / 100;
+    if (this.userSettings.player.autoNext != undefined)
+      this.playerSettings.autoNext = this.userSettings.player.autoNext;
   }
 
   private onPlayerAttach() {
-    this.player.currentTime = this.playerSettings.initPlaytime;
-    this.player.muted = this.playerSettings.initMuted;
-    this.player.volume = this.playerSettings.initVolume;
-    this.player.playbackRate = this.playerSettings.activeSpeedValue;
-    if (this.playerSettings.activeQualityValue)
-      this.changeVideoQuality(this.playerSettings.activeQualityValue);
     if (!this.player.src)
       this.setPlayerSource();
     // Set track list for the player, it's different from the track list in the menu
@@ -243,6 +245,14 @@ export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
       legacyWorkerUrl: '../../../../assets/js/jassub/jassub-worker-legacy.js'
     });
     this.player.textRenderers.add(renderer);
+    // Set hls.js provider
+    fromEvent<MediaProviderChangeEvent>(this.player, 'provider-change')
+      .pipe(takeUntil(this.playerSettings.playerDestroyed)).subscribe((event) => {
+        const provider = event.detail;
+        if (isHLSProvider(provider)) {
+          provider.library = HLS;
+        }
+      });
     // Register media session when the media starts playing
     fromEvent<MediaLoadStartEvent>(this.player, 'load-start')
       .pipe(takeUntil(this.playerSettings.playerDestroyed)).subscribe(() => {
@@ -251,6 +261,10 @@ export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
     // Update user volume setting when user changes the volume
     fromEvent<MediaVolumeChangeEvent>(this.player, 'volume-change')
       .pipe(debounceTime(1000), takeUntil(this.playerSettings.playerDestroyed)).subscribe(event => {
+        // Set player settings
+        this.playerSettings.activeVolume = event.detail.volume;
+        this.playerSettings.isMuted = event.detail.muted;
+        // Save user settings
         if (!this.userSettings || event.detail.volume * 100 === this.userSettings.player.volume) return;
         this.updateUserSettings({ player: { muted: event.detail.muted, volume: Math.round(event.detail.volume * 100) } });
       });
@@ -278,8 +292,7 @@ export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
     }
     // Set init audio track when track list is available
     fromEvent<HLSAudioTrackLoadedEvent>(this.player, 'hls-audio-track-loaded').pipe(first()).subscribe(() => {
-      if (this.playerSettings.initAudioValue === null) return;
-      this.setInitAudioTrack(this.playerSettings.initAudioValue);
+      this.setInitAudioTrack(this.playerSettings.initAudioValue, this.playerSettings.initAudioSurround);
     });
     const setPlayerStoreProp = (props: Partial<PlayerStore>) => {
       this.playerStore = { ...this.playerStore, ...props };
@@ -403,9 +416,17 @@ export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   setPlayerTrackList(): void {
-    if (!this.player || !this.player.textTracks) return;
-    const defaultLanguage = this.userSettings?.player.subtitleLang || this.translocoService.getActiveLang();
-    this.player.textTracks.clear();
+    if (!this.player) return;
+    const defaultLanguage = this.playerSettings.activeTrackValue ||
+      this.userSettings?.player.subtitleLang ||
+      this.translocoService.getActiveLang();
+    // Get the previously selected subtitle language
+    //const lastSubtitleLanguage = this.player.textTracks.selected?.language;
+    // Remove all existing subtitles
+    const oldSubtitles = this.player.textTracks.getByKind('subtitles');
+    oldSubtitles.forEach(s => {
+      this.player.textTracks.remove(s);
+    });
     this.playerSettings.tracks.forEach((track) => {
       const trackType = <'vtt' | 'srt' | 'ass' | 'ssa'>track.src.substring(track.src.lastIndexOf('.') + 1);
       const textTrack: TextTrackInit = {
@@ -416,11 +437,21 @@ export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
         kind: 'subtitles',
         type: trackType
       };
-      if (this.userSettings?.player.subtitle && track.lang === defaultLanguage) {
+      if (textTrack.language === defaultLanguage) {
         textTrack.default = true;
-        this.playerSettings.activeTrackValue = textTrack.language!;
-        this.playerSettings.showSubtitle = true;
+        this.playerSettings.activeTrackValue = textTrack.language;
       }
+      //   if (lastSubtitleLanguage && track.lang === lastSubtitleLanguage) {
+      //     // Select subtitle based on the previously selected language
+      //     textTrack.default = true;
+      //     this.playerSettings.activeTrackValue = textTrack.language!;
+      //     this.playerSettings.showSubtitle = true;
+      //   } else if (this.userSettings?.player.subtitle && track.lang === defaultLanguage) {
+      //     // Select subtitle based on user settings
+      //     textTrack.default = true;
+      //     this.playerSettings.activeTrackValue = textTrack.language!;
+      //     this.playerSettings.showSubtitle = true;
+      //   }
       this.player.textTracks.add(textTrack);
     });
   }
@@ -439,11 +470,38 @@ export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
     const playlistSrc = this.playerSettings.sourceBaseUrl.replace(':path', `${playlist._id}/${playlist.name}`);
     this.videoPlayerService.generateM3U8(playlistSrc, this.playerSettings.sourceBaseUrl, { opus: this.playerSupports.hlsOpus })
       .subscribe(uri => {
+        // Set source url
         this.player.src = {
           src: uri,
           type: 'application/x-mpegurl'
         };
+        // Apply settings to the player when playing
+        this.applySourceSettingsOnLoaded();
       });
+  }
+
+  applySourceSettingsOnLoaded() {
+    fromEvent<MediaLoadedMetadataEvent>(this.player, 'loaded-metadata').pipe(first()).subscribe(() => {
+      this.player.muted = this.playerSettings.isMuted;
+      this.player.volume = this.playerSettings.activeVolume;
+      this.player.playbackRate = this.playerSettings.activeSpeedValue;
+      // Set audio track when the source is changed
+      if (this.playerSettings.activeAudioLang) {
+        this.setAudioTrackByLang(this.playerSettings.activeAudioLang!, this.playerSettings.initAudioValue);
+      }
+      // Set video quality when the source is changed
+      if (this.playerSettings.activeQualityValue > 0) {
+        this.changeVideoQuality(this.playerSettings.activeQualityValue);
+      }
+      // Set subtitle when the source is changed
+      if (this.playerSettings.activeTrackValue !== null) {
+        this.setPlayerTrack(this.playerSettings.activeTrackValue);
+      }
+    });
+    // Move set time to play event because of some issues with autoplay
+    fromEvent<MediaPlayEvent>(this.player, 'play').pipe(first()).subscribe(() => {
+      this.player.currentTime = this.playerSettings.initPlaytime;
+    });
   }
 
   unsetPlayerSource(): void {
@@ -456,8 +514,10 @@ export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
     const audioTrack = this.player.audioTracks[index];
     if (!audioTrack) return;
     audioTrack.selected = true;
-    const audioTrackCodec = Number(audioTrack.label.split('-').pop()) || 1;
-    this.updateUserSettings({ player: { audioTrack: audioTrackCodec } });
+    this.playerSettings.activeAudioLang = audioTrack.language;
+    const audioTrackCodec = Number(audioTrack.label.split('-')[1]) || 1;
+    const isSurroundAudio = [AudioCodec.AAC_SURROUND, AudioCodec.OPUS_SURROUND].includes(audioTrackCodec);
+    this.updateUserSettings({ player: { audioTrack: audioTrackCodec, audioSurround: isSurroundAudio } });
   }
 
   changeVideoQuality(height: number): void {
@@ -494,10 +554,40 @@ export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  setInitAudioTrack(codec: number) {
+  setInitAudioTrack(codec: number | null, surroundAudio: boolean | null) {
     if (!this.player || this.player.audioTracks.readonly) return;
-    const audioTrack = this.player.audioTracks.toArray().find(a => Number(a.label.split('-').pop()) === codec);
+    const audioTracks = this.player.audioTracks.toArray();
+    let audioTrack: AudioTrack | undefined;
+    // Select exact audio by codec
+    if (codec !== null) {
+      audioTrack = audioTracks.find(a => Number(a.label.split('-')[1]) === codec);
+    }
+    // Fallback option to select any stereo or surround track
+    if (!audioTrack && surroundAudio !== null) {
+      audioTrack = audioTracks.find(a => {
+        const aCodec = Number(a.label.split('-')[1]);
+        if (surroundAudio)
+          return [AudioCodec.AAC_SURROUND, AudioCodec.OPUS_SURROUND].includes(aCodec);
+        return [AudioCodec.AAC, AudioCodec.OPUS].includes(aCodec);
+      });
+    }
     if (!audioTrack) return;
+    audioTrack.selected = true;
+    this.playerSettings.activeAudioLang = audioTrack.language;
+  }
+
+  setAudioTrackByLang(lang: string, codec?: number | null): void {
+    if (!this.player || this.player.audioTracks.readonly) return;
+    const audioTracks = this.player.audioTracks.toArray();
+    // Get all audio track with selected languages
+    const filteredAudioTracks = audioTracks.filter(a => a.language === lang);
+    if (!filteredAudioTracks.length) return;
+    let audioTrack: AudioTrack | undefined;
+    // Select exact audio by codec
+    if (codec != null)
+      audioTrack = filteredAudioTracks.find(a => Number(a.label.split('-')[1]) === codec);
+    if (!audioTrack)
+      audioTrack = filteredAudioTracks[0];
     audioTrack.selected = true;
   }
 
@@ -523,7 +613,8 @@ export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
     if (this.player.muted && this.player.volume === 0)
       this.player.volume = 0.25; // Workaround
     this.player.muted = !this.player.muted;
-    this.updateUserSettings({ player: { muted: !this.player.muted } });
+    this.playerSettings.isMuted = this.player.muted;
+    this.updateUserSettings({ player: { muted: this.player.muted } });
   }
 
   toggleFillScreen(): void {
@@ -585,7 +676,7 @@ export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
     if (this.playerSettings.updateSettingsSub) {
       this.playerSettings.updateSettingsSub.unsubscribe();
     }
-    this.playerSettings.updateSettingsSub = timer(5000).pipe(switchMap(() => {
+    this.playerSettings.updateSettingsSub = timer(3000).pipe(switchMap(() => {
       return this.usersService.updateSettings(this.authService.currentUser!._id, this.pendingUpdateSettings);
     })).subscribe(settings => {
       this.authService.currentUser = {

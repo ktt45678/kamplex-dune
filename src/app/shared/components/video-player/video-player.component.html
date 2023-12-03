@@ -69,7 +69,7 @@
         </div>
       </div>
     </div>
-    <button *ngIf="playerStore.autoplayError"
+    <button *ngIf="playerStore.autoplayError" [focusTarget]="player"
       class="tw-bg-black/60 tw-absolute tw-inset-0 tw-flex tw-items-center tw-justify-center tw-w-full tw-h-full tw-z-3"
       aria-label="Autoplay failed" (click)="togglePlay()">
       <div class="tw-w-24 md:tw-w-32">
@@ -116,7 +116,7 @@
             <div *ngIf="!playerSupports.isMobile" class="player-volume-area tw-flex tw-items-center"
               [ngClass]="{ 'player-volume-area-active': playerSettings.expandVolumeSlider }"
               (mouseenter)="playerSettings.expandVolumeSlider = true">
-              <button
+              <button [focusTarget]="player"
                 class="media-mute-button tw-w-12 sm:tw-w-14 tw-p-2 tw-pointer-events-auto focus-visible:tw-shadow-focus-box"
                 aria-label="Mute audio" aria-keyshortcuts="m" (click)="toggleMute()">
                 <player-mute-icon [muted]="playerStore.muted" [volume]="playerStore.volume"></player-mute-icon>
@@ -140,17 +140,17 @@
                 menuRelativeTo: bottomControls, offsetX: -10, offsetY: -10, flexibleDimensions: false }">
               </ng-container>
             </ng-container>
-            <button *ngIf="playerSupports.isMobile && playerStore.fullscreen" type="button"
+            <button *ngIf="playerSupports.isMobile && playerStore.fullscreen" type="button" [focusTarget]="player"
               class="media-fill-screen-button tw-w-12 sm:tw-w-14 tw-p-2 tw-pointer-events-auto focus-visible:tw-shadow-focus-box"
               aria-label="Full window" (click)="toggleFillScreen()">
               <player-fill-icon [active]="playerSettings.fillScreen"></player-fill-icon>
             </button>
-            <button *ngIf="canFitWindow" type="button"
+            <button *ngIf="canFitWindow" type="button" [focusTarget]="player"
               class="media-full-window-button tw-w-12 sm:tw-w-14 tw-p-2 tw-pointer-events-auto focus-visible:tw-shadow-focus-box"
               aria-label="Full window" (click)="toggleFullwindow()">
               <player-fit-window-icon [active]="playerSettings.fullWindow"></player-fit-window-icon>
             </button>
-            <button type="button"
+            <button type="button" [focusTarget]="player"
               class="media-fullscreen-button tw-w-12 sm:tw-w-14 tw-p-2 tw-pointer-events-auto focus-visible:tw-shadow-focus-box"
               aria-label="Fullscreen" aria-keyshortcuts="f" [attr.data-fullscreen]="playerStore.fullscreen ? '' : null"
               (click)="toggleFullscreen()">
@@ -161,21 +161,24 @@
       </div>
     </div>
     <ng-template #nextEpButtonTpl let-tplStyleClass="styleClass">
-      <button type="button" class="media-next-button focus-visible:tw-shadow-focus-box" aria-label="Next"
-        [class]="tplStyleClass" [ngClass]="canReqNext ? 'tw-pointer-events-auto' : 'p-disabled'" (click)="toggleNext()">
+      <button type="button" [focusTarget]="player" class="media-next-button focus-visible:tw-shadow-focus-box"
+        aria-label="Next" [class]="tplStyleClass" [ngClass]="canReqNext ? 'tw-pointer-events-auto' : 'p-disabled'"
+        (click)="toggleNext()">
         <player-skip-next-icon></player-skip-next-icon>
       </button>
     </ng-template>
     <ng-template #prevEpButtonTpl let-tplStyleClass="styleClass">
-      <button type="button" class="media-prev-button focus-visible:tw-shadow-focus-box" aria-label="Previous"
-        [class]="tplStyleClass" [ngClass]="canReqPrev ? 'tw-pointer-events-auto' : 'p-disabled'" (click)="togglePrev()">
+      <button type="button" [focusTarget]="player" class="media-prev-button focus-visible:tw-shadow-focus-box"
+        aria-label="Previous" [class]="tplStyleClass" [ngClass]="canReqPrev ? 'tw-pointer-events-auto' : 'p-disabled'"
+        (click)="togglePrev()">
         <player-skip-previous-icon></player-skip-previous-icon>
       </button>
     </ng-template>
     <ng-template #playButtonTpl let-tplStyleClass="styleClass">
-      <button type="button" class="media-play-button tw-pointer-events-auto focus-visible:tw-shadow-focus-box"
-        aria-label="Play/Pause" [class]="tplStyleClass" aria-keyshortcuts="k Space"
-        [attr.data-paused]="playerStore.paused ? '' : null" (click)="togglePlay()">
+      <button type="button" [focusTarget]="player"
+        class="media-play-button tw-pointer-events-auto focus-visible:tw-shadow-focus-box" aria-label="Play/Pause"
+        [class]="tplStyleClass" aria-keyshortcuts="k Space" [attr.data-paused]="playerStore.paused ? '' : null"
+        (click)="togglePlay()">
         <ng-container *ngIf="!playerSupports.isSafari; then normalPlayIconTpl; else safariPlayIconTpl"></ng-container>
         <ng-template #safariPlayIconTpl>
           <ng-container *ngIf="playerStore.paused; then safariPausedIconTpl; else normalPlayIconTpl"></ng-container>
@@ -192,7 +195,7 @@
       </button>
     </ng-template>
     <ng-template #subtitleButtonTpl>
-      <button type="button" *ngIf="playerSettings.tracks.length"
+      <button type="button" [focusTarget]="player" *ngIf="playerSettings.tracks.length"
         class="media-subtitle-button tw-w-12 sm:tw-w-14 tw-p-2 tw-pointer-events-auto focus-visible:tw-shadow-focus-box"
         aria-label="Enable/disable subtitle" aria-keyshortcuts="c" (click)="toggleSubtitle()">
         <player-subtitle-icon [enabled]="playerSettings.showSubtitle"></player-subtitle-icon>
@@ -201,7 +204,7 @@
     <ng-template #settingsButtonTpl let-tplMenuPosition="menuPosition" let-tplMenuRelativeTo="menuRelativeTo"
       let-tplOffsetX="offsetX" let-tplOffsetY="offsetY" let-tplLockedPosition="lockedPosition"
       let-tplFlexibleDimensions="flexibleDimensions" let-tplBackdropClass="backdropClass">
-      <button type="button"
+      <button type="button" [focusTarget]="!playerSettings.isMenuOpen ? player : null"
         class="media-settings-button tw-w-12 sm:tw-w-14 tw-p-2 tw-pointer-events-auto focus-visible:tw-shadow-focus-box"
         [ngClass]="{ 'media-settings-button-active': playerSettings.isMenuOpen }" aria-label="Settings"
         [slideMenuTriggerFor]="settingsMenu" [menuRelativeTo]="tplMenuRelativeTo" [offsetX]="tplOffsetX"
@@ -231,8 +234,8 @@
           <i class="ms ms-speaker"></i>
           <span class="tw-mr-8">{{ t('player.menu.audio') }}</span>
           <span class="tw-ml-auto tw-min-w-24 tw-text-sm tw-font-normal tw-text-right">
-            <ng-container *ngIf="playerStore.audioTrack">{{ playerStore.audioTrack.label | split:'-':0 }} -
-              {{ t('languages.' + playerStore.audioTrack.language) }}</ng-container>
+            <ng-container *ngIf="playerStore.audioTrack">{{ playerStore.audioTrack.label | split:'-':0 }} ({{
+              t('languages.' + playerStore.audioTrack.language) }})</ng-container>
           </span>
           <i class="ms ms-navigate-next ms-icon-sm tw-ml-1"></i>
         </button>
@@ -279,7 +282,8 @@
         <button *ngFor="let audio of playerStore.audioTracks; let i = index; trackBy: track_Id" slideMenuItemRadio
           [menuItemChecked]="audio.selected" (menuItemTriggered)="changeAudioTrack(i)">
           <i role="checkbox" class="ms ms-icon-sm ms-check"></i>
-          <span>{{ (audio.label | split:'-':0) }} - {{ t('languages.' + audio.language) }}</span>
+          <span>{{ (audio.label | split:'-':0) }}</span>
+          <span class="tw-ml-auto tw-pl-2 tw-text-sm">{{ t('languages.' + audio.language) }}</span>
         </button>
       </app-slide-menu>
     </ng-template>

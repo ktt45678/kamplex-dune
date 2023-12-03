@@ -2,7 +2,7 @@
   <ng-container *ngIf="media; else loadingMediaTpl">
     <div role="banner" aria-label="Background" class="tw-relative tw-w-full tw-h-72 sm:tw-h-80 tw-bg-cover tw-bg-no-repeat
       [background-position-x:50%] [background-position-y:35%] before:tw-absolute before:tw-inset-y-0 before:tw-w-full
-      before:tw-bg-zinc-900/75 -tw-z-1" *ngIf="media.thumbnailBackdropUrl; else emptyBackground"
+    before:tw-bg-zinc-900/75 -tw-z-1" *ngIf="media.thumbnailBackdropUrl; else emptyBackground"
       [lazyLoad]="media.thumbnailBackdropUrl"
       [ngStyle]="{ 'background-color': media.backdropColor ? '#' + (media.backdropColor | toString:16) : '#212121' }">
     </div>
@@ -32,21 +32,11 @@
               <!-- Primary info -->
               <div class="tw-text-white tw-mb-4">
                 <p class="tw-text-2xl sm:tw-text-3xl md:tw-text-4xl tw-font-bold tw-mt-2
-                  tw-leading-6 tw-line-clamp-5" [appTextResize]="media.title" [resizeOptions]="[
-                    { length: 50, size: '18px', lineHeight: '22px', disabled: !isMobile },
-                    { length: 75, size: '14px', lineHeight: '18px', disabled: !isMobile },
-                    { length: 100, size: '12px', lineHeight: '16px', disabled: !isMobile },
-                    { length: 50, size: '28px', lineHeight: '32px', disabled: isMobile },
-                    { length: 75, size: '24px', lineHeight: '28px', disabled: isMobile },
-                    { length: 100, size: '18px', lineHeight: '22px', disabled: isMobile }
-                  ]">{{ media.title }}</p>
+                  tw-leading-6 tw-line-clamp-5" [appTextResize]="media.title" [resizeOptions]="titleResizes">{{
+                  media.title }}</p>
                 <p *ngIf="media.originalTitle" class="tw-text-lg sm:tw-text-xl md:tw-text-2xl tw-mt-1 tw-line-clamp-2"
-                  [appTextResize]="media.originalTitle" [resizeOptions]="[
-                    { length: 50, size: '16px', lineHeight: '20px', disabled: !isMobile },
-                    { length: 75, size: '12px', lineHeight: '16px', disabled: !isMobile },
-                    { length: 75, size: '20px', lineHeight: '24px', disabled: isMobile },
-                    { length: 100, size: '16px', lineHeight: '20px', disabled: isMobile }
-                  ]">{{ media.originalTitle }}</p>
+                  [appTextResize]="media.originalTitle" [resizeOptions]="originalTitleResizes">{{ media.originalTitle
+                  }}</p>
                 <div class="tw-flex max-xs:tw-flex-wrap tw-text-base xs:tw-text-xl 2md:tw-text-2xl tw-mt-1 xs:tw-mt-2">
                   <p class="max-xs:tw-w-full [&>*]:tw-align-middle">
                     <i class="ms ms-star tw-text-xl xs:tw-text-2xl 2md:tw-text-3xl tw-text-yellow-500 -tw-mt-0.5"></i>
@@ -90,9 +80,12 @@
               <p class="tw-text-base tw-leading-5 tw-mt-4">
                 <span class="tw-font-bold">{{ t('media.details.studios') }}: </span>
                 <ng-container *ngIf="media.studios.length; else noStudios">
-                  <span [class.tw-ml-2]="!first"
-                    *ngFor="let studio of media.studios; let first = first; let last = last; trackBy: track_Id">{{
-                    last ? studio.name : studio.name + ',' }}</span>
+                  <ng-container
+                    *ngFor="let studio of media.studios; let first = first; let last = last; trackBy: track_Id">
+                    <a class="hover:tw-underline focus-visible:tw-underline" [class.tw-ml-2]="!first"
+                      [routerLink]="['/list', 'studio', studio._id]">{{ studio.name }}</a>
+                    <span *ngIf="!last">,</span>
+                  </ng-container>
                 </ng-container>
                 <ng-template #noStudios>
                   <span class="tw-text-gray-400 tw-italic">{{ t('media.details.noStudios') }}</span>
@@ -101,9 +94,12 @@
               <p class="tw-text-base tw-leading-5 tw-mt-2">
                 <span class="tw-font-bold">{{ t('media.details.producers') }}: </span>
                 <ng-container *ngIf="media.producers.length; else noProducers">
-                  <span [class.tw-ml-2]="!first"
-                    *ngFor="let producer of media.producers; let first = first; let last = last; trackBy: track_Id">{{
-                    last ? producer.name : producer.name + ',' }}</span>
+                  <ng-container
+                    *ngFor="let producer of media.producers; let first = first; let last = last; trackBy: track_Id">
+                    <a class="hover:tw-underline focus-visible:tw-underline" [class.tw-ml-2]="!first"
+                      [routerLink]="['/list', 'producer', producer._id]">{{ producer.name }}</a>
+                    <span *ngIf="!last">,</span>
+                  </ng-container>
                 </ng-container>
                 <ng-template #noProducers>
                   <span class="tw-text-gray-400 tw-italic">{{ t('media.details.noProducers') }}</span>
@@ -119,9 +115,11 @@
               </p>
               <p *ngIf="media.tags.length" class="tw-text-base tw-leading-5 tw-mt-2">
                 <span class="tw-font-bold">{{ t('media.details.tags') }}: </span>
-                <span [class.tw-ml-2]="!first"
-                  *ngFor="let tag of media.tags; let first = first; let last = last; trackBy: track_Id">{{
-                  last ? tag.name : tag.name + ',' }}</span>
+                <ng-container *ngFor="let tag of media.tags; let first = first; let last = last; trackBy: track_Id">
+                  <a class="hover:tw-underline focus-visible:tw-underline" [class.tw-ml-2]="!first"
+                    [routerLink]="['/list', 'tag', tag._id]">{{ tag.name }}</a>
+                  <span *ngIf="!last">,</span>
+                </ng-container>
               </p>
             </p-tabPanel>
             <p-tabPanel [header]="t('media.details.videos')">
@@ -154,16 +152,14 @@
             <i class="ms tw-text-blue-300 tw-text-base sm:tw-text-lg"
               [class]="media.type === MediaType.MOVIE ? 'ms-movie' : 'ms-tv'"></i>
             <span class="tw-font-medium tw-ml-1.5">{{
-              media.type === MediaType.MOVIE ?
-              t('media.mediaTypes.movie') :
-              t('media.mediaTypes.tvShow') }}</span>
+              media.type === MediaType.MOVIE ? t('media.mediaTypes.movie') : t('media.mediaTypes.tvShow') }}</span>
           </div>
           <div class="[&>*]:tw-align-middle tw-ml-3">
             <i class="ms ms-schedule tw-text-gray-400 tw-text-base sm:tw-text-lg"></i>
             <span class="tw-font-medium tw-ml-1.5">{{ media.runtime * 1000 | time:{ format:['hours', 'minutes'],
               display:'short' } }}</span>
           </div>
-          <div class="tw-text- [&>*]:tw-align-middle tw-ml-3">
+          <div class="[&>*]:tw-align-middle tw-ml-3">
             <i class="ms ms-calendar-today tw-text-base sm:tw-text-lg"></i>
             <span class="tw-font-medium tw-ml-1.5">{{ media.releaseDate.year }}</span>
           </div>

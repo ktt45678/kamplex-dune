@@ -6,19 +6,27 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
+import { DOCUMENT } from '@angular/common';
 import { Directionality } from '@angular/cdk/bidi';
-import { BooleanInput, coerceBooleanProperty } from '@angular/cdk/coercion';
+import { BooleanInput, NumberInput, coerceBooleanProperty, coerceNumberProperty } from '@angular/cdk/coercion';
 import { hasModifierKey } from '@angular/cdk/keycodes';
-import { _getEventTarget } from '@angular/cdk/platform';
+import { Platform, _getEventTarget, normalizePassiveListenerOptions } from '@angular/cdk/platform';
 import { TemplatePortal } from '@angular/cdk/portal';
-import { Directive, ElementRef, EventEmitter, inject, Inject, InjectionToken, Injector, Input, OnChanges, OnDestroy, Optional, Output, SimpleChanges, TemplateRef, ViewContainerRef, } from '@angular/core';
-import { Subject, Subscription } from 'rxjs';
-import { takeUntil, takeWhile } from 'rxjs/operators';
+import { AfterViewInit, Directive, ElementRef, EventEmitter, inject, Inject, InjectionToken, Injector, Input, NgZone, OnChanges, OnDestroy, Optional, Output, SimpleChanges, TemplateRef, ViewContainerRef, } from '@angular/core';
+import { Subject, Subscription, asapScheduler, fromEvent } from 'rxjs';
+import { delay, take, takeUntil, takeWhile } from 'rxjs/operators';
 import {
-  Overlay, OverlayConfig, OverlayRef, ConnectedOverlayPositionChange, ConnectedPosition, FlexibleConnectedPositionStrategy,
-  FlexibleConnectedPositionStrategyOrigin, RepositionScrollStrategy, ScrollStrategy, STANDARD_DROPDOWN_BELOW_POSITIONS
+  Overlay, OverlayConfig, OverlayRef, ConnectedOverlayPositionChange, FlexibleConnectedPositionStrategy,
+  FlexibleConnectedPositionStrategyOrigin, RepositionScrollStrategy, ScrollStrategy, STANDARD_DROPDOWN_BELOW_POSITIONS,
+  ConnectedPosition, STANDARD_DROPDOWN_ADJACENT_POSITIONS
 } from '@angular/cdk/overlay';
+import { FocusMonitor } from '@angular/cdk/a11y';
 import { animate, AnimationBuilder, AnimationFactory, style } from '@angular/animations';
+
+/**
+ * Options for how the overlay trigger should handle touch gestures.
+ */
+export type OverlayTouchGestures = 'auto' | 'on' | 'off';
 
 /** Injection token that determines the scroll handling while the connected overlay is open. */
 export const APP_CONNECTED_OVERLAY_SCROLL_STRATEGY = new InjectionToken<() => ScrollStrategy>(
@@ -28,18 +36,24 @@ export const APP_CONNECTED_OVERLAY_SCROLL_STRATEGY = new InjectionToken<() => Sc
 /** Injection token for overlay trigger. */
 export const OVERLAY_TRIGGER = new InjectionToken<AppOverlayOrigin>('app-overlay-trigger');
 
+/** Options used to bind passive event listeners. */
+const passiveListenerOptions = normalizePassiveListenerOptions({ passive: true });
+
+/**
+ * Time between the user putting the pointer on a overlay
+ * trigger and the long press event being fired.
+ */
+const LONGPRESS_DELAY = 500;
+
 /**
  * Directive applied to an element to make it usable as an origin for an Overlay using a
  * ConnectedPositionStrategy.
  */
 @Directive({
   selector: '[appOverlayOrigin]',
-  exportAs: 'appOverlayOrigin',
-  host: {
-    '(click)': 'toggle()'
-  }
+  exportAs: 'appOverlayOrigin'
 })
-export class AppOverlayOrigin implements OnChanges, OnDestroy {
+export class AppOverlayOrigin implements AfterViewInit, OnChanges, OnDestroy {
   private injector = inject(Injector);
   private _overlay = inject(Overlay);
   private _hasBackdrop = false;
@@ -47,13 +61,26 @@ export class AppOverlayOrigin implements OnChanges, OnDestroy {
   private _growAfterOpen = false;
   private _flexibleDimensions = false;
   private _push = false;
+  private _disabled = false;
+  private _triggerEvent = 'click';
+  private _viewInitialized = false;
+  private _pointerExitEventsInitialized = false;
   private _backdropSubscription = Subscription.EMPTY;
   private _positionSubscription = Subscription.EMPTY;
   private _offsetX!: number;
   private _offsetY!: number;
   private _position!: FlexibleConnectedPositionStrategy;
+  private _showTimeoutId: number | null = null;
+  private _hideTimeoutId: number | null = null;
   private _scrollStrategyFactory: () => ScrollStrategy;
   private showAnimation: AnimationFactory;
+  private hideAnimation: AnimationFactory;
+
+  /** Emits whenever an animation on the menu completes. */
+  readonly hideAnimationDone = new Subject<void>();
+
+  /** Whether the menu is animating. */
+  isAnimatingHide: boolean = false;
 
   /** A reference to the overlay */
   private _overlayRef: OverlayRef | null = null;
@@ -64,8 +91,14 @@ export class AppOverlayOrigin implements OnChanges, OnDestroy {
   /** The injector to use for the child overlay opened by this trigger. */
   private _childOverlayInjector?: Injector;
 
+  /** Timer started at the last `touchstart` event. */
+  private _touchstartTimeout?: ReturnType<typeof setTimeout>;
+
   /** Emits when this trigger is destroyed. */
   private readonly destroyed: Subject<void> = new Subject();
+
+  /** Manually-bound passive event listeners. */
+  private readonly _passiveListeners: (readonly [string, EventListenerOrEventListenerObject])[] = [];
 
   /** Template reference variable to the overlay this trigger opens */
   @Input('appOverlayOrigin') overlayTemplateRef: TemplateRef<unknown> | null = null;
@@ -183,6 +216,93 @@ export class AppOverlayOrigin implements OnChanges, OnDestroy {
     this._push = coerceBooleanProperty(value);
   }
 
+  /** Disables the display of the overlay. */
+  @Input('overlayDisabled')
+  get disabled(): boolean {
+    return this._disabled;
+  }
+
+  set disabled(value: BooleanInput) {
+    this._disabled = coerceBooleanProperty(value);
+
+    // If overlay is disabled, hide immediately.
+    if (this._disabled) {
+      this._detachOverlay();
+    } else {
+      this.registerEvents();
+    }
+  }
+
+  /** The event of the trigger to toggle the overlay. */
+  @Input('overlayTriggerEvent')
+  get triggerEvent(): string {
+    return this._triggerEvent;
+  }
+  set triggerEvent(value: string) {
+    this._triggerEvent = value;
+  }
+
+  /** The default delay in ms before showing the tooltip after show is called */
+  @Input('overlayShowDelay')
+  get showDelay(): number | undefined {
+    return this._showDelay;
+  }
+
+  set showDelay(value: NumberInput) {
+    this._showDelay = coerceNumberProperty(value);
+  }
+
+  private _showDelay?: number;
+
+  /** The default delay in ms before hiding the tooltip after hide is called */
+  @Input('overlayHideDelay')
+  get hideDelay(): number | undefined {
+    return this._hideDelay;
+  }
+
+  set hideDelay(value: NumberInput) {
+    this._hideDelay = coerceNumberProperty(value);
+  }
+
+  private _hideDelay?: number;
+
+  /** The default delay in ms before hiding the tooltip after hide is called */
+  @Input('overlayMouseLeaveDelay')
+  get mouseLeaveDelay(): number | undefined {
+    return this._mouseLeaveDelay;
+  }
+
+  set mouseLeaveDelay(value: NumberInput) {
+    this._mouseLeaveDelay = coerceNumberProperty(value);
+  }
+
+  private _mouseLeaveDelay: number = 200;
+
+  /** Data to be passed along to any lazily-rendered content. */
+  @Input('overlayData')
+  get overlayData(): any {
+    return this._overlayData;
+  }
+
+  set overlayData(value: any) {
+    this._overlayData = value;
+  }
+
+  private _overlayData: any;
+
+  @Input('overlayTouchGestures') touchGestures: OverlayTouchGestures = 'auto';
+
+  @Input('overlayTriggerOn') triggerOn: 'click' | 'hover' = 'click';
+
+  /**
+   * A list of preferred overlay positions to be used when constructing the
+   * `FlexibleConnectedPositionStrategy` for this trigger's overlay.
+   */
+  @Input() overlayPosition?: ConnectedPosition[];
+
+  /** The direction items in the overlay flow. */
+  @Input() overlayOrientation?: 'horizontal' | 'vertical';
+
   /** Event emitted when the backdrop is clicked. */
   @Output() readonly backdropClick = new EventEmitter<MouseEvent>();
 
@@ -209,9 +329,13 @@ export class AppOverlayOrigin implements OnChanges, OnDestroy {
 
   constructor(
     /** Reference to the element on which the directive is applied. */
-    public elementRef: ElementRef,
+    public elementRef: ElementRef<HTMLElement>,
     private viewContainerRef: ViewContainerRef,
+    private ngZone: NgZone,
+    private focusMonitor: FocusMonitor,
     private animationBuilder: AnimationBuilder,
+    private platform: Platform,
+    @Inject(DOCUMENT) private document: Document,
     @Inject(APP_CONNECTED_OVERLAY_SCROLL_STRATEGY) scrollStrategyFactory: any,
     @Optional() private _dir: Directionality
   ) {
@@ -219,8 +343,206 @@ export class AppOverlayOrigin implements OnChanges, OnDestroy {
     this.scrollStrategy = this._scrollStrategyFactory();
     this.showAnimation = this.animationBuilder.build([
       style({ opacity: 0 }),
-      animate('100ms ease-in', style({ opacity: 1 })),
+      animate('200ms ease', style({ opacity: 1 })),
     ]);
+    this.hideAnimation = this.animationBuilder.build([
+      style({ opacity: 1 }),
+      animate('200ms ease', style({ opacity: 0 })),
+    ]);
+  }
+
+  ngAfterViewInit(): void {
+    this._viewInitialized = true;
+    this.registerEvents();
+  }
+
+  playShowAnimation() {
+    const player = this.showAnimation.create(this._overlayRef!.overlayElement);
+    player.play();
+  }
+
+  playHideAnimation() {
+    const player = this.hideAnimation.create(this._overlayRef!.overlayElement);
+    player.onDone(() => {
+      this.hideAnimationDone.next();
+      this.isAnimatingHide = false;
+    });
+    this.isAnimatingHide = true;
+    player.play();
+  }
+
+  private registerEvents() {
+    if (this.triggerOn === 'click') {
+      this.registerClickEvent();
+    } else {
+      this.registerHoverEvent();
+    }
+  }
+
+  private registerClickEvent() {
+    fromEvent(this.elementRef.nativeElement, 'click').pipe(takeUntil(this.destroyed)).subscribe(() => {
+      this.toggle();
+    });
+  }
+
+  private registerHoverEvent() {
+    this._setupPointerEnterEventsIfNeeded();
+    this.focusMonitor
+      .monitor(this.elementRef)
+      .pipe(takeUntil(this.destroyed))
+      .subscribe(origin => {
+        // Note that the focus monitor runs outside the Angular zone.
+        if (!origin) {
+          this.ngZone.run(() => this.hide());
+        } else if (origin === 'keyboard') {
+          this.ngZone.run(() => this.show());
+        }
+      });
+  }
+
+  /** Binds the pointer events to the tooltip trigger. */
+  private _setupPointerEnterEventsIfNeeded() {
+    // Optimization: Defer hooking up events if there's no message or the tooltip is disabled.
+    if (this._disabled || !this._viewInitialized || this._passiveListeners.length)
+      return;
+
+    // The mouse events shouldn't be bound on mobile devices, because they can prevent the
+    // first tap from firing its click event or can cause the tooltip to open for clicks.
+    if (this._platformSupportsMouseEvents()) {
+      this._passiveListeners.push([
+        'mouseenter', () => {
+          this._setupPointerExitEventsIfNeeded();
+          this.show();
+        }
+      ]);
+    } else if (this.touchGestures !== 'off') {
+      this._disableNativeGesturesIfNecessary();
+
+      this._passiveListeners.push([
+        'touchstart', () => {
+          // Note that it's important that we don't `preventDefault` here,
+          // because it can prevent click events from firing on the element.
+          this._setupPointerExitEventsIfNeeded();
+          clearTimeout(this._touchstartTimeout);
+          this._touchstartTimeout = setTimeout(() => this.show(), LONGPRESS_DELAY);
+        }
+      ]);
+    }
+
+    this._addListeners(this._passiveListeners);
+  }
+
+  private _setupPointerExitEventsIfNeeded() {
+    if (this._pointerExitEventsInitialized) {
+      return;
+    }
+    this._pointerExitEventsInitialized = true;
+
+    const exitListeners: (readonly [string, EventListenerOrEventListenerObject])[] = [];
+    if (this._platformSupportsMouseEvents()) {
+      // Overlay mouse leave event
+      const handleMouseLeave = (overlayEvent: Event) => {
+        const overlayNewTarget = (overlayEvent as MouseEvent).relatedTarget as Node | null;
+        // Close when not going back to hover the trigger
+        if (overlayNewTarget !== this.elementRef.nativeElement) {
+          this.hide();
+        }
+      }
+      exitListeners.push(
+        [
+          'mouseleave', event => {
+            const newTarget = (event as MouseEvent).relatedTarget as Node | null;
+            if (!newTarget || !this._overlayRef?.overlayElement.contains(newTarget)) {
+              // Instead of hiding immediately, wait for mouse enter on the overlay element for a specific time
+              let enteredOverlay = false;
+              if (this._overlayRef?.overlayElement) {
+                const handleOverlayMouseEnter = () => { enteredOverlay = true; }
+                this._overlayRef.overlayElement.addEventListener('mouseenter', handleOverlayMouseEnter, { once: true, passive: true });
+                setTimeout(() => {
+                  if (!enteredOverlay) {
+                    this._overlayRef!.overlayElement.removeEventListener('mouseenter', handleOverlayMouseEnter);
+                    this.hide();
+                  } else {
+                    this._overlayRef!.overlayElement.addEventListener('mouseleave', handleMouseLeave, { once: true, passive: true });
+                  }
+                }, this._mouseLeaveDelay);
+              } else {
+                this.hide();
+              }
+            } else if (this._overlayRef?.overlayElement.contains(newTarget)) {
+              // Close when leaving the overlay itself
+              this._overlayRef!.overlayElement.addEventListener('mouseleave', handleMouseLeave, { once: true, passive: true });
+            }
+          }
+        ],
+        ['wheel', event => this._wheelListener(event as WheelEvent)]
+      );
+    } else if (this.touchGestures !== 'off') {
+      this._disableNativeGesturesIfNecessary();
+      const touchendListener = () => {
+        clearTimeout(this._touchstartTimeout);
+        this.hide(); // Insert delay option
+      };
+      exitListeners.push(['touchend', touchendListener], ['touchcancel', touchendListener]);
+    }
+
+    this._addListeners(exitListeners);
+    this._passiveListeners.push(...exitListeners);
+  }
+
+  private _addListeners(listeners: (readonly [string, EventListenerOrEventListenerObject])[]) {
+    listeners.forEach(([event, listener]) => {
+      this.elementRef.nativeElement.addEventListener(event, listener, passiveListenerOptions);
+    });
+  }
+
+  private _platformSupportsMouseEvents() {
+    return !this.platform.IOS && !this.platform.ANDROID;
+  }
+
+  /** Listener for the `wheel` event on the element. */
+  private _wheelListener(event: WheelEvent) {
+    if (this.isOpen()) {
+      const elementUnderPointer = this.document.elementFromPoint(event.clientX, event.clientY);
+      const element = this.elementRef.nativeElement;
+
+      // On non-touch devices we depend on the `mouseleave` event to close the tooltip, but it
+      // won't fire if the user scrolls away using the wheel without moving their cursor. We
+      // work around it by finding the element under the user's cursor and closing the tooltip
+      // if it's not the trigger.
+      if (elementUnderPointer !== element && !element.contains(elementUnderPointer)) {
+        this.hide();
+      }
+    }
+  }
+
+  /** Disables the native browser gestures, based on how the tooltip has been configured. */
+  private _disableNativeGesturesIfNecessary() {
+    const gestures = this.touchGestures;
+
+    if (gestures !== 'off') {
+      const element = this.elementRef.nativeElement;
+      const style = element.style;
+
+      // If gestures are set to `auto`, we don't disable text selection on inputs and
+      // textareas, because it prevents the user from typing into them on iOS Safari.
+      if (gestures === 'on' || (element.nodeName !== 'INPUT' && element.nodeName !== 'TEXTAREA')) {
+        style.userSelect =
+          (style as any).msUserSelect =
+          style.webkitUserSelect =
+          (style as any).MozUserSelect =
+          'none';
+      }
+
+      // If we have `auto` gestures and the element uses native HTML dragging,
+      // we don't set `-webkit-user-drag` because it prevents the native behavior.
+      if (gestures === 'on' || !element.draggable) {
+        (style as any).webkitUserDrag = 'none';
+      }
+
+      style.touchAction = 'none';
+      (style as any).webkitTapHighlightColor = 'transparent';
+    }
   }
 
   /** Whether the overlay is open. */
@@ -230,20 +552,21 @@ export class AppOverlayOrigin implements OnChanges, OnDestroy {
 
   /** Toggle the attached overlay. */
   toggle() {
-    if (this.isOpen()) {
-      this._detachOverlay();
+    if (this.isOpen() && !this.isAnimatingHide) {
+      this.hide();
     } else {
-      this._attachOverlay();
+      this.show();
     }
   }
 
   private getOverlayContentPortal() {
     const hasOverlayContentChanged = this.overlayTemplateRef !== this._overlayPortal?.templateRef;
+    const templateContext = { overlayData: this._overlayData };
     if (this.overlayTemplateRef && (!this._overlayPortal || hasOverlayContentChanged)) {
       this._overlayPortal = new TemplatePortal(
         this.overlayTemplateRef,
         this.viewContainerRef,
-        undefined,
+        templateContext,
         this._getChildOverlayInjector()
       );
     }
@@ -271,9 +594,28 @@ export class AppOverlayOrigin implements OnChanges, OnDestroy {
     this.destroyed.next();
     this.destroyed.complete();
 
+    if (this._showTimeoutId) {
+      clearTimeout(this._showTimeoutId);
+      this._showTimeoutId = null;
+    }
+
+    if (this._hideTimeoutId) {
+      clearTimeout(this._hideTimeoutId);
+      this._hideTimeoutId = null;
+    }
+
     if (this._overlayRef) {
       this._overlayRef.dispose();
     }
+
+    // Hover events
+    clearTimeout(this._touchstartTimeout);
+    // Clean up the event listeners set in the constructor
+    this._passiveListeners.forEach(([event, listener]) => {
+      this.elementRef.nativeElement.removeEventListener(event, listener, passiveListenerOptions);
+    });
+    this._passiveListeners.length = 0;
+    this.focusMonitor.stopMonitoring(this.elementRef.nativeElement);
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -363,7 +705,9 @@ export class AppOverlayOrigin implements OnChanges, OnDestroy {
   private _updatePositionStrategy(positionStrategy: FlexibleConnectedPositionStrategy) {
     return positionStrategy
       .setOrigin(this.elementRef)
-      .withPositions(STANDARD_DROPDOWN_BELOW_POSITIONS)
+      .withPositions(this._getOverlayPositions())
+      .withDefaultOffsetX(this.offsetX)
+      .withDefaultOffsetY(this.offsetY)
       .withFlexibleDimensions(this.flexibleDimensions)
       .withPush(this.push)
       .withGrowAfterOpen(this.growAfterOpen)
@@ -381,8 +725,58 @@ export class AppOverlayOrigin implements OnChanges, OnDestroy {
     return strategy;
   }
 
+  /** Get the preferred positions for the opened menu relative to the menu item. */
+  private _getOverlayPositions(): ConnectedPosition[] {
+    return (
+      this.overlayPosition ??
+      (!this.overlayOrientation || this.overlayOrientation === 'horizontal'
+        ? STANDARD_DROPDOWN_ADJACENT_POSITIONS
+        : STANDARD_DROPDOWN_BELOW_POSITIONS)
+    );
+  }
+
+  /**
+   * Shows the overlay with an animation originating from the provided origin
+   * @param delay Amount of milliseconds to the delay showing the overlay.
+   */
+  show(delay: number | undefined = this._showDelay) {
+    // Cancel the delayed hide if it is scheduled
+    if (this._hideTimeoutId !== null) {
+      window.clearTimeout(this._hideTimeoutId);
+    }
+
+    this._showTimeoutId = window.setTimeout(() => {
+      this._attachOverlay();
+      this._showTimeoutId = null;
+    }, delay);
+  }
+
+  /**
+   * Begins the animation to hide the overlay after the provided delay in ms.
+   * @param delay Amount of milliseconds to delay showing the overlay.
+   */
+  hide(delay: number | undefined = this._hideDelay) {
+    // Cancel the delayed show if it is scheduled
+    if (this._showTimeoutId !== null) {
+      clearTimeout(this._showTimeoutId);
+    }
+
+    this._hideTimeoutId = window.setTimeout(() => {
+      this._detachOverlay();
+      this._hideTimeoutId = null;
+    }, delay);
+  }
+
   /** Attaches the overlay and subscribes to backdrop clicks if backdrop exists */
   private _attachOverlay() {
+    // Handle if the hide animation is running
+    if (this.isAnimatingHide) {
+      this.hideAnimationDone.pipe(take(1), delay(0, asapScheduler), takeUntil(this.destroyed)).subscribe(() => {
+        this._attachOverlay();
+      });
+      return;
+    }
+
     if (!this._overlayRef) {
       this._createOverlay();
     } else {
@@ -392,7 +786,7 @@ export class AppOverlayOrigin implements OnChanges, OnDestroy {
 
     if (!this._overlayRef!.hasAttached()) {
       this._overlayRef!.attach(this.getOverlayContentPortal());
-      this.showAnimation.create(this._overlayRef!.overlayElement).play();
+      this.playShowAnimation();
     }
 
     if (this.hasBackdrop) {
@@ -422,8 +816,16 @@ export class AppOverlayOrigin implements OnChanges, OnDestroy {
 
   /** Detaches the overlay and unsubscribes to backdrop clicks if backdrop exists */
   private _detachOverlay() {
+    // Handle if the hide animation is running
+    if (this.isAnimatingHide) {
+      return;
+    }
+
     if (this._overlayRef) {
-      this._overlayRef.detach();
+      this.playHideAnimation();
+      this.hideAnimationDone.pipe(take(1), delay(0, asapScheduler), takeUntil(this.destroyed)).subscribe(() => {
+        this._overlayRef!.detach();
+      });
     }
 
     this._backdropSubscription.unsubscribe();

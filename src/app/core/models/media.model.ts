@@ -1,4 +1,4 @@
-import { Genre, MovieStatus, ShortDate, TVShowLastEpisode } from '.';
+import { Genre, MovieStatus, ShortDate, TVShowListInfo } from '.';
 
 export interface Media {
   _id: string;
@@ -13,7 +13,7 @@ export interface Media {
   adult: boolean;
   releaseDate: ShortDate;
   movie: MovieStatus;
-  tv: TVShowLastEpisode;
+  tv: TVShowListInfo;
   views: number;
   dailyViews: number;
   weeklyViews: number;

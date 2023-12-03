@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
-import { Translation, TranslocoLoader, TRANSLOCO_CONFIG, translocoConfig, TranslocoModule, TRANSLOCO_LOADER } from '@ngneat/transloco';
+import { Translation, TranslocoLoader, TranslocoModule, provideTransloco } from '@ngneat/transloco';
 import { Injectable, NgModule } from '@angular/core';
-import { TranslocoMessageFormatModule } from '@ngneat/transloco-messageformat';
+import { provideTranslocoMessageformat } from '@ngneat/transloco-messageformat';
 // import { TranslocoPersistTranslationsModule, PERSIST_TRANSLATIONS_STORAGE } from '@ngneat/transloco-persist-translations';
 // import * as localForage from 'localforage';
 
@@ -27,35 +27,21 @@ export class TranslocoHttpLoader implements TranslocoLoader {
 }
 
 @NgModule({
-  imports: [
-    TranslocoMessageFormatModule.forRoot({
-      locales: ['en-US', 'vi-VN']
-    }),
-    // TranslocoPersistTranslationsModule.forRoot({
-    //   loader: TranslocoHttpLoader,
-    //   ttl: environment.production ? 3600 : 30,
-    //   storage: {
-    //     provide: PERSIST_TRANSLATIONS_STORAGE,
-    //     useValue: localForage.driver() ? localForage : localStorage
-    //   }
-    // })
-  ],
   exports: [TranslocoModule],
   providers: [
-    {
-      provide: TRANSLOCO_CONFIG,
-      useValue: translocoConfig({
+    provideTransloco({
+      config: {
         availableLangs: ['en', 'vi'],
         defaultLang: 'en',
         // Remove this option if your application doesn't support changing language in runtime.
         reRenderOnLangChange: false,
         prodMode: environment.production,
-      })
-    },
-    {
-      provide: TRANSLOCO_LOADER,
-      useClass: TranslocoHttpLoader
-    }
+      },
+      loader: TranslocoHttpLoader
+    }),
+    provideTranslocoMessageformat({
+      locales: ['en-US', 'vi-VN']
+    })
   ]
 })
 export class TranslocoRootModule { }

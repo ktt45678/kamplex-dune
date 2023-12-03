@@ -1,15 +1,15 @@
 import { Directive, ElementRef, inject, OnDestroy } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 import { Directionality } from '@angular/cdk/bidi';
 import { _getEventTarget } from '@angular/cdk/platform';
 import { ConnectedPosition, FlexibleConnectedPositionStrategy, Overlay, OverlayConfig, STANDARD_DROPDOWN_ADJACENT_POSITIONS, STANDARD_DROPDOWN_BELOW_POSITIONS } from '@angular/cdk/overlay';
 import { hasModifierKey } from '@angular/cdk/keycodes';
-import { takeUntil } from 'rxjs';
+import { asapScheduler, delay, take, takeUntil } from 'rxjs';
 
 import { SlideMenuOverlay } from '../slide-menu-overlay/slide-menu-overlay';
 import { SLIDE_MENU_TRIGGER, SlideMenuTriggerBase } from '../slide-menu-trigger-base/slide-menu-trigger-base';
 import { SLIDE_MENU } from '../slide-menu-interface';
 import { PARENT_OR_NEW_SLIDE_MENU_STACK_PROVIDER } from '../slide-menu-stack/slide-menu-stack';
-import { DOCUMENT } from '@angular/common';
 
 @Directive({
   selector: '[slideMenuTriggerFor]',
@@ -69,7 +69,10 @@ export class SlideMenuTriggerDirective extends SlideMenuTriggerBase implements O
 
   /** Toggle the attached menu. */
   toggle() {
-    if (this.isOpen() && this.menuStack.isPrimaryTrigger(this._elementRef)) {
+    // Close if it's the primary trigger
+    const isPrimaryTrigger = this.menuStack.isPrimaryTrigger(this._elementRef);
+    const isNotClosing = !this.getMenu()?.isAnimatingHide;
+    if (this.isOpen() && isPrimaryTrigger && isNotClosing) {
       this.close();
     } else {
       this.open();
@@ -78,12 +81,24 @@ export class SlideMenuTriggerDirective extends SlideMenuTriggerBase implements O
 
   /** Open the attached menu. */
   open() {
+    // Handle if the hide animation is running
+    const isClosing = this.getMenu()?.isAnimatingHide;
+    if (isClosing) {
+      const menu = this.getMenu()!;
+      menu.hideAnimationDone.pipe(take(1), delay(0, asapScheduler)).subscribe(() => {
+        this.open();
+      });
+      return;
+    }
+
     if (!this.isOpen() && this.menuTemplateRef != null) {
       this.opened.next();
     }
 
+    // Get last menu height for transform animation
     let lastMenuHeight: number | undefined;
 
+    // Create overlay
     this.menuStack.overlayRef = this.menuStack.overlayRef || this.menuStack.createOverlay(this._getOverlayConfig());
 
     if (this.menuStack.overlayRef.hasAttached()) {
@@ -100,13 +115,14 @@ export class SlideMenuTriggerDirective extends SlideMenuTriggerBase implements O
     this.menuStack.activeMenuRef = this.menuTemplateRef;
     this._subscribeToOutsideClicks();
 
+    const menu = this.getMenu()!;
     if (this.menuStack.isPrimaryTrigger(this._elementRef)) {
-      this.getMenu()?.setAnimation();
+      menu.playShowAnimation();
     } else if (lastMenuHeight) {
       if (!this.menuStack.primaryTrigger?.fixedBottom) {
-        this.getMenu()?.setSlideAnimation(lastMenuHeight);
+        menu.playSlideAnimation(lastMenuHeight);
       } else {
-        this.getMenu()?.setFixedSlideAnimation();
+        menu.playFixedSlideAnimation();
       }
     }
   }
@@ -114,11 +130,15 @@ export class SlideMenuTriggerDirective extends SlideMenuTriggerBase implements O
   /** Close the opened menu. */
   close() {
     if (this.isOpen()) {
-      this.closed.next();
+      const menu = this.getMenu()!;
+      menu.playHideAnimation();
+      menu.hideAnimationDone.pipe(take(1), delay(0, asapScheduler)).subscribe(() => {
+        this.closed.next();
 
-      this.menuStack.overlayRef!.detach();
-      this.menuStack.parentMenuRefs = [];
-      this.menuStack.activeMenuRef = null;
+        this.menuStack.overlayRef!.detach();
+        this.menuStack.parentMenuRefs = [];
+        this.menuStack.activeMenuRef = null;
+      });
     }
     this._closeSiblingTriggers();
   }
@@ -137,13 +157,25 @@ export class SlideMenuTriggerDirective extends SlideMenuTriggerBase implements O
   _toggleOnKeydown(event: KeyboardEvent) {
     const isParentVertical = this._parentMenu?.orientation === 'vertical';
     const keyCode = event.code;
+
+    const invokeFocusItem = (cb: () => void) => {
+      const menu = this.getMenu();
+      if (menu?.isAnimatingHide) {
+        menu.hideAnimationDone.pipe(take(1), delay(0, asapScheduler)).subscribe(() => {
+          cb();
+        });
+      } else {
+        cb();
+      }
+    }
+
     switch (keyCode) {
       case 'Space':
       case 'Enter':
         if (!hasModifierKey(event)) {
           event.preventDefault();
           this.toggle();
-          this.childMenu?.focusFirstItem('keyboard');
+          invokeFocusItem(() => this.childMenu?.focusFirstItem('keyboard'));
         }
         break;
 
@@ -152,7 +184,7 @@ export class SlideMenuTriggerDirective extends SlideMenuTriggerBase implements O
           if (this._parentMenu && isParentVertical && this._directionality?.value !== 'rtl') {
             event.preventDefault();
             this.open();
-            this.childMenu?.focusFirstItem('keyboard');
+            invokeFocusItem(() => this.childMenu?.focusFirstItem('keyboard'));
           }
         }
         break;
@@ -162,7 +194,7 @@ export class SlideMenuTriggerDirective extends SlideMenuTriggerBase implements O
           if (this._parentMenu && isParentVertical && this._directionality?.value === 'rtl') {
             event.preventDefault();
             this.open();
-            this.childMenu?.focusFirstItem('keyboard');
+            invokeFocusItem(() => this.childMenu?.focusFirstItem('keyboard'));
           }
         }
         break;
@@ -174,8 +206,8 @@ export class SlideMenuTriggerDirective extends SlideMenuTriggerBase implements O
             event.preventDefault();
             this.open();
             keyCode === 'ArrowDown'
-              ? this.childMenu?.focusFirstItem('keyboard')
-              : this.childMenu?.focusLastItem('keyboard');
+              ? invokeFocusItem(() => this.childMenu?.focusFirstItem('keyboard'))
+              : invokeFocusItem(() => this.childMenu?.focusLastItem('keyboard'));
           }
         }
         break;
@@ -265,6 +297,8 @@ export class SlideMenuTriggerDirective extends SlideMenuTriggerBase implements O
     if (!this._parentMenu) {
       this.menuStack.closed.pipe(takeUntil(this.destroyed)).subscribe(({ item }) => {
         if (item === this.childMenu) {
+          if (this.childMenu.isAnimatingHide)
+            return;
           this.close();
         }
       });
@@ -287,18 +321,14 @@ export class SlideMenuTriggerDirective extends SlideMenuTriggerBase implements O
           const element = this._elementRef.nativeElement;
 
           if (target !== element && !element.contains(target)) {
-            if (!this.isElementInsideMenuStack(target)) {
-              if (event instanceof PointerEvent) {
-                // Stop event on outside click (left mouse and touch)
-                if ((event.pointerType === 'mouse' || event.pointerType === 'touch') && event.button === 0) {
-                  event.preventDefault();
-                  event.stopPropagation();
-                }
+            if (event instanceof PointerEvent) {
+              // Stop event on outside click (left mouse and touch)
+              if ((event.pointerType === 'mouse' || event.pointerType === 'touch') && event.button === 0) {
+                event.preventDefault();
+                event.stopPropagation();
               }
-              this.menuStack.closeAll();
-            } else {
-              this._closeSiblingTriggers();
             }
+            this.menuStack.closeAll();
           }
         });
     }

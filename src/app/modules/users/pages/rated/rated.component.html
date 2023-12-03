@@ -10,7 +10,7 @@
         [(ngModel)]="listViewMode">
       </p-selectButton>
       <ng-template #overlayRatingMenu #op="appConnectedOverlay" appConnectedOverlay>
-        <div class="tw-flex tw-items-center">
+        <div class="tw-flex tw-items-center tw-p-4">
           <p class="tw-text-white tw-flex-shrink tw-basis-48">{{ t('users.rating.editMode') }}</p>
           <p-inputSwitch #switchEditableScore [(ngModel)]="editMode" ariaLabel="Toggle editable score" class="tw-h-7"
             styleClass="tw-ml-8"></p-inputSwitch>

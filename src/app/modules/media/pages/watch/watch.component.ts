@@ -90,34 +90,39 @@ export class WatchComponent implements OnInit, OnDestroy {
         return this.mediaService.findOne(params.id).pipe(map(media => ({ media, params })));
       }),
       takeUntil(this.destroyService)
-    ).subscribe(({ media, params }) => {
-      if (this.media?._id !== media._id)
-        this.findMediaRating(media);
-      // Assign media
-      this.media = media;
-      this.ratingCount = media.ratingCount;
-      this.ratingScore = media.ratingScore;
-      this.ratingAverage = media.ratingAverage;
-      // Find relasted media list
-      this.findRelatedMedia(true);
-      // Start watching
-      if (media.type === MediaType.MOVIE) {
-        this.watchMovie(media);
-      }
-      else if (media.type === MediaType.TV) {
-        if (!media.tv.episodes.length) return;
-        this.episodes = media.tv.episodes;
-        // Play first episode by default
-        if (!params.epNumber) {
-          const ep = media.tv.episodes[0].epNumber;
-          this.router.navigate([], { queryParams: { ep }, replaceUrl: true });
-          return;
+    ).subscribe({
+      next: ({ media, params }) => {
+        if (this.media?._id !== media._id)
+          this.findMediaRating(media);
+        // Assign media
+        this.media = media;
+        this.ratingCount = media.ratingCount;
+        this.ratingScore = media.ratingScore;
+        this.ratingAverage = media.ratingAverage;
+        // Find relasted media list
+        this.findRelatedMedia(true);
+        // Start watching
+        if (media.type === MediaType.MOVIE) {
+          this.watchMovie(media);
         }
-        this.watchTVEpisode(media, params.epNumber);
+        else if (media.type === MediaType.TV) {
+          if (!media.tv.episodes.length) return;
+          this.episodes = media.tv.episodes;
+          // Play first episode by default
+          if (!params.epNumber) {
+            const ep = media.tv.episodes[0].epNumber;
+            this.router.navigate([], { queryParams: { ep }, replaceUrl: true });
+            return;
+          }
+          this.watchTVEpisode(media, params.epNumber);
+        }
+        this.loading = false;
+        this.ref.markForCheck();
+      },
+      error: () => {
+        this.loading = false;
+        this.ref.markForCheck();
       }
-    }).add(() => {
-      this.loading = false;
-      this.ref.markForCheck();
     });
   }
 
