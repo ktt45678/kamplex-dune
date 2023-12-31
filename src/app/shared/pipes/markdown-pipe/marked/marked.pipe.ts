@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { SafeHtml } from '@angular/platform-browser';
-import { marked } from 'marked';
+import { MarkedOptions } from 'marked';
 
 import { SanitizeOptions } from '../interfaces';
 import { MarkedService } from './marked.service';
@@ -11,7 +11,7 @@ import { MarkedService } from './marked.service';
 export class MarkedPipe implements PipeTransform {
   constructor(private markedService: MarkedService) { }
 
-  transform(value: string, options?: marked.MarkedOptions & SanitizeOptions): string | SafeHtml {
+  transform(value: string, options?: MarkedOptions & SanitizeOptions): string | SafeHtml {
     return this.markedService.parse(value, options);
   }
 

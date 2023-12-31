@@ -29,7 +29,7 @@
             <p-altAutoComplete formControlName="media" [suggestions]="mediaSuggestions"
               (completeMethod)="loadMediaSuggestions($event.query)" field="title" dataKey="_id" [multiple]="true"
               [unique]="true" [placeholder]="t('users.filterHistory.mediaIds')" scrollHeight="300px" appendTo="body"
-              class="p-autocomplete-full" styleClass="p-autocomplete-xs tw-mt-2" panelStyleClass="p-autocomplete-xs"
+              styleClass="p-autocomplete-full p-autocomplete-xs tw-mt-2" panelStyleClass="p-autocomplete-xs"
               inputId="media-ids" ariaLabel="Find Movie and TV Shows"
               dropdownAriaLabel="Movie and TV Shows search results">
             </p-altAutoComplete>
@@ -63,7 +63,7 @@
             <p-altAutoComplete formControlName="mediaGenres" [suggestions]="genreSuggestions"
               (completeMethod)="loadGenreSuggestions($event.query)" field="name" dataKey="_id" [multiple]="true"
               [unique]="true" [placeholder]="t('users.filterHistory.mediaGenres')" scrollHeight="300px" appendTo="body"
-              class="p-autocomplete-full" styleClass="p-autocomplete-xs tw-mt-2" panelStyleClass="p-autocomplete-xs"
+              styleClass="p-autocomplete-full p-autocomplete-xs tw-mt-2" panelStyleClass="p-autocomplete-xs"
               ariaLabel="Find genres" dropdownAriaLabel="Genre search results">
             </p-altAutoComplete>
             <button pButton type="submit" [label]="t('users.filterHistory.filter')" icon="ms ms-filter-list"
@@ -121,7 +121,7 @@
                           <div *ngIf="history.media.smallPosterUrl else noPoster"
                             class="tw-rounded-md tw-overflow-hidden">
                             <img class="tw-object-cover tw-w-12 tw-h-12" [lazyLoad]="history.media.smallPosterUrl"
-                              [lazyLoadPlaceholder]="history.media.posterColor | rgbColor"
+                              [defaultImage]="history.media.posterPlaceholder | thumbhashUrl"
                               errorImage="assets/images/media-poster-sm.png" [alt]="history.media.title">
                           </div>
                           <ng-template #noPoster>
@@ -130,7 +130,7 @@
                           </ng-template>
                         </div>
                         <div class="tw-ml-2">
-                          <p class="tw-text-base tw-font-semibold tw-line-clamp-2">{{ history.media.title }}</p>
+                          <p class="tw-text-base tw-font-medium tw-line-clamp-2">{{ history.media.title }}</p>
                           <p *ngIf="history.episode" class="tw-text-sm">
                             <span>{{ history.episode.epNumber }}</span>
                             <span *ngIf="history.episode.name">. {{ history.episode.name }}</span>

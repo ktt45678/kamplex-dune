@@ -44,7 +44,7 @@
                         <img
                           *ngIf="playlist.thumbnailMedia && playlist.thumbnailMedia.smallBackdropUrl else noThumbnail"
                           class="tw-object-cover" [lazyLoad]="playlist.thumbnailMedia.smallBackdropUrl"
-                          [lazyLoadPlaceholder]="playlist.thumbnailMedia.backdropColor | rgbColor"
+                          [defaultImage]="playlist.thumbnailMedia.backdropPlaceholder | thumbhashUrl"
                           errorImage="assets/images/media-backdrop-sm.png" [alt]="playlist.name">
                         <ng-template #noThumbnail>
                           <img class="tw-object-cover" src="assets/images/media-backdrop-md.png" loading="lazy"
@@ -53,7 +53,7 @@
                       </div>
                     </div>
                     <div class="tw-ml-2">
-                      <p class="tw-text-base tw-font-semibold tw-line-clamp-2">{{ playlist.name }}</p>
+                      <p class="tw-text-base tw-font-medium tw-line-clamp-2">{{ playlist.name }}</p>
                     </div>
                   </div>
                 </td>

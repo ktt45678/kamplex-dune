@@ -80,18 +80,11 @@ export default {
         'screen-75': '75vh',
         'screen-80': '80vh'
       },
-      minWidth: {
-        '24': '96px',
-        '32': '128px',
-        '48': '12rem',
-      },
       maxHeight: {
         'fill-available': '-webkit-fill-available'
       },
       maxWidth: {
         '115px': '115px',
-        '32': '128px',
-        '48': '12rem',
         '8xl': '90rem'
       },
       opacity: {

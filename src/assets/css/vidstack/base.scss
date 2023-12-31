@@ -1,7 +1,113 @@
+/*
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * Player
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ */
+
+:where([data-media-player][data-view-type='video']) {
+  aspect-ratio: 16 / 9;
+}
+
+[data-media-player]:focus,
+[data-media-player]:focus-visible {
+  outline: none;
+}
+
+[data-media-player][data-view-type='video'][data-started]:not([data-controls]) {
+  pointer-events: auto;
+  cursor: none;
+}
+
+[data-media-player] slot {
+  display: contents;
+}
+
+/*
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * Provider
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ */
+
+[data-media-provider] {
+  display: flex;
+  position: relative;
+  box-sizing: border-box;
+  align-items: center;
+  width: 100%;
+  aspect-ratio: inherit;
+}
+
+[data-media-player]:not([data-view-type='audio']) [data-media-provider],
+[data-media-player][data-fullscreen] [data-media-provider] {
+  height: 100%;
+}
+
+[data-media-player][data-view-type='audio'] [data-media-provider] {
+  display: contents;
+  background-color: unset;
+}
+
+[data-media-provider] audio {
+  width: 100%;
+}
+
+:where([data-media-provider] video),
+:where([data-media-provider] iframe) {
+  aspect-ratio: inherit;
+  display: inline-block;
+  height: auto;
+  object-fit: contain;
+  touch-action: manipulation;
+  border-radius: inherit;
+  width: 100%;
+}
+
+[data-media-provider] iframe {
+  height: 100%;
+}
+
+[data-media-player][data-view-type='audio'] video,
+[data-media-player][data-view-type='audio'] iframe {
+  display: none;
+}
+
+[data-media-player][data-fullscreen] video {
+  height: 100%;
+}
+
+iframe.vds-youtube[data-no-controls] {
+  height: 1000%;
+}
+
+.vds-blocker {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: auto;
+  aspect-ratio: inherit;
+  pointer-events: auto;
+  z-index: 1;
+}
+
+[data-ended] .vds-blocker {
+  background-color: black;
+}
+
+/*
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * Custom
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ */
+
 media-player {
-  --media-aspect-ratio: 16 / 9;
   --media-font-family: Roboto, Helvetica Neue Light, Helvetica Neue, Helvetica, Arial, Lucida Grande, sans-serif;
   display: block;
+  width: 100%;
+  align-items: center;
+  position: relative;
+  contain: style;
+  box-sizing: border-box;
+  user-select: none;
 }
 
 media-player:not([controls]) > media-outlet video {

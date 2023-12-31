@@ -1,4 +1,5 @@
 import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, ChangeDetectorRef, ViewChild } from '@angular/core';
+import { Location } from '@angular/common';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { Meta, Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -14,7 +15,7 @@ import { StarRatingComponent } from '../../../../shared/components/star-rating';
 import { AddToPlaylistComponent } from '../../../../shared/dialogs/add-to-playlist';
 import { ShareMediaLinkComponent, SharingOption } from '../../../../shared/dialogs/share-media-link';
 import { MediaBreakpoints, MediaType } from '../../../../core/enums';
-import { toHexColor } from '../../../../core/utils';
+import { toHexColor, trackId } from '../../../../core/utils';
 import { SITE_NAME, SITE_THEME_COLOR } from '../../../../../environments/config';
 
 @Component({
@@ -25,6 +26,7 @@ import { SITE_NAME, SITE_THEME_COLOR } from '../../../../../environments/config'
   providers: [HistoryService, RatingsService, DestroyService]
 })
 export class WatchComponent implements OnInit, OnDestroy {
+  track_Id = trackId;
   @ViewChild('videoPlayer') videoPlayer?: VideoPlayerComponent;
   @ViewChild('starRating') set _starRating(value: StarRatingComponent) {
     this.starRating = value;
@@ -57,10 +59,11 @@ export class WatchComponent implements OnInit, OnDestroy {
   watchTimeUpdateSub?: Subscription;
   serverWatchTimeUpdateSub?: Subscription;
 
-  constructor(private ref: ChangeDetectorRef, private title: Title, private meta: Meta, private breakpointObserver: BreakpointObserver,
-    private dialogService: DialogService, private authService: AuthService, private mediaService: MediaService,
-    private historyService: HistoryService, private ratingsService: RatingsService, private route: ActivatedRoute,
-    private router: Router, private translocoService: TranslocoService, private destroyService: DestroyService) { }
+  constructor(private ref: ChangeDetectorRef, private title: Title, private meta: Meta, private location: Location,
+    private breakpointObserver: BreakpointObserver, private dialogService: DialogService, private authService: AuthService,
+    private mediaService: MediaService, private historyService: HistoryService, private ratingsService: RatingsService,
+    private route: ActivatedRoute, private router: Router, private translocoService: TranslocoService,
+    private destroyService: DestroyService) { }
 
   ngOnInit(): void {
     this.initWatch();
@@ -87,7 +90,8 @@ export class WatchComponent implements OnInit, OnDestroy {
         this.loading = true;
         this.ref.markForCheck();
         if (params.id === this.media?._id) return of(this.media).pipe(map(media => ({ media, params })));
-        return this.mediaService.findOne(params.id).pipe(map(media => ({ media, params })));
+        const mediaId = params.id.split('-')[0];
+        return this.mediaService.findOne(mediaId).pipe(map(media => ({ media, params })));
       }),
       takeUntil(this.destroyService)
     ).subscribe({
@@ -103,15 +107,18 @@ export class WatchComponent implements OnInit, OnDestroy {
         this.findRelatedMedia(true);
         // Start watching
         if (media.type === MediaType.MOVIE) {
+          const replacedUrlParams = new URLSearchParams({ ...this.route.snapshot.queryParams }).toString();
+          this.location.replaceState('/watch/' + media._id + '-' + media.slug.substring(0, 100), replacedUrlParams);
           this.watchMovie(media);
-        }
-        else if (media.type === MediaType.TV) {
+        } else if (media.type === MediaType.TV) {
           if (!media.tv.episodes.length) return;
           this.episodes = media.tv.episodes;
           // Play first episode by default
           if (!params.epNumber) {
             const ep = media.tv.episodes[0].epNumber;
-            this.router.navigate([], { queryParams: { ep }, replaceUrl: true });
+            const replacedUrlParams = new URLSearchParams({ ...this.route.snapshot.queryParams, ep: ep.toString() }).toString();
+            this.location.replaceState('/watch/' + media._id + '-' + media.slug.substring(0, 100), replacedUrlParams);
+            this.watchTVEpisode(media, ep);
             return;
           }
           this.watchTVEpisode(media, params.epNumber);

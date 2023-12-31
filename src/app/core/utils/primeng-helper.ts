@@ -5,7 +5,6 @@ import { InputNumber } from 'primeng/inputnumber';
 import { TabMenu } from 'primeng/tabmenu';
 import { ZIndexUtils } from 'primeng/utils';
 import { first } from 'rxjs';
-import { InputSwitch } from 'primeng/inputswitch';
 
 export function fixNestedDialogFocus(dialogRef: DynamicDialogRef, parent: DynamicDialogRef, dialogService: DialogService, renderer: Renderer2, document: Document) {
   const dialogComponent = dialogService.dialogComponentRefMap.get(parent)?.instance;
@@ -70,13 +69,5 @@ export function applyPrimeNGPatches() {
       return this.max;
     }
     return value;
-  }
-  InputSwitch.prototype.onClick = function (event: Event, cb: HTMLInputElement) {
-    if (!this.disabled && !this.readonly) {
-      event.preventDefault();
-      this.toggle(event);
-      // Prevent focus visible
-      //cb.focus();
-    }
   }
 }

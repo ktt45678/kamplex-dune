@@ -12,9 +12,9 @@ import { ButtonModule } from 'primeng/button';
 
 import { PlaylistSettingsComponent } from './playlist-settings.component';
 import { FormDirectiveModule } from '../../directives/form-directive';
-import { LazyloadImageExtraModule } from '../../directives/lazyload-image-extra';
 import { ValidationPipeModule } from '../../pipes/validation-pipe';
 import { NumberPipeModule } from '../../pipes/number-pipe';
+import { PlaceholderPipeModule } from '../../pipes/placeholder-pipe';
 import { ImageEditorModule } from '../image-editor';
 
 @NgModule({
@@ -24,11 +24,11 @@ import { ImageEditorModule } from '../image-editor';
     ReactiveFormsModule,
     TranslocoModule,
     LazyLoadImageModule,
-    LazyloadImageExtraModule,
     ImageEditorModule,
     FormDirectiveModule,
     ValidationPipeModule,
     NumberPipeModule,
+    PlaceholderPipeModule,
     DynamicDialogModule,
     RadioButtonModule,
     InputTextModule,

@@ -1,5 +1,5 @@
 <ng-container *transloco="let t">
-  <div class="tw-bg-neutral-850 tw-rounded-md tw-ml-4 tw-p-4">
+  <div class="tw-bg-neutral-850 tw-rounded-md tw-ml-4 tw-p-4 max-md:tw-mr-4">
     <div class="tw-flex tw-flex-wrap tw-mb-4">
       <div class="tw-w-full md:tw-w-auto tw-mr-auto tw-mt-2 md:tw-mt-0">
         <span class="p-input-icon-left tw-w-full">
@@ -29,7 +29,7 @@
       </ng-template>
       <ng-template pTemplate="header">
         <tr>
-          <th class="tw-w-96" pSortableColumn="title">
+          <th class="tw-w-96 tw-min-w-80" pSortableColumn="title">
             {{ t('admin.media.title') }} <p-sortIcon field="title"></p-sortIcon>
           </th>
           <th class="tw-w-28">
@@ -38,16 +38,16 @@
           <th class="tw-w-40">
             {{ t('admin.media.episodesOrDuration') }}
           </th>
-          <th class="tw-w-36" pSortableColumn="releaseDate.year">
+          <th class="tw-w-36 tw-min-w-36" pSortableColumn="releaseDate.year">
             {{ t('admin.media.releaseDate') }} <p-sortIcon field="releaseDate.year"></p-sortIcon>
           </th>
-          <th class="tw-w-auto" pSortableColumn="ratingAverage">
+          <th class="tw-w-auto tw-min-w-24" pSortableColumn="ratingAverage">
             {{ t('admin.media.rating') }} <p-sortIcon field="ratingAverage"></p-sortIcon>
           </th>
-          <th class="tw-w-20">
+          <th class="tw-w-20 tw-min-w-20">
             {{ t('admin.media.pStatus') }}
           </th>
-          <th class="tw-w-32"></th>
+          <th class="tw-w-32 tw-min-w-32"></th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-media>
@@ -58,7 +58,7 @@
                 <div *ngIf="media.thumbnailPosterUrl; else noPoster"
                   class="tw-aspect-w-2 tw-aspect-h-3 tw-rounded-md tw-overflow-hidden">
                   <img class="tw-object-cover" [lazyLoad]="media.smallPosterUrl"
-                    [lazyLoadPlaceholder]="media.posterColor | rgbColor"
+                    [defaultImage]="media.posterPlaceholder | thumbhashUrl"
                     errorImage="assets/images/media-poster-error-sm.png" [alt]="media.title">
                 </div>
                 <ng-template #noPoster>

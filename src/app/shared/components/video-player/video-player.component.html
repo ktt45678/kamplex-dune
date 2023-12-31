@@ -1,20 +1,21 @@
 <ng-container *transloco="let t; loadingTpl: loadingPlayerTpl">
-  <media-player #player aspect-ratio="16/9" preload="metadata" key-target="player" playsinline user-idle-delay="2500"
-    autoplay crossorigin [attr.data-menu-open]="playerSettings.isMenuOpen || null"
+  <media-player #player preload="metadata" key-target="player" playsinline user-idle-delay="2500" autoplay crossorigin
+    [attr.data-menu-open]="playerSettings.isMenuOpen || null"
     [attr.data-fill-screen]="playerSettings.fillScreen || null" [attr.data-mobile]="playerSupports.isMobile || null"
-    [attr.data-touch-device]="playerSupports.isTouchDevice || null" [attr.thumbnails]="playerSettings.previewThumbnail">
+    [attr.data-touch-device]="playerSupports.isTouchDevice || null">
     <!--image-cdn="https://wsrv.nl/?url={url}"-->
-    <media-outlet class="tw-h-full">
-      <ng-container *ngIf="!playerSupports.isTouchDevice; else touchGestures">
-        <media-gesture *ngIf="playerStore.canPlay" event="click" action="toggle:paused"></media-gesture>
-        <media-gesture event="dblclick" action="toggle:fullscreen"></media-gesture>
-      </ng-container>
-      <ng-template #touchGestures>
-        <media-gesture class="media-gesture-forward" event="dblclick" action="seek:5"></media-gesture>
-        <media-gesture class="media-gesture-rewind" event="dblclick" action="seek:-5"></media-gesture>
-      </ng-template>
-      <media-captions [ngStyle]="playerSettings.subtitleStyles"></media-captions>
-    </media-outlet>
+    <media-provider>
+    </media-provider>
+    <ng-container *ngIf="!playerSupports.isTouchDevice; else touchGestures">
+      <media-gesture class="media-gesture" *ngIf="playerStore.canPlay" event="click"
+        action="toggle:paused"></media-gesture>
+      <media-gesture class="media-gesture" event="dblclick" action="toggle:fullscreen"></media-gesture>
+    </ng-container>
+    <ng-template #touchGestures>
+      <media-gesture class="media-gesture media-gesture-forward" event="dblclick" action="seek:5"></media-gesture>
+      <media-gesture class="media-gesture media-gesture-rewind" event="dblclick" action="seek:-5"></media-gesture>
+    </ng-template>
+    <media-captions class="media-captions" [ngStyle]="playerSettings.subtitleStyles"></media-captions>
     <div *ngIf="!playerStore.canPlay || playerStore.waiting" class="tw-absolute tw-absolute-center tw-z-1
       tw-pointer-events-none" aria-label="Loading media">
       <p-progressSpinner strokeWidth="3px" styleClass="max-sm:!tw-w-20 max-sm:!tw-h-20"></p-progressSpinner>
@@ -91,13 +92,29 @@
         </div>
       </div>
       <div class="tw-flex tw-flex-wrap tw-content-end tw-h-64 tw-bg-gradient-to-t tw-from-black/60 tw-to-transparent">
-        <media-time-slider step="1" key-step="5" shift-key-multiplier="2" class="tw-pointer-events-auto">
+        <!-- <media-time-slider step="1" key-step="5" shift-key-multiplier="2" class="tw-pointer-events-auto">
           <div part="track track-hover"></div>
           <div slot="preview">
-            <media-slider-thumbnail />
+            <media-slider-thumbnail [attr.src]="playerSettings.previewThumbnail" />
             <media-slider-value type="pointer" format="time">
             </media-slider-value>
           </div>
+        </media-time-slider> -->
+        <media-time-slider step="1" key-step="5" shift-key-multiplier="2"
+          class="media-player-slider media-player-time-slider">
+          <div class="slider-track slider-track-container">
+            <div class="slider-track-fill slider-track"></div>
+            <div class="slider-track-progress slider-track"></div>
+          </div>
+          <media-slider-preview class="media-player-slider-preview" noClamp>
+            <media-slider-thumbnail #sliderThumbnail cdn-url="https://wsrv.nl/?url={url}" cdn-preload="true"
+              class="media-player-slider-thumbnail">
+              <img *ngIf="playerSettings.activeThumbPlaceholder && thumbnailStore.loading"
+                class="slider-thumbnail-placeholder" [src]="playerSettings.activeThumbPlaceholder | thumbhashUrl">
+            </media-slider-thumbnail>
+            <media-slider-value class="media-player-slider-value" format="time"></media-slider-value>
+          </media-slider-preview>
+          <div class="slider-thumb"></div>
         </media-time-slider>
         <div #bottomControls role="group" class="player-bottom-controls tw-flex tw-justify-between tw-w-full"
           [ngClass]="{ 'tw-pointer-events-auto': !playerSupports.isMobile }"
@@ -121,9 +138,15 @@
                 aria-label="Mute audio" aria-keyshortcuts="m" (click)="toggleMute()">
                 <player-mute-icon [muted]="playerStore.muted" [volume]="playerStore.volume"></player-mute-icon>
               </button>
-              <media-volume-slider class="tw-w-0 tw-pointer-events-auto tw-transition-width-height tw-duration-200"
-                key-step="5">
-                <media-slider-value type="pointer" format="percent" slot="preview" />
+              <media-volume-slider key-step="5" class="media-player-slider media-player-volume-slider tw-w-0 tw-pointer-events-auto
+                tw-transition-width-height tw-duration-200">
+                <div class="slider-track">
+                  <div class="slider-track-fill slider-track"></div>
+                </div>
+                <media-slider-preview class="media-player-slider-preview" noClamp>
+                  <media-slider-value type="pointer" format="percent" />
+                </media-slider-preview>
+                <div class="slider-thumb"></div>
               </media-volume-slider>
             </div>
             <div class="[&>*]:tw-text-sm" [class]="playerSupports.isMobile ? 'tw-ml-4' : 'tw-ml-2'">

@@ -14,7 +14,7 @@
               <div class="tw-flex-grow-0 tw-flex-shrink-0 tw-basis-16">
                 <div class="tw-aspect-w-2 tw-aspect-h-3 tw-rounded-md tw-overflow-hidden">
                   <img *ngIf="media.thumbnailPosterUrl; else noPoster" class="tw-object-cover"
-                    [lazyLoad]="media.thumbnailPosterUrl" [lazyLoadPlaceholder]="media.posterColor | rgbColor"
+                    [lazyLoad]="media.thumbnailPosterUrl" [defaultImage]="media.posterPlaceholder | thumbhashUrl"
                     [alt]="media.title" errorImage="assets/images/media-poster-md.png">
                   <ng-template #noPoster>
                     <img class="tw-object-cover" src="assets/images/media-poster-md.png" loading="lazy"

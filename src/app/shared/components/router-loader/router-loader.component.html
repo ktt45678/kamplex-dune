@@ -1,0 +1,3 @@
+<ng-container *ngIf="value != null ? value : (value$ | async) as progress">
+  <div class="ngx-bar" [style.background]="color" [style.height]="height" [style.width]="progress + '%'"></div>
+</ng-container>

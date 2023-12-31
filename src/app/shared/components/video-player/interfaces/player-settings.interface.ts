@@ -1,14 +1,17 @@
 import { NgStyle } from '@angular/common';
-import { Dispose } from 'maverick.js';
+import { MediaPlayerElement } from 'vidstack/elements';
 import { Subject, Subscription } from 'rxjs';
 
-import { KPTrack } from './track.interface';
+import type { KPTrack } from './track.interface';
+import type { ThumbnailFrame } from './thumbnail-frame.interface';
 
 export interface PlayerSettings {
   readonly playbackSpeeds: number[];
   tracks: KPTrack[];
   sourceBaseUrl: string;
   previewThumbnail: string | null;
+  thumbnailFrames: ThumbnailFrame[];
+  activeThumbPlaceholder: string | null;
   activeQualityValue: number;
   activeSpeedValue: number;
   activeTrackValue: string | null;
@@ -35,5 +38,5 @@ export interface PlayerSettings {
   playToastAnimEndSub?: Subscription;
   updateSettingsSub?: Subscription;
   playerDestroyed: Subject<void>;
-  storeDisposeFn: Dispose[];
+  storeDisposeFn: ReturnType<typeof MediaPlayerElement.prototype.subscribe>[];
 }

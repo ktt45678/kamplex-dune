@@ -12,4 +12,5 @@ export interface UserDetails extends User {
   smallBannerUrl?: string;
   fullBannerUrl?: string;
   bannerColor?: number;
+  bannerPlaceholder?: string;
 }

@@ -17,7 +17,7 @@
             <!-- Poster -->
             <div class="tw-aspect-w-2 tw-aspect-h-3 tw-rounded-lg tw-overflow-hidden">
               <img *ngIf="media.thumbnailPosterUrl; else noPoster" class="tw-object-cover"
-                [lazyLoad]="media.thumbnailPosterUrl" [lazyLoadPlaceholder]="media.posterColor | rgbColor"
+                [lazyLoad]="media.thumbnailPosterUrl" [defaultImage]="media.posterPlaceholder | thumbhashUrl"
                 [alt]="media.title" errorImage="assets/images/media-poster-md.png">
               <ng-template #noPoster>
                 <img class="tw-object-cover" lazyLoad="assets/images/media-poster-md.png"
@@ -74,15 +74,15 @@
         <ng-template #mediaTabs let-tabStyleClass="tabStyleClass">
           <p-tabView [styleClass]="tabStyleClass">
             <p-tabPanel class="tw-text-white" [header]="t('media.details.information')">
-              <p class="tw-text-base sm:tw-text-lg tw-font-bold tw-leading-5">{{
+              <p class="tw-text-base sm:tw-text-lg tw-leading-5">{{
                 t('media.details.overview') }}</p>
               <p class="tw-text-gray-200 tw-text-base tw-mt-2">{{ media.overview }}</p>
               <p class="tw-text-base tw-leading-5 tw-mt-4">
-                <span class="tw-font-bold">{{ t('media.details.studios') }}: </span>
+                <span>{{ t('media.details.studios') }}: </span>
                 <ng-container *ngIf="media.studios.length; else noStudios">
                   <ng-container
                     *ngFor="let studio of media.studios; let first = first; let last = last; trackBy: track_Id">
-                    <a class="hover:tw-underline focus-visible:tw-underline" [class.tw-ml-2]="!first"
+                    <a class="hover:tw-underline focus-visible:tw-underline tw-font-semibold" [class.tw-ml-2]="!first"
                       [routerLink]="['/list', 'studio', studio._id]">{{ studio.name }}</a>
                     <span *ngIf="!last">,</span>
                   </ng-container>
@@ -92,11 +92,11 @@
                 </ng-template>
               </p>
               <p class="tw-text-base tw-leading-5 tw-mt-2">
-                <span class="tw-font-bold">{{ t('media.details.producers') }}: </span>
+                <span>{{ t('media.details.producers') }}: </span>
                 <ng-container *ngIf="media.producers.length; else noProducers">
                   <ng-container
                     *ngFor="let producer of media.producers; let first = first; let last = last; trackBy: track_Id">
-                    <a class="hover:tw-underline focus-visible:tw-underline" [class.tw-ml-2]="!first"
+                    <a class="hover:tw-underline focus-visible:tw-underline tw-font-semibold" [class.tw-ml-2]="!first"
                       [routerLink]="['/list', 'producer', producer._id]">{{ producer.name }}</a>
                     <span *ngIf="!last">,</span>
                   </ng-container>
@@ -106,20 +106,34 @@
                 </ng-template>
               </p>
               <p class="tw-text-base tw-leading-5 tw-mt-2">
-                <span class="tw-font-bold">{{ t('media.details.releaseDate') }}: </span>
+                <span>{{ t('media.details.releaseDate') }}: </span>
                 <span>{{ media.releaseDate | shortDate }}</span>
+                <span *ngIf="media.type === MediaType.TV"> {{ t('media.details.releaseDateTo')
+                  }}
+                  @if (media.tv.lastAirDate) {
+                  {{ media.tv.lastAirDate | shortDate }}
+                  }
+                  @else {
+                  {{ t('media.details.releaseDateToNow') }}
+                  }
+                </span>
               </p>
               <p class="tw-text-base tw-leading-5 tw-mt-2">
-                <span class="tw-font-bold">{{ t('media.details.status') }}: </span>
+                <span>{{ t('media.details.status') }}: </span>
                 <span>{{ t('media.statusOptions.' + media.status) }}</span>
               </p>
               <p *ngIf="media.tags.length" class="tw-text-base tw-leading-5 tw-mt-2">
-                <span class="tw-font-bold">{{ t('media.details.tags') }}: </span>
+                <span>{{ t('media.details.tags') }}: </span>
                 <ng-container *ngFor="let tag of media.tags; let first = first; let last = last; trackBy: track_Id">
-                  <a class="hover:tw-underline focus-visible:tw-underline" [class.tw-ml-2]="!first"
+                  <a class="hover:tw-underline focus-visible:tw-underline tw-font-semibold" [class.tw-ml-2]="!first"
                     [routerLink]="['/list', 'tag', tag._id]">{{ tag.name }}</a>
                   <span *ngIf="!last">,</span>
                 </ng-container>
+              </p>
+              <p class="tw-text-base tw-leading-5 tw-mt-2">
+                <span>{{ t('media.details.releaseYear') }}: </span>
+                <a class="hover:tw-underline focus-visible:tw-underline tw-font-semibold"
+                  [routerLink]="['/list', 'year', media.releaseDate.year]">{{ media.releaseDate.year }}</a>
               </p>
             </p-tabPanel>
             <p-tabPanel [header]="t('media.details.videos')">

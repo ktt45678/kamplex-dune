@@ -8,7 +8,7 @@
             <div class="tw-aspect-w-2 tw-aspect-h-3 [&>*]:tw-rounded-md">
               <img *ngIf="rating.media.thumbnailPosterUrl && rating.media.thumbnailPosterUrl; else noPoster"
                 class="tw-object-cover" [lazyLoad]="rating.media.thumbnailPosterUrl"
-                [lazyLoadPlaceholder]="rating.media.posterColor| rgbColor" [alt]="rating.media.title"
+                [defaultImage]="rating.media.posterPlaceholder | thumbhashUrl" [alt]="rating.media.title"
                 errorImage="assets/images/media-poster-md.png">
               <ng-template #noPoster>
                 <img class="tw-object-cover" src="assets/images/media-poster-md.png" loading="lazy"
@@ -18,7 +18,7 @@
           </div>
         </div>
         <div class="tw-mx-4">
-          <p class="tw-text-xs sm:tw-text-sm md:tw-text-base tw-font-bold">{{ rating.media.title }}</p>
+          <p class="tw-text-xs sm:tw-text-sm md:tw-text-base tw-font-medium">{{ rating.media.title }}</p>
           <p class="tw-text-xl xs:tw-text-2xl [&>*]:tw-align-middle">
             <i class="ms ms-star ms-fill tw-text-3xl tw-text-yellow-500 -tw-mt-0.5"></i>
             <span class="tw-text-white tw-font-medium tw-ml-1.5">{{ rating.score }}</span>

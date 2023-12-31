@@ -363,7 +363,7 @@
           <div class="tw-flex tw-flex-wrap tw-w-full md:tw-w-2/3 tw-gap-2 tw-content-center">
             <p-chip *ngFor="let genre of createOrUpdateForm.value.genres" [label]="genre.name" [removable]="true"
               styleClass="p-chip-sm tw-rounded-full"
-              (onRemove)="genreAC.removeItemByObject(genre); genreAC.cd.markForCheck()"></p-chip>
+              (onRemove)="genreAC.removeOptionByObject(genre); genreAC.cd.markForCheck()"></p-chip>
           </div>
         </div>
         <div class="tw-flex max-md:tw-flex-wrap tw-my-2">
@@ -383,7 +383,7 @@
           <div class="tw-flex tw-flex-wrap tw-w-full md:tw-w-2/3 tw-gap-2 tw-content-center">
             <p-chip *ngFor="let studio of createOrUpdateForm.value.studios" [label]="studio.name" [removable]="true"
               styleClass="p-chip-sm tw-rounded-full"
-              (onRemove)="studioAC.removeItemByObject(studio); studioAC.cd.markForCheck()"></p-chip>
+              (onRemove)="studioAC.removeOptionByObject(studio); studioAC.cd.markForCheck()"></p-chip>
           </div>
         </div>
         <div class="tw-flex max-md:tw-flex-wrap tw-my-2">
@@ -403,7 +403,7 @@
           <div class="tw-flex tw-flex-wrap tw-w-full md:tw-w-2/3 tw-gap-2 tw-content-center">
             <p-chip *ngFor="let producer of createOrUpdateForm.value.producers" [label]="producer.name"
               [removable]="true" styleClass="p-chip-sm tw-rounded-full"
-              (onRemove)="producerAC.removeItemByObject(producer); producerAC.cd.markForCheck()"></p-chip>
+              (onRemove)="producerAC.removeOptionByObject(producer); producerAC.cd.markForCheck()"></p-chip>
           </div>
         </div>
         <div class="tw-flex max-md:tw-flex-wrap tw-my-2">
@@ -423,7 +423,7 @@
           <div class="tw-flex tw-flex-wrap tw-w-full md:tw-w-2/3 tw-gap-2 tw-content-center">
             <p-chip *ngFor="let tag of createOrUpdateForm.value.tags" [label]="tag.name" [removable]="true"
               styleClass="p-chip-sm tw-rounded-full"
-              (onRemove)="tagAC.removeItemByObject(tag); tagAC.cd.markForCheck()"></p-chip>
+              (onRemove)="tagAC.removeOptionByObject(tag); tagAC.cd.markForCheck()"></p-chip>
           </div>
         </div>
       </ng-template>
@@ -511,8 +511,9 @@
               <span class="tw-ml-1">{{ t('admin.createMedia.subtitlesAdded', { subtitleCount }) }}</span>
             </p>
           </div>
-          <app-file-upload #subtitleFileUpload class="tw-ml-auto" accept=".vtt, .srt, .ass" styleClass="tw-w-48 tw-h-20"
-            ariaLabel="Choose a subtitle to upload" [label]="t('admin.createMedia.chooseFile')" [showFilename]="false"
+          <app-file-upload #subtitleFileUpload class="tw-ml-auto" accept=".vtt, .srt, .ass, .vtt.gz, .srt.gz, .ass.gz"
+            styleClass="tw-w-48 tw-h-20" ariaLabel="Choose a subtitle to upload"
+            [label]="t('admin.createMedia.chooseFile')" [showFilename]="false"
             (fileChange)="showAddSubtitleDialog($event)">
           </app-file-upload>
         </div>

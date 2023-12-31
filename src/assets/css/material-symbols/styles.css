@@ -1267,7 +1267,7 @@
 }
 
 .ms-block:before {
-  content: "\f326";
+  content: "block";
 }
 
 .ms-bloodtype:before {
@@ -2911,7 +2911,7 @@
 }
 
 .ms-edit:before {
-  content: "\f345";
+  content: "edit";
 }
 
 .ms-edit-attributes:before {

@@ -1,0 +1,28 @@
+:host {
+  position: relative;
+  display: block;
+  pointer-events: none;
+
+  .ngx-bar {
+    transition: width 350ms;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    border-bottom-right-radius: 1px;
+    border-top-right-radius: 1px;
+
+    [dir='rtl'] & {
+      right: 0;
+      left: unset;
+    }
+  }
+
+  &[fixed='true'] {
+    z-index: 10002;
+    .ngx-bar {
+      position: fixed;
+    }
+  }
+}

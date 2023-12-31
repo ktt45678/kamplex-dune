@@ -18,6 +18,7 @@ export class PlaylistCardComponent implements OnInit, OnChanges {
   @Output() onDelete = new EventEmitter<Playlist>();
   thumbnailUrl: string | null = null;
   thumbnailBgColor: number = 0;
+  thumbnailPlaceholder: string = '';
   userId: string | null = null;
   currentUser!: UserDetails | null;
 
@@ -40,6 +41,7 @@ export class PlaylistCardComponent implements OnInit, OnChanges {
       const playlist = <Playlist>changes['playlist'].currentValue;
       this.thumbnailUrl = playlist.thumbnailThumbnailUrl || playlist.thumbnailMedia?.smallBackdropUrl || null;
       this.thumbnailBgColor = playlist.thumbnailColor || playlist.thumbnailMedia?.backdropColor || 0;
+      this.thumbnailPlaceholder = playlist.thumbnailPlaceholder || playlist.thumbnailMedia?.backdropPlaceholder || '';
       this.ref.markForCheck();
     }
   }

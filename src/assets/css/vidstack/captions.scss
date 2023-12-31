@@ -1,40 +1,32 @@
-media-captions {
+.media-captions {
   --overlay-padding: 1%;
   --cue-color: white;
   --cue-bg-color: rgba(0, 0, 0, 0.7);
   --cue-font-size: calc(var(--overlay-height) / 100 * 5 * var(--cue-font-size-scale, 1));
   --cue-line-height: calc(var(--cue-font-size) * 1.2);
-  --cue-padding-x: calc(var(--cue-font-size) * 0.6);
-  --cue-padding-y: calc(var(--cue-font-size) * 0.4);
+  --cue-padding-x: calc(var(--cue-font-size) * 0.4);
+  --cue-padding-y: calc(var(--cue-font-size) * 0.2);
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   z-index: 1;
-  contain: strict;
+  contain: layout style;
   margin: var(--overlay-padding);
   font-size: var(--cue-font-size);
   font-weight: var(--cue-font-weight);
-  font-family: sans-serif;
   box-sizing: border-box;
   pointer-events: none;
   user-select: none;
   word-spacing: normal;
   word-break: break-word;
+  bottom: 8px;
+  transition: bottom 0.15s linear;
 }
 
-media-player[data-view-type='audio'] media-captions {
-  position: relative;
-  margin: 0;
+.media-captions[aria-hidden='true'] {
+  display: none;
 }
 
-media-captions[data-hidden] {
-  opacity: 0;
-  visibility: hidden;
-}
-
-media-captions [part='cue-display'] {
+.media-captions [data-part='cue-display'] {
   position: absolute;
   direction: ltr;
   overflow: visible;
@@ -45,88 +37,42 @@ media-captions [part='cue-display'] {
   bottom: var(--cue-bottom);
   width: var(--cue-width, auto);
   height: var(--cue-height, auto);
-  box-sizing: border-box;
   transform: var(--cue-transform);
   text-align: var(--cue-text-align);
   writing-mode: var(--cue-writing-mode, unset);
-  background-color: var(--cue-window-color);
   white-space: pre-line;
   unicode-bidi: plaintext;
   min-width: min-content;
   min-height: min-content;
 }
 
-media-captions[data-dir='rtl'] [part='cue-display'] {
+.media-captions[data-dir='rtl'] [data-part='cue-display'] {
   direction: rtl;
 }
 
-media-captions [part='cue'] {
+.media-captions [data-part='cue'] {
   display: inline-block;
   contain: content;
   border-radius: 2px;
   padding: var(--cue-padding-y) var(--cue-padding-x);
   line-height: var(--cue-line-height);
   background-color: var(--cue-bg-color);
-  box-sizing: border-box;
   color: var(--cue-color);
-  box-shadow: var(--cue-box-shadow);
-  white-space: var(--cue-white-space, pre-wrap);
+  white-space: pre-wrap;
   outline: var(--cue-outline);
   text-shadow: var(--cue-text-shadow);
 }
 
-media-captions [part='cue-display'][data-vertical] [part='cue'] {
+.media-captions [data-part='cue-display'][data-vertical] [data-part='cue'] {
   padding: var(--cue-padding-x) var(--cue-padding-y);
-}
-
-media-captions [part='region'] {
-  position: absolute;
-  display: inline-flex;
-  flex-flow: column;
-  justify-content: flex-start;
-  width: var(--region-width);
-  height: var(--region-height);
-  min-height: 0px;
-  max-height: var(--region-height);
-  writing-mode: horizontal-tb;
-  top: var(--region-top, calc(var(--overlay-height) * var(--region-viewport-anchor-y) / 100 - var(--region-height) * var(--region-anchor-y) / 100));
-  left: var(--region-left, calc(calc(var(--region-viewport-anchor-x) * 1%) - calc(var(--region-width) * var(--region-anchor-x) / 100)));
-  right: var(--region-right);
-  bottom: var(--region-bottom);
-  overflow: hidden;
-  overflow-wrap: break-word;
-  box-sizing: border-box;
-}
-
-/*
-media-captions [part='region'][data-active] {
-}
-*/
-
-media-captions [part='region'][data-scroll='up'] {
-  justify-content: end;
-}
-
-media-captions [part='region'][data-active][data-scroll='up'] {
-  transition: top 0.433s;
-}
-
-media-captions [part='region'] > [part='cue-display'] {
-  position: relative;
-  width: auto;
-  left: var(--cue-offset);
-  height: var(--cue-height, auto);
-  text-align: var(--cue-text-align);
-  unicode-bidi: plaintext;
-  margin-top: 2px;
-}
-
-media-captions [part='region'] [part='cue'] {
-  position: relative;
-  border-radius: 0px;
 }
 
 // JASSUB
 .JASSUB {
+  position: absolute !important;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   pointer-events: none;
 }

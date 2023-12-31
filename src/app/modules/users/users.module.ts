@@ -47,7 +47,6 @@ import { AddToPlaylistModule } from '../../shared/dialogs/add-to-playlist';
 import { AddAllToPlaylistModule } from '../../shared/dialogs/add-all-to-playlist';
 import { PlaylistSettingsModule } from '../../shared/dialogs/playlist-settings';
 import { CommonDirectiveModule } from '../../shared/directives/common-directive';
-import { LazyloadImageExtraModule } from '../../shared/directives/lazyload-image-extra';
 import { FormDirectiveModule } from '../../shared/directives/form-directive';
 import { CdkMenuCustomModule } from '../../shared/directives/cdk-menu-custom';
 import { OverlayPanelModule } from '../../shared/directives/overlay-panel';
@@ -57,6 +56,7 @@ import { ValidationPipeModule } from '../../shared/pipes/validation-pipe';
 import { MarkdownPipeModule } from '../../shared/pipes/markdown-pipe';
 import { HtmlPipeModule } from '../../shared/pipes/html-pipe';
 import { StringPipeModule } from '../../shared/pipes/string-pipe';
+import { PlaceholderPipeModule } from '../../shared/pipes/placeholder-pipe';
 import { UsersService } from '../../core/services';
 import { RatedComponent } from './pages/rated/rated.component';
 import { StarRatingModule } from '../../shared/components/star-rating';
@@ -104,9 +104,9 @@ import { AltAutoCompleteModule } from '../../core/utils/primeng';
     MarkdownPipeModule,
     HtmlPipeModule,
     StringPipeModule,
+    PlaceholderPipeModule,
     CommonDirectiveModule,
     LazyLoadImageModule,
-    LazyloadImageExtraModule,
     InfiniteScrollModule,
     FormDirectiveModule,
     CdkMenuCustomModule,

@@ -7,7 +7,6 @@
 @import "../node_modules/@angular/cdk/overlay-prebuilt.css";
 
 /* Vidstack */
-@import "../node_modules/vidstack/styles/base.css";
 @import "./assets/css/vidstack/base.scss";
 @import "./assets/css/vidstack/gesture.scss";
 @import "./assets/css/vidstack/sliders.scss";
@@ -64,7 +63,7 @@ p {
   word-break: break-word;
 }
 
-.ng-lazyloading {
+.ng-lazyload-extended-placeholder.ng-lazyloading {
   opacity: 0;
 }
 

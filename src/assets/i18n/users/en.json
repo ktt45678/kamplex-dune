@@ -135,6 +135,7 @@
   "updateProfile": {
     "nickname": "Nickname",
     "about": "About",
+    "aboutPlaceholder": "About user",
     "submit": "{{ users.updateUsername.submit }}"
   },
   "updatePrivacy": {

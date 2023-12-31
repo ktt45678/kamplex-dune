@@ -199,7 +199,7 @@ export class HomeHeaderComponent implements OnInit {
         return;
       autoComplete.overlayVisible = false;
       autoComplete.cd.markForCheck();
-      this.loadAdvancedSearch(autoComplete.inputValue);
+      this.loadAdvancedSearch(autoComplete.value);
     }
   }
 

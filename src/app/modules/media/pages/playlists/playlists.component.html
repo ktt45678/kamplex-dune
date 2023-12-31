@@ -22,7 +22,8 @@
                     tw-flex-shrink-0">
                     <img *ngIf="playlist.author.smallAvatarUrl; else noAvatar" class="tw-object-cover"
                       [lazyLoad]="playlist.author.smallAvatarUrl"
-                      [lazyLoadPlaceholder]="playlist.author.avatarColor | rgbColor" [alt]="playlist.author.username">
+                      [defaultImage]="playlist.author.avatarPlaceholder | thumbhashUrl"
+                      [alt]="playlist.author.username">
                     <ng-template #noAvatar>
                       <span class="ms ms-account-circle ms-opsz-lg tw-text-4xl tw-leading-9"></span>
                     </ng-template>
@@ -54,7 +55,7 @@
                       <div class="tw-aspect-w-2 tw-aspect-h-3 [&>*]:tw-rounded-md">
                         <img *ngIf="item.media.thumbnailPosterUrl; else noPoster" class="tw-object-cover"
                           [lazyLoad]="item.media.thumbnailPosterUrl"
-                          [lazyLoadPlaceholder]="item.media.posterColor | rgbColor" [alt]="item.media.title"
+                          [defaultImage]="item.media.posterPlaceholder | thumbhashUrl" [alt]="item.media.title"
                           errorImage="assets/images/media-poster-md.png">
                         <ng-template #noPoster>
                           <img class="tw-object-cover" src="assets/images/media-poster-md.png" loading="lazy"

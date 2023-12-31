@@ -317,7 +317,7 @@ export class ConfigureEpisodeComponent implements OnInit, AfterViewInit {
     this.showEpisodePlayer = true;
     const mediaId = this.config.data!.media._id;
     const episodeNumber = this.config.data!.episode.epNumber;
-    this.mediaService.findTVStreams(mediaId, episodeNumber).subscribe((episode) => {
+    this.mediaService.findTVStreams(mediaId, episodeNumber, { preview: true }).subscribe((episode) => {
       this.previewStream = episode;
       this.ref.markForCheck();
     });

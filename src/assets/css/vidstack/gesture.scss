@@ -1,5 +1,11 @@
+.media-gesture {
+  display: block;
+  position: absolute;
+  z-index: 0;
+}
+
 /* Toggle paused/playing. */
-media-gesture[action='toggle:paused'] {
+.media-gesture[action='toggle:paused'] {
   top: 0;
   left: 0;
   width: 100%;
@@ -7,7 +13,7 @@ media-gesture[action='toggle:paused'] {
 }
 
 /* Toggle fullscreen. */
-media-gesture[action='toggle:fullscreen'] {
+.media-gesture[action='toggle:fullscreen'] {
   top: 0;
   left: 0;
   width: 100%;
@@ -15,21 +21,17 @@ media-gesture[action='toggle:fullscreen'] {
 }
 
 /* Seek +5 seconds. */
-media-gesture.media-gesture-forward {
+.media-gesture.media-gesture-forward {
   top: 0;
   right: 0;
   width: 40%;
   height: 100%;
-  /* Higher z-index means this gesture will override any below it. */
-  z-index: 1;
 }
 
 /* Seek 5 seconds. */
-media-gesture.media-gesture-rewind {
+.media-gesture.media-gesture-rewind {
   top: 0;
   left: 0;
   width: 40%;
   height: 100%;
-  /* Higher z-index means this gesture will override any below it. */
-  z-index: 1;
 }

@@ -18,7 +18,7 @@
           <div>
             <div class="tw-aspect-w-2 tw-aspect-h-3 tw-rounded-t-md tw-overflow-hidden">
               <img *ngIf="media.thumbnailPosterUrl; else noPoster" class="tw-object-cover"
-                [lazyLoad]="media.thumbnailPosterUrl" [lazyLoadPlaceholder]="media.posterColor | rgbColor"
+                [lazyLoad]="media.thumbnailPosterUrl" [defaultImage]="media.posterPlaceholder | thumbhashUrl"
                 [alt]="media.title" errorImage="assets/images/media-poster-md.png">
               <ng-template #noPoster>
                 <img class="tw-object-cover" src="assets/images/media-poster-md.png" loading="lazy" [alt]="media.title">
@@ -61,7 +61,7 @@
               <div class="tw-flex-grow-0 tw-flex-shrink-0 tw-basis-16">
                 <div class="tw-aspect-w-2 tw-aspect-h-3 tw-rounded-md tw-overflow-hidden">
                   <img *ngIf="media.smallPosterUrl; else noPoster" class="tw-object-cover"
-                    [lazyLoad]="media.smallPosterUrl" [lazyLoadPlaceholder]="media.posterColor | rgbColor"
+                    [lazyLoad]="media.smallPosterUrl" [defaultImage]="media.posterPlaceholder | thumbhashUrl"
                     [alt]="media.title" errorImage="assets/images/media-poster-md.png">
                   <ng-template #noPoster>
                     <img class="tw-object-cover" src="assets/images/media-poster-md.png" loading="lazy"
@@ -133,7 +133,7 @@
       <p *ngIf="media.genres.length" class="tw-text-sm">
         <span class="tw-font-light">{{ t('media.details.genres') }}: </span>
         <ng-container *ngFor="let genre of media.genres; let first = first; let last = last; trackBy: track_Id">
-          <a class="hover:tw-underline focus-visible:tw-underline" [class.tw-ml-2]="!first"
+          <a class="hover:tw-underline focus-visible:tw-underline tw-font-semibold" [class.tw-ml-2]="!first"
             [routerLink]="['/list', 'genre', genre._id]">{{ genre.name }}</a>
           <span *ngIf="!last">,</span>
         </ng-container>

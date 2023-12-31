@@ -13,9 +13,10 @@
       </p-multiSelect> -->
       <p-altAutoComplete #genreAutoComplete formControlName="genres" [suggestions]="genreSuggestions"
         (completeMethod)="loadGenreSuggestions($event.query)" field="name" dataKey="_id" [multiple]="true"
-        [unique]="true" [placeholder]="t('media.filter.genre')" [completeOnFocus]="true" scrollHeight="300px"
-        appendTo="body" class="p-autocomplete-full" styleClass="p-autocomplete-xs" panelStyleClass="p-autocomplete-xs"
-        inputId="genres" ariaLabel="Find genres" dropdownAriaLabel="Genre search results">
+        [unique]="true" [placeholder]="t('media.filter.genre')" [completeOnFocus]="true" [hideOnSelect]="false"
+        scrollHeight="300px" appendTo="body" styleClass="p-autocomplete-full p-autocomplete-xs"
+        panelStyleClass="p-autocomplete-xs" inputId="genres" ariaLabel="Find genres"
+        dropdownAriaLabel="Genre search results">
         <ng-template let-values pTemplate="selectedItem">{{ t('media.filter.selectedGenres', { genreCount:
           values.length }) }}</ng-template>
         <ng-template let-item pTemplate="item">
@@ -48,9 +49,9 @@
       </p-dropdown>
       <p-altAutoComplete [hidden]="!showAdvanced" #tagAutoComplete formControlName="tags" [suggestions]="tagSuggestions"
         (completeMethod)="loadTagSuggestions($event.query)" field="name" dataKey="_id" [multiple]="true" [unique]="true"
-        [placeholder]="t('media.filter.tag')" [completeOnFocus]="true" scrollHeight="300px" appendTo="body"
-        class="p-autocomplete-full" styleClass="p-autocomplete-xs" panelStyleClass="p-autocomplete-xs" inputId="tags"
-        ariaLabel="Find tags" dropdownAriaLabel="Tag search results">
+        [placeholder]="t('media.filter.tag')" [completeOnFocus]="true" [hideOnSelect]="false" scrollHeight="300px"
+        appendTo="body" styleClass="p-autocomplete-full p-autocomplete-xs" panelStyleClass="p-autocomplete-xs"
+        inputId="tags" ariaLabel="Find tags" dropdownAriaLabel="Tag search results">
         <ng-template let-values pTemplate="selectedItem">{{ t('media.filter.selectedTags', { tagCount:
           values.length }) }}</ng-template>
         <ng-template let-item pTemplate="item">
@@ -82,7 +83,7 @@
         (onRemove)="filterForm.controls.search.setValue(null)"></p-chip>
       <ng-container *ngFor="let genre of filterForm.value.genres">
         <p-chip [label]="genre.name" [removable]="true" styleClass="p-chip-sm tw-rounded-full tw-mr-2"
-          (onRemove)="genreAutoComplete.removeItemByObject(genre); genreAutoComplete.cd.markForCheck()"></p-chip>
+          (onRemove)="genreAutoComplete.removeOptionByObject(genre); genreAutoComplete.cd.markForCheck()"></p-chip>
       </ng-container>
       <p-chip *ngIf="filterForm.value.type"
         [label]="t('media.mediaTypes.' + (filterForm.value.type === 'movie' ? 'movie' : 'tvShow'))" [removable]="true"
@@ -97,14 +98,14 @@
         styleClass="p-chip-sm tw-rounded-full tw-mr-2" (onRemove)="filterForm.controls.year.setValue(null)"></p-chip>
       <ng-container *ngFor="let tag of filterForm.value.tags">
         <p-chip [label]="tag.name" [removable]="true" styleClass="p-chip-sm tw-rounded-full tw-mr-2"
-          (onRemove)="tagAutoComplete.removeItemByObject(tag); tagAutoComplete.cd.markForCheck()"></p-chip>
+          (onRemove)="tagAutoComplete.removeOptionByObject(tag); tagAutoComplete.cd.markForCheck()"></p-chip>
       </ng-container>
     </div>
     <!-- <div class="tw-flex tw-mt-4 tw-items-center">
       <i class="ms ms-sell tw-mr-2 tw-text-white"></i>
       <div class="tw-mr-2" *ngFor="let tag of tagAutoComplete.value">
         <p-chip [label]="tag.name" [removable]="true" styleClass="p-chip-sm"
-          (onRemove)="tagAutoComplete.removeItemByObject(tag); tagAutoComplete.cd.markForCheck()"></p-chip>
+          (onRemove)="tagAutoComplete.removeOptionByObject(tag); tagAutoComplete.cd.markForCheck()"></p-chip>
       </div>
     </div> -->
   </form>

@@ -24,11 +24,13 @@ export interface Media {
   smallPosterUrl?: string;
   fullPosterUrl?: string;
   posterColor?: number;
+  posterPlaceholder?: string;
   backdropUrl?: string;
   thumbnailBackdropUrl?: string;
   smallBackdropUrl?: string;
   fullBackdropUrl?: string;
   backdropColor?: number;
+  backdropPlaceholder?: string;
   pStatus?: number;
   createdAt: Date;
   updatedAt: Date;

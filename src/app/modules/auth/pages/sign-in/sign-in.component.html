@@ -5,7 +5,8 @@
         [ngClass]="signInForm.disabled ? 'tw-visible' : 'tw-invisible'"></p-progressBar>
       <div class="tw-px-8 tw-py-14 tw-shadow-md">
         <h3 class="tw-text-white tw-text-3xl tw-font-bold tw-text-center tw-mb-8">{{ t('auth.signIn.formHeader') }}</h3>
-        <form [formGroup]="signInForm" formHandler (ngSubmit)="onSignInFormSubmit()">
+        <form *ngIf="!currentUser; else signedInTpl" [formGroup]="signInForm" formHandler
+          (ngSubmit)="onSignInFormSubmit()">
           <span class="p-float-label">
             <input formControlName="email" class="tw-w-full" id="email" type="text" aria-describedby="email-error"
               pInputText controlAutofocus>
@@ -41,6 +42,31 @@
             </div>
           </div>
         </form>
+        <ng-template #signedInTpl>
+          <div class="tw-text-center">
+            <div class="tw-w-32 tw-rounded-full tw-mx-auto">
+              <div class="tw-aspect-w-1 tw-aspect-h-1 [&>*]:tw-rounded-full tw-flex-shrink-0">
+                <img *ngIf="currentUser!.thumbnailAvatarUrl; else noAvatarTpl" class="tw-object-cover"
+                  [lazyLoad]="currentUser!.thumbnailAvatarUrl"
+                  [defaultImage]="currentUser!.avatarPlaceholder | thumbhashUrl" [alt]="currentUser!.username">
+                <ng-template #noAvatarTpl>
+                  <app-avatar [label]="(currentUser!.nickname || currentUser!.username) | substring"
+                    styleClass="tw-rounded-full" labelStyleClass="tw-text-5xl"></app-avatar>
+                </ng-template>
+              </div>
+            </div>
+            <p class="tw-text-white tw-mt-2">{{ t('auth.signIn.alreadySignedIn', { username: currentUser!.username })
+              }}</p>
+            <div class="tw-mt-8">
+              <a routerLink="/">
+                <button pButton class="p-button p-button-secondary p-button-shrink tw-px-4" icon="ms ms-home"
+                  [label]="t('auth.signIn.returnToHome')"></button>
+              </a>
+              <button pButton class="p-button p-button-shrink tw-px-4 tw-ml-2" icon="ms ms-logout"
+                [label]="t('auth.signIn.signOut')" (click)="onSignOut()"></button>
+            </div>
+          </div>
+        </ng-template>
       </div>
     </div>
   </div>

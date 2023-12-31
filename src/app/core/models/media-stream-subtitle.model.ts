@@ -4,4 +4,5 @@ export interface MediaStreamSubtitle {
   lang: string;
   size: number;
   src: string;
+  mimeType: string;
 }

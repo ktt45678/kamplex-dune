@@ -35,21 +35,21 @@
                   [ngClass]="displayMobileSearch ? 'tw-inline-flex' : 'tw-hidden lg:tw-inline-flex tw-mr-2'">
                   <button pButton type="button" icon="ms ms-search" aria-label="Search"
                     class="p-button-rounded p-button-text p-button-secondary p-button-sm p-button-sm-icon tw-ml-0.5"
-                    (click)="loadAdvancedSearch(mediaSearch.inputValue)">
+                    (click)="loadAdvancedSearch(mediaSearch.value)">
                   </button>
                   <p-autoComplete #mediaSearch [suggestions]="mediaSuggestions"
                     [placeholder]="t('homeHeader.searchPlaceholder')" [minLength]="2" [maxlength]="250"
                     (completeMethod)="loadMediaSuggestions($event.query)" field="title" dataKey="_id"
-                    [completeOnFocus]="false" [showEmptyMessage]="true" scrollHeight="480px" class="p-autocomplete-full"
-                    styleClass="p-inputtext-xs p-inputtext-rounded" panelStyleClass="p-autocomplete-xs" inputId="media"
-                    ariaLabel="Find media" dropdownAriaLabel="Media search results"
-                    (onKeyUp)="onMediaSearchKeyUp($event, mediaSearch)">
+                    [completeOnFocus]="false" [showEmptyMessage]="true" scrollHeight="480px"
+                    styleClass="p-autocomplete-full p-inputtext-xs p-inputtext-rounded"
+                    panelStyleClass="p-autocomplete-xs" inputId="media" ariaLabel="Find media"
+                    dropdownAriaLabel="Media search results" (onKeyUp)="onMediaSearchKeyUp($event, mediaSearch)">
                     <ng-template let-media pTemplate="item">
                       <a class="tw-flex" [routerLink]="['/details', media._id]">
                         <div class="tw-w-14">
                           <div class="tw-aspect-w-2 tw-aspect-h-3 tw-rounded-sm tw-overflow-hidden">
                             <img *ngIf="media.smallPosterUrl; else noPoster" class="tw-object-cover"
-                              [lazyLoad]="media.smallPosterUrl" [lazyLoadPlaceholder]="media.posterColor | rgbColor"
+                              [lazyLoad]="media.smallPosterUrl" [defaultImage]="media.posterPlaceholder | thumbhashUrl"
                               [alt]="media.title" errorImage="assets/images/media-poster-sm.png">
                             <ng-template #noPoster>
                               <img class="tw-object-cover" src="assets/images/media-poster-sm.png" loading="lazy"
@@ -325,7 +325,7 @@
       <div class="tw-aspect-w-1 tw-aspect-h-1 tw-rounded-full [&>*]:tw-rounded-full tw-overflow-hidden
         tw-flex-shrink-0">
         <img *ngIf="currentUser.smallAvatarUrl; else noAvatar" class="tw-object-cover"
-          [lazyLoad]="currentUser.smallAvatarUrl" [lazyLoadPlaceholder]="currentUser.avatarColor | rgbColor"
+          [lazyLoad]="currentUser.smallAvatarUrl" [defaultImage]="currentUser.avatarPlaceholder | thumbhashUrl"
           [alt]="currentUser.username">
         <ng-template #noAvatar>
           <app-avatar [label]="(currentUser.nickname || currentUser.username) | substring" styleClass="tw-rounded-full"

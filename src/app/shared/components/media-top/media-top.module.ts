@@ -6,9 +6,9 @@ import { LazyLoadImageModule } from 'ng-lazyload-image';
 
 import { MediaTopComponent } from './media-top.component';
 import { SkeletonModule } from '../skeleton';
-import { LazyloadImageExtraModule } from '../../directives/lazyload-image-extra';
 import { NumberPipeModule } from '../../pipes/number-pipe';
 import { ArrayPipeModule } from '../../pipes/array-pipe/array-pipe.module';
+import { PlaceholderPipeModule } from '../../pipes/placeholder-pipe';
 
 @NgModule({
   declarations: [MediaTopComponent],
@@ -18,9 +18,9 @@ import { ArrayPipeModule } from '../../pipes/array-pipe/array-pipe.module';
     TranslocoModule,
     LazyLoadImageModule,
     SkeletonModule,
-    LazyloadImageExtraModule,
     NumberPipeModule,
-    ArrayPipeModule
+    ArrayPipeModule,
+    PlaceholderPipeModule
   ],
   exports: [MediaTopComponent]
 })

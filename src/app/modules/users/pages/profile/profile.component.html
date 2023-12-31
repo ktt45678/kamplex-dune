@@ -40,7 +40,8 @@
           <div class="tw-w-12">
             <div class="tw-aspect-w-2 tw-aspect-h-3 [&>*]:tw-rounded-l-md">
               <img *ngIf="history.media.smallPosterUrl else noPoster" class="tw-object-cover"
-                [lazyLoad]="history.media.smallPosterUrl" [lazyLoadPlaceholder]="history.media.posterColor | rgbColor"
+                [lazyLoad]="history.media.smallPosterUrl"
+                [defaultImage]="history.media.posterPlaceholder | thumbhashUrl"
                 errorImage="assets/images/media-poster-sm.png" [alt]="history.media.title">
               <ng-template #noPoster>
                 <img class="tw-object-cover tw-rounded-md" src="assets/images/media-poster-sm.png" loading="lazy"

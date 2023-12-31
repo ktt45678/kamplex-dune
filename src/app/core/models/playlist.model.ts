@@ -8,6 +8,7 @@ export interface Playlist {
   smallThumbnailUrl?: string;
   fullThumbnailUrl?: string;
   thumbnailColor?: number;
+  thumbnailPlaceholder?: string;
   thumbnailMedia?: Pick<Media, ThumbnailMediaProps>;
   itemCount: number;
   visibility: number;
@@ -21,8 +22,10 @@ type ThumbnailMediaProps = '_id'
   | 'smallPosterUrl'
   | 'fullPosterUrl'
   | 'posterColor'
+  | 'posterPlaceholder'
   | 'backdropUrl'
   | 'thumbnailBackdropUrl'
   | 'smallBackdropUrl'
   | 'fullBackdropUrl'
-  | 'backdropColor';
+  | 'backdropColor'
+  | 'backdropPlaceholder';

@@ -62,8 +62,8 @@
             <div class="tw-aspect-w-1 tw-aspect-h-1 [&>*]:tw-rounded-full">
               <ng-container *ngIf="!avatarPreviewName && !removingAvatar; else updatingAvatarTpl">
                 <img *ngIf="currentUser.thumbnailAvatarUrl; else noAvatar" class="tw-object-cover"
-                  [lazyLoad]="currentUser.thumbnailAvatarUrl" [lazyLoadPlaceholder]="currentUser.avatarColor | rgbColor"
-                  [alt]="currentUser.username">
+                  [lazyLoad]="currentUser.thumbnailAvatarUrl"
+                  [defaultImage]="currentUser.avatarPlaceholder | thumbhashUrl" [alt]="currentUser.username">
               </ng-container>
               <ng-template #updatingAvatarTpl>
                 <ng-container *ngIf="avatarPreviewName; then: avatarPreview; else noAvatar"></ng-container>
@@ -111,14 +111,14 @@
           <label for="nickname" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
             t('users.updateProfile.nickname') }}</label>
           <input formControlName="nickname" class="p-inputtext-sm tw-w-full" id="nickname" type="text"
-            aria-describedby="nickname-error" pInputText>
+            aria-describedby="nickname-error" [placeholder]="currentUser.username" pInputText>
           <small id="nickname-error" class="p-error tw-text-xs tw-block tw-my-2"
             [invalidControl]="updateProfileForm.controls.nickname">{{ updateProfileForm.controls.nickname.errors
             | firstErrorKey:'updateProfile':'nickname' }}</small>
           <label for="about" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5 tw-mt-2">{{
             t('users.updateProfile.about') }}</label>
           <textarea formControlName="about" class="tw-w-full tw-resize-y" id="about" aria-describedby="about-error"
-            placeholder="About user" pInputTextarea [rows]="15"></textarea>
+            [placeholder]="t('users.updateProfile.aboutPlaceholder')" pInputTextarea [rows]="15"></textarea>
           <small id="about-error" class="p-error tw-text-xs tw-block tw-my-2"
             [invalidControl]="updateProfileForm.controls.about">{{ updateProfileForm.controls.about.errors
             | firstErrorKey:'updateProfile':'about' }}</small>

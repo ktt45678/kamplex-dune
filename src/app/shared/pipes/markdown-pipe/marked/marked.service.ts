@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { marked } from 'marked';
+import { marked, MarkedOptions } from 'marked';
 
 import { DompurifyService } from '../../html-pipe';
 import { SanitizeOptions } from '../interfaces';
@@ -8,7 +8,7 @@ import { SanitizeOptions } from '../interfaces';
 export class MarkedService {
   constructor(private dompurifyService: DompurifyService) { }
 
-  parse(source: string, options?: marked.MarkedOptions & SanitizeOptions) {
+  parse(source: string, options?: MarkedOptions & SanitizeOptions) {
     options = {
       ...options,
       breaks: true,
@@ -24,7 +24,7 @@ export class MarkedService {
       const html = linkRenderer.call(renderer, href, title, text);
       return localLink ? html : html.replace(/^<a /, `<a target="_blank" rel="noreferrer noopener nofollow" `);
     };
-    const parsed = marked.parse(source, { ...options, renderer });
+    const parsed = <string>marked.parse(source, { ...options, renderer, async: false });
     if (options.domPurifyConfig) {
       const sanitized = this.dompurifyService.sanitize(parsed, options.domPurifyConfig);
       return sanitized;

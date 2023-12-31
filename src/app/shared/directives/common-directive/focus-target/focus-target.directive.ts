@@ -15,7 +15,7 @@ export class FocusTargetDirective {
     if (this.focusTarget === 'none')
       return;
     if (this.focusTarget instanceof HTMLElement && 'focus' in this.focusTarget)
-      this.focusTarget.focus();
+      this.focusTarget.focus({ preventScroll: true });
   }
 
 }

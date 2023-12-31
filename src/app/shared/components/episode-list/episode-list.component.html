@@ -6,12 +6,12 @@
         <li class="tw-transition-colors tw-duration-200 hover:tw-bg-neutral-800"
           routerLinkActive="tw-bg-neutral-725 hover:!tw-bg-neutral-725"
           *ngFor="let episode of episodeList; trackBy: trackId">
-          <a [routerLink]="['/watch', media._id]" [queryParams]="{ ep: episode.epNumber}" class="tw-flex tw-flex-wrap
-            sm:tw-flex-nowrap tw-p-1 tw-group focus-visible:tw-shadow-focus-box focus-visible:tw-rounded-md">
+          <a [routerLink]="['/watch', media._id]" [queryParams]="{ ep: episode.epNumber}"
+            class="tw-flex tw-p-1 tw-group focus-visible:tw-shadow-focus-box focus-visible:tw-rounded-md">
             <div [ngClass]="stillStyleClass">
               <div class="tw-aspect-w-16 tw-aspect-h-9 tw-rounded-md">
                 <img *ngIf="episode.thumbnailStillUrl; else noStill" class="tw-object-cover tw-rounded-md"
-                  [lazyLoad]="episode.thumbnailStillUrl" [lazyLoadPlaceholder]="episode.stillColor | rgbColor"
+                  [lazyLoad]="episode.thumbnailStillUrl" [defaultImage]="episode.stillPlaceholder | thumbhashUrl"
                   placeholderStyleClass="tw-rounded-md" [alt]="episode.name"
                   errorImage="assets/images/episode-image-md.png">
                 <ng-template #noStill>
@@ -25,7 +25,7 @@
               </div>
             </div>
             <div [ngClass]="infoStyleClass">
-              <p class="tw-text-white tw-text-sm md:tw-text-base tw-leading-5 tw-font-bold tw-line-clamp-2">
+              <p class="tw-text-white tw-text-sm md:tw-text-base tw-leading-5 tw-font-bold tw-line-clamp-1">
                 <span *ngIf="episode.name; else noEpisodeName">{{ episode.epNumber }}. {{ episode.name }}</span>
                 <ng-template #noEpisodeName>
                   <span>{{ t('media.episode.episodePrefix') }} {{ episode.epNumber }}</span>

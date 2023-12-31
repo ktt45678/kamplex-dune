@@ -12,4 +12,5 @@ type AuthorProps = '_id'
   | 'thumbnailAvatarUrl'
   | 'smallAvatarUrl'
   | 'fullAvatarUrl'
-  | 'avatarColor';
+  | 'avatarColor'
+  | 'avatarPlaceholder';

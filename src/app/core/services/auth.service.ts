@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import jwt_decode from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 
 import { UserDetails, JWTWithPayload } from '../models';
 import { ConfirmEmailDto, PasswordRecoveryDto, ResetPasswordDto, SignInDto, SignUpDto } from '../dto/auth';
@@ -81,7 +81,7 @@ export class AuthService {
     const accessToken = this.accessTokenValue;
     if (accessToken) {
       // Parse json object from base64 encoded jwt token
-      const jwtToken = jwt_decode<any>(accessToken);
+      const jwtToken = jwtDecode<any>(accessToken);
       // Set a timeout to refresh the token a minute before it expires
       const expires = new Date(jwtToken.exp * 1000);
       const timeout = expires.getTime() - Date.now() - (60 * 1000);

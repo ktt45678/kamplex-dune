@@ -7,9 +7,9 @@ import { ButtonModule } from 'primeng/button';
 
 import { EpisodeListComponent } from './episode-list.component';
 import { SkeletonModule } from '../skeleton';
-import { LazyloadImageExtraModule } from '../../directives/lazyload-image-extra';
 import { DateTimePipeModule } from '../../pipes/date-time-pipe';
 import { NumberPipeModule } from '../../pipes/number-pipe';
+import { PlaceholderPipeModule } from '../../pipes/placeholder-pipe';
 
 @NgModule({
   declarations: [
@@ -22,8 +22,8 @@ import { NumberPipeModule } from '../../pipes/number-pipe';
     LazyLoadImageModule,
     ButtonModule,
     SkeletonModule,
-    LazyloadImageExtraModule,
     DateTimePipeModule,
+    PlaceholderPipeModule,
     NumberPipeModule
   ],
   exports: [

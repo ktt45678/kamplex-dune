@@ -14,4 +14,5 @@ export interface User {
   smallAvatarUrl?: string;
   fullAvatarUrl?: string;
   avatarColor?: number;
+  avatarPlaceholder?: string;
 }

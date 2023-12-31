@@ -44,6 +44,7 @@
     "status": "Status",
     "genres": "Genres",
     "tags": "Tags",
+    "releaseYear": "Year",
     "videos": "Videos",
     "noVideos": "No videos found",
     "episodes": "Episodes",

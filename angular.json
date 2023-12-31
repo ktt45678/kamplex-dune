@@ -8,7 +8,8 @@
       "schematics": {
         "@schematics/angular:component": {
           "style": "scss",
-          "changeDetection": "OnPush"
+          "changeDetection": "OnPush",
+          "standalone": false
         },
         "@schematics/angular:application": {
           "strict": true
@@ -24,8 +25,7 @@
             "allowedCommonJsDependencies": [
               "@messageformat/core",
               "flat",
-              "plyr",
-              "hls.js",
+              "dashjs",
               "dompurify"
             ],
             "outputPath": "dist/kamplex-v2",
@@ -86,10 +86,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "kamplex-v2:build:production"
+              "buildTarget": "kamplex-v2:build:production"
             },
             "development": {
-              "browserTarget": "kamplex-v2:build:development"
+              "buildTarget": "kamplex-v2:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -97,7 +97,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "kamplex-v2:build"
+            "buildTarget": "kamplex-v2:build"
           }
         },
         "test": {

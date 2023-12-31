@@ -1,4 +1,4 @@
-import { MediaState } from 'vidstack';
+import type { MediaState } from 'vidstack';
 
 type PlayerStoreProps =
   'autoplayError' |

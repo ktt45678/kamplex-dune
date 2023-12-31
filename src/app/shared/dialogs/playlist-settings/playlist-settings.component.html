@@ -39,13 +39,14 @@
               </ng-template>
               <ng-template #customThumbnail>
                 <img *ngIf="playlist.thumbnailThumbnailUrl; else thumbnailMedia" class="tw-object-cover"
-                  [lazyLoad]="playlist.thumbnailThumbnailUrl" [lazyLoadPlaceholder]="playlist.thumbnailColor | rgbColor"
-                  [alt]="playlist.name" errorImage="assets/images/media-backdrop-md.png">
+                  [lazyLoad]="playlist.thumbnailThumbnailUrl"
+                  [defaultImage]="playlist.thumbnailPlaceholder | thumbhashUrl" [alt]="playlist.name"
+                  errorImage="assets/images/media-backdrop-md.png">
               </ng-template>
               <ng-template #thumbnailMedia>
                 <img *ngIf="playlist.thumbnailMedia && playlist.thumbnailMedia.smallBackdropUrl; else noThumbnail"
                   class="tw-object-cover" [lazyLoad]="playlist.thumbnailMedia.smallBackdropUrl"
-                  [lazyLoadPlaceholder]="playlist.thumbnailMedia.backdropColor | rgbColor" [alt]="playlist.name"
+                  [defaultImage]="playlist.thumbnailMedia.backdropPlaceholder | thumbhashUrl" [alt]="playlist.name"
                   errorImage="assets/images/media-backdrop-md.png">
               </ng-template>
               <ng-template #noThumbnail>

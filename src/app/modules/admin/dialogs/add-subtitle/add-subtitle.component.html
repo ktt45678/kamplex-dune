@@ -13,8 +13,9 @@
       [invalidControl]="addSubtitleForm.controls.language">{{ addSubtitleForm.controls.language.errors |
       firstErrorKey:'addMediaSubtitle':'language' }}</small>
     <!--input hidden="true" [value]="null" aria-describedby="file-error" /-->
-    <app-file-upload formControlName="file" accept=".vtt, .srt, .ass" [label]="t('admin.addMediaSubtitle.chooseFile')"
-      [disabledControl]="isAddingSubtitle" ariaDescribedby="file-error">
+    <app-file-upload formControlName="file" accept=".vtt, .srt, .ass, .vtt.gz, .srt.gz, .ass.gz"
+      [label]="t('admin.addMediaSubtitle.chooseFile')" [disabledControl]="isAddingSubtitle"
+      ariaDescribedby="file-error">
     </app-file-upload>
     <!--label for="file" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">
       {{ t('admin.addMediaSubtitle.file') }}

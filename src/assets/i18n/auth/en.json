@@ -5,7 +5,10 @@
     "password": "Password",
     "forgotPassword": "Forgot password?",
     "signUp": "Create account",
-    "submit": "Sign in"
+    "submit": "Sign in",
+    "alreadySignedIn": "Already signed in as {{ username }}",
+    "returnToHome": "Home",
+    "signOut": "Sign out"
   },
   "signUp": {
     "formHeader": "Create Account",
@@ -29,7 +32,7 @@
     "successMessageDetail": "Your email has been activated",
     "failureMessageSummary": "Failed",
     "failureMessageDetail": "This activation request is invalid or has expired",
-    "returnToHome": "Home"
+    "returnToHome": "{{ auth.signIn.returnToHome }}"
   },
   "forgotPassword": {
     "formHeader": "Forgot Password",

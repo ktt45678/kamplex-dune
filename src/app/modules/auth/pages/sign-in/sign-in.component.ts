@@ -6,6 +6,7 @@ import { RecaptchaComponent } from 'ng-recaptcha';
 
 import { AuthService, DestroyService } from '../../../../core/services';
 import { SIGN_IN_LIMIT_COUNT, SIGN_IN_LIMIT_TTL } from '../../../../../environments/config';
+import { UserDetails } from '../../../../core/models';
 
 interface SignInForm {
   email: FormControl<string>;
@@ -26,6 +27,7 @@ export class SignInComponent implements OnInit {
   continueUrl: string;
   signInForm: FormGroup<SignInForm>;
   failureCount: number = 0;
+  currentUser: UserDetails | null = null;
 
   constructor(private ref: ChangeDetectorRef, private route: ActivatedRoute, private router: Router,
     private authService: AuthService, private destroyService: DestroyService) {
@@ -38,9 +40,10 @@ export class SignInComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.authService.currentUser) {
-      this.router.navigate([this.continueUrl]);
-    }
+    this.authService.currentUser$.pipe(takeUntil(this.destroyService)).subscribe(user => {
+      this.currentUser = user;
+      this.ref.markForCheck();
+    });
   }
 
   onSignInFormSubmit(): void {
@@ -81,6 +84,10 @@ export class SignInComponent implements OnInit {
       }),
       takeUntil(this.destroyService)
     ).subscribe();
+  }
+
+  onSignOut(): void {
+    this.authService.signOut().subscribe();
   }
 
 }

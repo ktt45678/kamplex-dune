@@ -5,7 +5,7 @@
       <div class="tw-relative">
         <div class="tw-aspect-w-16 tw-aspect-h-9 [&>*]:tw-rounded-md">
           <img *ngIf="thumbnailUrl; else noBackdrop" class="tw-object-cover" [lazyLoad]="thumbnailUrl"
-            [lazyLoadPlaceholder]="thumbnailBgColor | rgbColor" [alt]="playlist.name"
+            [defaultImage]="thumbnailPlaceholder | thumbhashUrl" [alt]="playlist.name"
             errorImage="assets/images/media-backdrop-md.png">
           <ng-template #noBackdrop>
             <img class="tw-object-cover" src="assets/images/media-backdrop-md.png" loading="lazy" [alt]="playlist.name">
@@ -23,7 +23,7 @@
     </a>
     <div class="tw-flex tw-mt-2">
       <div class="tw-flex-grow tw-cursor-pointer" (click)="playlistLink.click()">
-        <p class="tw-text-xs sm:tw-text-sm md:tw-text-base tw-font-bold tw-line-clamp-2">{{ playlist.name }}
+        <p class="tw-text-xs sm:tw-text-sm md:tw-text-base tw-font-medium tw-line-clamp-2">{{ playlist.name }}
         </p>
       </div>
       <button pButton [appMenuTriggerFor]="playlistMenu" icon="ms ms-more-vert" type="button"

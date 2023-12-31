@@ -13,6 +13,7 @@ import { cloneDeep } from 'lodash-es';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { ROUTER_LOADER_CONFIG, RouterLoaderModule } from './shared/components/router-loader';
 import { HomeLayoutModule } from './shared/layouts/home-layout';
 import { environment } from '../environments/environment';
 import { TranslocoRootModule } from './transloco-root.module';
@@ -46,6 +47,7 @@ import { HTTP_CACHE_TTL } from '../environments/config';
       }
     }),
     TranslocoRootModule,
+    RouterLoaderModule,
     HomeLayoutModule,
     ToastModule
   ],
@@ -82,6 +84,10 @@ import { HTTP_CACHE_TTL } from '../environments/config';
     {
       provide: RouteReuseStrategy,
       useClass: CustomRouteReuseStrategy
+    },
+    {
+      provide: ROUTER_LOADER_CONFIG,
+      useValue: { latencyThreshold: 100 }
     }
   ],
   bootstrap: [AppComponent]

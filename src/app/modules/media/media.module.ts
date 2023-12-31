@@ -28,13 +28,13 @@ import { WatchComponent } from './pages/watch/watch.component';
 import { DetailsComponent } from './pages/details/details.component';
 import { PlaylistsComponent } from './pages/playlists/playlists.component';
 import { ListComponent } from './pages/list/list.component';
-import { LazyloadImageExtraModule } from '../../shared/directives/lazyload-image-extra';
 import { CdkMenuCustomModule } from '../../shared/directives/cdk-menu-custom';
 import { TextDirectiveModule } from '../../shared/directives/text-directive';
-import { UrlPipeModule } from '../../shared/pipes/url-pipe';
 import { NumberPipeModule } from '../../shared/pipes/number-pipe';
 import { DateTimePipeModule } from '../../shared/pipes/date-time-pipe';
 import { TypePipeModule } from '../../shared/pipes/type-pipe';
+import { UrlPipeModule } from '../../shared/pipes/url-pipe';
+import { PlaceholderPipeModule } from '../../shared/pipes/placeholder-pipe';
 
 @NgModule({
   declarations: [
@@ -60,13 +60,13 @@ import { TypePipeModule } from '../../shared/pipes/type-pipe';
     TranslocoModule,
     LazyLoadImageModule,
     InfiniteScrollModule,
-    LazyloadImageExtraModule,
     CdkMenuCustomModule,
     TextDirectiveModule,
     NumberPipeModule,
     DateTimePipeModule,
     TypePipeModule,
     UrlPipeModule,
+    PlaceholderPipeModule,
     ButtonModule,
     DialogModule,
     DynamicDialogModule,

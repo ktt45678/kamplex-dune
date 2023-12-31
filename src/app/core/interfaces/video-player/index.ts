@@ -1,2 +1,2 @@
-export * from './m3u8-options.interface';
-export * from './stream-manifest.interface';
+export type * from './manifest-converter-options.interface';
+export type * from './stream-manifest.interface';

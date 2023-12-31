@@ -5,7 +5,8 @@
     </button>
   </div>
   <div *ngIf="media; else loadingSpinner">
-    <app-vertical-tab panelStyleClass="tw-max-w-8xl tw-mx-auto tw-my-8" contentStyleClass="tw-ml-8 tw-mr-24 md:tw-ml-0">
+    <app-vertical-tab panelStyleClass="tw-max-w-8xl tw-mx-auto tw-my-8"
+      contentStyleClass="tw-ml-8 tw-mr-8 md:tw-mr-24 md:tw-ml-0">
       <!--General info-->
       <ng-template appTabPanel [label]="t('admin.configureMedia.general')" id="general">
         <p class="tw-text-white tw-font-bold tw-text-2xl">{{ t('admin.configureMedia.general') }}</p>
@@ -73,18 +74,18 @@
                   t('admin.updateMedia.genres') }}</label>
                 <p-altAutoComplete #genreAC formControlName="genres" [suggestions]="genreSuggestions"
                   (completeMethod)="loadGenreSuggestions($event.query)" field="name" dataKey="_id" [multiple]="true"
-                  [unique]="true" [completeOnFocus]="true" scrollHeight="300px" appendTo="body" styleClass="tw-w-full"
-                  panelStyleClass="p-autocomplete-xs" inputId="genres" ariaLabel="Find genres"
-                  dropdownAriaLabel="Genre search results">
-                  <ng-template let-values pTemplate="selectedItem">{{ t('admin.updateMedia.selectedItems', { itemCount:
-                    values.length }) }}</ng-template>
+                  [unique]="true" [completeOnFocus]="true" [hideOnSelect]="false" scrollHeight="300px" appendTo="body"
+                  styleClass="p-autocomplete-full" panelStyleClass="p-autocomplete-xs" inputId="genres"
+                  ariaLabel="Find genres" dropdownAriaLabel="Genre search results">
+                  <ng-template let-option pTemplate="selectedItem">{{ t('admin.updateMedia.selectedItems', { itemCount:
+                    option.length }) }}</ng-template>
                 </p-altAutoComplete>
               </div>
               <div class="max-md:tw-hidden tw-divider-y tw-mx-8"></div>
               <div class="tw-flex tw-flex-wrap tw-w-full md:tw-w-2/3 tw-gap-2 tw-content-center">
                 <p-chip *ngFor="let genre of updateMediaForm.value.genres" [label]="genre.name" [removable]="true"
                   styleClass="p-chip-sm tw-rounded-full"
-                  (onRemove)="genreAC.removeItemByObject(genre); genreAC.cd.markForCheck()"></p-chip>
+                  (onRemove)="genreAC.removeOptionByObject(genre); genreAC.cd.markForCheck()"></p-chip>
               </div>
             </div>
             <div class="tw-flex max-md:tw-flex-wrap tw-my-2">
@@ -93,8 +94,8 @@
                   t('admin.updateMedia.studios') }}</label>
                 <p-altAutoComplete #studioAC formControlName="studios" [suggestions]="productionSuggestions"
                   (completeMethod)="loadProductionSuggestions($event.query)" field="name" dataKey="_id"
-                  [multiple]="true" [unique]="true" [completeOnFocus]="true" scrollHeight="300px" appendTo="body"
-                  styleClass="tw-w-full" panelStyleClass="p-autocomplete-xs" inputId="studios"
+                  [multiple]="true" [unique]="true" [completeOnFocus]="true" [hideOnSelect]="false" scrollHeight="300px"
+                  appendTo="body" styleClass="p-autocomplete-full" panelStyleClass="p-autocomplete-xs" inputId="studios"
                   ariaLabel="Find companies" dropdownAriaLabel="Studio search results">
                   <ng-template let-values pTemplate="selectedItem">{{ t('admin.updateMedia.selectedItems', { itemCount:
                     values.length }) }}</ng-template>
@@ -104,7 +105,7 @@
               <div class="tw-flex tw-flex-wrap tw-w-full md:tw-w-2/3 tw-gap-2 tw-content-center">
                 <p-chip *ngFor="let studio of updateMediaForm.value.studios" [label]="studio.name" [removable]="true"
                   styleClass="p-chip-sm tw-rounded-full"
-                  (onRemove)="studioAC.removeItemByObject(studio); studioAC.cd.markForCheck()"></p-chip>
+                  (onRemove)="studioAC.removeOptionByObject(studio); studioAC.cd.markForCheck()"></p-chip>
               </div>
             </div>
             <div class="tw-flex max-md:tw-flex-wrap tw-my-2">
@@ -113,9 +114,9 @@
                   t('admin.updateMedia.producers') }}</label>
                 <p-altAutoComplete #producerAC formControlName="producers" [suggestions]="productionSuggestions"
                   (completeMethod)="loadProductionSuggestions($event.query)" field="name" dataKey="_id"
-                  [multiple]="true" [unique]="true" [completeOnFocus]="true" scrollHeight="300px" appendTo="body"
-                  styleClass="tw-w-full" panelStyleClass="p-autocomplete-xs" inputId="producers"
-                  ariaLabel="Find companies" dropdownAriaLabel="Producer search results">
+                  [multiple]="true" [unique]="true" [completeOnFocus]="true" [hideOnSelect]="false" scrollHeight="300px"
+                  appendTo="body" styleClass="p-autocomplete-full" panelStyleClass="p-autocomplete-xs"
+                  inputId="producers" ariaLabel="Find companies" dropdownAriaLabel="Producer search results">
                   <ng-template let-values pTemplate="selectedItem">{{ t('admin.updateMedia.selectedItems', { itemCount:
                     values.length }) }}</ng-template>
                 </p-altAutoComplete>
@@ -124,7 +125,7 @@
               <div class="tw-flex tw-flex-wrap tw-w-full md:tw-w-2/3 tw-gap-2 tw-content-center">
                 <p-chip *ngFor="let producer of updateMediaForm.value.producers" [label]="producer.name"
                   [removable]="true" styleClass="p-chip-sm tw-rounded-full"
-                  (onRemove)="producerAC.removeItemByObject(producer); producerAC.cd.markForCheck()"></p-chip>
+                  (onRemove)="producerAC.removeOptionByObject(producer); producerAC.cd.markForCheck()"></p-chip>
               </div>
             </div>
             <div class="tw-flex max-md:tw-flex-wrap tw-my-2">
@@ -133,9 +134,9 @@
                   t('admin.updateMedia.tags') }}</label>
                 <p-altAutoComplete #tagAC formControlName="tags" [suggestions]="tagSuggestions"
                   (completeMethod)="loadTagSuggestions($event.query)" field="name" dataKey="_id" [multiple]="true"
-                  [unique]="true" [completeOnFocus]="true" scrollHeight="300px" appendTo="body" styleClass="tw-w-full"
-                  panelStyleClass="p-autocomplete-xs" inputId="tags" ariaLabel="Find tags"
-                  dropdownAriaLabel="Tag search results">
+                  [unique]="true" [completeOnFocus]="true" [hideOnSelect]="false" scrollHeight="300px" appendTo="body"
+                  styleClass="p-autocomplete-full" panelStyleClass="p-autocomplete-xs" inputId="tags"
+                  ariaLabel="Find tags" dropdownAriaLabel="Tag search results">
                   <ng-template let-values pTemplate="selectedItem">{{ t('admin.updateMedia.selectedItems', { itemCount:
                     values.length }) }}</ng-template>
                 </p-altAutoComplete>
@@ -144,7 +145,7 @@
               <div class="tw-flex tw-flex-wrap tw-w-full md:tw-w-2/3 tw-gap-2 tw-content-center">
                 <p-chip *ngFor="let tag of updateMediaForm.value.tags" [label]="tag.name" [removable]="true"
                   styleClass="p-chip-sm tw-rounded-full"
-                  (onRemove)="tagAC.removeItemByObject(tag); tagAC.cd.markForCheck()"></p-chip>
+                  (onRemove)="tagAC.removeOptionByObject(tag); tagAC.cd.markForCheck()"></p-chip>
               </div>
             </div>
             <label for="release-date" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
@@ -258,7 +259,7 @@
                   firstErrorKey:'updateMedia':'externalIds.tmdb'
                   }}</small>
               </div>
-              <div class="tw-w-full sm:tw-w-1/4 tw-pl-2">
+              <div class="tw-w-full sm:tw-w-1/4 sm:tw-pl-2">
                 <label for="external-ids-imdb" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
                   t('admin.externalIds.imdb') }}</label>
                 <input formControlName="imdb" class="tw-w-full" id="external-ids-imdb" type="text"
@@ -269,7 +270,7 @@
                   firstErrorKey:'updateMedia':'externalIds.imdb'
                   }}</small>
               </div>
-              <div class="tw-w-full sm:tw-w-1/4 tw-pl-2">
+              <div class="tw-w-full sm:tw-w-1/4 sm:tw-pl-2">
                 <label for="external-ids-anilist" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
                   t('admin.externalIds.aniList') }}</label>
                 <input formControlName="aniList" class="tw-w-full" id="external-ids-anilist" type="number" min="0"
@@ -279,7 +280,7 @@
                   updateMediaForm.controls.externalIds.controls.aniList.errors |
                   firstErrorKey:'updateMedia':'externalIds.aniList' }}</small>
               </div>
-              <div class="tw-w-full sm:tw-w-1/4 tw-pl-2">
+              <div class="tw-w-full sm:tw-w-1/4 sm:tw-pl-2">
                 <label for="external-ids-mal" class="tw-inline-block tw-text-base tw-font-medium tw-mb-1.5">{{
                   t('admin.externalIds.mal') }}</label>
                 <input formControlName="mal" class="tw-w-full" id="external-ids-mal" type="number" min="0"
@@ -295,7 +296,7 @@
               <div class="tw-flex">
                 <label for="scanner-enabled" class="tw-inline-block tw-text-base tw-font-medium">{{
                   t('admin.mediaScanner.enabled') }}</label>
-                <p-inputSwitch formControlName="enabled" id="scanner-enabled" class="tw-ml-4"></p-inputSwitch>
+                <p-inputSwitch formControlName="enabled" inputId="scanner-enabled" class="tw-ml-4"></p-inputSwitch>
               </div>
               <div *ngIf="media.type === MediaType.TV" class="tw-flex tw-mt-2">
                 <label for="scanner-tv-season" class="tw-inline-block tw-text-base tw-font-medium">{{
@@ -311,9 +312,15 @@
           [visible]="updateMediaFormChanged">
           <div class="tw-flex tw-mx-4 tw-my-2 tw-items-center">
             <p class="tw-text-white tw-font-medium">{{ t('admin.configureMedia.unsavedChanges') }}</p>
-            <div class="tw-ml-auto">
+            <div class="tw-ml-auto" style="height: 40.98px;">
+              <div [formGroup]="updateMediaForm" class="tw-inline-flex tw-h-full tw-items-center">
+                <label for="update-timestamp" class="tw-inline-block tw-text-base">{{
+                  t('admin.updateMedia.updateTimestamp') }}</label>
+                <p-inputSwitch formControlName="updateTimestamp" inputId="update-timestamp" styleClass="tw-ml-2"
+                  form="update-media-form"></p-inputSwitch>
+              </div>
               <button pButton type="button" [label]="t('admin.updateMedia.cancel')" (click)="onUpdateMediaFormReset()"
-                class="p-button-text p-button-secondary p-button-sm" [disabled]="updateMediaForm.disabled">
+                class="p-button-text p-button-secondary p-button-sm tw-ml-4" [disabled]="updateMediaForm.disabled">
               </button>
               <button pButton type="submit" [label]="t('admin.updateMedia.submit')" form="update-media-form"
                 class="p-button-success p-button-sm tw-ml-1" [disabled]="updateMediaForm.disabled">
@@ -331,7 +338,7 @@
             <div class="tw-aspect-w-2 tw-aspect-h-3 tw-rounded-xl tw-overflow-hidden tw-mt-2">
               <ng-container *ngIf="!posterPreviewName; else posterPreview">
                 <img *ngIf="media.thumbnailPosterUrl; else noPoster" class="tw-object-cover tw-rounded-xl"
-                  [lazyLoad]="media.thumbnailPosterUrl" [lazyLoadPlaceholder]="media.posterColor | rgbColor"
+                  [lazyLoad]="media.thumbnailPosterUrl" [defaultImage]="media.posterPlaceholder | thumbhashUrl"
                   [alt]="media.title" errorImage="assets/images/media-poster-error-md.png">
                 <ng-template #noPoster>
                   <img class="tw-object-cover tw-rounded-xl" src="assets/images/media-poster-md.png" loading="lazy"
@@ -376,7 +383,7 @@
             <div class="tw-aspect-w-16 tw-aspect-h-9 tw-rounded-xl tw-overflow-hidden tw-mt-2">
               <ng-container *ngIf="!backdropPreviewName; else backdropPreview">
                 <img *ngIf="media.thumbnailBackdropUrl; else noBackdrop" class="tw-object-cover tw-rounded-xl"
-                  [lazyLoad]="media.thumbnailBackdropUrl" [lazyLoadPlaceholder]="media.backdropColor | rgbColor"
+                  [lazyLoad]="media.thumbnailBackdropUrl" [defaultImage]="media.backdropPlaceholder | thumbhashUrl"
                   placeholderStyleClass="tw-rounded-xl" [alt]="media.title"
                   errorImage="assets/images/media-backdrop-error-md.png">
                 <ng-template #noBackdrop>
@@ -435,11 +442,11 @@
                 <th class="tw-w-12">
                   <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
                 </th>
-                <th class="tw-w-64"></th>
-                <th pSortableColumn="name">
+                <th class="tw-w-64 tw-min-w-64"></th>
+                <th class="tw-min-w-64" pSortableColumn="name">
                   {{ t('media.video.name') }} <p-sortIcon field="name"></p-sortIcon>
                 </th>
-                <th class="tw-w-32"></th>
+                <th class="tw-w-32 tw-min-w-32"></th>
               </tr>
             </ng-template>
             <ng-template pTemplate="body" let-video let-rowIndex="rowIndex">
@@ -501,7 +508,7 @@
           <p class="tw-text-white tw-font-bold tw-text-2xl">{{ t('admin.configureMedia.subtitles')
             }}</p>
           <div class="tw-my-3">
-            <app-file-upload #subtitleFileUpload accept=".vtt, .srt, .ass"
+            <app-file-upload #subtitleFileUpload accept=".vtt, .srt, .ass, .vtt.gz, .srt.gz, .ass.gz"
               [label]="t('admin.configureMedia.addSubtitle')" [desciption]="t('admin.configureMedia.addSubtitleDesc')"
               [showFilename]="false" styleClass="tw-max-w-xl tw-h-40 tw-mx-auto" ariaLabel="Choose a subtitle to upload"
               (fileChange)="showAddSubtitleDialog($event)">
@@ -515,10 +522,10 @@
                   <th class="tw-w-12">
                     <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
                   </th>
-                  <th pSortableColumn="language">
+                  <th class="tw-min-w-32" pSortableColumn="language">
                     {{ t('admin.configureMedia.language') }} <p-sortIcon field="language"></p-sortIcon>
                   </th>
-                  <th class="tw-w-16"></th>
+                  <th class="tw-w-16 tw-min-w-16"></th>
                 </tr>
               </ng-template>
               <ng-template pTemplate="body" let-subtitle>
@@ -616,22 +623,22 @@
               responsiveLayout="scroll" [rowTrackBy]="trackId" [rowHover]="true" [loading]="loadingEpisodes">
               <ng-template pTemplate="header">
                 <tr>
-                  <th class="tw-w-20" pSortableColumn="epNumber">
+                  <th class="tw-w-20 tw-min-w-20" pSortableColumn="epNumber">
                     {{ t('admin.episode.episodeNumber') }} <p-sortIcon field="epNumber"></p-sortIcon>
                   </th>
-                  <th class="tw-w-80" pSortableColumn="name">
+                  <th class="tw-w-80 tw-min-w-80" pSortableColumn="name">
                     {{ t('admin.episode.name') }} <p-sortIcon field="name"></p-sortIcon>
                   </th>
-                  <th class="tw-w-32" pSortableColumn="runtime">
+                  <th class="tw-w-32 tw-min-w-32" pSortableColumn="runtime">
                     {{ t('admin.episode.runtime') }} <p-sortIcon field="runtime"></p-sortIcon>
                   </th>
-                  <th class="tw-w-40" pSortableColumn="airDate">
+                  <th class="tw-w-40 tw-min-w-40" pSortableColumn="airDate">
                     {{ t('admin.episode.airDate') }} <p-sortIcon field="airDate"></p-sortIcon>
                   </th>
-                  <th class="tw-w-24" pSortableColumn="status">
+                  <th class="tw-w-24 tw-min-w-24" pSortableColumn="status">
                     {{ t('admin.episode.status') }} <p-sortIcon field="status"></p-sortIcon>
                   </th>
-                  <th class="tw-w-32"></th>
+                  <th class="tw-w-32 tw-min-w-32"></th>
                 </tr>
               </ng-template>
               <ng-template pTemplate="body" let-episode>
@@ -642,8 +649,9 @@
                       <div class="tw-w-24 tw-flex-shrink-0">
                         <div class="tw-aspect-w-16 tw-aspect-h-9 tw-rounded-md tw-overflow-hidden">
                           <img *ngIf="episode.thumbnailStillUrl; else noStill" class="tw-object-cover"
-                            [lazyLoad]="episode.thumbnailStillUrl" [lazyLoadPlaceholder]="episode.stillColor | rgbColor"
-                            [alt]="episode.name" errorImage="assets/images/episode-image-error-md.png">
+                            [lazyLoad]="episode.thumbnailStillUrl"
+                            [defaultImage]="episode.stillPlaceholder | thumbhashUrl" [alt]="episode.name"
+                            errorImage="assets/images/episode-image-error-md.png">
                           <ng-template #noStill>
                             <img class="tw-rounded-md" src="assets/images/episode-image-md.png" loading="lazy"
                               [alt]="episode.name">

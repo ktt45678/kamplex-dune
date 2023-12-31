@@ -35,11 +35,11 @@ import { VideoPlayerModule } from '../../shared/components/video-player';
 import { StepperModule } from '../../shared/components/stepper';
 import { ImageEditorModule } from '../../shared/dialogs/image-editor';
 import { FormDirectiveModule } from '../../shared/directives/form-directive';
-import { LazyloadImageExtraModule } from '../../shared/directives/lazyload-image-extra';
 import { ValidationPipeModule } from '../../shared/pipes/validation-pipe';
 import { DateTimePipeModule } from '../../shared/pipes/date-time-pipe';
 import { NumberPipeModule } from '../../shared/pipes/number-pipe';
 import { UrlPipeModule } from '../../shared/pipes/url-pipe/url-pipe.module';
+import { PlaceholderPipeModule } from '../../shared/pipes/placeholder-pipe';
 import { WS_AUTH, WS_NAMESPACE, WsModule } from '../../shared/modules/ws';
 import { CreateProductionComponent } from './dialogs/create-production/create-production.component';
 import { UpdateProductionComponent } from './dialogs/update-production/update-production.component';
@@ -87,11 +87,11 @@ import { AltAutoCompleteModule } from '../../core/utils/primeng';
     StepperModule,
     ImageEditorModule,
     FormDirectiveModule,
-    LazyloadImageExtraModule,
     ValidationPipeModule,
     DateTimePipeModule,
     NumberPipeModule,
     UrlPipeModule,
+    PlaceholderPipeModule,
     AltAutoCompleteModule,
     LazyLoadImageModule,
     ButtonModule,

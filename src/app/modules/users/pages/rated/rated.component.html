@@ -47,7 +47,7 @@
                     <div class="tw-flex-shrink-0">
                       <div *ngIf="rating.media.smallPosterUrl else noPoster" class="tw-rounded-md tw-overflow-hidden">
                         <img class="tw-object-cover tw-w-12 tw-h-12" [lazyLoad]="rating.media.smallPosterUrl"
-                          [lazyLoadPlaceholder]="rating.media.posterColor | rgbColor"
+                          [defaultImage]="rating.media.posterPlaceholder | thumbhashUrl"
                           errorImage="assets/images/media-poster-sm.png" [alt]="rating.media.title">
                       </div>
                       <ng-template #noPoster>
@@ -56,7 +56,7 @@
                       </ng-template>
                     </div>
                     <div class="tw-ml-2">
-                      <p class="tw-text-base tw-font-semibold tw-line-clamp-2">{{ rating.media.title }}</p>
+                      <p class="tw-text-base tw-font-medium tw-line-clamp-2">{{ rating.media.title }}</p>
                     </div>
                   </div>
                 </td>

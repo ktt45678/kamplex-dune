@@ -7,9 +7,9 @@ import { BadgeModule } from 'primeng/badge';
 import { ButtonModule } from 'primeng/button';
 
 import { HomeRoutingModule } from './home-routing.module';
-import { LazyloadImageExtraModule } from '../../shared/directives/lazyload-image-extra';
 import { NumberPipeModule } from '../../shared/pipes/number-pipe';
 import { DateTimePipeModule } from '../../shared/pipes/date-time-pipe';
+import { PlaceholderPipeModule } from '../../shared/pipes/placeholder-pipe';
 import { HomeComponent } from './pages/home/home.component';
 import { MediaListModule } from '../../shared/components/media-list';
 import { MediaTopModule } from '../../shared/components/media-top';
@@ -26,10 +26,10 @@ import { FeaturedMediaComponent } from './components/featured-media';
     HomeRoutingModule,
     NumberPipeModule,
     DateTimePipeModule,
+    PlaceholderPipeModule,
     TranslocoModule,
     LazyLoadImageModule,
     SwiperModule,
-    LazyloadImageExtraModule,
     MediaListModule,
     MediaTopModule,
     ButtonModule,

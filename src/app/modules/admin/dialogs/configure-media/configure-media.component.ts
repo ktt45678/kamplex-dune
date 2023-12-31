@@ -51,6 +51,7 @@ interface UpdateMediaForm {
   status: FormControl<string>;
   externalIds: FormGroup<ExternalIdsForm>;
   scanner: FormGroup<MediaScannerForm>;
+  updateTimestamp: FormControl<boolean>;
 }
 
 @Component({
@@ -142,7 +143,8 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
       }, { updateOn: 'change' }),
       scanner: new FormGroup<MediaScannerForm>({
         enabled: new FormControl(false, { nonNullable: true })
-      }, { updateOn: 'change' })
+      }, { updateOn: 'change' }),
+      updateTimestamp: new FormControl(true, { nonNullable: true })
     }, { updateOn: 'change' });
     if (mediaType === MediaType.TV) {
       this.updateMediaForm.addControl('lastAirDate', new FormGroup<ShortDateForm>({
@@ -294,7 +296,8 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
       externalIds: formValue.externalIds,
       scanner: {
         enabled: formValue.scanner.enabled
-      }
+      },
+      updateTimestamp: formValue.updateTimestamp
     };
     if (this.media.type === MediaType.TV) {
       if (formValue.lastAirDate) {
@@ -641,7 +644,7 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
   showSourcePreview(): void {
     this.showMoviePlayer = true;
     const mediaId = this.config.data!._id;
-    this.mediaService.findMovieStreams(mediaId).subscribe((movie) => {
+    this.mediaService.findMovieStreams(mediaId, { preview: true }).subscribe((movie) => {
       this.previewStream = movie;
       this.ref.markForCheck();
     });

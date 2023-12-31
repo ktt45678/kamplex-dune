@@ -58,14 +58,14 @@ export class SubtitleSettingsComponent implements OnInit {
     private usersService: UsersService, private destroyService: DestroyService) {
     this.updateSubtitleForm = new FormGroup<UpdateSubtitleForm>({
       fontSize: new FormControl(),
-      fontFamily: new FormControl(),
-      fontWeight: new FormControl(),
-      textColor: new FormControl(),
+      fontFamily: new FormControl(null),
+      fontWeight: new FormControl(null),
+      textColor: new FormControl(null),
       textAlpha: new FormControl(),
-      textEdge: new FormControl(),
-      bgColor: new FormControl(),
+      textEdge: new FormControl(null),
+      bgColor: new FormControl(null),
       bgAlpha: new FormControl(),
-      winColor: new FormControl(),
+      winColor: new FormControl(null),
       winAlpha: new FormControl()
     });
   }
@@ -100,14 +100,14 @@ export class SubtitleSettingsComponent implements OnInit {
     const windowOpacity = settings.winAlpha != undefined ? settings.winAlpha : 100;
     this.updateSubtitleForm.patchValue({
       fontSize: settings.fontSize || 100,
-      fontFamily: settings.fontFamily,
+      fontFamily: settings.fontFamily || null,
       fontWeight: settings.fontWeight || 400,
-      textColor: textColor,
+      textColor: textColor || null,
       textAlpha: textOpacity,
-      textEdge: settings.textEdge,
-      bgColor: backgroundColor,
+      textEdge: settings.textEdge || null,
+      bgColor: backgroundColor || null,
       bgAlpha: backgroundOpacity,
-      winColor: windowColor,
+      winColor: windowColor || null,
       winAlpha: windowOpacity
     });
     this.updateSubtitleInitValue = { ...this.updateSubtitleForm.value };

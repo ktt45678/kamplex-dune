@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Injector, OnDestroy, OnInit, ViewContainerRef } from '@angular/core';
 import { DialogService } from 'primeng/dynamicdialog';
 import { first, takeUntil } from 'rxjs';
 
 import { ShortDate, UserDetails } from '../../../../../core/models';
-import { AuthService, DestroyService } from '../../../../../core/services';
+import { AuthService, DestroyService, UsersService } from '../../../../../core/services';
 import { UpdateBirthdateComponent } from '../../../dialogs/update-birthdate';
 import { UpdateEmailComponent } from '../../../dialogs/update-email';
 import { UpdatePasswordComponent } from '../../../dialogs/update-password';
@@ -20,7 +20,7 @@ export class AccountSettingsComponent implements OnInit, OnDestroy {
   currentUser: UserDetails | null = null;
 
   constructor(private ref: ChangeDetectorRef, private dialogService: DialogService,
-    private authService: AuthService, private destroyService: DestroyService) { }
+    private authService: AuthService, private usersService: UsersService, private destroyService: DestroyService) { }
 
   ngOnInit(): void {
     this.authService.currentUser$.pipe(takeUntil(this.destroyService)).subscribe((user) => {
@@ -37,7 +37,8 @@ export class AccountSettingsComponent implements OnInit, OnDestroy {
       styleClass: 'p-dialog-header-sm',
       contentStyle: { 'margin-top': '-1.5rem' },
       dismissableMask: true,
-      minimal: true
+      minimal: true,
+      providers: [{ provide: UsersService, useValue: this.usersService }]
     });
     dialogRef.onClose.pipe(first()).subscribe((username: string) => {
       if (!username || !this.currentUser) return;
@@ -55,7 +56,8 @@ export class AccountSettingsComponent implements OnInit, OnDestroy {
       styleClass: 'p-dialog-header-sm',
       contentStyle: { 'margin-top': '-1.5rem' },
       dismissableMask: true,
-      minimal: true
+      minimal: true,
+      providers: [{ provide: UsersService, useValue: this.usersService }]
     });
     dialogRef.onClose.pipe(first()).subscribe((email: string) => {
       if (!email || !this.currentUser) return;
@@ -73,7 +75,8 @@ export class AccountSettingsComponent implements OnInit, OnDestroy {
       styleClass: 'p-dialog-header-sm',
       contentStyle: { 'margin-top': '-1.5rem' },
       dismissableMask: true,
-      minimal: true
+      minimal: true,
+      providers: [{ provide: UsersService, useValue: this.usersService }]
     });
     dialogRef.onClose.pipe(first()).subscribe((birthdate: ShortDate) => {
       if (!birthdate || !this.currentUser) return;
@@ -91,7 +94,8 @@ export class AccountSettingsComponent implements OnInit, OnDestroy {
       styleClass: 'p-dialog-header-sm',
       contentStyle: { 'margin-top': '-1.5rem' },
       dismissableMask: true,
-      minimal: true
+      minimal: true,
+      providers: [{ provide: UsersService, useValue: this.usersService }]
     });
   }
 

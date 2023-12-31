@@ -33,9 +33,11 @@ export interface HlsVideoTrack {
   width: number;
   height: number;
   par: string;
+  sar: string;
   bandwidth: number;
   duration: number;
   format: string;
+  language: string;
   mimeType: string;
   frameRate: number;
   hlsSegment: HlsSegmentGroup;

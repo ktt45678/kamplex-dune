@@ -1,4 +1,5 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import { Location } from '@angular/common';
 import { Meta, Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BreakpointObserver } from '@angular/cdk/layout';
@@ -36,8 +37,9 @@ export class DetailsComponent implements OnInit, OnDestroy {
   youtubeThumbnailUrl = YOUTUBE_THUMBNAIL_URL;
 
   constructor(private ref: ChangeDetectorRef, private title: Title, private meta: Meta, private breakpointObserver: BreakpointObserver,
-    private dialogService: DialogService, private translocoService: TranslocoService, private authService: AuthService,
-    private mediaService: MediaService, private route: ActivatedRoute, private router: Router, private destroyService: DestroyService) { }
+    private location: Location, private dialogService: DialogService, private translocoService: TranslocoService,
+    private authService: AuthService, private mediaService: MediaService, private route: ActivatedRoute, private router: Router,
+    private destroyService: DestroyService) { }
 
   ngOnInit(): void {
     this.route.params.pipe(takeUntil(this.destroyService)).subscribe(params => {
@@ -53,7 +55,8 @@ export class DetailsComponent implements OnInit, OnDestroy {
   }
 
   loadMedia(id: string) {
-    this.mediaService.findOne(id).subscribe(media => {
+    const mediaId = id.split('-')[0];
+    this.mediaService.findOne(mediaId).subscribe(media => {
       this.media = media;
       this.title.setTitle(`${media.title} - ${SITE_NAME}`);
       this.meta.updateTag({ name: 'description', content: media.overview });
@@ -70,6 +73,8 @@ export class DetailsComponent implements OnInit, OnDestroy {
         this.meta.updateTag({ property: 'og:image:type', content: 'image/jpeg' });
         this.meta.updateTag({ property: 'og:image:alt', content: media.title });
       }
+      const replacedUrlParams = new URLSearchParams({ ...this.route.snapshot.queryParams }).toString();
+      this.location.replaceState('/details/' + media._id + '-' + media.slug.substring(0, 100), replacedUrlParams);
       this.ref.markForCheck();
     });
   }

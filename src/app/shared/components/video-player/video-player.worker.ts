@@ -1,12 +1,22 @@
 /// <reference lib="webworker" />
-import { convertToM3U8 } from '../../../core/utils/stream-manifest-helper';
+import { streamManifestHelper } from '../../../core/utils/stream-manifest-helper';
 
 addEventListener('message', ({ data }) => {
   let response = null;
-  switch (data.type) {
+  const { id, request } = data;
+  switch (request.type) {
     case 'manifest-to-m3u8': {
-      response = convertToM3U8(data.manifest, data.baseUrl, data.options);
+      response = streamManifestHelper.convertToM3U8(request.manifest, request.baseUrl, request.options);
+      break;
+    }
+    case 'manifest-to-parsed-dash': {
+      response = streamManifestHelper.convertToParsedDash(request.manifest, request.baseUrl, request.options);
+      break;
+    }
+    case 'utf8-decode': {
+      response = new TextDecoder().decode(request.source);
+      break;
     }
   }
-  postMessage(response);
+  postMessage({ id, response });
 });

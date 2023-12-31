@@ -2,27 +2,22 @@ import { Component, OnInit, ChangeDetectionStrategy, Input, OnDestroy, Output, E
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { Platform } from '@angular/cdk/platform';
 import { TRANSLOCO_SCOPE, TranslocoService } from '@ngneat/transloco';
-import { type MediaPlayerElement, type MediaVolumeChangeEvent, type TextTrackInit, type MediaPlayRequestEvent, type MediaPauseRequestEvent, type MediaSeekRequestEvent, type MediaProviderSetupEvent, type MediaPlayEvent, type HLSAudioTrackLoadedEvent, type MediaLoadStartEvent, isHLSProvider, LibASSTextRenderer, type MediaProviderChangeEvent, type AudioTrack, MediaLoadedMetadataEvent } from 'vidstack';
-import { Subject, buffer, debounceTime, filter, first, forkJoin, fromEvent, merge, switchMap, takeUntil, timer } from 'rxjs';
-import HLS from 'hls.js/dist/hls.js';
+import { type MediaVolumeChangeEvent, type TextTrackInit, type MediaPlayRequestEvent, type MediaPauseRequestEvent, type MediaSeekRequestEvent, type MediaProviderSetupEvent, type MediaPlayEvent, type HLSAudioTrackLoadedEvent, type MediaLoadStartEvent, isDashProvider, LibASSTextRenderer, type MediaProviderChangeEvent, type AudioTrack, MediaLoadedMetadataEvent } from 'vidstack';
+import { MediaPlayerElement, MediaSliderThumbnailElement } from 'vidstack/elements';
+import { Subject, buffer, debounceTime, filter, first, firstValueFrom, forkJoin, fromEvent, merge, switchMap, takeUntil, timer } from 'rxjs';
+import * as dashjs from 'dashjs';
 
-import { UpdateUserSettingsDto } from '../../../core/dto/users';
-import { MediaDetails, MediaStream, UserSettings } from '../../../core/models';
+import type { MediaDetails, MediaStream, UserSettings } from '../../../core/models';
+import type { UpdateUserSettingsDto } from '../../../core/dto/users';
+import type { KPTrack, PlayerSettings, PlayerStore, PlayerSupports, ThumbnailStore } from './interfaces';
 import { AuthService, DestroyService, UsersService } from '../../../core/services';
 import { VideoPlayerService } from './video-player.service';
-import { KPTrack, PlayerSettings, PlayerStore, PlayerSupports } from './interfaces';
 import { AudioCodec, MediaBreakpoints, MediaStorageType, MediaType } from '../../../core/enums';
 import { getFontFamily, getTextEdgeStyle, prepareColor, scaleFontWeight, track_Id } from '../../../core/utils';
 
-import 'vidstack/define/media-player.js';
-import 'vidstack/define/media-time.js';
-import 'vidstack/define/media-slider.js';
-import 'vidstack/define/media-gesture.js';
-import 'vidstack/define/media-captions.js';
-import 'vidstack/define/media-time-slider.js';
-import 'vidstack/define/media-volume-slider.js';
-import 'vidstack/define/media-slider-value.js';
-import 'vidstack/define/media-slider-thumbnail.js';
+import 'vidstack/player';
+import 'vidstack/player/layouts';
+import 'vidstack/player/ui';
 
 @Component({
   selector: 'app-video-player',
@@ -56,11 +51,13 @@ export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
   @Output() requestNext = new EventEmitter<void>();
   @Output() requestPrev = new EventEmitter<void>();
   player!: MediaPlayerElement;
+  sliderThumbnailEl?: MediaSliderThumbnailElement;
   playerSettings: PlayerSettings;
   playerSupports: PlayerSupports;
   mediaPlayToast?: HTMLElement;
   streamData?: MediaStream;
   playerStore: PlayerStore;
+  thumbnailStore: ThumbnailStore;
   userSettings: UserSettings | null = null;
   pendingUpdateSettings: UpdateUserSettingsDto = {};
 
@@ -81,10 +78,13 @@ export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
   @ViewChild('player') set setPlayer(value: ElementRef<MediaPlayerElement> | undefined) {
     if (!this.player && value) {
       this.player = value.nativeElement;
-      this.player.onAttach(() => {
-        this.onPlayerAttach();
-      });
+      this.onPlayerAttach();
     }
+  }
+
+  @ViewChild('sliderThumbnail') set setSliderThumbnail(value: ElementRef<MediaSliderThumbnailElement> | undefined) {
+    this.sliderThumbnailEl = value?.nativeElement;
+    this.setPlayerPreviewThumbnail();
   }
 
   @ViewChild('mediaPlayToast') set setMediaPlayToast(value: ElementRef<HTMLElement> | undefined) {
@@ -100,34 +100,9 @@ export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
   constructor(private ref: ChangeDetectorRef, private renderer: Renderer2, private breakpointObserver: BreakpointObserver,
     private platform: Platform, private translocoService: TranslocoService, private authService: AuthService,
     private usersService: UsersService, private videoPlayerService: VideoPlayerService, private destroyService: DestroyService) {
-    this.playerSettings = {
-      playbackSpeeds: [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2],
-      tracks: [],
-      sourceBaseUrl: '',
-      previewThumbnail: null,
-      activeQualityValue: 0,
-      activeSpeedValue: 1,
-      activeTrackValue: null,
-      activeAudioLang: null,
-      initAudioValue: null,
-      initAudioSurround: true,
-      autoNext: false,
-      showSubtitle: false,
-      showFastForward: false,
-      showRewind: false,
-      fullWindow: false,
-      fillScreen: false,
-      initPlaytime: 0,
-      activeVolume: 1,
-      isMuted: false,
-      expandVolumeSlider: false,
-      isMenuOpen: false,
-      hasError: false,
-      subtitleStyles: null,
-      playerDestroyed: new Subject(),
-      storeDisposeFn: [],
-      touchIdleTimeoutValue: 2500
-    };
+    this.playerSettings = this.videoPlayerService.initPlayerSettings();
+    this.playerStore = this.videoPlayerService.initPlayerStore();
+    this.thumbnailStore = this.videoPlayerService.initThumbnailStore();
     const isTouchDevice = (('ontouchstart' in window) || (navigator.maxTouchPoints > 0));
     const isMinMobileScreen = this.breakpointObserver.isMatched(MediaBreakpoints.SMALL);
     this.playerSupports = {
@@ -135,27 +110,6 @@ export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
       isSafari: this.platform.SAFARI,
       isTouchDevice: isTouchDevice,
       hlsOpus: !this.platform.SAFARI
-    };
-    this.playerStore = {
-      autoplayError: undefined,
-      audioTracks: [],
-      audioTrack: null,
-      textTrack: null,
-      canFullscreen: false,
-      canPlay: false,
-      currentTime: 0,
-      error: undefined,
-      fullscreen: false,
-      loop: false,
-      muted: false,
-      paused: true,
-      playing: false,
-      qualities: [],
-      quality: null,
-      autoQuality: false,
-      canSetQuality: true,
-      volume: 1,
-      waiting: false
     };
   }
 
@@ -187,11 +141,17 @@ export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
     if (data.subtitles?.length) {
       this.translocoService.selectTranslation('languages').pipe(first()).subscribe(t => {
         data.subtitles.sort().forEach(subtitle => {
+          const srcSplit = subtitle.src.split('.');
+          const trackType = <'vtt' | 'srt' | 'ass' | 'ssa'>(this.videoPlayerService.isGzipSubtitle(subtitle.mimeType) ?
+            srcSplit[srcSplit.length - 2] :
+            srcSplit[srcSplit.length - 1]);
           tracks.push({
             _id: subtitle._id,
             label: t[subtitle.lang],
             lang: subtitle.lang,
-            src: subtitle.src
+            src: subtitle.src,
+            mimeType: subtitle.mimeType,
+            type: trackType
           });
         });
         this.playerSettings.tracks = tracks;
@@ -201,6 +161,7 @@ export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
     this.playerSettings.sourceBaseUrl = data.baseUrl;
     this.playerSettings.previewThumbnail = data.baseUrl.replace(':path', data.previewThumbnail);
     this.setPlayerSource();
+    this.setPlayerPreviewThumbnail();
   }
 
   applyUserSettings(): void {
@@ -242,15 +203,35 @@ export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
     // Set libass renderer
     const renderer = new LibASSTextRenderer(() => import('jassub') as any, {
       workerUrl: '../../../../assets/js/jassub/jassub-worker.js',
-      legacyWorkerUrl: '../../../../assets/js/jassub/jassub-worker-legacy.js'
+      legacyWasmUrl: '../../../../assets/js/jassub/jassub-worker-legacy.js',
+      modernWasmUrl: '../../../../assets/js/jassub/jassub-worker-modern.wasm'
+    }, {
+      onSubtitleReady: (instance => {
+        instance.getStyles((error, event) => {
+          if (error) return;
+          const styleList = Array.isArray(event) ? event : [event];
+          this.videoPlayerService.findSubtitleFontList(styleList).subscribe(fontUrls => {
+            fontUrls.forEach(fontUrl => {
+              instance.addFont(fontUrl);
+            });
+          });
+        });
+      })
     });
     this.player.textRenderers.add(renderer);
     // Set hls.js provider
     fromEvent<MediaProviderChangeEvent>(this.player, 'provider-change')
       .pipe(takeUntil(this.playerSettings.playerDestroyed)).subscribe((event) => {
         const provider = event.detail;
-        if (isHLSProvider(provider)) {
-          provider.library = HLS;
+        if (isDashProvider(provider)) {
+          provider.library = dashjs as any;
+          provider.config = {
+            streaming: {
+              abr: { autoSwitchBitrate: { audio: false } },
+              buffer: { fastSwitchEnabled: true },
+              trackSwitchMode: { video: 'alwaysReplace', audio: 'alwaysReplace' }
+            }
+          };
         }
       });
     // Register media session when the media starts playing
@@ -295,7 +276,7 @@ export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
       this.setInitAudioTrack(this.playerSettings.initAudioValue, this.playerSettings.initAudioSurround);
     });
     const setPlayerStoreProp = (props: Partial<PlayerStore>) => {
-      this.playerStore = { ...this.playerStore, ...props };
+      Object.assign(this.playerStore, props);
       this.ref.markForCheck();
     };
     // Subscribe to the media store
@@ -340,7 +321,7 @@ export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   private handleTouchUserIdle(): void {
-    if (!isHLSProvider(this.player.provider)) return;
+    if (!isDashProvider(this.player.provider)) return;
     const idleAttributeName = 'data-touch-user-idle';
     const click$ = fromEvent<MouseEvent>(this.player.provider.video, 'click');
     const clearIdleTimeoutFn = () => {
@@ -427,16 +408,20 @@ export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
     oldSubtitles.forEach(s => {
       this.player.textTracks.remove(s);
     });
-    this.playerSettings.tracks.forEach((track) => {
-      const trackType = <'vtt' | 'srt' | 'ass' | 'ssa'>track.src.substring(track.src.lastIndexOf('.') + 1);
+    for (let i = 0; i < this.playerSettings.tracks.length; i++) {
+      const track = this.playerSettings.tracks[i];
       const textTrack: TextTrackInit = {
         id: track._id,
         label: track.label,
         language: track.lang,
         src: track.src,
         kind: 'subtitles',
-        type: trackType
+        type: track.type,
+        mimeType: track.mimeType,
       };
+      if (this.videoPlayerService.isGzipSubtitle(track.mimeType)) {
+        textTrack.subtitleLoader = (loadTrack) => firstValueFrom(this.videoPlayerService.loadGzipSubtitle(loadTrack.src!));
+      }
       if (textTrack.language === defaultLanguage) {
         textTrack.default = true;
         this.playerSettings.activeTrackValue = textTrack.language;
@@ -453,7 +438,7 @@ export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
       //     this.playerSettings.showSubtitle = true;
       //   }
       this.player.textTracks.add(textTrack);
-    });
+    };
   }
 
   setPlaybackSpeed(speed: number = 1): void {
@@ -468,16 +453,67 @@ export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
     const playlist = this.streamData.streams.find(s => s.type === MediaStorageType.MANIFEST);
     if (!playlist) return;
     const playlistSrc = this.playerSettings.sourceBaseUrl.replace(':path', `${playlist._id}/${playlist.name}`);
-    this.videoPlayerService.generateM3U8(playlistSrc, this.playerSettings.sourceBaseUrl, { opus: this.playerSupports.hlsOpus })
-      .subscribe(uri => {
-        // Set source url
-        this.player.src = {
-          src: uri,
-          type: 'application/x-mpegurl'
-        };
-        // Apply settings to the player when playing
-        this.applySourceSettingsOnLoaded();
-      });
+    if (dashjs.supportsMediaSource()) {
+      // Use dash.js when supported
+      this.videoPlayerService.generateParsedDash(playlistSrc, this.playerSettings.sourceBaseUrl, { opus: this.playerSupports.hlsOpus })
+        .subscribe(manifest => {
+          // Set source url
+          this.player.src = {
+            src: manifest, //https://bitmovin-a.akamaihd.net/content/sintel/sintel.mpd, https://files.catbox.moe/57jhls.mpd
+            type: 'video/dash',
+            provider: 'dash'
+          };
+        });
+    } else {
+      // Fallback to native HLS
+      this.videoPlayerService.generateM3U8(playlistSrc, this.playerSettings.sourceBaseUrl, { opus: false })
+        .subscribe(manifestSrc => {
+          this.player.src = { src: manifestSrc, type: 'application/x-mpegurl' };
+        });
+    }
+    // Apply settings to the player when playing
+    this.applySourceSettingsOnLoaded();
+  }
+
+  setPlayerPreviewThumbnail(): void {
+    if (!this.sliderThumbnailEl) return;
+    this.playerSettings.storeDisposeFn.push(
+      this.sliderThumbnailEl.subscribe(({ activeCue }) => {
+        this.thumbnailStore.activeCue = activeCue;
+        this.onThumbnailCueChange();
+        this.ref.markForCheck();
+      }),
+      this.sliderThumbnailEl.subscribe(({ loading }) => {
+        this.thumbnailStore.loading = loading;
+        this.ref.markForCheck();
+      })
+    );
+    if (!this.playerSettings.previewThumbnail) {
+      this.sliderThumbnailEl.src = '';
+      return;
+    }
+    this.videoPlayerService.getPreviewThumbnails(this.playerSettings.previewThumbnail).subscribe(thumbnailFrames => {
+      if (!thumbnailFrames) {
+        this.sliderThumbnailEl!.src = '';
+        return;
+      }
+      this.playerSettings.thumbnailFrames = thumbnailFrames;
+      const generatedCues = this.videoPlayerService.createThumbnailCues(thumbnailFrames);
+      this.sliderThumbnailEl!.src = {
+        src: generatedCues,
+        baseURL: this.playerSettings.previewThumbnail!,
+        type: 'cues'
+      };
+    });
+  }
+
+  onThumbnailCueChange() {
+    this.playerSettings.activeThumbPlaceholder = null;
+    if (this.thumbnailStore.activeCue && this.playerSettings.thumbnailFrames.length) {
+      const activeFrame = this.playerSettings.thumbnailFrames.find(f => f.startTime === this.thumbnailStore.activeCue!.startTime);
+      this.playerSettings.activeThumbPlaceholder = activeFrame ? activeFrame.placeholder : null;
+    }
+    this.ref.markForCheck();
   }
 
   applySourceSettingsOnLoaded() {

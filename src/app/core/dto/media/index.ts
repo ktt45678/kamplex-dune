@@ -4,6 +4,7 @@ export * from './add-tv-episode.dto';
 export * from './create-media.dto';
 export * from './cursor-page-media.dto';
 export * from './dropdown-option.dto';
+export * from './find-media-stream.dto';
 export * from './find-one-media.dto';
 export * from './find-tv-episodes.dto';
 export * from './media-filter-options.dto';

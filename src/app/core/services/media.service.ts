@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { forkJoin, map, Observable, tap } from 'rxjs';
 import { HttpCacheManager } from '@ngneat/cashew';
 
-import { AddMediaSubtitleDto, AddMediaVideoDto, AddTVEpisodeDto, CreateMediaDto, CursorPageMediaDto, FindOneMediaDto, FindTVEpisodesDto, OffsetPageMediaDto, PaginateMediaDto, UpdateMediaDto, UpdateMediaVideoDto, UpdateTVEpisodeDto } from '../dto/media';
+import { AddMediaSubtitleDto, AddMediaVideoDto, AddTVEpisodeDto, CreateMediaDto, CursorPageMediaDto, FindMediaStreamDto, FindOneMediaDto, FindTVEpisodesDto, OffsetPageMediaDto, PaginateMediaDto, UpdateMediaDto, UpdateMediaVideoDto, UpdateTVEpisodeDto } from '../dto/media';
 import { CursorPaginated, ExtMediaSuggestions, FlixHQInfo, FlixHQSearch, GogoanimeInfo, GogoanimeSearch, Media, MediaDetails, MediaStream, MediaSubtitle, MediaVideo, Paginated, TVEpisode, TVEpisodeDetails, ZoroInfo, ZoroSearch } from '../models';
 import { CacheKey, ExtMediaProvider } from '../../core/enums';
 import { getImageName } from '../../core/utils';
@@ -77,8 +77,11 @@ export class MediaService {
     return this.http.patch<MediaDetails>(`media/${id}`, updateMediaDto).pipe(tap(() => this.invalidateHomeMediaCache()));
   }
 
-  findMovieStreams(id: string) {
-    return this.http.get<MediaStream>(`media/${id}/movie/streams`);
+  findMovieStreams(id: string, findMediaStreamDto: FindMediaStreamDto = {}) {
+    const params: { [key: string]: any } = {};
+    const { preview } = findMediaStreamDto;
+    preview !== undefined && (params['preview'] = preview);
+    return this.http.get<MediaStream>(`media/${id}/movie/streams`, { params });
   }
 
   remove(id: string) {
@@ -197,8 +200,11 @@ export class MediaService {
     return this.http.delete(`media/${id}/tv/episodes/${episodeId}/subtitles/${subtitleId}`);
   }
 
-  findTVStreams(id: string, episodeNumber: string | number) {
-    return this.http.get<MediaStream>(`media/${id}/tv/episodes/${episodeNumber}/streams`);
+  findTVStreams(id: string, episodeNumber: string | number, findMediaStreamDto: FindMediaStreamDto = {}) {
+    const params: { [key: string]: any } = {};
+    const { preview } = findMediaStreamDto;
+    preview !== undefined && (params['preview'] = preview);
+    return this.http.get<MediaStream>(`media/${id}/tv/episodes/${episodeNumber}/streams`, { params });
   }
 
   deleteTVSource(id: string, episodeId: string) {

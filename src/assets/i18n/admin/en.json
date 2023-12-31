@@ -188,6 +188,7 @@
     "visibilityUnlisted": "{{ admin.createMedia.visibilityUnlisted }}",
     "visibilityPrivate": "{{ admin.createMedia.visibilityPrivate }}",
     "status": "{{ admin.createMedia.status }}",
+    "updateTimestamp": "Update timestamp",
     "cancel": "Reset",
     "submit": "{{ admin.updateGenre.submit }}"
   },

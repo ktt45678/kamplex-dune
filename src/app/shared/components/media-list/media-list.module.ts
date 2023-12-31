@@ -9,11 +9,11 @@ import { DynamicDialogModule } from 'primeng/dynamicdialog';
 
 import { MediaListComponent } from './media-list.component';
 import { SkeletonModule } from '../skeleton';
-import { LazyloadImageExtraModule } from '../../directives/lazyload-image-extra';
 import { CdkMenuCustomModule } from '../../directives/cdk-menu-custom';
 import { OverlayPanelModule } from '../../directives/overlay-panel';
 import { NumberPipeModule } from '../../pipes/number-pipe';
 import { DateTimePipeModule } from '../../pipes/date-time-pipe';
+import { PlaceholderPipeModule } from '../../pipes/placeholder-pipe';
 
 @NgModule({
   declarations: [MediaListComponent],
@@ -22,10 +22,10 @@ import { DateTimePipeModule } from '../../pipes/date-time-pipe';
     RouterModule,
     LazyLoadImageModule,
     SkeletonModule,
-    LazyloadImageExtraModule,
     TranslocoModule,
     NumberPipeModule,
     DateTimePipeModule,
+    PlaceholderPipeModule,
     CdkMenuCustomModule,
     OverlayPanelModule,
     ButtonModule,

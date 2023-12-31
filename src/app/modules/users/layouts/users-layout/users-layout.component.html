@@ -10,7 +10,7 @@
         <div class="tw-w-36 tw-border-8 tw-border-app-body tw-rounded-full">
           <div class="tw-aspect-w-1 tw-aspect-h-1 [&>*]:tw-rounded-full tw-flex-shrink-0">
             <img *ngIf="user.thumbnailAvatarUrl; else noAvatar" class="tw-object-cover"
-              [lazyLoad]="user.thumbnailAvatarUrl" [lazyLoadPlaceholder]="user.avatarColor | rgbColor"
+              [lazyLoad]="user.thumbnailAvatarUrl" [defaultImage]="user.avatarPlaceholder | thumbhashUrl"
               [alt]="user.username">
             <ng-template #noAvatar>
               <app-avatar [label]="(user.nickname || user.username) | substring" styleClass="tw-rounded-full"
