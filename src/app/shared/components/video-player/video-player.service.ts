@@ -48,7 +48,7 @@ export class VideoPlayerService implements OnDestroy {
       subtitleStyles: null,
       playerDestroyed: new Subject(),
       storeDisposeFn: [],
-      touchIdleTimeoutValue: 2500
+      touchControlsTimeoutValue: 2500
     };
   }
 

@@ -1,11 +1,9 @@
 <ng-container *transloco="let t; loadingTpl: loadingPlayerTpl">
-  <media-player #player preload="metadata" key-target="player" playsinline user-idle-delay="2500" autoplay crossorigin
-    [attr.data-menu-open]="playerSettings.isMenuOpen || null"
+  <media-player #player preload="metadata" key-target="player" playsinline controls-delay="2500"
+    hide-controls-on-mouse-leave autoplay crossorigin [attr.data-menu-open]="playerSettings.isMenuOpen || null"
     [attr.data-fill-screen]="playerSettings.fillScreen || null" [attr.data-mobile]="playerSupports.isMobile || null"
     [attr.data-touch-device]="playerSupports.isTouchDevice || null">
-    <!--image-cdn="https://wsrv.nl/?url={url}"-->
-    <media-provider>
-    </media-provider>
+    <media-provider></media-provider>
     <ng-container *ngIf="!playerSupports.isTouchDevice; else touchGestures">
       <media-gesture class="media-gesture" *ngIf="playerStore.canPlay" event="click"
         action="toggle:paused"></media-gesture>
@@ -92,14 +90,6 @@
         </div>
       </div>
       <div class="tw-flex tw-flex-wrap tw-content-end tw-h-64 tw-bg-gradient-to-t tw-from-black/60 tw-to-transparent">
-        <!-- <media-time-slider step="1" key-step="5" shift-key-multiplier="2" class="tw-pointer-events-auto">
-          <div part="track track-hover"></div>
-          <div slot="preview">
-            <media-slider-thumbnail [attr.src]="playerSettings.previewThumbnail" />
-            <media-slider-value type="pointer" format="time">
-            </media-slider-value>
-          </div>
-        </media-time-slider> -->
         <media-time-slider step="1" key-step="5" shift-key-multiplier="2"
           class="media-player-slider media-player-time-slider">
           <div class="slider-track slider-track-container">

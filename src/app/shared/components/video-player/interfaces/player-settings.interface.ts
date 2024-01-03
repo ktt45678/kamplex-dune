@@ -23,8 +23,8 @@ export interface PlayerSettings {
   showFastForward: boolean;
   fastForwardToastTimeout?: number;
   rewindToastTimeout?: number;
-  touchIdleTimeout?: number;
-  touchIdleTimeoutValue: number;
+  touchControlsTimeout?: number;
+  touchControlsTimeoutValue: number;
   showRewind: boolean;
   fullWindow: boolean;
   fillScreen: boolean;

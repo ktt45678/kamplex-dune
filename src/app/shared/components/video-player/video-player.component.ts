@@ -268,7 +268,7 @@ export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
     if (this.playerSupports.isTouchDevice) {
       fromEvent<MediaProviderSetupEvent>(this.player, 'provider-setup')
         .pipe(takeUntil(this.playerSettings.playerDestroyed)).subscribe(() => {
-          this.handleTouchUserIdle();
+          this.handleTouchUserControls();
         });
     }
     // Set init audio track when track list is available
@@ -320,51 +320,49 @@ export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
     });
   }
 
-  private handleTouchUserIdle(): void {
+  private handleTouchUserControls(): void {
     if (!isDashProvider(this.player.provider)) return;
-    const idleAttributeName = 'data-touch-user-idle';
+    const controlsAttributeName = 'data-touch-controls';
     const click$ = fromEvent<MouseEvent>(this.player.provider.video, 'click');
-    const clearIdleTimeoutFn = () => {
-      if (this.playerSettings.touchIdleTimeout) {
-        window.clearTimeout(this.playerSettings.touchIdleTimeout);
-        this.playerSettings.touchIdleTimeout = undefined;
+    const clearControlsTimeoutFn = () => {
+      if (this.playerSettings.touchControlsTimeout) {
+        window.clearTimeout(this.playerSettings.touchControlsTimeout);
+        this.playerSettings.touchControlsTimeout = undefined;
       }
     };
-    // Toggle user idle attribute on tap
+    // Toggle user controls attribute on tap
     click$.pipe(
       buffer(click$.pipe(debounceTime(200))),
       takeUntil(this.playerSettings.playerDestroyed)
     ).subscribe(events => {
       // Only accept single click, ignore seek gestures
       if (events.length > 1) return;
-      if (this.player.hasAttribute(idleAttributeName)) {
-        this.renderer.removeAttribute(this.player, idleAttributeName);
-        // Set idle after timeout, clear current timeout if exist
-        clearIdleTimeoutFn();
-        this.playerSettings.touchIdleTimeout = window.setTimeout(() => {
-          this.renderer.setAttribute(this.player, idleAttributeName, 'true');
-        }, this.playerSettings.touchIdleTimeoutValue);
+      if (this.player.hasAttribute(controlsAttributeName)) {
+        this.renderer.removeAttribute(this.player, controlsAttributeName);
+        clearControlsTimeoutFn();
       }
       else {
-        this.renderer.setAttribute(this.player, idleAttributeName, 'true');
-        clearIdleTimeoutFn();
+        this.renderer.setAttribute(this.player, controlsAttributeName, 'true');
+        // Set controls after timeout, clear current timeout if exist
+        clearControlsTimeoutFn();
+        this.playerSettings.touchControlsTimeout = window.setTimeout(() => {
+          // Do not remove if the player is paused
+          if (this.player.paused) return;
+          this.renderer.removeAttribute(this.player, controlsAttributeName);
+        }, this.playerSettings.touchControlsTimeoutValue);
       }
-    });
-    // Keep idle attribute when started playing
-    fromEvent<MediaPlayEvent>(this.player, 'play').pipe(takeUntil(this.playerSettings.playerDestroyed)).subscribe(() => {
-      this.resetTouchIdleTimeout();
     });
   }
 
-  private resetTouchIdleTimeout(): void {
+  private resetTouchControlsTimeout(): void {
     if (!this.playerSupports.isTouchDevice) return;
-    const idleAttributeName = 'data-touch-user-idle';
-    this.renderer.removeAttribute(this.player, idleAttributeName);
-    if (this.playerSettings.touchIdleTimeout)
-      window.clearTimeout(this.playerSettings.touchIdleTimeout);
-    this.playerSettings.touchIdleTimeout = window.setTimeout(() => {
-      this.renderer.setAttribute(this.player, idleAttributeName, 'true');
-    }, this.playerSettings.touchIdleTimeoutValue);
+    const controlsAttributeName = 'data-touch-controls';
+    this.renderer.setAttribute(this.player, controlsAttributeName, 'true');
+    if (this.playerSettings.touchControlsTimeout)
+      window.clearTimeout(this.playerSettings.touchControlsTimeout);
+    this.playerSettings.touchControlsTimeout = window.setTimeout(() => {
+      this.renderer.removeAttribute(this.player, controlsAttributeName);
+    }, this.playerSettings.touchControlsTimeoutValue);
   }
 
   private handleUserSeekGesture(event: MediaSeekRequestEvent): void {
@@ -633,16 +631,17 @@ export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
       this.player.pause();
     else
       this.player.play();
+    this.resetTouchControlsTimeout();
   }
 
   toggleNext(): void {
     this.requestNext.emit();
-    this.resetTouchIdleTimeout();
+    this.resetTouchControlsTimeout();
   }
 
   togglePrev(): void {
     this.requestPrev.emit();
-    this.resetTouchIdleTimeout();
+    this.resetTouchControlsTimeout();
   }
 
   toggleMute(): void {
@@ -655,7 +654,7 @@ export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
 
   toggleFillScreen(): void {
     this.playerSettings.fillScreen = !this.playerSettings.fillScreen;
-    this.resetTouchIdleTimeout();
+    this.resetTouchControlsTimeout();
   }
 
   toggleFullwindow(): void {
@@ -671,7 +670,7 @@ export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
         this.player.enterFullscreen();
       else
         this.player.exitFullscreen();
-      this.resetTouchIdleTimeout();
+      this.resetTouchControlsTimeout();
     }
   }
 
