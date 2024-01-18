@@ -54,6 +54,69 @@ export class StreamManifestHelper {
     return masterUri;
   }
 
+  convertToMPD(manifest: StreamManifest, baseUrl: string, options: DashConverterOptions) {
+    let mpdStr = `<?xml version="1.0"?>\n<MPD xmlns="urn:mpeg:dash:schema:mpd:2011" `;
+    mpdStr += `minBufferTime="PT${manifest.videoTracks[0]?.dashSegment.maxSubsegmentDuration || 0}S" `;
+    mpdStr += `type="static" `;
+    mpdStr += `mediaPresentationDuration="PT${manifest.videoTracks[0]?.dashSegment.mediaPresentationDuration || 0}S" `;
+    mpdStr += `maxSubsegmentDuration="PT${manifest.videoTracks[0]?.dashSegment.maxSubsegmentDuration || 0}S" `;
+    mpdStr += `profiles="urn:mpeg:dash:profile:isoff-on-demand:2011">\n`;
+    mpdStr += ` <Period duration="PT${manifest.totalDuration}S">\n`;
+
+    for (let i = 0; i < manifest.audioTracks.length; i++) {
+      const track = manifest.audioTracks[i];
+      // AAC 6.1 and higher are not currently supported by browsers (chrome, firefox...)
+      if (track.codecID === AudioCodec.AAC_SURROUND && track.channels >= 7)
+        continue;
+      const fileUrl = baseUrl.replace(':path', track.uri);
+      mpdStr += `  <AdaptationSet segmentAlignment="true" lang="${track.language || 'und'}" startWithSAP="1" `;
+      mpdStr += `subsegmentAlignment="true" subsegmentStartsWithSAP="1">\n`;
+      mpdStr += `   <Representation id="${track.name} - ${track.codecID} - ${track.language}" `;
+      mpdStr += `mimeType="${track.mimeType}" codecs="${track.codec}" audioSamplingRate="${track.samplingRate}" `;
+      mpdStr += `bandwidth="${track.bandwidth}">\n`;
+      mpdStr += `    <AudioChannelConfiguration schemeIdUri="urn:mpeg:dash:23003:3:audio_channel_configuration:2011" `;
+      mpdStr += `value="${track.channels}"/>\n`;
+      mpdStr += `    <BaseURL>${fileUrl}</BaseURL>\n`;
+      mpdStr += `    <SegmentBase indexRangeExact="true" `;
+      mpdStr += `indexRange="${track.dashSegment.indexRange.start}-${track.dashSegment.indexRange.end}">\n`;
+      mpdStr += `     <Initialization range="${track.dashSegment.initRange.start}-${track.dashSegment.initRange.end}"/>\n`;
+      mpdStr += `    </SegmentBase>\n`;
+      mpdStr += `   </Representation>\n`;
+      mpdStr += `  </AdaptationSet>\n`;
+    }
+
+    const minWidth = Math.min(...manifest.videoTracks.map(t => t.width));
+    const minHeight = Math.min(...manifest.videoTracks.map(t => t.height));
+    const maxWidth = Math.max(...manifest.videoTracks.map(t => t.width));
+    const maxHeight = Math.max(...manifest.videoTracks.map(t => t.height));
+    const maxFrameRate = Math.max(...manifest.videoTracks.map(t => t.frameRate));
+
+    mpdStr += `  <AdaptationSet segmentAlignment="true" minWidth="${minWidth}" minHeight="${minHeight}" `;
+    mpdStr += `maxWidth="${maxWidth}" maxHeight="${maxHeight}" maxFrameRate="${maxFrameRate}" `;
+    mpdStr += `par="${manifest.videoTracks[0]?.par}" lang="${manifest.videoTracks[0]?.language}" `;
+    mpdStr += `startWithSAP="1" subsegmentAlignment="true" subsegmentStartsWithSAP="1">\n`;
+
+    for (let i = 0; i < manifest.videoTracks.length; i++) {
+      const track = manifest.videoTracks[i];
+      const fileUrl = baseUrl.replace(':path', track.uri);
+      mpdStr += `   <Representation id="${track.height}p" mimeType="${track.mimeType}" codecs="${track.codec}" `;
+      mpdStr += `width="${track.width}" height="${track.height}" frameRate="${track.frameRate}" sar="${track.sar}" `;
+      mpdStr += `bandwidth="${track.bandwidth}">\n`;
+      mpdStr += `    <BaseURL>${fileUrl}</BaseURL>\n`;
+      mpdStr += `    <SegmentBase indexRangeExact="true" `;
+      mpdStr += `indexRange="${track.dashSegment.indexRange.start}-${track.dashSegment.indexRange.end}">\n`;
+      mpdStr += `     <Initialization range="${track.dashSegment.initRange.start}-${track.dashSegment.initRange.end}"/>\n`;
+      mpdStr += `    </SegmentBase>\n`;
+      mpdStr += `   </Representation>\n`;
+    }
+
+    mpdStr += `  </AdaptationSet>\n`;
+    mpdStr += ` </Period>\n`;
+    mpdStr += `</MPD>\n`;
+
+    return mpdStr;
+  }
+
   convertToParsedDash(manifest: StreamManifest, baseUrl: string, options: DashConverterOptions) {
     const parsedManifest: ParsedDashManifest = { protocol: 'DASH' };
     const periodData: DashManifestData = {};
@@ -168,6 +231,7 @@ export class StreamManifestHelper {
       adaptationSet['maxHeight'] = Math.max(...manifest.videoTracks.map(t => t.height));
       adaptationSet['maxFrameRate'] = Math.max(...manifest.videoTracks.map(t => t.frameRate));
       adaptationSet['par'] = manifest.videoTracks[0]?.par;
+      adaptationSet['lang'] = manifest.videoTracks[0]?.language;
       adaptationSet['startWithSAP'] = 1;
       adaptationSet['subsegmentAlignment'] = 'true';
       adaptationSet['subsegmentStartsWithSAP'] = 1;

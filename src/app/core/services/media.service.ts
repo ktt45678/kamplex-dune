@@ -42,7 +42,7 @@ export class MediaService {
     if (paginateMediaDto) {
       const { pageToken, limit, search, sort, genres, tags, genreMatch, tagMatch, excludeIds, type, status, originalLang, year,
         preset, presetParams, includeHidden, includeUnprocessed } = paginateMediaDto;
-      pageToken && (params['page'] = pageToken);
+      pageToken && (params['pageToken'] = pageToken);
       limit && (params['limit'] = limit);
       search && (params['search'] = search);
       sort && (params['sort'] = sort);
