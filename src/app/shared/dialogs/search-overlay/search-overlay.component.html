@@ -1,0 +1,76 @@
+<ng-container *transloco="let t">
+  <div class="tw-px-3 tw-pt-3 tw-bg-neutral-800 tw-rounded-t">
+    <span class="p-input-icon-left tw-w-full">
+      <i class="ms ms-search"></i>
+      <input #inputSearch type="text" class="tw-w-full" [placeholder]="t('homeHeader.searchPlaceholder')" pInputText
+        autofocus />
+    </span>
+  </div>
+  <div pDialogContent class="tw-my-3 !tw-px-3 !tw-py-0">
+    @if (!searchResults(); as searchResults) {
+      <div class="tw-w-4/5 tw-mx-auto tw-text-center tw-py-8">
+        <p>{{ t('search.noRecentSearches') }}</p>
+      </div>
+    } @else if (!searchResults()!.length) {
+      <div class="tw-w-4/5 tw-mx-auto tw-text-center tw-py-8">
+        <p>{{ t('search.noResultsFound') }}</p>
+      </div>
+    } @else {
+      <div>
+        @for (media of searchResults(); track media._id; let first = $first; let i = $index) {
+          <a #searchMediaResult class="tw-group tw-flex tw-rounded tw-bg-neutral-875 hover:tw-bg-neutral-850
+            focus-visible:tw-shadow-focus-box tw-transition-colors tw-duration-200" [ngClass]="{ 'tw-mt-2': !first }"
+            tabindex="0" [routerLink]="['/details', media._id]" (mousemove)="selectedIndex.set(i)">
+            <div class="tw-w-14">
+              <div class="tw-aspect-w-2 tw-aspect-h-3 tw-rounded-sm tw-overflow-hidden">
+                <img *ngIf="media.smallPosterUrl; else noPoster" class="tw-object-cover"
+                  [lazyLoad]="media.smallPosterUrl" [defaultImage]="media.posterPlaceholder | thumbhashUrl"
+                  [alt]="media.title" errorImage="assets/images/media-poster-sm.png">
+                <ng-template #noPoster>
+                  <img class="tw-object-cover" src="assets/images/media-poster-sm.png" loading="lazy"
+                    [alt]="media.title">
+                </ng-template>
+              </div>
+            </div>
+            <div class="tw-text-white tw-flex-1 tw-m-2 tw-text-sm">
+              <p class="tw-font-bold tw-whitespace-normal tw-line-clamp-2">{{ media.title }}</p>
+              <p class="tw-text-gray-400 tw-text-xs tw-font-bold tw-mt-1">{{ media.type === MediaType.MOVIE ?
+                t('media.mediaTypes.movie') : t('media.mediaTypes.tvShow') }}</p>
+              <div class="tw-flex tw-items-center tw-text-xs tw-text-gray-400 tw-mt-1">
+                <span class="ms ms-calendar-today ms-icon-xs tw-mr-1.5"></span>
+                <p class="tw-font-bold tw-mr-2">{{ media.releaseDate.year }}</p>
+                <span class="ms ms-schedule ms-icon-xs tw-mr-1.5"></span>
+                <p class="tw-font-bold tw-mr-2">{{ media.runtime * 1000 | time:{ display:'short' }
+                }}</p>
+              </div>
+            </div>
+            <span *ngIf="selectedIndex() === i"
+              class="ms ms-subdirectory-arrow-left tw-self-center tw-mr-3 tw-opacity-75">
+            </span>
+          </a>
+        }
+      </div>
+    }
+  </div>
+  <div class="!tw-p-4 !tw-bg-neutral-850" pDialogActions>
+    <div class="tw-flex tw-items-center tw-text-xs tw-leading-3">
+      <div class="tw-flex">
+        <div class="tw-border tw-p-0.5 tw-rounded">Enter</div>
+        <span class="tw-ml-2 tw-leading-[17.6px]">{{ t('search.select') }}</span>
+      </div>
+      <div class="tw-flex tw-ml-4">
+        <div class="tw-border tw-rounded">
+          <span class="ms ms-arrow-upward-alt tw-text-sm tw-leading-3.5"></span>
+        </div>
+        <div class="tw-border tw-rounded tw-ml-0.5">
+          <span class="ms ms-arrow-downward-alt tw-text-sm tw-leading-3.5"></span>
+        </div>
+        <span class="tw-ml-2 tw-leading-[17.6px]">{{ t('search.navigate') }}</span>
+      </div>
+      <div class="tw-flex tw-ml-4">
+        <div class="tw-border tw-p-0.5 tw-rounded">ESC</div>
+        <span class="tw-ml-2 tw-leading-[17.6px]">{{ t('search.close') }}</span>
+      </div>
+    </div>
+  </div>
+</ng-container>

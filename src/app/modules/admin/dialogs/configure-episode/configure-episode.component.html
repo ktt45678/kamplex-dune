@@ -5,8 +5,9 @@
     </button>
   </div>
   <div *ngIf="episode; else loadingSpinner">
-    <app-vertical-tab width="80vw" menuWidth="12rem" menuSpacingX="2rem" menuSpacingY="2rem"
-      panelStyleClass="tw-max-w-8xl tw-mx-auto tw-my-8" contentStyleClass="tw-ml-6 tw-mr-6 md:tw-ml-0">
+    <app-vertical-tab class="configure-episode-tab" width="80vw" height="var(--vert-tab-height)" menuWidth="12rem"
+      menuSpacingX="2rem" menuSpacingY="2rem" panelStyleClass="tw-max-w-8xl tw-mx-auto tw-my-8"
+      contentStyleClass="tw-ml-6 tw-mr-6 md:tw-ml-0">
       <!--General info-->
       <ng-template appTabPanel [label]="t('admin.configureEpisode.general')" id="general" [separator]="true">
         <p class="tw-text-white tw-font-semibold tw-text-xl">{{ t('admin.configureEpisode.general') }}</p>

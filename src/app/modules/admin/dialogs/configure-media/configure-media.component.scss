@@ -1,0 +1,9 @@
+.configure-media-tab {
+  --vert-tab-height: calc(90vh - 48.8px);
+}
+
+@media (screen(md)) {
+  .configure-media-tab {
+    --vert-tab-height: 100vh;
+  }
+}

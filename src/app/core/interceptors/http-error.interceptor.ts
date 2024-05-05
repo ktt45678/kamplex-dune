@@ -14,7 +14,10 @@ export class HttpErrorInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     const ngIntercept = request.headers.get('x-ng-intercept');
     if (ngIntercept && (ngIntercept === 'ignore' || !ngIntercept.includes('http-error'))) {
-      return next.handle(request);
+      const ignoreInterceptorReq = request.clone({
+        headers: request.headers.delete('x-ng-intercept', ['ignore', 'http-error'])
+      });
+      return next.handle(ignoreInterceptorReq);
     }
     return next.handle(request).pipe(
       retry({

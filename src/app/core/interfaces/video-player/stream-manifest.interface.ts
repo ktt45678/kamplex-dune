@@ -14,6 +14,7 @@ export interface HlsAudioTrack {
   default: boolean;
   autoselect: boolean;
   language: string;
+  title?: string;
   format: string;
   channels: number;
   samplingRate: number;

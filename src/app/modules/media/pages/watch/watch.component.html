@@ -1,5 +1,5 @@
 <ng-container *transloco="let t">
-  <div class="tw-mb-8 2md:tw-mt-8" [ngClass]="{ 'tw-max-w-8xl tw-mx-auto': !fitWindow }">
+  <div class="tw-mb-8" [ngClass]="{ '2md:tw-mt-8 tw-max-w-8xl tw-mx-auto': !fitWindow }">
     <div class="tw-flex tw-flex-wrap" [ngClass]="{ '2md:tw-flex-nowrap': !fitWindow }">
       <div class="tw-w-full" [ngClass]="{ '2md:tw-w-9/12': !fitWindow }">
         <app-video-player #videoPlayer [media]="media" [stream]="streams" [canReqNext]="this.nextEpIndex > -1"

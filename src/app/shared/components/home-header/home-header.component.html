@@ -1,97 +1,53 @@
 <ng-container *transloco="let t">
   <header>
-    <nav id="navbar" class="tw-z-10 tw-bg-neutral-900 hover:tw-bg-opacity-100 tw-transition-all tw-duration-200"
-      [ngClass]="{ 'tw-fixed tw-top-0 tw-left-0 tw-right-0': isFixedNavbar,
-      'tw-bg-opacity-100': displayMobileSearch, 'tw-bg-opacity-60': !displayMobileSearch }">
+    <nav id="navbar"
+      class="tw-z-10 tw-bg-neutral-900 tw-bg-opacity-60 hover:tw-bg-opacity-100 tw-transition-all tw-duration-200"
+      [ngClass]="{ 'tw-fixed tw-top-0 tw-left-0 tw-right-0': isFixedNavbar }">
       <div class="tw-max-w-8xl tw-mx-auto tw-px-4 sm:tw-px-6 lg:tw-px-8">
         <div class="tw-relative tw-flex tw-justify-between tw-h-14">
           <div class="tw-flex tw-items-center tw-flex-initial tw-basis-full">
             <!-- Desktop menu button -->
             <button pButton [appMenuTriggerFor]="desktopMenu" icon="ms ms-menu" type="button"
               aria-label="Toggle desktop menu"
-              [ngClass]="displayMobileSearch ? 'lg:tw-inline-flex' : 'sm:tw-inline-flex'"
-              class="p-button-rounded p-button-text p-button-secondary p-button-sm p-button-sm-icon tw-hidden">
+              class="p-button-rounded p-button-text p-button-secondary p-button-sm p-button-sm-icon tw-hidden sm:tw-inline-flex">
             </button>
             <!-- Home page button -->
-            <a routerLink="/" routerLinkActive="ms-fill" [routerLinkActiveOptions]="{ exact: true }"
-              [ngClass]="displayMobileSearch ? 'tw-hidden lg:tw-block' : 'tw-block'">
+            <a routerLink="/" routerLinkActive="ms-fill" [routerLinkActiveOptions]="{ exact: true }" class="tw-block">
               <button pButton type="button" role="navigation" icon="ms ms-home tw-text-app-primary -tw-mt-px"
                 aria-label="Home page"
                 class="p-button-rounded p-button-text p-button-secondary p-button-sm p-button-sm-icon">
               </button>
             </a>
-            <a routerLink="/" [ngClass]="displayMobileSearch ? 'tw-hidden lg:tw-block' : 'tw-block'">
+            <a routerLink="/" class="tw-block">
               <img height="12px" width="auto" class="tw-h-3 md:tw-h-4 tw-w-auto" src="assets/images/logo-text.png"
                 alt="KamPlex">
             </a>
-            <button *ngIf="displayMobileSearch" pButton type="button" icon="ms ms-arrow-back"
-              aria-label="Hide mobile search"
-              class="p-button-rounded p-button-text p-button-secondary p-button-sm p-button-sm-icon lg:tw-hidden"
-              (click)="toggleMobileSearch()">
-            </button>
-            <div class="lg:tw-ml-4" [ngClass]="{ 'tw-w-full lg:tw-w-auto': displayMobileSearch }">
-              <div class="tw-flex tw-items-center">
-                <span class="p-input-button-left tw-w-full lg:tw-w-80"
-                  [ngClass]="displayMobileSearch ? 'tw-inline-flex' : 'tw-hidden lg:tw-inline-flex tw-mr-2'">
-                  <button pButton type="button" icon="ms ms-search" aria-label="Search"
-                    class="p-button-rounded p-button-text p-button-secondary p-button-sm p-button-sm-icon tw-ml-0.5"
-                    (click)="loadAdvancedSearch(mediaSearch.value)">
-                  </button>
-                  <p-autoComplete #mediaSearch [suggestions]="mediaSuggestions"
-                    [placeholder]="t('homeHeader.searchPlaceholder')" [minLength]="2" [maxlength]="250"
-                    (completeMethod)="loadMediaSuggestions($event.query)" field="title" dataKey="_id"
-                    [completeOnFocus]="false" [showEmptyMessage]="true" scrollHeight="480px"
-                    styleClass="p-autocomplete-full p-inputtext-xs p-inputtext-rounded"
-                    panelStyleClass="p-autocomplete-xs" inputId="media" ariaLabel="Find media"
-                    dropdownAriaLabel="Media search results" (onKeyUp)="onMediaSearchKeyUp($event, mediaSearch)">
-                    <ng-template let-media pTemplate="item">
-                      <a class="tw-flex" [routerLink]="['/details', media._id]">
-                        <div class="tw-w-14">
-                          <div class="tw-aspect-w-2 tw-aspect-h-3 tw-rounded-sm tw-overflow-hidden">
-                            <img *ngIf="media.smallPosterUrl; else noPoster" class="tw-object-cover"
-                              [lazyLoad]="media.smallPosterUrl" [defaultImage]="media.posterPlaceholder | thumbhashUrl"
-                              [alt]="media.title" errorImage="assets/images/media-poster-sm.png">
-                            <ng-template #noPoster>
-                              <img class="tw-object-cover" src="assets/images/media-poster-sm.png" loading="lazy"
-                                [alt]="media.title">
-                            </ng-template>
-                          </div>
-                        </div>
-                        <div class="tw-text-white tw-flex-1 tw-mx-2 tw-text-sm">
-                          <p class="tw-font-bold tw-whitespace-normal tw-line-clamp-2">{{ media.title }}</p>
-                          <p class="tw-text-gray-400 tw-text-xs tw-font-bold tw-mt-1">{{ media.type ===
-                            MediaType.MOVIE ? t('media.mediaTypes.movie') : t('media.mediaTypes.tvShow') }}</p>
-                          <div class="tw-flex tw-items-center tw-text-xs tw-text-gray-400 tw-mt-1">
-                            <i class="ms ms-calendar-today ms-icon-xs tw-mr-1.5"></i>
-                            <p class="tw-font-bold tw-mr-2">{{ media.releaseDate.year }}</p>
-                            <i class="ms ms-schedule ms-icon-xs tw-mr-1.5"></i>
-                            <p class="tw-font-bold tw-mr-2">{{ media.runtime * 1000 | time:{ display:'short' }
-                              }}</p>
-                          </div>
-                        </div>
-                      </a>
-                    </ng-template>
-                  </p-autoComplete>
-                </span>
-              </div>
+            <div class="tw-hidden lg:tw-block tw-ml-4">
+              <button class="tw-group tw-flex tw-items-center" (click)="showSearchDialog()">
+                <div class="tw-text-white tw-text-opacity-40 tw-flex tw-items-center tw-w-full
+                  lg:tw-w-80 tw-px-2 tw-py-1.5 tw-border tw-rounded-md tw-border-opacity-30 hover:tw-border-opacity-60
+                  tw-transition-colors tw-border-white">
+                  <span class="ms ms-search tw-text-xl tw-text-white"></span>
+                  <span class="tw-text-white tw-ml-2 tw-text-sm tw-text-opacity-30 group-hover:tw-text-opacity-60
+                    tw-transition-colors">{{ t('homeHeader.searchPlaceholder') }}</span>
+                  <div class="tw-inline-flex tw-items-center tw-border tw-rounded tw-ml-auto tw-px-1 tw-py-0.5">
+                    <span class="ms ms-keyboard-command-key tw-text-sm tw-leading-none"></span>
+                    <span class="tw-text-xs tw-leading-none tw-ml-0.5">K</span>
+                  </div>
+                </div>
+              </button>
             </div>
           </div>
           <div class="tw-flex tw-items-center tw-ml-auto tw-flex-shrink-0 tw-basis-auto">
-            <button *ngIf="displayMobileSearch" pButton type="button" icon="ms ms-close" aria-label="Clear search input"
+            <button pButton type="button" icon="ms ms-search" aria-label="Show mobile search"
               class="p-button-rounded p-button-text p-button-secondary p-button-sm p-button-sm-icon lg:tw-hidden"
-              (click)="clearSearchInput()" [disabled]="!mediaSearch.inputValue">
-            </button>
-            <button *ngIf="!displayMobileSearch" pButton type="button" icon="ms ms-search"
-              aria-label="Show mobile search"
-              class="p-button-rounded p-button-text p-button-secondary p-button-sm p-button-sm-icon lg:tw-hidden"
-              (click)="toggleMobileSearch()">
+              (click)="showSearchDialog()">
             </button>
             <!-- Mobile menu button -->
             <button pButton (click)="toggleMobileMenu()" icon="ms ms-menu" type="button" aria-label="Toggle mobile menu"
-              class="p-button-rounded p-button-text p-button-secondary p-button-sm p-button-sm-icon sm:tw-hidden"
-              [ngClass]="displayMobileSearch ? 'tw-hidden lg:tw-inline-flex' : 'tw-inline-flex'">
+              class="p-button-rounded p-button-text p-button-secondary p-button-sm p-button-sm-icon tw-inline-flex sm:tw-hidden">
             </button>
-            <div class="tw-hidden tw-items-center" [ngClass]="displayMobileSearch ? 'lg:tw-flex' : 'sm:tw-flex'">
+            <div class="tw-hidden tw-items-center sm:tw-flex">
               <ng-container *ngIf="currentUser; else notLoggedIn">
                 <a type="button" role="navigation" aria-label="User profile" class="tw-flex tw-items-center tw-rounded-full
                     tw-p-1 hover:tw-bg-neutral-650 focus-visible:tw-outline-none focus-visible:tw-shadow-focus-box
@@ -157,7 +113,7 @@
     <ng-template #desktopGenresMenu>
       <div appMenu class="p-scrollbar tw-flex-wrap tw-flex-row tw-w-[38rem] tw-max-h-96 tw-overflow-y-auto"
         infiniteScroll [infiniteScrollDistance]="2" [infiniteScrollDisabled]="!genreList?.hasNextPage"
-        [scrollWindow]="false" (scrolled)="onScroll()">
+        [scrollWindow]="false" (scrolled)="onGenresMenuScroll()">
         <ng-container *ngIf="!loadingGenres && genreList; else loadingGenresTpl">
           <a *ngFor="let genre of genreList.results; trackBy: track_Id"
             class="cdk-menu-item-sm !tw-block tw-w-1/4 tw-text-sm tw-truncate" appMenuItem
@@ -262,7 +218,7 @@
       <div *ngIf="displaySidebarGenres">
         <div infiniteScroll [infiniteScrollDistance]="2" class="tw-flex tw-flex-wrap"
           [infiniteScrollDisabled]="!genreList?.hasNextPage || !displaySidebarGenres" [fromRoot]="true"
-          infiniteScrollContainer="#sidebar-menu-content" (scrolled)="onScroll()">
+          infiniteScrollContainer="#sidebar-menu-content" (scrolled)="onGenresMenuScroll()">
           <ng-container *ngIf="!loadingGenres && genreList; else loadingGenresTpl">
             <a *ngFor="let genre of genreList.results; trackBy: track_Id" class="tw-block tw-w-full xs:tw-w-1/2"
               [routerLink]="['/list', 'genre', genre._id]">
@@ -307,17 +263,6 @@
       <!-- Space between footer menu and this sidebar -->
       <div class="tw-h-12"></div>
     </ng-template>
-    <!--ng-template pTemplate="footer">
-      <button *ngIf="currentUser; else notLoggedIn" role="button" pButton (click)="onSignOut()"
-        class="p-button-sm p-button-secondary p-button-shrink tw-w-full" icon="ms ms-logout"
-        [label]="t('homeHeader.signOut')"></button>
-      <ng-template #notLoggedIn>
-        <a class="tw-block tw-w-full" routerLink="/sign-in">
-          <button role="navigation" pButton class="p-button-sm p-button-secondary p-button-shrink tw-w-full"
-            icon="ms ms-logout" [label]="t('homeHeader.signIn')"></button>
-        </a>
-      </ng-template>
-    </ng-template-->
   </p-sidebar>
 
   <ng-template #userButton let-currentUser="currentUser">

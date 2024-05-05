@@ -1,4 +1,4 @@
-export interface KPTrack {
+export interface KPSubtitleTrack {
   _id: string;
   src: string;
   content?: string;

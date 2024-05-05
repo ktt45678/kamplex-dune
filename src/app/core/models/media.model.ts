@@ -17,6 +17,7 @@ export interface Media {
   views: number;
   dailyViews: number;
   weeklyViews: number;
+  monthlyViews: number;
   ratingCount: number;
   ratingAverage: number;
   posterUrl?: string;

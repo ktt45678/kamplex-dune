@@ -1,0 +1,9 @@
+.configure-episode-tab {
+  --vert-tab-height: calc(95vh - 48.8px);
+}
+
+@media (screen(md)) {
+  .configure-episode-tab {
+    --vert-tab-height: 100vh;
+  }
+}

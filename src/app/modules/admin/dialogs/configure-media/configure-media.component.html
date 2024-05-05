@@ -1,12 +1,12 @@
 <ng-container *transloco="let t; loadingTpl: loadingSpinner">
-  <div class="tw-fixed tw-right-10 tw-top-10 tw-z-50">
+  <div class="tw-fixed tw-right-10 tw-top-14 md:tw-top-10 tw-z-50">
     <button type="button" role="button" aria-label="Close dialog" pButton icon="ms ms-close"
       class="p-button-outlined p-button-rounded p-button-secondary p-button-text tw-ml-auto" (click)="closeDialog()">
     </button>
   </div>
   <div *ngIf="media; else loadingSpinner">
-    <app-vertical-tab panelStyleClass="tw-max-w-8xl tw-mx-auto tw-my-8"
-      contentStyleClass="tw-ml-8 tw-mr-8 md:tw-mr-24 md:tw-ml-0">
+    <app-vertical-tab class="configure-media-tab" height="var(--vert-tab-height)"
+      panelStyleClass="tw-max-w-8xl tw-mx-auto tw-my-8" contentStyleClass="tw-ml-8 tw-mr-8 md:tw-mr-24 md:tw-ml-0">
       <!--General info-->
       <ng-template appTabPanel [label]="t('admin.configureMedia.general')" id="general">
         <p class="tw-text-white tw-font-bold tw-text-2xl">{{ t('admin.configureMedia.general') }}</p>
@@ -308,7 +308,7 @@
           </form>
         </div>
         <ng-template appPanelToast tabId="general"
-          styleClass="tw-bg-neutral-850 tw-bg-opacity-80 tw-bottom-4 tw-left-8 tw-right-34 tw-rounded-md tw-z-[101]"
+          styleClass="tw-bg-neutral-850 tw-bg-opacity-80 tw-bottom-4 tw-left-8 tw-right-8 md:tw-right-34 tw-rounded-md tw-z-[101]"
           [visible]="updateMediaFormChanged">
           <div class="tw-flex tw-mx-4 tw-my-2 tw-items-center">
             <p class="tw-text-white tw-font-medium">{{ t('admin.configureMedia.unsavedChanges') }}</p>

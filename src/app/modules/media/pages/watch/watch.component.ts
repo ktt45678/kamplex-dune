@@ -159,7 +159,7 @@ export class WatchComponent implements OnInit, OnDestroy {
     if (!this.loading && this.media && this.videoPlayer?.player) {
       const updateWatchTimeDto: UpdateWatchTimeDto = {
         media: this.media._id,
-        time: ~~this.videoPlayer.player.currentTime
+        time: ~~(this.videoPlayer.player()?.currentTime || 0)
       };
       if (this.streams?.episode)
         updateWatchTimeDto.episode = this.streams.episode._id;
@@ -247,7 +247,7 @@ export class WatchComponent implements OnInit, OnDestroy {
   showShareMediaLinkDialog() {
     if (!this.media) return;
     const currentTimeUrl = new URL(window.location.href);
-    currentTimeUrl.searchParams.append('t', Math.trunc(this.videoPlayer?.playerStore.currentTime || 0).toString());
+    currentTimeUrl.searchParams.append('t', Math.trunc(this.videoPlayer?.playerStore().currentTime || 0).toString());
     const sharingOptions: SharingOption[] = [{
       label: this.translocoService.translate('media.sharing.url'),
       content: window.location.href,

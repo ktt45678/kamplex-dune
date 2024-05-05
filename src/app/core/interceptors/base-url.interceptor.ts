@@ -14,7 +14,10 @@ export class BaseUrlInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     const ngIntercept = request.headers.get('x-ng-intercept');
     if (ngIntercept && (ngIntercept === 'ignore' || !ngIntercept.includes('base-url'))) {
-      return next.handle(request);
+      const ignoreInterceptorReq = request.clone({
+        headers: request.headers.delete('x-ng-intercept', ['ignore', 'base-url'])
+      });
+      return next.handle(ignoreInterceptorReq);
     }
     const canInsertBaseUrl = request.url.indexOf('http://') !== 0 && request.url.indexOf('https://') !== 0 && request.url.indexOf('/assets/i18n/') !== 0;
     const language = this.translocoService.getActiveLang();

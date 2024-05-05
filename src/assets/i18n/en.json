@@ -15,7 +15,7 @@
     "address": "Address",
     "addressValue": "Vietnam",
     "email": "Email",
-    "emailValue": "support@kamplex.tk",
+    "emailValue": "support@kamplex.net",
     "phone": "Phone",
     "phoneValue": "0123456789",
     "copyright": "Developed by Kam",
@@ -34,12 +34,19 @@
     "signIn": "Sign in",
     "signUp": "Sign up",
     "search": "Search",
-    "searchPlaceholder": "Search...",
+    "searchPlaceholder": "Search",
     "profile": "Profile",
     "adminPanel": "Admin panel",
     "settings": "Settings",
     "signOut": "Sign out",
     "notSignedIn": "Not signed in"
+  },
+  "search": {
+    "noRecentSearches": "No recent searches",
+    "noResultsFound": "No results found",
+    "select": "Select",
+    "navigate": "Navigate",
+    "close": "Close"
   },
   "validationErrors": {
     "auth": {

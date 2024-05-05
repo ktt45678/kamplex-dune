@@ -830,6 +830,10 @@
   content: "\e5db";
 }
 
+.ms-arrow-downward-alt:before {
+  content: "\e984";
+}
+
 .ms-arrow-drop-down:before {
   content: "\e5c5";
 }
@@ -864,6 +868,10 @@
 
 .ms-arrow-upward:before {
   content: "\e5d8";
+}
+
+.ms-arrow-upward-alt:before {
+  content: "\e986";
 }
 
 .ms-art-track:before {

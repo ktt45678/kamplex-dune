@@ -4,9 +4,12 @@
     <form id="update-subtitle-form" class="tw-w-full lg:tw-w-1/2" [formGroup]="updateSubtitleForm" formHandler
       (ngSubmit)="onUpdateSubtitleFormSubmit()">
       <label id="font-size-label" class="tw-inline-block tw-text-base tw-font-medium">{{
-        t('users.subtitleSettings.fontSize') }}: {{ updateSubtitleForm.controls.fontSize.value }}%</label>
-      <p-sliderAlt formControlName="fontSize" [min]="25" [max]="300" [step]="5" ariaLabelledBy="font-size-label"
-        styleClass="tw-mt-2"></p-sliderAlt>
+        t('users.subtitleSettings.fontSize') }}</label>
+      <div class="tw-flex tw-items-center tw-mt-2">
+        <p class="tw-w-16">{{ updateSubtitleForm.controls.fontSize.value }}%</p>
+        <p-sliderAlt formControlName="fontSize" [min]="25" [max]="300" [step]="5" class="tw-flex-1"
+          ariaLabelledBy="font-size-label"></p-sliderAlt>
+      </div>
       <label class="tw-inline-block tw-text-base tw-font-medium tw-mt-4">{{
         t('users.subtitleSettings.fontFamily') }}</label>
       <p-dropdown formControlName="fontFamily" [options]="fontFamilyList" [overlayOptions]="{ baseZIndex: 100 }"
@@ -21,9 +24,12 @@
         t('users.subtitleSettings.textColor') }}</label>
       <app-color-picker formControlName="textColor" styleClass="tw-mt-2"></app-color-picker>
       <label id="text-alpha-label" class="tw-inline-block tw-text-base tw-font-medium tw-mt-4">{{
-        t('users.subtitleSettings.textAlpha') }}: {{ updateSubtitleForm.controls.textAlpha.value }}</label>
-      <p-sliderAlt formControlName="textAlpha" [min]="0" [max]="100" [step]="10" ariaLabelledBy="text-alpha-label"
-        styleClass="tw-mt-2"></p-sliderAlt>
+        t('users.subtitleSettings.textAlpha') }}</label>
+      <div class="tw-flex tw-items-center tw-mt-2">
+        <p class="tw-w-16">{{ updateSubtitleForm.controls.textAlpha.value }}%</p>
+        <p-sliderAlt formControlName="textAlpha" [min]="0" [max]="100" [step]="10" class="tw-flex-1"
+          ariaLabelledBy="text-alpha-label"></p-sliderAlt>
+      </div>
       <label class="tw-inline-block tw-text-base tw-font-medium tw-mt-4">{{ t('users.subtitleSettings.textEdge')
         }}</label>
       <p-dropdown formControlName="textEdge" [options]="textEdgeStyleList" [overlayOptions]="{ baseZIndex: 100 }"
@@ -33,17 +39,22 @@
         t('users.subtitleSettings.bgColor') }}</label>
       <app-color-picker formControlName="bgColor" styleClass="tw-mt-2"></app-color-picker>
       <label id="bg-alpha-label" class="tw-inline-block tw-text-base tw-font-medium tw-mt-4">{{
-        t('users.subtitleSettings.bgAlpha') }}: {{ updateSubtitleForm.controls.bgAlpha.value
-        }}</label>
-      <p-sliderAlt formControlName="bgAlpha" [min]="0" [max]="100" [step]="10" ariaLabelledBy="bg-alpha-label"
-        styleClass="tw-mt-2"></p-sliderAlt>
+        t('users.subtitleSettings.bgAlpha') }}</label>
+      <div class="tw-flex tw-items-center tw-mt-2">
+        <p class="tw-w-16">{{ updateSubtitleForm.controls.bgAlpha.value }}%</p>
+        <p-sliderAlt formControlName="bgAlpha" [min]="0" [max]="100" [step]="10" class="tw-flex-1"
+          ariaLabelledBy="bg-alpha-label"></p-sliderAlt>
+      </div>
       <label class="tw-inline-block tw-text-base tw-font-medium tw-mt-4">{{
         t('users.subtitleSettings.winColor') }}</label>
       <app-color-picker formControlName="winColor" styleClass="tw-mt-2"></app-color-picker>
       <label id="win-alpha-label" class="tw-inline-block tw-text-base tw-font-medium tw-mt-4">{{
-        t('users.subtitleSettings.winAlpha') }}: {{ updateSubtitleForm.controls.winAlpha.value }}</label>
-      <p-sliderAlt formControlName="winAlpha" [min]="0" [max]="100" [step]="10" ariaLabelledBy="win-alpha-label"
-        styleClass="tw-mt-2"></p-sliderAlt>
+        t('users.subtitleSettings.winAlpha') }}</label>
+      <div class="tw-flex tw-items-center tw-mt-2">
+        <p class="tw-w-16">{{ updateSubtitleForm.controls.winAlpha.value }}%</p>
+        <p-sliderAlt formControlName="winAlpha" [min]="0" [max]="100" [step]="10" class="tw-flex-1"
+          ariaLabelledBy="win-alpha-label"></p-sliderAlt>
+      </div>
       <div #dropdownZone class="p-dropdown-xs"></div>
     </form>
     <div class="tw-w-full lg:tw-w-1/2 max-lg:tw-mb-4">

@@ -70,6 +70,7 @@ export default {
         'dot': '\'\\2022\''
       },
       lineHeight: {
+        '3.5': '14px',
         '5xl': '1.1'
       },
       margin: {

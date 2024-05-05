@@ -1,7 +1,7 @@
 import type { ThumbnailState } from 'vidstack';
 
 type ThumbnailStoreProps =
-  'activeCue' |
+  'activeThumbnail' |
   'loading';
 
 export type ThumbnailStore = Pick<ThumbnailState, ThumbnailStoreProps>;

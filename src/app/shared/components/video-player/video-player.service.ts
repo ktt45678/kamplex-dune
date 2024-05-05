@@ -1,87 +1,25 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Injectable, OnDestroy } from '@angular/core';
-import { Observable, Subject, catchError, filter, first, fromEvent, map, of, switchMap, throwError } from 'rxjs';
+import { inject, Injectable, OnDestroy } from '@angular/core';
+import { Observable, catchError, filter, first, fromEvent, map, of, switchMap, throwError } from 'rxjs';
 import { gunzip } from 'fflate';
 import type { ASS_Style } from 'jassub';
+import type { ThumbnailImageInit } from 'vidstack';
 
 import type { FontInfo } from '../../../core/interfaces/subtitles';
 import type { DashConverterOptions, M3U8ConverterOptions, StreamManifest } from '../../../core/interfaces/video-player';
-import type { PlayerSettings, PlayerStore, ThumbnailFrame, ThumbnailStore } from './interfaces';
+import type { ThumbnailFrame } from './interfaces';
 import { streamManifestHelper } from '../../../core/utils';
 import { SUBTITLE_FONT_LIST_FILE, SUBTITLE_FONT_LIST_URL } from '../../../../environments/config';
 
 @Injectable()
 export class VideoPlayerService implements OnDestroy {
-  private activeSrcUrl?: string;
   private worker?: Worker;
   private isWorkerSupported = typeof Worker !== 'undefined';
   private workerMessageId: number = 0;
 
-  constructor(private http: HttpClient) { }
+  private http = inject(HttpClient);
 
-  initPlayerSettings(): PlayerSettings {
-    return {
-      playbackSpeeds: [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2],
-      tracks: [],
-      sourceBaseUrl: '',
-      previewThumbnail: null,
-      thumbnailFrames: [],
-      activeThumbPlaceholder: null,
-      activeQualityValue: 0,
-      activeSpeedValue: 1,
-      activeTrackValue: null,
-      activeAudioLang: null,
-      initAudioValue: null,
-      initAudioSurround: true,
-      autoNext: false,
-      showSubtitle: false,
-      showFastForward: false,
-      showRewind: false,
-      fullWindow: false,
-      fillScreen: false,
-      initPlaytime: 0,
-      activeVolume: 1,
-      isMuted: false,
-      expandVolumeSlider: false,
-      isMenuOpen: false,
-      hasError: false,
-      subtitleStyles: null,
-      playerDestroyed: new Subject(),
-      storeDisposeFn: [],
-      touchControlsTimeoutValue: 2500
-    };
-  }
-
-  initPlayerStore(): PlayerStore {
-    return {
-      autoplayError: null,
-      audioTracks: [],
-      audioTrack: null,
-      textTrack: null,
-      canFullscreen: false,
-      canPlay: false,
-      currentTime: 0,
-      error: null,
-      fullscreen: false,
-      loop: false,
-      muted: false,
-      paused: true,
-      playing: false,
-      qualities: [],
-      quality: null,
-      autoQuality: false,
-      canSetQuality: true,
-      volume: 1,
-      waiting: false
-    }
-  }
-
-  initThumbnailStore(): ThumbnailStore {
-    return {
-      activeCue: null,
-      loading: false
-    }
-  }
+  constructor() {}
 
   generateM3U8(manifestUrl: string, baseUrl: string, options?: M3U8ConverterOptions) {
     options = Object.assign({}, { opus: false }, options)
@@ -111,12 +49,22 @@ export class VideoPlayerService implements OnDestroy {
     );
   }
 
-  createThumbnailCues(frames: ThumbnailFrame[]) {
-    const cues: VTTCue[] = [];
+  createThumbnailFrames(frames: ThumbnailFrame[]) {
+    const thumbnailFrames: ThumbnailImageInit[] = [];
     frames.forEach(f => {
-      cues.push(new VTTCue(f.startTime, f.endTime, `${f.sprite}#xywh=${f.x},${f.y},${f.width},${f.height}`));
+      thumbnailFrames.push({
+        url: f.sprite,
+        startTime: f.startTime,
+        endTime: f.endTime,
+        width: f.width,
+        height: f.height,
+        coords: {
+          x: f.x,
+          y: f.y
+        }
+      });
     });
-    return cues;
+    return thumbnailFrames;
   }
 
   isGzipSubtitle(mimeType: string) {
@@ -210,13 +158,6 @@ export class VideoPlayerService implements OnDestroy {
 
   ngOnDestroy(): void {
     this.worker?.terminate();
-  }
-
-  private destroySrcUri() {
-    if (this.activeSrcUrl) {
-      URL.revokeObjectURL(this.activeSrcUrl);
-      this.activeSrcUrl = undefined;
-    }
   }
 }
 

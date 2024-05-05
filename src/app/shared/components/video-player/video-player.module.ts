@@ -23,6 +23,7 @@ import { SubtitleIconComponent } from './icons/subtitle-icon/subtitle-icon.compo
 import { SettingsIconComponent } from './icons/settings-icon/settings-icon.component';
 import { FillIconComponent } from './icons/fill-icon/fill-icon.component';
 import { PlayCircleIconComponent } from './icons/play-circle-icon/play-circle-icon.component';
+import { BaseVideoPlayerComponent } from './base-video-player/base-video-player.component';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,8 @@ import { PlayCircleIconComponent } from './icons/play-circle-icon/play-circle-ic
     SubtitleIconComponent,
     SettingsIconComponent,
     FillIconComponent,
-    PlayCircleIconComponent
+    PlayCircleIconComponent,
+    BaseVideoPlayerComponent
   ],
   exports: [VideoPlayerComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

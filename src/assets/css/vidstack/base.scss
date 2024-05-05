@@ -177,3 +177,16 @@ media-player[data-touch-device] {
     pointer-events: none;
   }
 }
+
+media-player[data-full-window] {
+  --full-window-height: calc(100vh - 56px);
+  height: var(--full-window-height);
+
+  media-provider {
+    height: var(--full-window-height);
+
+    video {
+      height: var(--full-window-height);
+    }
+  }
+}

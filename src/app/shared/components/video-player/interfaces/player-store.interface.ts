@@ -1,7 +1,7 @@
 import type { MediaState } from 'vidstack';
 
 type PlayerStoreProps =
-  'autoplayError' |
+  'autoPlayError' |
   'canPlay' |
   'waiting' |
   'playing' |

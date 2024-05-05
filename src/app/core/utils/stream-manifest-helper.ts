@@ -1,5 +1,5 @@
 import { AudioCodec } from '../enums';
-import { DashConverterOptions, HlsSegmentGroup, M3U8ConverterOptions, StreamManifest } from '../interfaces/video-player';
+import { DashConverterOptions, HlsAudioTrack, HlsSegmentGroup, M3U8ConverterOptions, StreamManifest } from '../interfaces/video-player';
 
 export type DashManifestData = { [key: string]: any };
 export type ParsedDashManifest = DashManifestData & { protocol: 'DASH' };
@@ -31,11 +31,12 @@ export class StreamManifestHelper {
         continue;
       if (track.channels > 6)
         continue;
+      const trackTitle = this.hasDuplicatedTrack(track, manifest.audioTracks) ? (track.title || `Track ${i + 1}`) : null;
       const segmentGroup = track.hlsSegment;
       const playlistUri = generatePlaylist(segmentGroup, track.uri);
       const defaultAudio = track.default ? 'YES' : 'NO';
       const autoSelectAudio = track.autoselect ? 'YES' : 'NO';
-      masterStr += `#EXT-X-MEDIA:TYPE=AUDIO,GROUP-ID="${track.group}",NAME="${track.name} - ${track.codecID} - ${track.language}",`;
+      masterStr += `#EXT-X-MEDIA:TYPE=AUDIO,GROUP-ID="${track.group}",NAME="${this.getTrackName(i, track.name, track.codecID, track.language, trackTitle)}",`;
       masterStr += `DEFAULT=${defaultAudio},AUTOSELECT=${autoSelectAudio},LANGUAGE="${track.language}",CHANNELS="${track.channels}",`;
       masterStr += `URI="${playlistUri}"\n`;
     }
@@ -69,9 +70,10 @@ export class StreamManifestHelper {
       if (track.codecID === AudioCodec.AAC_SURROUND && track.channels >= 7)
         continue;
       const fileUrl = baseUrl.replace(':path', track.uri);
+      const trackTitle = this.hasDuplicatedTrack(track, manifest.audioTracks) ? (track.title || `Track ${i + 1}`) : null;
       mpdStr += `  <AdaptationSet segmentAlignment="true" lang="${track.language || 'und'}" startWithSAP="1" `;
       mpdStr += `subsegmentAlignment="true" subsegmentStartsWithSAP="1">\n`;
-      mpdStr += `   <Representation id="${track.name} - ${track.codecID} - ${track.language}" `;
+      mpdStr += `   <Representation id="${this.getTrackName(i, track.name, track.codecID, track.language, trackTitle)}" `;
       mpdStr += `mimeType="${track.mimeType}" codecs="${track.codec}" audioSamplingRate="${track.samplingRate}" `;
       mpdStr += `bandwidth="${track.bandwidth}">\n`;
       mpdStr += `    <AudioChannelConfiguration schemeIdUri="urn:mpeg:dash:23003:3:audio_channel_configuration:2011" `;
@@ -128,6 +130,7 @@ export class StreamManifestHelper {
       if (track.codecID === AudioCodec.AAC_SURROUND && track.channels >= 7)
         continue;
       const fileUrl = baseUrl.replace(':path', track.uri);
+      const trackTitle = this.hasDuplicatedTrack(track, manifest.audioTracks) ? (track.title || `Track ${i + 1}`) : null;
       const adaptationSet: DashManifestData = {};
       const representation: DashManifestData = {};
       const audioChannelConfiguration: DashManifestData = {
@@ -158,7 +161,7 @@ export class StreamManifestHelper {
         { 'BaseURL': fileUrl },
         { 'SegmentBase': segmentBase },
       ];
-      representation['id'] = `${track.name} - ${track.codecID} - ${track.language}`;
+      representation['id'] = this.getTrackName(i, track.name, track.codecID, track.language, trackTitle);
       representation['mimeType'] = track.mimeType;
       representation['codecs'] = track.codec;
       representation['audioSamplingRate'] = track.samplingRate;
@@ -169,7 +172,7 @@ export class StreamManifestHelper {
       adaptationSet['Representation_asArray'] = [representation];
       adaptationSet['__children'] = [{ 'Representation': representation }];
       adaptationSet['segmentAlignment'] = 'true';
-      adaptationSet['id'] = `${track.name} - ${track.codecID} - ${track.language}`;
+      adaptationSet['id'] = this.getTrackName(i, track.name, track.codecID, track.language, trackTitle);
       adaptationSet['lang'] = track.language;
       adaptationSet['startWithSAP'] = 1;
       adaptationSet['subsegmentAlignment'] = 'true';
@@ -258,6 +261,15 @@ export class StreamManifestHelper {
     parsedManifest['baseUri'] = baseUrl.replace(':path', '');
     parsedManifest['loadedTime'] = new Date();
     return parsedManifest;
+  }
+
+  private hasDuplicatedTrack(currentAudioTrack: HlsAudioTrack, audioTracks: HlsAudioTrack[]) {
+    const { name, codecID, language } = currentAudioTrack;
+    return audioTracks.filter(t => t.name === name && t.codecID === codecID && t.language === language).length > 1;
+  }
+
+  private getTrackName(...values: (string | number | null | undefined)[]) {
+    return values.filter(v => v != null).join(' - ');
   }
 }
 

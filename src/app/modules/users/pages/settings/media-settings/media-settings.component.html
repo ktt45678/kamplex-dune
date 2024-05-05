@@ -3,11 +3,12 @@
   <div class="tw-text-white tw-mt-4">
     <form id="update-media-form" [formGroup]="updateMediaForm" formHandler (ngSubmit)="onUpdateMediaFormSubmit()">
       <label id="history-limit-label" class="tw-inline-block tw-text-base tw-font-medium">{{
-        t('users.mediaSettings.historyLimit') }}:
-        <span>{{ updateMediaForm.controls.historyLimit.value }}%</span>
-      </label>
-      <p-sliderAlt formControlName="historyLimit" [min]="50" [max]="100" [step]="5" ariaLabelledBy="history-limit-label"
-        aria-describedby="limit-desc" styleClass="tw-mt-2"></p-sliderAlt>
+        t('users.mediaSettings.historyLimit') }}</label>
+      <div class="tw-flex tw-items-center tw-mt-2">
+        <p class="tw-w-16">{{ updateMediaForm.controls.historyLimit.value }}%</p>
+        <p-sliderAlt formControlName="historyLimit" [min]="50" [max]="100" [step]="5"
+          ariaLabelledBy="history-limit-label" aria-describedby="limit-desc" class="tw-flex-1"></p-sliderAlt>
+      </div>
       <small id="limit-desc" class="p-error tw-text-sm tw-block tw-mt-2 tw-text-gray-400">{{
         t('users.mediaSettings.historyLimitDesc') }}</small>
       <p-inputSwitch formControlName="paused" class="tw-mt-4" labelStyleClass="tw-font-medium"

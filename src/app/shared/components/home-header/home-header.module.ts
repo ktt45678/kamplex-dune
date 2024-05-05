@@ -5,12 +5,14 @@ import { TranslocoModule } from '@ngneat/transloco';
 import { LazyLoadImageModule } from 'ng-lazyload-image';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { AutoCompleteModule } from 'primeng/autocomplete';
+import { DialogService, DynamicDialogModule } from 'primeng/dynamicdialog';
 import { ButtonModule } from 'primeng/button';
 import { SidebarModule } from 'primeng/sidebar';
 
 import { HomeHeaderComponent } from './home-header.component';
 import { SkeletonModule } from '../skeleton';
 import { AvatarModule } from '../avatar';
+import { SearchOverlayModule } from '../../dialogs/search-overlay';
 import { CdkMenuCustomModule } from '../../directives/cdk-menu-custom';
 import { CommonDirectiveModule } from '../../directives/common-directive';
 import { PermissionPipeModule } from '../../pipes/permission-pipe';
@@ -29,6 +31,7 @@ import { PlaceholderPipeModule } from '../../pipes/placeholder-pipe';
     InfiniteScrollModule,
     SkeletonModule,
     AvatarModule,
+    SearchOverlayModule,
     CdkMenuCustomModule,
     CommonDirectiveModule,
     PermissionPipeModule,
@@ -37,9 +40,11 @@ import { PlaceholderPipeModule } from '../../pipes/placeholder-pipe';
     StringPipeModule,
     PlaceholderPipeModule,
     AutoCompleteModule,
+    DynamicDialogModule,
     ButtonModule,
     SidebarModule
   ],
+  providers: [DialogService],
   exports: [HomeHeaderComponent]
 })
 export class HomeHeaderModule { }
