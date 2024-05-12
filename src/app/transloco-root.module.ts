@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { Translation, TranslocoLoader, TranslocoModule, provideTransloco } from '@ngneat/transloco';
 import { Injectable, NgModule } from '@angular/core';
 import { provideTranslocoMessageformat } from '@ngneat/transloco-messageformat';
@@ -6,6 +6,7 @@ import { provideTranslocoMessageformat } from '@ngneat/transloco-messageformat';
 // import * as localForage from 'localforage';
 
 import { environment } from '../environments/environment';
+import { CAN_INTERCEPT } from './core/tokens';
 
 // localForage.config({
 //   driver: [localForage.INDEXEDDB, localForage.LOCALSTORAGE],
@@ -19,9 +20,7 @@ export class TranslocoHttpLoader implements TranslocoLoader {
 
   getTranslation(lang: string) {
     return this.http.get<Translation>(`/assets/i18n/${lang}.json`, {
-      headers: {
-        'x-ng-intercept': 'ignore'
-      }
+      context: new HttpContext().set(CAN_INTERCEPT, [])
     });
   }
 }

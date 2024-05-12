@@ -5,6 +5,7 @@ import { MessageService } from 'primeng/api';
 
 import { AuthService } from '../services';
 import { ToastKey } from '../enums';
+import { CAN_INTERCEPT, RETRY_COUNT } from '../tokens';
 
 @Injectable()
 export class HttpErrorInterceptor implements HttpInterceptor {
@@ -12,16 +13,14 @@ export class HttpErrorInterceptor implements HttpInterceptor {
   constructor(private zone: NgZone, private messageService: MessageService, private authService: AuthService) { }
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-    const ngIntercept = request.headers.get('x-ng-intercept');
-    if (ngIntercept && (ngIntercept === 'ignore' || !ngIntercept.includes('http-error'))) {
-      const ignoreInterceptorReq = request.clone({
-        headers: request.headers.delete('x-ng-intercept', ['ignore', 'http-error'])
-      });
-      return next.handle(ignoreInterceptorReq);
+    const canIntercept = request.context.get(CAN_INTERCEPT);
+    if (!canIntercept.includes('http-error')) {
+      return next.handle(request);
     }
+    const retryCount = request.context.get(RETRY_COUNT);
     return next.handle(request).pipe(
       retry({
-        count: 5,
+        count: retryCount,
         delay: (error: HttpErrorResponse) => {
           if (error.status && error.status > 500) {
             return timer(3000);

@@ -1,4 +1,4 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpContext, HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable, OnDestroy } from '@angular/core';
 import { Observable, catchError, filter, first, fromEvent, map, of, switchMap, throwError } from 'rxjs';
 import { gunzip } from 'fflate';
@@ -10,6 +10,7 @@ import type { DashConverterOptions, M3U8ConverterOptions, StreamManifest } from 
 import type { ThumbnailFrame } from './interfaces';
 import { streamManifestHelper } from '../../../core/utils';
 import { SUBTITLE_FONT_LIST_FILE, SUBTITLE_FONT_LIST_URL } from '../../../../environments/config';
+import { CAN_INTERCEPT } from '../../../core/tokens';
 
 @Injectable()
 export class VideoPlayerService implements OnDestroy {
@@ -19,12 +20,12 @@ export class VideoPlayerService implements OnDestroy {
 
   private http = inject(HttpClient);
 
-  constructor() {}
+  constructor() { }
 
   generateM3U8(manifestUrl: string, baseUrl: string, options?: M3U8ConverterOptions) {
     options = Object.assign({}, { opus: false }, options)
     return this.http.get<StreamManifest>(manifestUrl, {
-      headers: { 'x-ng-intercept': 'http-error' }
+      context: new HttpContext().set(CAN_INTERCEPT, ['http-error'])
     }).pipe(switchMap(manifest => {
       return this.manifestToM3U8(manifest, baseUrl, options!);
     }));
@@ -33,14 +34,14 @@ export class VideoPlayerService implements OnDestroy {
   generateParsedDash(manifestUrl: string, baseUrl: string, options?: DashConverterOptions) {
     options = Object.assign({}, { opus: false }, options)
     return this.http.get<StreamManifest>(manifestUrl, {
-      headers: { 'x-ng-intercept': 'http-error' }
+      context: new HttpContext().set(CAN_INTERCEPT, ['http-error'])
     }).pipe(map(manifest => {
       return this.manifestToParsedDash(manifest, baseUrl, options!);
     }));
   }
 
   getPreviewThumbnails(url: string) {
-    return this.http.get<ThumbnailFrame[]>(url, { headers: { 'x-ng-intercept': 'ignore' } }).pipe(
+    return this.http.get<ThumbnailFrame[]>(url, { context: new HttpContext().set(CAN_INTERCEPT, []) }).pipe(
       catchError((error: HttpErrorResponse) => {
         if (error.status === 404)
           return of(null);
@@ -72,7 +73,7 @@ export class VideoPlayerService implements OnDestroy {
   }
 
   loadGzipSubtitle(src: string) {
-    return this.http.get(src, { headers: { 'x-ng-intercept': 'ignore' }, responseType: 'arraybuffer' }).pipe(
+    return this.http.get(src, { context: new HttpContext().set(CAN_INTERCEPT, []), responseType: 'arraybuffer' }).pipe(
       switchMap(subtitleBuffer => {
         return new Observable<string>(observer => {
           gunzip(new Uint8Array(subtitleBuffer), (err, decompressed) => {
@@ -104,7 +105,7 @@ export class VideoPlayerService implements OnDestroy {
 
   findSubtitleFontList(styles: ASS_Style[]) {
     return this.http.get<FontInfo[]>(`${SUBTITLE_FONT_LIST_URL}/${SUBTITLE_FONT_LIST_FILE}`,
-      { headers: { 'x-ng-intercept': 'ignore' } }
+      { context: new HttpContext().set(CAN_INTERCEPT, []) }
     ).pipe(
       map(fontList => {
         const addedFonts: string[] = [];

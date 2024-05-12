@@ -4,7 +4,7 @@ import { Platform } from '@angular/cdk/platform';
 import { patchState } from '@ngrx/signals';
 import type { DeepSignal } from '@ngrx/signals/src/deep-signal';
 import { isDASHProvider, isHLSProvider, LibASSTextRenderer } from 'vidstack';
-import type { MediaPauseRequestEvent, MediaPlayRequestEvent, MediaProviderChangeEvent, MediaProviderSetupEvent, MediaSeekRequestEvent, MediaVolumeChangeEvent, PlayerSrc } from 'vidstack';
+import type { MediaEndedEvent, MediaPauseRequestEvent, MediaPlayRequestEvent, MediaProviderChangeEvent, MediaProviderSetupEvent, MediaSeekRequestEvent, MediaVolumeChangeEvent, PlayerSrc } from 'vidstack';
 import { MediaPlayerElement, MediaSliderThumbnailElement } from 'vidstack/elements';
 import { TranslocoTranslateFn } from '@ngneat/transloco';
 import { buffer, debounceTime, filter, first, fromEvent, merge, Subject, takeUntil } from 'rxjs';
@@ -171,6 +171,13 @@ export class BaseVideoPlayerComponent implements OnInit, OnDestroy {
       ).subscribe(event => {
         this.handleUserSeekGesture(event);
       });
+    fromEvent<MediaEndedEvent>(player, 'ended')
+      .pipe(takeUntil(this.playerSettings.playerDestroyed()))
+      .subscribe(event => {
+        this.onEnded.emit();
+        if (this.playerSettings.autoNext() && this.canReqNext())
+          this.requestNext.emit();
+      });
     if (this.playerSupports.isTouchDevice()) {
       fromEvent<MediaProviderSetupEvent>(player, 'provider-setup')
         .pipe(takeUntil(this.playerSettings.playerDestroyed())).subscribe(() => {
@@ -222,12 +229,6 @@ export class BaseVideoPlayerComponent implements OnInit, OnDestroy {
       player.subscribe(({ qualities }) => {
         const sortedQualities = [...qualities].reverse();
         setPlayerStoreProp({ qualities: sortedQualities });
-      }),
-      player.subscribe(({ ended }) => {
-        if (!ended) return;
-        this.onEnded.emit();
-        if (this.playerSettings.autoNext() && this.canReqNext())
-          this.requestNext.emit();
       })
     );
     return storeDisposeFn;

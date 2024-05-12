@@ -1,4 +1,4 @@
-import { HttpClient, HttpEventType, HttpStatusCode } from '@angular/common/http';
+import { HttpClient, HttpContext, HttpEventType, HttpStatusCode } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, concatMap, Observable, retry, switchMap, tap } from 'rxjs';
 
@@ -6,6 +6,7 @@ import { QueueUploadStatus } from '../enums';
 import { UploadSession } from '../models';
 import { FileUpload } from '../utils';
 import { QUEUE_UPLOAD_CHUNK_SIZE, QUEUE_UPLOAD_RETRIES, QUEUE_UPLOAD_RETRY_DELAY } from '../../../environments/config';
+import { CAN_INTERCEPT } from '../tokens';
 
 @Injectable()
 export class QueueUploadService {
@@ -87,9 +88,9 @@ export class QueueUploadService {
           return this.http.put<{ id: string }>(session.url, chunk, {
             headers: {
               'Content-Range': `bytes ${startOffset}-${endOffset}/${fileSize}`,
-              'x-ng-intercept': 'ignore',
               'ngsw-bypass': 'true'
             },
+            context: new HttpContext().set(CAN_INTERCEPT, []),
             reportProgress: true,
             responseType: 'json',
             observe: 'events'

@@ -91,68 +91,67 @@
               <p class="tw-text-sm sm:tw-text-base tw-mt-2" [ngClass]="{ 'tw-line-clamp-2': !showMoreDetails }">{{
                 media.overview }}</p>
               @if (showMoreDetails) {
-              <div *ngIf="media.genres.length" class="tw-text-white tw-flex tw-flex-wrap tw-gap-1 tw-mt-2">
-                <p-tag *ngFor="let genre of media.genres; let first = first; trackBy: track_Id" [value]="genre.name"
-                  [link]="['/list', 'genre', genre._id]"
-                  styleClass="p-tag-secondary tw-text-sm tw-font-medium tw-px-2.5 tw-rounded-full"></p-tag>
-              </div>
-              <p *ngIf="media.studios.length" class="tw-text-base tw-leading-5 tw-mt-4">
-                <span>{{ t('media.details.studios') }}: </span>
-                <ng-container
-                  *ngFor="let studio of media.studios; let first = first; let last = last; trackBy: track_Id">
-                  <a class="hover:tw-underline focus-visible:tw-underline tw-font-semibold" [class.tw-ml-2]="!first"
-                    [routerLink]="['/list', 'studio', studio._id]">{{ studio.name }}</a>
-                  <span *ngIf="!last">,</span>
-                </ng-container>
-              </p>
-              <p *ngIf="media.producers.length" class="tw-text-base tw-leading-5 tw-mt-2">
-                <span>{{ t('media.details.producers') }}: </span>
-                <ng-container
-                  *ngFor="let producer of media.producers; let first = first; let last = last; trackBy: track_Id">
-                  <a class="hover:tw-underline focus-visible:tw-underline tw-font-semibold" [class.tw-ml-2]="!first"
-                    [routerLink]="['/list', 'producer', producer._id]">{{ producer.name }}</a>
-                  <span *ngIf="!last">,</span>
-                </ng-container>
-              </p>
-              <p class="tw-text-base tw-leading-5 tw-mt-2">
-                <span>{{ t('media.details.releaseDate') }}: </span>
-                <span>{{ media.releaseDate | shortDate }}</span>
-                <span *ngIf="media.type === MediaType.TV"> {{ t('media.details.releaseDateTo')
-                  }}
-                  @if (media.tv.lastAirDate) {
-                  {{ media.tv.lastAirDate | shortDate }}
-                  }
-                  @else {
-                  {{ t('media.details.releaseDateToNow') }}
-                  }
-                </span>
-              </p>
-              <p class="tw-text-base tw-leading-5 tw-mt-2">
-                <span>{{ t('media.details.status') }}: </span>
-                <span>{{ t('media.statusOptions.' + media.status) }}</span>
-              </p>
-              <p *ngIf="media.tags.length" class="tw-text-base tw-leading-5 tw-mt-2">
-                <span>{{ t('media.details.tags') }}: </span>
-                <ng-container *ngFor="let tag of media.tags; let first = first; let last = last; trackBy: track_Id">
-                  <a class="hover:tw-underline focus-visible:tw-underline tw-font-semibold" [class.tw-ml-2]="!first"
-                    [routerLink]="['/list', 'tag', tag._id]">{{ tag.name }}</a>
-                  <span *ngIf="!last">,</span>
-                </ng-container>
-              </p>
-              <p class="tw-text-base tw-leading-5 tw-mt-2">
-                <span>{{ t('media.details.releaseYear') }}: </span>
-                <a class="hover:tw-underline focus-visible:tw-underline tw-font-semibold"
-                  [routerLink]="['/list', 'year', media.releaseDate.year]">{{ media.releaseDate.year }}</a>
-              </p>
+                <div *ngIf="media.genres.length" class="tw-text-white tw-flex tw-flex-wrap tw-gap-1 tw-mt-2">
+                  <p-tag *ngFor="let genre of media.genres; let first = first; trackBy: track_Id" [value]="genre.name"
+                    [link]="['/list', 'genre', genre._id]"
+                    styleClass="p-tag-secondary tw-text-sm tw-font-medium tw-px-2.5 tw-rounded-full"></p-tag>
+                </div>
+                <p *ngIf="media.studios.length" class="tw-text-base tw-leading-5 tw-mt-4">
+                  <span>{{ t('media.details.studios') }}: </span>
+                  <ng-container
+                    *ngFor="let studio of media.studios; let first = first; let last = last; trackBy: track_Id">
+                    <a class="hover:tw-underline focus-visible:tw-underline tw-font-semibold" [class.tw-ml-2]="!first"
+                      [routerLink]="['/list', 'studio', studio._id]">{{ studio.name }}</a>
+                    <span *ngIf="!last">,</span>
+                  </ng-container>
+                </p>
+                <p *ngIf="media.producers.length" class="tw-text-base tw-leading-5 tw-mt-2">
+                  <span>{{ t('media.details.producers') }}: </span>
+                  <ng-container
+                    *ngFor="let producer of media.producers; let first = first; let last = last; trackBy: track_Id">
+                    <a class="hover:tw-underline focus-visible:tw-underline tw-font-semibold" [class.tw-ml-2]="!first"
+                      [routerLink]="['/list', 'producer', producer._id]">{{ producer.name }}</a>
+                    <span *ngIf="!last">,</span>
+                  </ng-container>
+                </p>
+                <p class="tw-text-base tw-leading-5 tw-mt-2">
+                  <span>{{ t('media.details.releaseDate') }}: </span>
+                  <span>{{ media.releaseDate | shortDate }}</span>
+                  <span *ngIf="media.type === MediaType.TV"> {{ t('media.details.releaseDateTo') }}
+                    @if (media.tv.lastAirDate) {
+                      {{ media.tv.lastAirDate | shortDate }}
+                    }
+                    @else {
+                      {{ t('media.details.releaseDateToNow') }}
+                    }
+                  </span>
+                </p>
+                <p class="tw-text-base tw-leading-5 tw-mt-2">
+                  <span>{{ t('media.details.status') }}: </span>
+                  <span>{{ t('media.statusOptions.' + media.status) }}</span>
+                </p>
+                <p *ngIf="media.tags.length" class="tw-text-base tw-leading-5 tw-mt-2">
+                  <span>{{ t('media.details.tags') }}: </span>
+                  <ng-container *ngFor="let tag of media.tags; let first = first; let last = last; trackBy: track_Id">
+                    <a class="hover:tw-underline focus-visible:tw-underline tw-font-semibold" [class.tw-ml-2]="!first"
+                      [routerLink]="['/list', 'tag', tag._id]">{{ tag.name }}</a>
+                    <span *ngIf="!last">,</span>
+                  </ng-container>
+                </p>
+                <p class="tw-text-base tw-leading-5 tw-mt-2">
+                  <span>{{ t('media.details.releaseYear') }}: </span>
+                  <a class="hover:tw-underline focus-visible:tw-underline tw-font-semibold"
+                    [routerLink]="['/list', 'year', media.releaseDate.year]">{{ media.releaseDate.year }}</a>
+                </p>
               }
               <div class="tw-mt-2">
                 <button pButton class="p-button-text p-button-plain p-button-sm tw-block !tw-p-0 tw-text-left"
                   (click)="toggleShowMoreDetails()">
                   @if (!showMoreDetails) {
-                  {{ t('media.actions.showMore') }}
+                    {{ t('media.actions.showMore') }}
                   }
                   @else {
-                  {{ t('media.actions.showLess') }}
+                    {{ t('media.actions.showLess') }}
                   }
                 </button>
               </div>

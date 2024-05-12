@@ -5,6 +5,7 @@ import { TranslocoService } from '@ngneat/transloco';
 
 import { environment } from '../../../environments/environment';
 import { AuthService } from '../services';
+import { CAN_INTERCEPT } from '../tokens';
 
 @Injectable()
 export class BaseUrlInterceptor implements HttpInterceptor {
@@ -12,12 +13,9 @@ export class BaseUrlInterceptor implements HttpInterceptor {
   constructor(private translocoService: TranslocoService, private authService: AuthService) { }
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-    const ngIntercept = request.headers.get('x-ng-intercept');
-    if (ngIntercept && (ngIntercept === 'ignore' || !ngIntercept.includes('base-url'))) {
-      const ignoreInterceptorReq = request.clone({
-        headers: request.headers.delete('x-ng-intercept', ['ignore', 'base-url'])
-      });
-      return next.handle(ignoreInterceptorReq);
+    const canIntercept = request.context.get(CAN_INTERCEPT);
+    if (!canIntercept.includes('base-url')) {
+      return next.handle(request);
     }
     const canInsertBaseUrl = request.url.indexOf('http://') !== 0 && request.url.indexOf('https://') !== 0 && request.url.indexOf('/assets/i18n/') !== 0;
     const language = this.translocoService.getActiveLang();

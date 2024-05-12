@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { jwtDecode } from 'jwt-decode';
 
 import { UserDetails, JWTWithPayload } from '../models';
 import { ConfirmEmailDto, PasswordRecoveryDto, ResetPasswordDto, SignInDto, SignUpDto } from '../dto/auth';
 import { UserPermission } from '../enums';
+import { CAN_INTERCEPT } from '../tokens';
 
 @Injectable({
   providedIn: 'root'
@@ -52,7 +53,7 @@ export class AuthService {
   }
 
   confirmEmail(body: ConfirmEmailDto) {
-    return this.http.post<void>('auth/confirm-email', body, { headers: { 'x-ng-intercept': 'base-url' } });
+    return this.http.post<void>('auth/confirm-email', body, { context: new HttpContext().set(CAN_INTERCEPT, ['base-url']) });
   }
 
   sendRecoveryEmail(body: PasswordRecoveryDto) {

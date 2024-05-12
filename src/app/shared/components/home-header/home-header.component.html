@@ -209,6 +209,12 @@
             <p class="tw-w-full tw-mt-1">{{ t('homeHeader.topRated') }}</p>
           </button>
         </a>
+        <a class="tw-block" routerLink="/search">
+          <button role="navigation" pButton class="p-button-secondary tw-flex-wrap tw-w-full">
+            <i class="ms ms-search tw-w-full"></i>
+            <p class="tw-w-full tw-mt-1">{{ t('homeHeader.search') }}</p>
+          </button>
+        </a>
       </div>
       <button pButton class="p-button-secondary tw-w-full tw-text-left tw-my-1 xs:tw-m-1"
         [label]="t('homeHeader.genres')" [icon]="'ms ms-' + (displaySidebarGenres ? 'expand-less' : 'expand-more')"

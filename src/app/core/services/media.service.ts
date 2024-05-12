@@ -212,15 +212,14 @@ export class MediaService {
   }
 
   findExtMediaSuggestions(query: string, limit: number = 8) {
-    const headers = { 'x-ng-intercept': 'http-error' };
     const requests: {
       flixHQ: Observable<FlixHQSearch>;
       zoro: Observable<ZoroSearch>;
       gogoanime: Observable<GogoanimeSearch>;
     } = {
-      flixHQ: this.http.get<FlixHQSearch>(`${environment.consumetApiUrl}/movies/flixhq/${query}`, { headers }),
-      zoro: this.http.get<ZoroSearch>(`${environment.consumetApiUrl}/anime/zoro/${query}`, { headers }),
-      gogoanime: this.http.get<GogoanimeSearch>(`${environment.consumetApiUrl}/anime/gogoanime/${query}`, { headers })
+      flixHQ: this.http.get<FlixHQSearch>(`${environment.consumetApiUrl}/movies/flixhq/${query}`),
+      zoro: this.http.get<ZoroSearch>(`${environment.consumetApiUrl}/anime/zoro/${query}`),
+      gogoanime: this.http.get<GogoanimeSearch>(`${environment.consumetApiUrl}/anime/gogoanime/${query}`)
     };
     return forkJoin(requests).pipe(map(responses => {
       const results: ExtMediaSuggestions[] = [];
@@ -252,7 +251,6 @@ export class MediaService {
   findFlixHQInfo(id: string) {
     return this.http.get<FlixHQInfo>(`${environment.consumetApiUrl}/movies/flixhq/info`,
       {
-        headers: { 'x-ng-intercept': 'http-error' },
         params: { id }
       }
     ).pipe(map(media => {
@@ -265,18 +263,13 @@ export class MediaService {
   findZoroInfo(id: string) {
     return this.http.get<ZoroInfo>(`${environment.consumetApiUrl}/anime/zoro/info`,
       {
-        headers: { 'x-ng-intercept': 'http-error' },
         params: { id }
       }
     );
   }
 
   findGogoanimeInfo(id: string) {
-    return this.http.get<GogoanimeInfo>(`${environment.consumetApiUrl}/anime/gogoanime/info/${id}`,
-      {
-        headers: { 'x-ng-intercept': 'http-error' }
-      }
-    );
+    return this.http.get<GogoanimeInfo>(`${environment.consumetApiUrl}/anime/gogoanime/info/${id}`);
   }
 
   invalidateHomeMediaCache() {

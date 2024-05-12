@@ -4,8 +4,8 @@ import { Platform } from '@angular/cdk/platform';
 import { TRANSLOCO_SCOPE, TranslocoService } from '@ngneat/transloco';
 import { patchState } from '@ngrx/signals';
 import { DeepSignal } from '@ngrx/signals/src/deep-signal';
-import { type TextTrackInit, type MediaPlayEvent, type DASHManifestLoadedEvent, type AudioTrack, MediaLoadedMetadataEvent, PlayerSrc } from 'vidstack';
-import { debounceTime, filter, first, firstValueFrom, forkJoin, fromEvent, Observable, of, skip, switchMap, takeUntil, tap, timer } from 'rxjs';
+import { type TextTrackInit, type MediaPlayEvent, type AudioTrack, type MediaLoadedMetadataEvent, type PlayerSrc } from 'vidstack';
+import { debounceTime, filter, first, firstValueFrom, forkJoin, fromEvent, Observable, of, switchMap, takeUntil, tap } from 'rxjs';
 import { supportsMediaSource } from 'dashjs';
 import { isEqual } from 'lodash-es';
 
@@ -147,7 +147,7 @@ export class VideoPlayerComponent implements OnInit {
 
   onPlayerAttach() {
     // Set init audio track when track list is available
-    fromEvent<DASHManifestLoadedEvent>(this.player()!, 'dash-manifest-loaded').pipe(first()).subscribe(() => {
+    fromEvent<MediaLoadedMetadataEvent>(this.player()!, 'loaded-metadata').pipe(first()).subscribe(() => {
       this.setInitAudioTrack(this.playerSettings.initAudioValue(), this.playerSettings.initAudioSurround());
     });
   }
@@ -358,7 +358,8 @@ export class VideoPlayerComponent implements OnInit {
         return [AudioCodec.AAC, AudioCodec.OPUS].includes(aCodec);
       });
     }
-    if (!audioTrack) return;
+    if (!audioTrack)
+      audioTrack = audioTracks[0];
     audioTrack.selected = true;
     patchState(this.videoPlayerStore.settingsState, { activeAudioLang: audioTrack.language });
   }
