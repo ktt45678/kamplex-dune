@@ -56,6 +56,7 @@ export class VideoPlayerComponent implements OnInit {
 
   playerSrc = signal<PlayerSrc>('');
   userSettings = signal<UserSettings | null>(null);
+  thumbnailPlaceholderSize = signal<{ width: string, height: string }>({ width: '0', height: '0' });
 
   player = computed(() => this.baseVideoPlayer()?.player() || null);
   sliderThumbnailEl = computed(() => this.baseVideoPlayer()?.sliderThumbnailEl() || null);
@@ -159,14 +160,21 @@ export class VideoPlayerComponent implements OnInit {
       this.translocoService.selectTranslation('languages').pipe(first()).subscribe(t => {
         data.subtitles.sort().forEach(subtitle => {
           const srcSplit = subtitle.src.split('.');
-          const trackType = <'vtt' | 'srt' | 'ass' | 'ssa'>(this.videoPlayerService.isGzipSubtitle(subtitle.mimeType) ?
+          const subtitleEncoding = this.videoPlayerService.isGzipSubtitle(subtitle.mimeType) ? 'gzip' :
+            this.videoPlayerService.isBrotliSubtitle(subtitle.mimeType) ? 'br' : null;
+          const trackType = <'vtt' | 'srt' | 'ass' | 'ssa'>(subtitleEncoding !== null ?
             srcSplit[srcSplit.length - 2] :
             srcSplit[srcSplit.length - 1]);
+          const subtitleSrc = new URL(subtitle.src);
+          if (subtitleEncoding !== null) {
+            subtitleSrc.searchParams.set('set-content-encoding', subtitleEncoding);
+            subtitleSrc.searchParams.set('set-content-type', 'text/plain');
+          }
           tracks.push({
             _id: subtitle._id,
             label: t[subtitle.lang],
             lang: subtitle.lang,
-            src: subtitle.src,
+            src: subtitleSrc.href,
             mimeType: subtitle.mimeType,
             type: trackType
           });
@@ -229,9 +237,9 @@ export class VideoPlayerComponent implements OnInit {
         type: track.type,
         mimeType: track.mimeType,
       };
-      if (this.videoPlayerService.isGzipSubtitle(track.mimeType)) {
-        textTrack.subtitleLoader = (loadTrack) => firstValueFrom(this.videoPlayerService.loadGzipSubtitle(loadTrack.src!));
-      }
+      // if (this.videoPlayerService.isGzipSubtitle(track.mimeType)) {
+      //   textTrack.subtitleLoader = (loadTrack) => firstValueFrom(this.videoPlayerService.loadGzipSubtitle(loadTrack.src!));
+      // }
       if (textTrack.language === defaultLanguage) {
         textTrack.default = true;
         patchState(this.videoPlayerStore.settingsState, { activeTrackValue: textTrack.language });
@@ -311,13 +319,30 @@ export class VideoPlayerComponent implements OnInit {
     if (this.thumbnailStore.activeThumbnail() && this.playerSettings.thumbnailFrames().length) {
       const activeFrame = this.playerSettings.thumbnailFrames().find(f => f.startTime === this.thumbnailStore.activeThumbnail()!.startTime);
       patchState(this.videoPlayerStore.settingsState, { activeThumbPlaceholder: activeFrame ? activeFrame.placeholder : null });
+      //this.setThumbnailPlaceholderSize();
     }
     this.ref.markForCheck();
   }
 
+  // setThumbnailPlaceholderSize() {
+  //   // Set thumbnail placeholder size
+  //   const sliderThumbnailEl = this.sliderThumbnailEl();
+  //   if (sliderThumbnailEl) {
+  //     const sliderThumbnailStyles = getComputedStyle(sliderThumbnailEl);
+  //     const thumbnailWidth = sliderThumbnailStyles.getPropertyValue('--thumbnail-width');
+  //     const thumbnailHeight = sliderThumbnailStyles.getPropertyValue('--thumbnail-height');
+  //     if (thumbnailWidth && thumbnailHeight) {
+  //       this.thumbnailPlaceholderSize.set({
+  //         width: thumbnailWidth,
+  //         height: thumbnailHeight
+  //       });
+  //     }
+  //   }
+  // }
+
   applySourceSettingsOnLoaded() {
     const player = this.player()!;
-    fromEvent<MediaLoadedMetadataEvent>(player, 'loaded-metadata').pipe(first()).subscribe(() => {
+    fromEvent<MediaLoadedMetadataEvent>(player, 'loaded-data').pipe(first()).subscribe(() => {
       player.muted = this.playerSettings.isMuted();
       player.volume = this.playerSettings.activeVolume();
       // Set audio track when the source is changed

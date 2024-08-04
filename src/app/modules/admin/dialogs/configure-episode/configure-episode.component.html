@@ -76,7 +76,7 @@
                       <button pButton type="button" icon="ms ms-upload" class="p-button-rounded p-button-text"
                         (click)="inputUploadPoster.click()">
                       </button>
-                      <button pButton type="button" icon="ms ms-delete"
+                      <button pButton type="button" icon="ms ms-delete" (click)="deleteStill($event)"
                         class="p-button-rounded p-button-text p-button-danger tw-ml-1" [disabled]="!episode.stillUrl">
                       </button>
                     </ng-container>
@@ -164,7 +164,7 @@
         <p class="tw-text-white tw-font-semibold tw-text-xl">{{ t('admin.configureEpisode.subtitles')
           }}</p>
         <div class="tw-my-3">
-          <app-file-upload #subtitleFileUpload accept=".vtt, .srt, .ass, .vtt.gz, .srt.gz, .ass.gz"
+          <app-file-upload #subtitleFileUpload accept=".vtt, .srt, .ass, .vtt.gz, .srt.gz, .ass.gz, .vtt.br, .srt.br, .ass.br"
             [label]="t('admin.configureEpisode.addSubtitle')" [desciption]="t('admin.configureEpisode.addSubtitleDesc')"
             [showFilename]="false" styleClass="tw-max-w-xl tw-h-40 tw-mx-auto" ariaLabel="Choose a subtitle to upload"
             (fileChange)="showAddSubtitleDialog($event)">

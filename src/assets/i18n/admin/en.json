@@ -393,7 +393,9 @@
     "runtime": "Duration",
     "runtimeValue": "{{ runtime }} sec",
     "airDate": "Air date",
-    "status": "Status"
+    "status": "Status",
+    "deleteStillConfirmationHeader": "Delete thumbnail",
+    "deleteStillConfirmation": "Are you sure you want to delete <strong>Episode {{ episode }}'s thumbnail</strong>? This action cannot be undone."
   },
   "externalIds": {
     "tmdb": "TBDb ID",

@@ -182,7 +182,7 @@ export class PlaylistSettingsComponent implements OnInit {
           this.playlist = {
             ...this.playlist!,
             thumbnailUrl: undefined, thumbnailThumbnailUrl: undefined, smallThumbnailUrl: undefined, fullThumbnailUrl: undefined,
-            thumbnailColor: undefined
+            thumbnailColor: undefined, thumbnailPlaceholder: undefined
           };
         }
         this.dialogRef.close(this.playlist);

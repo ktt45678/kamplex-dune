@@ -445,7 +445,7 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
             if (!this.media) return;
             this.media = {
               ...this.media, posterUrl: undefined, thumbnailPosterUrl: undefined, smallPosterUrl: undefined, fullPosterUrl: undefined,
-              posterColor: undefined
+              posterColor: undefined, posterPlaceholder: undefined
             };
             this.isUpdated = true;
           },
@@ -474,7 +474,7 @@ export class ConfigureMediaComponent implements OnInit, AfterViewInit, OnDestroy
             if (!this.media) return;
             this.media = {
               ...this.media, backdropUrl: undefined, thumbnailBackdropUrl: undefined, smallBackdropUrl: undefined,
-              fullBackdropUrl: undefined, backdropColor: undefined
+              fullBackdropUrl: undefined, backdropColor: undefined, backdropPlaceholder: undefined
             };
           },
           error: () => {

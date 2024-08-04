@@ -428,6 +428,8 @@ export class BaseVideoPlayerComponent implements OnInit, OnDestroy {
       patchState(this.videoPlayerStore.settingsState, { showSubtitle: false });
     }
     if (lang !== null) {
+      // TODO: TypeError: Cannot set properties of null (setting 'mode')
+      //   at i.setPlayerTrack (85.599a67224600d279.js:14:45148)
       const nextTrack = this.playerSettings.subtitleTracks().find(t => t.lang === lang)!;
       player.textTracks.getById(nextTrack._id)!.mode = 'showing';
       patchState(this.videoPlayerStore.settingsState, { activeTrackValue: lang, showSubtitle: true });

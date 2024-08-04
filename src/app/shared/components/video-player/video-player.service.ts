@@ -72,6 +72,14 @@ export class VideoPlayerService implements OnDestroy {
     return ['application/gzip', 'application/x-gzip'].includes(mimeType);
   }
 
+  isBrotliSubtitle(mimeType: string) {
+    return ['application/br', 'application/x-br'].includes(mimeType);
+  }
+
+  // isZipSubtitle(mimeType: string) {
+  //   return ['application/zip', 'application/x-zip-compressed'].includes(mimeType);
+  // }
+
   loadGzipSubtitle(src: string) {
     return this.http.get(src, { context: new HttpContext().set(CAN_INTERCEPT, []), responseType: 'arraybuffer' }).pipe(
       switchMap(subtitleBuffer => {
@@ -102,6 +110,39 @@ export class VideoPlayerService implements OnDestroy {
       })
     );
   }
+
+  // loadZipSubtitle(src: string) {
+  //   return this.http.get(src, { context: new HttpContext().set(CAN_INTERCEPT, []), responseType: 'arraybuffer' }).pipe(
+  //     switchMap(subtitleBuffer => {
+  //       return new Observable<string>(observer => {
+  //         unzip(new Uint8Array(subtitleBuffer), (err, decompressed) => {
+  //           if (err !== null) {
+  //             observer.error(err);
+  //             observer.complete();
+  //             return;
+  //           }
+  //           const targetFileName = Object.keys(decompressed)[0];
+  //           const targetFile = decompressed[targetFileName];
+  //           if (this.isWorkerSupported) {
+  //             this.sendWorkerMessage({ type: 'utf8-decode', source: targetFile }).subscribe(({ data: content }) => {
+  //               observer.next(content);
+  //               observer.complete();
+  //             });
+  //           } else {
+  //             const content = new TextDecoder().decode(targetFile);
+  //             observer.next(content);
+  //             observer.complete();
+  //           }
+  //         });
+  //       });
+  //     }),
+  //     catchError((error: HttpErrorResponse) => {
+  //       if (error.status === 404)
+  //         return of(null);
+  //       return throwError(() => error);
+  //     })
+  //   );
+  // }
 
   findSubtitleFontList(styles: ASS_Style[]) {
     return this.http.get<FontInfo[]>(`${SUBTITLE_FONT_LIST_URL}/${SUBTITLE_FONT_LIST_FILE}`,

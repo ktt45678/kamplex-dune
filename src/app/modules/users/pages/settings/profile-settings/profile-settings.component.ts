@@ -264,7 +264,7 @@ export class ProfileSettingsComponent implements OnInit, OnDestroy {
         if (removeAvatarResult) {
           const updatedUser: UserDetails = {
             ...this.currentUser!, avatarUrl: undefined, thumbnailAvatarUrl: undefined, smallAvatarUrl: undefined,
-            fullAvatarUrl: undefined, avatarColor: undefined
+            fullAvatarUrl: undefined, avatarColor: undefined, avatarPlaceholder: undefined
           };
           this.authService.currentUser = updatedUser;
           this.removingAvatar = false;
@@ -281,7 +281,7 @@ export class ProfileSettingsComponent implements OnInit, OnDestroy {
         if (removeBannerResult) {
           const updatedUser: UserDetails = {
             ...this.currentUser!, bannerUrl: undefined, thumbnailBannerUrl: undefined, smallBannerUrl: undefined,
-            fullBannerUrl: undefined, bannerColor: undefined
+            fullBannerUrl: undefined, bannerColor: undefined, bannerPlaceholder: undefined
           };
           this.authService.currentUser = updatedUser;
           this.removingBanner = false;

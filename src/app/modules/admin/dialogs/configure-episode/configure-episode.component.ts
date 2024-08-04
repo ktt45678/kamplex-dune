@@ -222,6 +222,36 @@ export class ConfigureEpisodeComponent implements OnInit, AfterViewInit {
     this.ref.markForCheck();
   }
 
+  deleteStill(event: Event): void {
+    const mediaId = this.config.data!.media._id;
+    const episodeId = this.config.data!.episode._id;
+    const episodeNumber = this.config.data!.episode.epNumber;
+    this.confirmationService.confirm({
+      key: 'inModalEpisode',
+      message: this.translocoService.translate('admin.episode.deleteStillConfirmation', { episode: episodeNumber }),
+      header: this.translocoService.translate('admin.episode.deleteStillConfirmationHeader'),
+      icon: 'ms ms-delete',
+      defaultFocus: 'reject',
+      accept: () => {
+        const element = event.target instanceof HTMLButtonElement ? event.target : <HTMLButtonElement>(<HTMLSpanElement>event.target).parentElement;
+        this.renderer.setProperty(element, 'disabled', true);
+        this.mediaService.deleteStill(mediaId, episodeId).subscribe({
+          next: () => {
+            if (!this.episode) return;
+            this.episode = {
+              ...this.episode, stillUrl: undefined, thumbnailStillUrl: undefined, smallStillUrl: undefined, fullStillUrl: undefined,
+              stillColor: undefined, stillPlaceholder: undefined
+            };
+            this.isUpdated = true;
+          },
+          error: () => {
+            this.renderer.setProperty(element, 'disabled', false);
+          }
+        }).add(() => this.ref.markForCheck());
+      }
+    });
+  }
+
   patchUpdateEpisodeForm(episode: TVEpisodeDetails): void {
     const runtimeValue = secondsToTimeString(episode.runtime);
     this.updateEpisodeForm.patchValue({

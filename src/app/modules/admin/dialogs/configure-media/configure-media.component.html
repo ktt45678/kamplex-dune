@@ -508,7 +508,7 @@
           <p class="tw-text-white tw-font-bold tw-text-2xl">{{ t('admin.configureMedia.subtitles')
             }}</p>
           <div class="tw-my-3">
-            <app-file-upload #subtitleFileUpload accept=".vtt, .srt, .ass, .vtt.gz, .srt.gz, .ass.gz"
+            <app-file-upload #subtitleFileUpload accept=".vtt, .srt, .ass, .vtt.gz, .srt.gz, .ass.gz, .vtt.br, .srt.br, .ass.br"
               [label]="t('admin.configureMedia.addSubtitle')" [desciption]="t('admin.configureMedia.addSubtitleDesc')"
               [showFilename]="false" styleClass="tw-max-w-xl tw-h-40 tw-mx-auto" ariaLabel="Choose a subtitle to upload"
               (fileChange)="showAddSubtitleDialog($event)">
