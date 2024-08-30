@@ -42,6 +42,9 @@ export class VideoPlayerStore {
       fillScreen: false,
       initPlaytime: 0,
       activeVolume: 1,
+      audioGain: 1,
+      audioCodecOption: 2,
+      audioChannelOption: 2,
       isMuted: false,
       isSurroundAudio: false,
       expandVolumeSlider: false,
@@ -76,6 +79,7 @@ export class VideoPlayerStore {
       autoQuality: false,
       canSetQuality: true,
       volume: 1,
+      audioGain: 1,
       waiting: false
     }
   }

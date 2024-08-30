@@ -18,6 +18,9 @@ export interface PlayerSettings {
   activeAudioLang: string | null;
   activeAudioCodec: number | null;
   activeVolume: number;
+  audioGain: number;
+  audioCodecOption: number;
+  audioChannelOption: number;
   isMuted: boolean;
   isSurroundAudio: boolean;
   autoNext: boolean;

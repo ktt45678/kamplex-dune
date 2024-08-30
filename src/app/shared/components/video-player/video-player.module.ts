@@ -5,7 +5,10 @@ import { RouterModule } from '@angular/router';
 import { LayoutModule } from '@angular/cdk/layout';
 import { TranslocoModule } from '@ngneat/transloco';
 import { InputSwitchModule } from 'primeng/inputswitch';
+import { RadioButtonModule } from 'primeng/radiobutton';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { SliderAltModule } from 'primeng/slideralt';
+import { TooltipModule } from 'primeng/tooltip';
 
 import { VideoPlayerComponent } from './video-player.component';
 import { SlideMenuModule } from '../../components/slide-menu';
@@ -24,6 +27,7 @@ import { SettingsIconComponent } from './icons/settings-icon/settings-icon.compo
 import { FillIconComponent } from './icons/fill-icon/fill-icon.component';
 import { PlayCircleIconComponent } from './icons/play-circle-icon/play-circle-icon.component';
 import { BaseVideoPlayerComponent } from './base-video-player/base-video-player.component';
+import { SelectButtonModule } from 'primeng/selectbutton';
 
 @NgModule({
   declarations: [
@@ -54,7 +58,11 @@ import { BaseVideoPlayerComponent } from './base-video-player/base-video-player.
     PlaceholderPipeModule,
     CommonDirectiveModule,
     InputSwitchModule,
-    ProgressSpinnerModule
+    RadioButtonModule,
+    SelectButtonModule,
+    ProgressSpinnerModule,
+    SliderAltModule,
+    TooltipModule
   ]
 })
 export class VideoPlayerModule { }

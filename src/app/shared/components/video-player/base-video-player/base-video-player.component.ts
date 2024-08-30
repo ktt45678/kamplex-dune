@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, effect, ElementRef, inject, input, OnDestroy, OnInit, output, Renderer2, untracked, viewChild, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, ElementRef, inject, input, OnDestroy, OnInit, output, Renderer2, signal, untracked, viewChild, ViewEncapsulation } from '@angular/core';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { Platform } from '@angular/cdk/platform';
 import { patchState } from '@ngrx/signals';
@@ -14,6 +14,7 @@ import { DestroyService } from '../../../../core/services';
 import type { PlayerSettings, PlayerStore, PlayerSupports, ThumbnailStore } from '../interfaces';
 import { VideoPlayerService } from '../video-player.service';
 import { VideoPlayerStore } from '../video-player.store';
+import { SelectOption } from '../../../../core/interfaces/primeng';
 import { AudioCodec, MediaBreakpoints } from '../../../../core/enums';
 import { track_Id } from '../../../../core/utils';
 
@@ -55,6 +56,13 @@ export class BaseVideoPlayerComponent implements OnInit, OnDestroy {
   playerSupports: DeepSignal<PlayerSupports>;
   playerStore: DeepSignal<PlayerStore>;
   thumbnailStore: DeepSignal<ThumbnailStore>;
+
+  audioGainOptions = [
+    { label: '100%', value: 1 },
+    { label: '200%', value: 2 }
+  ];
+  audioCodecOptions = signal<SelectOption[]>([]);
+  audioChannelOptions = signal<SelectOption[]>([]);
 
   private renderer = inject(Renderer2);
   private platform = inject(Platform);
@@ -98,6 +106,18 @@ export class BaseVideoPlayerComponent implements OnInit, OnDestroy {
       const isTouchDevice = (('ontouchstart' in window) || (navigator.maxTouchPoints > 0));
       patchState(this.videoPlayerStore.supportsState, { isMobile: (state.matches && isTouchDevice) || isMobilePlatform });
     });
+    this.audioCodecOptions.set([
+      { label: this.t()('player.audioCodecOptions.off'), value: 1 },
+      { label: this.t()('player.audioCodecOptions.auto'), value: 2 },
+      { label: this.t()('player.audioCodecOptions.aac'), value: 3 },
+      { label: this.t()('player.audioCodecOptions.opus'), value: 4 }
+    ]);
+    this.audioChannelOptions.set([
+      { label: this.t()('player.audioChannelOptions.off'), value: 1 },
+      { label: this.t()('player.audioChannelOptions.auto'), value: 2 },
+      { label: this.t()('player.audioChannelOptions.stereo'), value: 3 },
+      { label: this.t()('player.audioChannelOptions.surround'), value: 4 }
+    ]);
   }
 
   private onPlayerAttach() {
@@ -215,6 +235,7 @@ export class BaseVideoPlayerComponent implements OnInit, OnDestroy {
       player.subscribe(({ paused }) => { setPlayerStoreProp({ paused }); }),
       player.subscribe(({ muted }) => { setPlayerStoreProp({ muted }); }),
       player.subscribe(({ volume }) => { setPlayerStoreProp({ volume }); }),
+      player.subscribe(({ audioGain }) => { setPlayerStoreProp({ audioGain }); }),
       player.subscribe(({ fullscreen }) => { setPlayerStoreProp({ fullscreen }); }),
       player.subscribe(({ canFullscreen }) => { setPlayerStoreProp({ canFullscreen }); }),
       player.subscribe(({ currentTime }) => { setPlayerStoreProp({ currentTime }); }),
@@ -388,6 +409,30 @@ export class BaseVideoPlayerComponent implements OnInit, OnDestroy {
     patchState(this.videoPlayerStore.settingsState, { activeSpeedValue: speed });
   }
 
+  // setAudioGainWithScale(gain: number = 1, scale: number): void {
+  //   const gainValue = Math.ceil(gain / scale);
+  //   this.setAudioGain(gainValue);
+  // }
+
+  setAudioGain(gain: number = 1): void {
+    const player = this.player();
+    if (!player) return;
+    // Since gain = 1 will set audioGain to null, only check same value if > 1
+    if ((player.state.audioGain === gain) || (!player.state.audioGain && gain === 1)) return;
+    player.setAudioGain(gain);
+    patchState(this.videoPlayerStore.settingsState, { audioGain: gain });
+  }
+
+  setAudioCodecOption(option: number = 2): void {
+    // 1: Off, 2: Auto, 3: AAC, 4: Opus
+    patchState(this.videoPlayerStore.settingsState, { audioCodecOption: option });
+  }
+
+  setAudioChannelOption(option: number = 2): void {
+    // 1: Off, 2: Auto, 3: Stereo, 4: Surround
+    patchState(this.videoPlayerStore.settingsState, { audioChannelOption: option });
+  }
+
   changeAudioTrack(index: number): void {
     const player = this.player()!;
     if (!player || player.audioTracks.readonly) return;
@@ -428,8 +473,6 @@ export class BaseVideoPlayerComponent implements OnInit, OnDestroy {
       patchState(this.videoPlayerStore.settingsState, { showSubtitle: false });
     }
     if (lang !== null) {
-      // TODO: TypeError: Cannot set properties of null (setting 'mode')
-      //   at i.setPlayerTrack (85.599a67224600d279.js:14:45148)
       const nextTrack = this.playerSettings.subtitleTracks().find(t => t.lang === lang)!;
       player.textTracks.getById(nextTrack._id)!.mode = 'showing';
       patchState(this.videoPlayerStore.settingsState, { activeTrackValue: lang, showSubtitle: true });

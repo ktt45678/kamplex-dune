@@ -6,6 +6,7 @@ import { SlideMenuOverlay } from './slide-menu-overlay/slide-menu-overlay';
 import { SlideMenuItem } from './slide-menu-item/slide-menu-item';
 import { SlideMenuItemCheckbox } from './slide-menu-item-checkbox/slide-menu-item-checkbox';
 import { SlideMenuItemRadio } from './slide-menu-item-radio/slide-menu-item-radio';
+import { SlideMenuItemButton } from './slide-menu-item-button/slide-menu-item-button';
 
 @NgModule({
   declarations: [
@@ -13,7 +14,8 @@ import { SlideMenuItemRadio } from './slide-menu-item-radio/slide-menu-item-radi
     SlideMenuOverlay,
     SlideMenuItem,
     SlideMenuItemCheckbox,
-    SlideMenuItemRadio
+    SlideMenuItemRadio,
+    SlideMenuItemButton
   ],
   imports: [
     CommonModule
@@ -23,7 +25,8 @@ import { SlideMenuItemRadio } from './slide-menu-item-radio/slide-menu-item-radi
     SlideMenuOverlay,
     SlideMenuItem,
     SlideMenuItemCheckbox,
-    SlideMenuItemRadio
+    SlideMenuItemRadio,
+    SlideMenuItemButton
   ]
 })
 export class SlideMenuModule { }

@@ -19,11 +19,14 @@ let nextId = 0;
   exportAs: 'appSlideMenu',
   template: `
     <ng-container *ngIf="menuStack.parentMenuRefs.length">
-      <button #previousButton="slideMenuTriggerFor" class="slide-menu-previous" slideMenuItem
-        [slideMenuTriggerFor]="menuStack.parentMenuRefs[menuStack.parentMenuRefs.length - 1]">
-        <i class="ms ms-icon-sm ms-navigate-before"></i>
-        <span>{{ backLabel }}</span>
-      </button>
+      <div class="tw-flex">
+        <button #previousButton="slideMenuTriggerFor" class="slide-menu-previous" slideMenuItemButton
+          [slideMenuTriggerFor]="menuStack.parentMenuRefs[menuStack.parentMenuRefs.length - 1]">
+          <i class="ms ms-icon-sm ms-navigate-before"></i>
+          <span>{{ backLabel }}</span>
+        </button>
+        <ng-content select="header-options"></ng-content>
+      </div>
       <div class="tw-divider tw-my-2"></div>
     </ng-container>
     <ng-content></ng-content>
@@ -40,6 +43,7 @@ let nextId = 0;
     '(focusout)': 'menuStack.setHasFocus(false)',
     '(keydown)': '_handleKeyEvent($event)'
   },
+  styleUrl: './slide-menu-overlay.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     { provide: CdkMenuGroup, useExisting: SlideMenuOverlay },

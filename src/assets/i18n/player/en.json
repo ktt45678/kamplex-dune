@@ -7,6 +7,27 @@
     "subtitle": "Subtitle",
     "back": "Back"
   },
+  "audioOptions": {
+    "maxVolume": "Max volume",
+    "maxVolumeDescription": "Adjust maximum volume using audio gain on supported browsers",
+    "preferedAudioOptions": "Prefered audio format",
+    "codec": "Codec",
+    "codecDescription": "Select audio codec to apply by default",
+    "audioChannels": "Audio channels",
+    "audioChannelsDescription": "Select audio channel to apply by default"
+  },
+  "audioCodecOptions": {
+    "off": "Off",
+    "auto": "Auto",
+    "aac": "AAC",
+    "opus": "Opus"
+  },
+  "audioChannelOptions": {
+    "off": "Off",
+    "auto": "Auto",
+    "stereo": "Stereo",
+    "surround": "Surround"
+  },
   "speed": {
     "normal": "Normal"
   },

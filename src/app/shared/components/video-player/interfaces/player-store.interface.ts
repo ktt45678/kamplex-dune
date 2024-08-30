@@ -8,6 +8,7 @@ type PlayerStoreProps =
   'paused' |
   'muted' |
   'volume' |
+  'audioGain' |
   'fullscreen' |
   'canFullscreen' |
   'currentTime' |

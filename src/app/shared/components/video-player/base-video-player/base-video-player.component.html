@@ -312,6 +312,8 @@
   <ng-template #audioMenu>
     <app-slide-menu class="media-menu tw-max-h-80"
       [ngClass]="{ 'media-menu-mobile tw-w-96': playerSupports.isMobile() }" [backLabel]="t()('player.menu.audio')">
+      <button ngProjectAs="header-options" class="slide-menu-options !tw-text-xs !tw-px-2" slideMenuItemButton
+        [slideMenuTriggerFor]="audioOptionsMenu">Options</button>
       <button *ngFor="let audio of playerStore.audioTracks(); let i = index; trackBy: track_Id" slideMenuItemRadio
         [menuItemChecked]="audio.selected" (menuItemTriggered)="changeAudioTrack(i)">
         <i role="checkbox" class="ms ms-icon-sm ms-check"></i>
@@ -321,6 +323,48 @@
           @if (audio.label | split:' - ':4; as audioTrackTitle) { <span> ({{ audioTrackTitle }})</span> }
         </span>
       </button>
+    </app-slide-menu>
+  </ng-template>
+  <ng-template #audioOptionsMenu>
+    <app-slide-menu class="media-menu tw-w-96 tw-max-h-80"
+      [ngClass]="{ 'media-menu-mobile': playerSupports.isMobile() }" [backLabel]="t()('player.menu.audio')">
+      <div slideMenuItemButton>
+        <label>{{ t()('player.audioOptions.maxVolume') }}</label>
+        <span class="ms ms-help tw-text-base tw-ml-1 tw-mr-4"
+          pTooltip="Adjust maximum volume using audio gain on supported browsers"></span>
+        <p-selectButton [options]="audioGainOptions" [initValue]="playerSettings.audioGain()" optionLabel="label"
+          optionValue="value" class="tw-ml-auto" styleClass="p-button-sm" (onChange)="setAudioGain($event.value)">
+        </p-selectButton>
+      </div>
+      <!-- <button slideMenuItem [slideMenuTriggerFor]="audioPreferedOptionsMenu">
+        <span class="tw-mr-8">{{ t()('player.audioOptions.preferedAudioOptions') }}</span>
+        <span class="tw-ml-auto tw-min-w-24 tw-text-sm tw-font-normal tw-text-right">
+          AAC, Surround
+        </span>
+        <i class="ms ms-navigate-next ms-icon-sm tw-ml-1"></i>
+      </button> -->
+    </app-slide-menu>
+  </ng-template>
+  <ng-template #audioPreferedOptionsMenu>
+    <app-slide-menu class="media-menu tw-max-h-80"
+      [ngClass]="{ 'media-menu-mobile tw-w-96': playerSupports.isMobile() }"
+      [backLabel]="t()('player.audioOptions.preferedAudioOptions')">
+      <div slideMenuItemButton>
+        <label>{{ t()('player.audioOptions.codec') }}</label>
+        <span class="ms ms-help tw-text-base tw-ml-1 tw-mr-4"
+          [pTooltip]="t()('player.audioOptions.codecDescription')"></span>
+        <p-selectButton [options]="audioCodecOptions()" [initValue]="1" optionLabel="label" optionValue="value"
+          class="tw-ml-auto" styleClass="p-button-sm" (onChange)="setAudioCodecOption($event.value)">
+        </p-selectButton>
+      </div>
+      <div slideMenuItemButton>
+        <label>{{ t()('player.audioOptions.audioChannels') }}</label>
+        <span class="ms ms-help tw-text-base tw-ml-1 tw-mr-4"
+          [pTooltip]="t()('player.audioOptions.audioChannelsDescription')"></span>
+        <p-selectButton [options]="audioChannelOptions()" [initValue]="1" optionLabel="label" optionValue="value"
+          class="tw-ml-auto" styleClass="p-button-sm" (onChange)="setAudioChannelOption($event.value)">
+        </p-selectButton>
+      </div>
     </app-slide-menu>
   </ng-template>
   <ng-template #qualityMenu>

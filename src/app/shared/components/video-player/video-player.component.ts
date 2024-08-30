@@ -5,7 +5,7 @@ import { TRANSLOCO_SCOPE, TranslocoService } from '@ngneat/transloco';
 import { patchState } from '@ngrx/signals';
 import { DeepSignal } from '@ngrx/signals/src/deep-signal';
 import { type TextTrackInit, type MediaPlayEvent, type AudioTrack, type MediaLoadedMetadataEvent, type PlayerSrc } from 'vidstack';
-import { debounceTime, filter, first, firstValueFrom, forkJoin, fromEvent, Observable, of, switchMap, takeUntil, tap } from 'rxjs';
+import { debounceTime, filter, first, forkJoin, fromEvent, Observable, of, switchMap, takeUntil, tap } from 'rxjs';
 import { supportsMediaSource } from 'dashjs';
 import { isEqual } from 'lodash-es';
 
@@ -111,6 +111,8 @@ export class VideoPlayerComponent implements OnInit {
     });
     // On source change
     effect(() => {
+      if (!this.player())
+        return;
       const stream = this.stream();
       if (!stream) {
         this.baseVideoPlayer()?.unsetPlayerSource();
