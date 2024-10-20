@@ -8,6 +8,10 @@ export interface MediaPlayerOptions {
   subtitle?: boolean | null;
   subtitleLang?: string | null;
   autoNext?: boolean | null;
+  prefAudioLang?: boolean;
+  prefAudioLangList?: string[];
+  prefSubtitleLang?: boolean;
+  prefSubtitleLangList?: string[];
 }
 
 export interface SubtitleOptions {

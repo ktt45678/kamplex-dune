@@ -4,7 +4,7 @@ import { Platform } from '@angular/cdk/platform';
 import { TRANSLOCO_SCOPE, TranslocoService } from '@ngneat/transloco';
 import { patchState } from '@ngrx/signals';
 import { DeepSignal } from '@ngrx/signals/src/deep-signal';
-import { type TextTrackInit, type MediaPlayEvent, type AudioTrack, type MediaLoadedMetadataEvent, type PlayerSrc } from 'vidstack';
+import { type TextTrackInit, type MediaPlayEvent, type AudioTrack, type MediaLoadedMetadataEvent, type PlayerSrc, type AudioTrackList, type TextTrack, type TextTrackList } from 'vidstack';
 import { debounceTime, filter, first, forkJoin, fromEvent, Observable, of, switchMap, takeUntil, tap } from 'rxjs';
 import { supportsMediaSource } from 'dashjs';
 import { isEqual } from 'lodash-es';
@@ -125,7 +125,7 @@ export class VideoPlayerComponent implements OnInit {
     // Set init play time
     effect(() => {
       const initPlaytime = this.initPlaytime();
-      if (!initPlaytime) return;
+      if (initPlaytime == null) return;
       patchState(this.videoPlayerStore.settingsState, { initPlaytime });
     }, { allowSignalWrites: true });
     // On user settings change
@@ -151,15 +151,15 @@ export class VideoPlayerComponent implements OnInit {
   onPlayerAttach() {
     // Set init audio track when track list is available
     fromEvent<MediaLoadedMetadataEvent>(this.player()!, 'loaded-metadata').pipe(first()).subscribe(() => {
-      this.setInitAudioTrack(this.playerSettings.initAudioValue(), this.playerSettings.initAudioSurround());
+      this.setInitAudioTrack();
     });
   }
 
   //** Run when stream input changed */
   setPlayerData(data: MediaStream): void {
     const tracks: KPSubtitleTrack[] = [];
-    if (data.subtitles?.length) {
-      this.translocoService.selectTranslation('languages').pipe(first()).subscribe(t => {
+    this.translocoService.selectTranslation('languages').pipe(first()).subscribe(t => {
+      if (data.subtitles?.length) {
         data.subtitles.sort().forEach(subtitle => {
           const srcSplit = subtitle.src.split('.');
           const subtitleEncoding = this.videoPlayerService.isGzipSubtitle(subtitle.mimeType) ? 'gzip' :
@@ -181,10 +181,10 @@ export class VideoPlayerComponent implements OnInit {
             type: trackType
           });
         });
-        patchState(this.videoPlayerStore.settingsState, { subtitleTracks: tracks });
-        this.setPlayerTrackList();
-      });
-    }
+      }
+      patchState(this.videoPlayerStore.settingsState, { subtitleTracks: tracks });
+      this.setPlayerTrackList();
+    });
     patchState(this.videoPlayerStore.settingsState, {
       sourceBaseUrl: data.baseUrl,
       previewThumbnail: data.baseUrl.replace(':path', data.previewThumbnail)
@@ -212,14 +212,19 @@ export class VideoPlayerComponent implements OnInit {
       patchState(this.videoPlayerStore.settingsState, { activeVolume: userSettings.player.volume / 100 });
     if (userSettings.player.autoNext != undefined)
       patchState(this.videoPlayerStore.settingsState, { autoNext: userSettings.player.autoNext });
+    if (userSettings.player.prefAudioLang != undefined)
+      patchState(this.videoPlayerStore.settingsState, { prefAudioLang: userSettings.player.prefAudioLang });
+    if (userSettings.player.prefAudioLangList != undefined)
+      patchState(this.videoPlayerStore.settingsState, { prefAudioLangList: userSettings.player.prefAudioLangList });
+    if (userSettings.player.prefSubtitleLang != undefined)
+      patchState(this.videoPlayerStore.settingsState, { prefSubtitleLang: userSettings.player.prefSubtitleLang });
+    if (userSettings.player.prefSubtitleLangList != undefined)
+      patchState(this.videoPlayerStore.settingsState, { prefSubtitleLangList: userSettings.player.prefSubtitleLangList });
   }
 
   setPlayerTrackList(): void {
     const player = this.player()!;
     if (!player) return;
-    const defaultLanguage = this.playerSettings.activeTrackValue() ||
-      this.userSettings()?.player.subtitleLang ||
-      this.translocoService.getActiveLang();
     // Get the previously selected subtitle language
     //const lastSubtitleLanguage = this.player.textTracks.selected?.language;
     // Remove all existing subtitles
@@ -228,6 +233,13 @@ export class VideoPlayerComponent implements OnInit {
       player.textTracks.remove(s);
     });
     const subtitleTracks = this.playerSettings.subtitleTracks();
+    if (!subtitleTracks.length) return;
+    const defaultLanguage = this.playerSettings.activeTrackValue() ||
+      this.userSettings()?.player.subtitleLang ||
+      this.translocoService.getActiveLang();
+    const prefSubtitleLang = this.playerSettings.prefSubtitleLang();
+    const prefSubtitleTrack = prefSubtitleLang ? this.selectPreferredKPSubtitle(this.playerSettings.prefSubtitleLangList(), subtitleTracks) : null;
+    let defaultTrackSelected = false;
     for (let i = 0; i < subtitleTracks.length; i++) {
       const track = subtitleTracks[i];
       const textTrack: TextTrackInit = {
@@ -239,12 +251,19 @@ export class VideoPlayerComponent implements OnInit {
         type: track.type,
         mimeType: track.mimeType,
       };
-      // if (this.videoPlayerService.isGzipSubtitle(track.mimeType)) {
-      //   textTrack.subtitleLoader = (loadTrack) => firstValueFrom(this.videoPlayerService.loadGzipSubtitle(loadTrack.src!));
-      // }
-      if (textTrack.language === defaultLanguage) {
-        textTrack.default = true;
-        patchState(this.videoPlayerStore.settingsState, { activeTrackValue: textTrack.language });
+      if (!defaultTrackSelected) {
+        // Select by preferred setting
+        if (prefSubtitleLang && prefSubtitleTrack) {
+          if (track.lang === prefSubtitleTrack.lang) {
+            textTrack.default = true;
+            patchState(this.videoPlayerStore.settingsState, { activeTrackValue: textTrack.language });
+          }
+        } else if (textTrack.language === defaultLanguage) {
+          // Select by default language
+          textTrack.default = true;
+          patchState(this.videoPlayerStore.settingsState, { activeTrackValue: textTrack.language });
+        }
+        defaultTrackSelected = !!textTrack.default;
       }
       //   if (lastSubtitleLanguage && track.lang === lastSubtitleLanguage) {
       //     // Select subtitle based on the previously selected language
@@ -367,13 +386,21 @@ export class VideoPlayerComponent implements OnInit {
     });
   }
 
-  setInitAudioTrack(codec: number | null, surroundAudio: boolean | null) {
+  setInitAudioTrack() {
+    const codec = this.playerSettings.initAudioValue();
+    const surroundAudio = this.playerSettings.initAudioSurround();
+    const prefAudioLang = this.playerSettings.prefAudioLang();
+    const prefAudioLangList = this.playerSettings.prefAudioLangList();
     const player = this.player()!;
     if (!player || player.audioTracks.readonly) return;
     const audioTracks = player.audioTracks.toArray();
-    let audioTrack: AudioTrack | undefined;
+    let audioTrack: AudioTrack | undefined | null;
+    // Select audio by preferred language
+    if (prefAudioLang) {
+      audioTrack = this.selectPreferredLanguage(prefAudioLangList, audioTracks);
+    }
     // Select exact audio by codec
-    if (codec !== null) {
+    if (!audioTrack && codec !== null) {
       audioTrack = audioTracks.find(a => Number(a.label.split(' - ')[2]) === codec);
     }
     // Fallback option to select any stereo or surround track
@@ -421,6 +448,32 @@ export class VideoPlayerComponent implements OnInit {
 
   handleMediaEnded(): void {
     this.onEnded.emit();
+  }
+
+  selectPreferredLanguage(preferredLanguages: string[], trackList: TextTrack[]): TextTrack | null;
+  selectPreferredLanguage(preferredLanguages: string[], trackList: AudioTrack[]): AudioTrack | null;
+  selectPreferredLanguage(preferredLanguages: string[], trackList: AudioTrack[] | TextTrack[]): AudioTrack | TextTrack | null {
+    for (let i = 0; i < preferredLanguages.length; i++) {
+      const prefLanguage = preferredLanguages[i];
+      if (prefLanguage === 'default')
+        return null;
+      const track = trackList.find(t => t.language === prefLanguage);
+      if (track)
+        return track;
+    }
+    return null;
+  }
+
+  selectPreferredKPSubtitle(preferredLanguages: string[], trackList: KPSubtitleTrack[]): KPSubtitleTrack | null {
+    for (let i = 0; i < preferredLanguages.length; i++) {
+      const prefLanguage = preferredLanguages[i];
+      if (prefLanguage === 'default')
+        return null;
+      const track = trackList.find(t => t.lang === prefLanguage);
+      if (track)
+        return track;
+    }
+    return null;
   }
 
   updateUserSettings(updateUserSettingsDto: UpdateUserSettingsDto): Observable<UserSettings | null> {

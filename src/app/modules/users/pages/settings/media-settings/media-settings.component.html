@@ -9,12 +9,28 @@
         <p-sliderAlt formControlName="historyLimit" [min]="50" [max]="100" [step]="5"
           ariaLabelledBy="history-limit-label" aria-describedby="limit-desc" class="tw-flex-1"></p-sliderAlt>
       </div>
-      <small id="limit-desc" class="p-error tw-text-sm tw-block tw-mt-2 tw-text-gray-400">{{
+      <small id="limit-desc" class="tw-text-sm tw-font-medium tw-block tw-mt-2 tw-text-gray-400">{{
         t('users.mediaSettings.historyLimitDesc') }}</small>
+
       <p-inputSwitch formControlName="paused" class="tw-mt-4" labelStyleClass="tw-font-medium"
         [label]="t('users.mediaSettings.paused')" aria-describedby="pause-history-desc"></p-inputSwitch>
-      <small id="pause-history-desc" class="p-error tw-text-sm tw-block tw-mt-2 tw-text-gray-400">{{
+      <small id="pause-history-desc" class="tw-text-sm tw-font-medium tw-block tw-mt-2 tw-text-gray-400">{{
         t('users.mediaSettings.pauseHistoryDescription') }}</small>
+
+      <p-inputSwitch formControlName="prefAudioLang" class="tw-mt-4" labelStyleClass="tw-font-medium"
+        [label]="t('users.mediaSettings.enablePrefAudioLang')" aria-describedby="pref-audio-lang-desc"></p-inputSwitch>
+      <small id="pref-audio-lang-desc" class="tw-text-sm tw-font-medium tw-block tw-mt-2 tw-text-gray-400">{{
+        t('users.mediaSettings.prefLangDescription') }}</small>
+      <app-select-order formControlName="prefAudioLangList" [t]="t" styleClass="tw-mt-4" [options]="languageList()"
+        optionLabel="label" optionValue="value" fixedValue="default"></app-select-order>
+
+      <p-inputSwitch formControlName="prefSubtitleLang" class="tw-mt-4" labelStyleClass="tw-font-medium"
+        [label]="t('users.mediaSettings.enablePrefSubtitleLang')"
+        aria-describedby="pref-subtitle-lang-desc"></p-inputSwitch>
+      <small id="pref-subtitle-lang-desc" class="tw-text-sm tw-font-medium tw-block tw-mt-2 tw-text-gray-400">{{
+        t('users.mediaSettings.prefLangDescription') }}</small>
+      <app-select-order formControlName="prefSubtitleLangList" [t]="t" styleClass="tw-mt-4" [options]="languageList()"
+        optionLabel="label" optionValue="value" fixedValue="default"></app-select-order>
     </form>
   </div>
   <div *ngIf="hasUnsavedChanges" class="tw-bg-neutral-925 tw-fixed tw-max-w-5xl tw-mx-auto tw-bg-opacity-80 tw-left-2 tw-right-2

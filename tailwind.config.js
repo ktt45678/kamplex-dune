@@ -93,6 +93,7 @@ export default {
       },
       spacing: {
         '1.75': '0.4rem',
+        '18': '4.5rem',
         '34': '8.5rem',
         '76': '19rem',
         '30px': '30px'

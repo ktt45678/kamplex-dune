@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LayoutModule } from '@angular/cdk/layout';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { LazyLoadImageModule } from 'ng-lazyload-image';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
@@ -62,6 +63,7 @@ import { RatedComponent } from './pages/rated/rated.component';
 import { StarRatingModule } from '../../shared/components/star-rating';
 import { SkeletonModule } from '../../shared/components/skeleton';
 import { AvatarModule } from '../../shared/components/avatar';
+import { SelectOrderModule } from '../../shared/components/select-order';
 import { AltAutoCompleteModule } from '../../core/utils/primeng';
 
 @NgModule({
@@ -91,6 +93,7 @@ import { AltAutoCompleteModule } from '../../core/utils/primeng';
     FormsModule,
     ReactiveFormsModule,
     LayoutModule,
+    DragDropModule,
     TranslocoModule,
     UsersRoutingModule,
     AddToPlaylistModule,
@@ -98,6 +101,7 @@ import { AltAutoCompleteModule } from '../../core/utils/primeng';
     PlaylistSettingsModule,
     ColorPickerModule,
     AvatarModule,
+    SelectOrderModule,
     NumberPipeModule,
     DateTimePipeModule,
     ValidationPipeModule,

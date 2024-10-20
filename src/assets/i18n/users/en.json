@@ -150,6 +150,11 @@
     "historyLimitDesc": "Once you've reached this percentage, the movie/episode will be marked as watched in your watch history.",
     "paused": "Pause history",
     "pauseHistoryDescription": "Pausing history will stop updating your watch history, previous activities will not be affected. Please note that your watch history has nothing to do with movie and tv show recommendations",
+    "enablePrefAudioLang": "Select audio language based on your preferred setting",
+    "enablePrefSubtitleLang": "Select subtitle language based on your preferred setting",
+    "prefLangDescription": "Adjust the list below to decide which languages will be automatically selected in order of priority",
+    "language": "Language",
+    "addLanguage": "Add language",
     "unsavedChanges": "{{ users.profileSettings.unsavedChanges }}",
     "reset": "{{ users.profileSettings.reset }}",
     "save": "{{ users.profileSettings.save }}"

@@ -21,6 +21,10 @@ export interface PlayerSettings {
   audioGain: number;
   audioCodecOption: number;
   audioChannelOption: number;
+  prefAudioLang: boolean;
+  prefAudioLangList: string[];
+  prefSubtitleLang: boolean;
+  prefSubtitleLangList: string[];
   isMuted: boolean;
   isSurroundAudio: boolean;
   autoNext: boolean;

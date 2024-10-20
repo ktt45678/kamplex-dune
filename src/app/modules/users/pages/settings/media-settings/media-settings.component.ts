@@ -1,15 +1,22 @@
 import { animate, style, transition, trigger } from '@angular/animations';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, OnInit, signal } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { first, takeUntil } from 'rxjs';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { TranslocoService } from '@ngneat/transloco';
+import { first, map, takeUntil } from 'rxjs';
 
 import { UserDetails } from '../../../../../core/models';
+import { LanguageOptionDto } from '../../../../../core/dto/common';
 import { AuthService, UsersService, DestroyService } from '../../../../../core/services';
 import { detectFormChange } from '../../../../../core/utils';
 
 interface UpdateMediaForm {
   historyLimit: FormControl<number>;
   paused: FormControl<boolean>;
+  prefAudioLang: FormControl<boolean>;
+  prefAudioLangList: FormControl<string[]>;
+  prefSubtitleLang: FormControl<boolean>;
+  prefSubtitleLangList: FormControl<string[]>;
 }
 
 @Component({
@@ -36,12 +43,17 @@ export class MediaSettingsComponent implements OnInit {
   updateMediaForm: FormGroup<UpdateMediaForm>;
   updateMediaInitValue: object = {};
   hasUnsavedChanges: boolean = false;
+  languageList = signal<LanguageOptionDto[]>([]);
 
-  constructor(private ref: ChangeDetectorRef, private authService: AuthService, private usersService: UsersService,
-    private destroyService: DestroyService) {
+  constructor(private ref: ChangeDetectorRef, private translocoService: TranslocoService, private authService: AuthService,
+    private usersService: UsersService, private destroyService: DestroyService) {
     this.updateMediaForm = new FormGroup<UpdateMediaForm>({
       historyLimit: new FormControl(),
-      paused: new FormControl()
+      paused: new FormControl(),
+      prefAudioLang: new FormControl(),
+      prefAudioLangList: new FormControl([], { nonNullable: true }),
+      prefSubtitleLang: new FormControl(),
+      prefSubtitleLangList: new FormControl([], { nonNullable: true })
     });
   }
 
@@ -54,13 +66,21 @@ export class MediaSettingsComponent implements OnInit {
       if (!user) return;
       this.patchUpdateMediaForm(user);
     });
+    this.getLanguageList().subscribe(languages => {
+      this.languageList.set([...languages, { label: 'Default', value: 'default' }]);
+    });
   }
 
   patchUpdateMediaForm(user: UserDetails): void {
     const historySettings = user.settings!.history;
+    const playerSettings = user.settings!.player;
     this.updateMediaForm.patchValue({
       historyLimit: historySettings.limit || 90,
-      paused: historySettings.paused || false
+      paused: historySettings.paused || false,
+      prefAudioLang: playerSettings.prefAudioLang || false,
+      prefAudioLangList: playerSettings.prefAudioLangList || ['default'],
+      prefSubtitleLang: playerSettings.prefSubtitleLang || false,
+      prefSubtitleLangList: playerSettings.prefSubtitleLangList || ['default']
     });
     this.updateMediaInitValue = { ...this.updateMediaForm.value };
     this.detectUpdateMediaFormChange();
@@ -89,8 +109,14 @@ export class MediaSettingsComponent implements OnInit {
       history: {
         limit: formValue.historyLimit,
         paused: formValue.paused
+      },
+      player: {
+        prefAudioLang: formValue.prefAudioLang,
+        prefAudioLangList: formValue.prefAudioLangList,
+        prefSubtitleLang: formValue.prefSubtitleLang,
+        prefSubtitleLangList: formValue.prefSubtitleLangList
       }
-    }).pipe(takeUntil(this.destroyService)).subscribe(settings => {
+    }).subscribe(settings => {
       const updatedUser: UserDetails = { ...this.currentUser!, settings };
       this.authService.currentUser = updatedUser;
       this.hasUnsavedChanges = false;
@@ -100,5 +126,18 @@ export class MediaSettingsComponent implements OnInit {
       this.detectUpdateMediaFormChange();
       this.ref.markForCheck();
     });
+  }
+
+  getLanguageList() {
+    return this.translocoService.selectTranslation('languages').pipe(first(), map(t => {
+      const languageOptions: LanguageOptionDto[] = [];
+      for (let key in t) {
+        languageOptions.push({
+          label: t[key],
+          value: key
+        });
+      }
+      return languageOptions;
+    }));
   }
 }

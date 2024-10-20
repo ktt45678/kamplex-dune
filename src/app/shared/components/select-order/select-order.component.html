@@ -1,0 +1,25 @@
+<div [class]="styleClass()" class="tw-p-2 tw-bg-neutral-875">
+  <div class="tw-w-full tw-flex">
+    <p-dropdown #dropdownOptions [options]="availableOptions()" [optionLabel]="optionLabel()" class="tw-ml-auto"
+      styleClass="p-dropdown-sm tw-w-56" panelStyleClass="p-dropdown-sm" scrollHeight="300px" [virtualScroll]="true"
+      [virtualScrollItemSize]="49" [placeholder]="t()('users.mediaSettings.addLanguage')" [disabled]="disabled()"
+      (onChange)="addOption($event.value); dropdownOptions.updateModel(null)"></p-dropdown>
+  </div>
+  <div class="tw-divider tw-mt-2"></div>
+  <div>
+    <ul cdkDropList (cdkDropListDropped)="dropOption($event)">
+      @for (option of selectedOptions(); track option.value) {
+        <li cdkDrag [cdkDragDisabled]="disabled()" class="tw-flex tw-items-center tw-p-2">
+          <div cdkDragHandle class="tw-h-10 tw-w-10 tw-flex tw-items-center tw-justify-center tw-cursor-move">
+            <span class="ms ms-reorder"></span>
+          </div>
+          <p class="tw-ml-2">{{ option.label }}</p>
+          @if (fixedValue() && option.value !== fixedValue()) {
+            <button type="button" pButton icon="ms ms-delete" (click)="removeOption(option)"
+              class="p-button-text p-button-sm p-button-rounded p-button-sm-icon p-button-plain tw-ml-auto"></button>
+          }
+        </li>
+      }
+    </ul>
+  </div>
+</div>
