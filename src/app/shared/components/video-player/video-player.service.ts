@@ -1,6 +1,6 @@
 import { HttpClient, HttpContext, HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable, OnDestroy } from '@angular/core';
-import { Observable, catchError, filter, first, fromEvent, map, of, switchMap, throwError } from 'rxjs';
+import { Observable, catchError, filter, first, forkJoin, fromEvent, map, of, switchMap, throwError } from 'rxjs';
 import { gunzip } from 'fflate';
 import type { ASS_Style } from 'jassub';
 import type { ThumbnailImageInit } from 'vidstack';
@@ -37,6 +37,20 @@ export class VideoPlayerService implements OnDestroy {
       context: new HttpContext().set(CAN_INTERCEPT, ['http-error'])
     }).pipe(map(manifest => {
       return this.manifestToParsedDash(manifest, baseUrl, options!);
+    }));
+  }
+
+  generateParsedDashFromUrls(manifestUrls: string[], baseUrl: string, options?: DashConverterOptions) {
+    options = Object.assign({}, { opus: false, av1: false }, options)
+    return forkJoin(manifestUrls.map(url => this.http.get<StreamManifest>(url, {
+      context: new HttpContext().set(CAN_INTERCEPT, ['http-error'])
+    }))).pipe(map(manifests => {
+      const primaryManifest = manifests.find(m => m.audioTracks.length) || manifests[0];
+      const extraManifests = manifests.filter(m => m !== primaryManifest);
+      for (let i = 0; i < extraManifests.length; i++) {
+        primaryManifest.videoTracks.push(...extraManifests[i].videoTracks);
+      }
+      return this.manifestToParsedDash(primaryManifest, baseUrl, options!);
     }));
   }
 

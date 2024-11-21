@@ -282,18 +282,23 @@ export class VideoPlayerComponent implements OnInit {
 
   setPlayerSource(): void {
     if (!this.streamData?.streams) return;
-    const playlist = this.streamData.streams.find(s => s.type === MediaStorageType.MANIFEST);
-    if (!playlist) return;
-    const playlistSrc = this.playerSettings.sourceBaseUrl().replace(':path', `${playlist._id}/${playlist.name}`);
     if (supportsMediaSource()) {
       // Use dash.js when supported
-      this.videoPlayerService.generateParsedDash(playlistSrc, this.playerSettings.sourceBaseUrl(), { opus: this.playerSupports.hlsOpus() })
-        .subscribe(manifest => {
-          // Set source url
-          this.playerSrc.set({ src: manifest, type: 'video/dash' });
-        });
+      if (!this.streamData.streams.length) return;
+      const playlists = [...this.streamData.streams].sort((a, b) => a.codec - b.codec);
+      const playlistSrcs = playlists.map(playlist =>
+        this.playerSettings.sourceBaseUrl().replace(':path', `${playlist._id}/${playlist.name}`));
+      this.videoPlayerService.generateParsedDashFromUrls(playlistSrcs, this.playerSettings.sourceBaseUrl(),
+        { opus: this.playerSupports.hlsOpus(), av1: !this.playerSupports.isSafari() }
+      ).subscribe(manifest => {
+        // Set source url
+        this.playerSrc.set({ src: manifest, type: 'video/dash' });
+      });
     } else {
       // Fallback to native HLS
+      const playlist = this.streamData.streams.find(s => s.type === MediaStorageType.MANIFEST);
+      if (!playlist) return;
+      const playlistSrc = this.playerSettings.sourceBaseUrl().replace(':path', `${playlist._id}/${playlist.name}`);
       this.videoPlayerService.generateM3U8(playlistSrc, this.playerSettings.sourceBaseUrl(), { opus: false })
         .subscribe(manifestSrc => {
           this.playerSrc.set({ src: manifestSrc, type: 'application/x-mpegurl' });

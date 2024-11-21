@@ -1,4 +1,4 @@
-import { AudioCodec } from '../enums';
+import { AudioCodec, VideoCodec } from '../enums';
 import { DashConverterOptions, HlsAudioTrack, HlsSegmentGroup, M3U8ConverterOptions, StreamManifest } from '../interfaces/video-player';
 
 export type DashManifestData = { [key: string]: any };
@@ -187,6 +187,8 @@ export class StreamManifestHelper {
       const adaptationSetChildrenList: DashManifestData[] = [];
       for (let i = 0; i < manifest.videoTracks.length; i++) {
         const track = manifest.videoTracks[i];
+        if (!options.av1 && track.codecID === VideoCodec.AV1)
+          continue;
         const fileUrl = baseUrl.replace(':path', track.uri);
         const representation: DashManifestData = {};
         const segmentBase: DashManifestData = {

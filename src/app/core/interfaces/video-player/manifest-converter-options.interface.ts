@@ -4,4 +4,5 @@ export interface M3U8ConverterOptions {
 
 export interface DashConverterOptions {
   opus?: boolean;
+  av1?: boolean;
 }
