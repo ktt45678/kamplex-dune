@@ -1,3 +1,5 @@
+import { groupBy } from 'lodash-es';
+
 import { AudioCodec, VideoCodec } from '../enums';
 import { DashConverterOptions, HlsAudioTrack, HlsSegmentGroup, M3U8ConverterOptions, StreamManifest } from '../interfaces/video-player';
 
@@ -50,8 +52,6 @@ export class StreamManifestHelper {
       masterStr += playlistUri + '\n';
     }
     const masterUri = 'data:application/x-mpegurl;charset=UTF-8,' + encodeURIComponent(masterStr);
-    //const manifestBlob = new Blob([masterStr], { type: 'application/x-mpegurl' });
-    //const masterUri = URL.createObjectURL(manifestBlob);
     return masterUri;
   }
 
@@ -87,36 +87,45 @@ export class StreamManifestHelper {
       mpdStr += `  </AdaptationSet>\n`;
     }
 
-    const minWidth = Math.min(...manifest.videoTracks.map(t => t.width));
-    const minHeight = Math.min(...manifest.videoTracks.map(t => t.height));
-    const maxWidth = Math.max(...manifest.videoTracks.map(t => t.width));
-    const maxHeight = Math.max(...manifest.videoTracks.map(t => t.height));
-    const maxFrameRate = Math.max(...manifest.videoTracks.map(t => t.frameRate));
+    const codecTrackListGroup = groupBy(manifest.videoTracks, (track) => track.codecID);
+    const codecTrackList = Object.values(codecTrackListGroup);
+    for (let i = 0; i < codecTrackList.length; i++) {
+      const videoTracks = codecTrackList[i];
+      if (!options.av1 && videoTracks.length && videoTracks[0].codecID === VideoCodec.AV1)
+        continue;
+      const minWidth = Math.min(...videoTracks.map(t => t.width));
+      const minHeight = Math.min(...videoTracks.map(t => t.height));
+      const maxWidth = Math.max(...videoTracks.map(t => t.width));
+      const maxHeight = Math.max(...videoTracks.map(t => t.height));
+      const maxFrameRate = Math.max(...videoTracks.map(t => t.frameRate));
 
-    mpdStr += `  <AdaptationSet segmentAlignment="true" minWidth="${minWidth}" minHeight="${minHeight}" `;
-    mpdStr += `maxWidth="${maxWidth}" maxHeight="${maxHeight}" maxFrameRate="${maxFrameRate}" `;
-    mpdStr += `par="${manifest.videoTracks[0]?.par}" lang="${manifest.videoTracks[0]?.language}" `;
-    mpdStr += `startWithSAP="1" subsegmentAlignment="true" subsegmentStartsWithSAP="1">\n`;
+      mpdStr += `  <AdaptationSet segmentAlignment="true" minWidth="${minWidth}" minHeight="${minHeight}" `;
+      mpdStr += `maxWidth="${maxWidth}" maxHeight="${maxHeight}" maxFrameRate="${maxFrameRate}" `;
+      mpdStr += `par="${videoTracks[0]?.par}" lang="${videoTracks[0]?.language}" `;
+      mpdStr += `startWithSAP="1" subsegmentAlignment="true" subsegmentStartsWithSAP="1">\n`;
 
-    for (let i = 0; i < manifest.videoTracks.length; i++) {
-      const track = manifest.videoTracks[i];
-      const fileUrl = baseUrl.replace(':path', track.uri);
-      mpdStr += `   <Representation id="${track.height}p" mimeType="${track.mimeType}" codecs="${track.codec}" `;
-      mpdStr += `width="${track.width}" height="${track.height}" frameRate="${track.frameRate}" sar="${track.sar}" `;
-      mpdStr += `bandwidth="${track.bandwidth}">\n`;
-      mpdStr += `    <BaseURL>${fileUrl}</BaseURL>\n`;
-      mpdStr += `    <SegmentBase indexRangeExact="true" `;
-      mpdStr += `indexRange="${track.dashSegment.indexRange.start}-${track.dashSegment.indexRange.end}">\n`;
-      mpdStr += `     <Initialization range="${track.dashSegment.initRange.start}-${track.dashSegment.initRange.end}"/>\n`;
-      mpdStr += `    </SegmentBase>\n`;
-      mpdStr += `   </Representation>\n`;
+      for (let j = 0; j < videoTracks.length; j++) {
+        const track = videoTracks[j];
+        const fileUrl = baseUrl.replace(':path', track.uri).replace(/&/, '&amp;');
+        mpdStr += `   <Representation id="${track.height}p" mimeType="${track.mimeType}" codecs="${track.codec}" `;
+        mpdStr += `width="${track.width}" height="${track.height}" frameRate="${track.frameRate}" sar="${track.sar}" `;
+        mpdStr += `bandwidth="${track.bandwidth}">\n`;
+        mpdStr += `    <BaseURL>${fileUrl}</BaseURL>\n`;
+        mpdStr += `    <SegmentBase indexRangeExact="true" `;
+        mpdStr += `indexRange="${track.dashSegment.indexRange.start}-${track.dashSegment.indexRange.end}">\n`;
+        mpdStr += `     <Initialization range="${track.dashSegment.initRange.start}-${track.dashSegment.initRange.end}"/>\n`;
+        mpdStr += `    </SegmentBase>\n`;
+        mpdStr += `   </Representation>\n`;
+      }
+
+      mpdStr += `  </AdaptationSet>\n`;
     }
 
-    mpdStr += `  </AdaptationSet>\n`;
     mpdStr += ` </Period>\n`;
     mpdStr += `</MPD>\n`;
 
-    return mpdStr;
+    const mpdUri = 'data:application/dash+xml;charset=UTF-8,' + encodeURIComponent(mpdStr);
+    return mpdUri;
   }
 
   convertToParsedDash(manifest: StreamManifest, baseUrl: string, options: DashConverterOptions) {
@@ -181,14 +190,18 @@ export class StreamManifestHelper {
       adaptationSetList.push(adaptationSet);
     }
 
-    {
+    const codecTrackListGroup = groupBy(manifest.videoTracks, (track) => track.codecID);
+    const codecTrackList = Object.values(codecTrackListGroup);
+    for (let i = 0; i < codecTrackList.length; i++) {
+      const videoTracks = codecTrackList[i];
+      if (!options.av1 && videoTracks.length && videoTracks[0].codecID === VideoCodec.AV1)
+        continue;
       const adaptationSet: DashManifestData = {};
       const representationList: DashManifestData[] = [];
       const adaptationSetChildrenList: DashManifestData[] = [];
-      for (let i = 0; i < manifest.videoTracks.length; i++) {
-        const track = manifest.videoTracks[i];
-        if (!options.av1 && track.codecID === VideoCodec.AV1)
-          continue;
+
+      for (let j = 0; j < videoTracks.length; j++) {
+        const track = videoTracks[j];
         const fileUrl = baseUrl.replace(':path', track.uri);
         const representation: DashManifestData = {};
         const segmentBase: DashManifestData = {
@@ -211,7 +224,7 @@ export class StreamManifestHelper {
           { 'BaseURL': fileUrl },
           { 'SegmentBase': segmentBase },
         ];
-        representation['id'] = track.height + 'p';
+        representation['id'] = track.height + 'p' + ' - ' + track.codecID;
         representation['mimeType'] = track.mimeType;
         representation['codecs'] = track.codec;
         representation['width'] = track.width;
@@ -230,13 +243,13 @@ export class StreamManifestHelper {
       adaptationSet['Representation_asArray'] = representationList;
       adaptationSet['__children'] = adaptationSetChildrenList;
       adaptationSet['segmentAlignment'] = 'true';
-      adaptationSet['minWidth'] = Math.min(...manifest.videoTracks.map(t => t.width));
-      adaptationSet['minHeight'] = Math.min(...manifest.videoTracks.map(t => t.height));
-      adaptationSet['maxWidth'] = Math.max(...manifest.videoTracks.map(t => t.width));
-      adaptationSet['maxHeight'] = Math.max(...manifest.videoTracks.map(t => t.height));
-      adaptationSet['maxFrameRate'] = Math.max(...manifest.videoTracks.map(t => t.frameRate));
-      adaptationSet['par'] = manifest.videoTracks[0]?.par;
-      adaptationSet['lang'] = manifest.videoTracks[0]?.language;
+      adaptationSet['minWidth'] = Math.min(...videoTracks.map(t => t.width));
+      adaptationSet['minHeight'] = Math.min(...videoTracks.map(t => t.height));
+      adaptationSet['maxWidth'] = Math.max(...videoTracks.map(t => t.width));
+      adaptationSet['maxHeight'] = Math.max(...videoTracks.map(t => t.height));
+      adaptationSet['maxFrameRate'] = Math.max(...videoTracks.map(t => t.frameRate));
+      adaptationSet['par'] = videoTracks[0]?.par;
+      adaptationSet['lang'] = videoTracks[0]?.language;
       adaptationSet['startWithSAP'] = 1;
       adaptationSet['subsegmentAlignment'] = 'true';
       adaptationSet['subsegmentStartsWithSAP'] = 1;

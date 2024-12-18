@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 import { Platform } from '@angular/cdk/platform';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { signalState } from '@ngrx/signals';
@@ -14,7 +15,8 @@ export class VideoPlayerStore {
   readonly supportsState = signalState<PlayerSupports>(this.initPlayerSupports());
   readonly thumbnailStoreState = signalState<ThumbnailStore>(this.initThumbnailStore());
 
-  constructor(private platform: Platform, private breakpointObserver: BreakpointObserver) { }
+  constructor(@Inject(DOCUMENT) private document: Document, private platform: Platform,
+    private breakpointObserver: BreakpointObserver) { }
 
   initPlayerSettings(): PlayerSettings {
     return {
@@ -91,11 +93,13 @@ export class VideoPlayerStore {
   initPlayerSupports(): PlayerSupports {
     const isTouchDevice = (('ontouchstart' in window) || (navigator.maxTouchPoints > 0));
     const isMinMobileScreen = this.breakpointObserver.isMatched(MediaBreakpoints.SMALL);
+    const videoEl = this.document.createElement('video');
     return {
       isMobile: this.platform.ANDROID || this.platform.IOS || (isTouchDevice && isMinMobileScreen),
       isSafari: this.platform.SAFARI,
       isTouchDevice: isTouchDevice,
-      hlsOpus: !this.platform.SAFARI
+      hlsOpus: !this.platform.SAFARI,
+      av1: videoEl.canPlayType('video/webm; codecs="av01.0.04M.08"') !== '' || videoEl.canPlayType('video/mp4; codecs="av01.0.04M.08"') !== ''
     };
   }
 

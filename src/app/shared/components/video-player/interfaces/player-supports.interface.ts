@@ -3,4 +3,5 @@ export interface PlayerSupports {
   isSafari: boolean;
   isTouchDevice: boolean;
   hlsOpus: boolean;
+  av1: boolean;
 }

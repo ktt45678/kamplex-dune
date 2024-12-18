@@ -15,7 +15,7 @@ import type { KPSubtitleTrack, PlayerSettings, PlayerStore, PlayerSupports, Thum
 import { AuthService, DestroyService, UsersService } from '../../../core/services';
 import { VideoPlayerService } from './video-player.service';
 import { VideoPlayerStore } from './video-player.store';
-import { AudioCodec, MediaStorageType, MediaType } from '../../../core/enums';
+import { AudioCodec, MediaStorageType, MediaType, VideoCodec } from '../../../core/enums';
 import { getFontFamily, getTextEdgeStyle, prepareColor, scaleFontWeight, track_Id } from '../../../core/utils';
 import { BaseVideoPlayerComponent } from './base-video-player/base-video-player.component';
 
@@ -285,18 +285,23 @@ export class VideoPlayerComponent implements OnInit {
     if (supportsMediaSource()) {
       // Use dash.js when supported
       if (!this.streamData.streams.length) return;
-      const playlists = [...this.streamData.streams].sort((a, b) => a.codec - b.codec);
+      let playlists = this.streamData.streams.filter(s => s.type === MediaStorageType.MANIFEST);
+      // Remove AV1 codec if not supported
+      if (!this.playerSupports.av1())
+        playlists = this.streamData.streams.filter(s => s.codec !== VideoCodec.AV1);
+      // Sort by codec id
+      playlists = playlists.sort((a, b) => a.codec - b.codec);
       const playlistSrcs = playlists.map(playlist =>
         this.playerSettings.sourceBaseUrl().replace(':path', `${playlist._id}/${playlist.name}`));
       this.videoPlayerService.generateParsedDashFromUrls(playlistSrcs, this.playerSettings.sourceBaseUrl(),
-        { opus: this.playerSupports.hlsOpus(), av1: !this.playerSupports.isSafari() }
+        { opus: this.playerSupports.hlsOpus(), av1: this.playerSupports.av1() }
       ).subscribe(manifest => {
         // Set source url
         this.playerSrc.set({ src: manifest, type: 'video/dash' });
       });
     } else {
       // Fallback to native HLS
-      const playlist = this.streamData.streams.find(s => s.type === MediaStorageType.MANIFEST);
+      const playlist = this.streamData.streams.sort((a, b) => a.codec - b.codec).find(s => s.type === MediaStorageType.MANIFEST);
       if (!playlist) return;
       const playlistSrc = this.playerSettings.sourceBaseUrl().replace(':path', `${playlist._id}/${playlist.name}`);
       this.videoPlayerService.generateM3U8(playlistSrc, this.playerSettings.sourceBaseUrl(), { opus: false })

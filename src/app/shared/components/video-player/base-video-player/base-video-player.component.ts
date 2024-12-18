@@ -15,7 +15,7 @@ import type { PlayerSettings, PlayerStore, PlayerSupports, ThumbnailStore } from
 import { VideoPlayerService } from '../video-player.service';
 import { VideoPlayerStore } from '../video-player.store';
 import { SelectOption } from '../../../../core/interfaces/primeng';
-import { AudioCodec, MediaBreakpoints } from '../../../../core/enums';
+import { AudioCodec, MediaBreakpoints, VideoCodec } from '../../../../core/enums';
 import { track_Id } from '../../../../core/utils';
 
 import 'vidstack/player';
@@ -31,6 +31,7 @@ import 'vidstack/player/ui';
 })
 export class BaseVideoPlayerComponent implements OnInit, OnDestroy {
   track_Id = track_Id;
+  VideoCodec = VideoCodec;
   t = input.required<TranslocoTranslateFn>();
   canFitWindow = input<boolean>(false);
   canReqNext = input<boolean>(false);
@@ -162,7 +163,10 @@ export class BaseVideoPlayerComponent implements OnInit, OnDestroy {
           provider.config = {
             streaming: {
               abr: { autoSwitchBitrate: { audio: false } },
-              trackSwitchMode: { video: 'alwaysReplace', audio: 'alwaysReplace' }
+              trackSwitchMode: { video: 'alwaysReplace', audio: 'alwaysReplace' },
+              buffer: {
+                resetSourceBuffersForTrackSwitch: true
+              }
             }
           };
         }
@@ -456,7 +460,23 @@ export class BaseVideoPlayerComponent implements OnInit, OnDestroy {
       player.qualities.autoSelect();
       patchState(this.videoPlayerStore.settingsState, { activeQualityValue: 0 });
     } else {
-      const quality = this.playerStore.qualities().find(q => q.height === height);
+      const quality = this.playerStore.qualities().find(q => q.height === height)
+      // Fallback to auto if quality not found
+      if (!quality)
+        return player.qualities.autoSelect();
+      quality.selected = true;
+      patchState(this.videoPlayerStore.settingsState, { activeQualityValue: quality.height });
+    }
+  }
+
+  changeVideoQualityById(id: string | null): void {
+    const player = this.player()!;
+    if (!player || !this.playerStore.canSetQuality()) return;
+    if (id === null) {
+      player.qualities.autoSelect();
+      patchState(this.videoPlayerStore.settingsState, { activeQualityValue: 0 });
+    } else {
+      const quality = this.playerStore.qualities().find(q => q.id === id)
       // Fallback to auto if quality not found
       if (!quality)
         return player.qualities.autoSelect();

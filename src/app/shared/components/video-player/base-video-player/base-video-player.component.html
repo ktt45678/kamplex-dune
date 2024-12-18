@@ -273,9 +273,10 @@
         <span class="tw-mr-8">{{ t()('player.menu.quality') }}</span>
         <span class="tw-ml-auto tw-min-w-24 tw-text-sm tw-font-normal tw-text-right">
           @if (!playerStore.autoQuality() && playerStore.quality()) {
-            {{ playerStore.quality()!.height }}p
+            {{ playerStore.quality()!.height | qualityLabel:0:playerStore.quality()!.id }}
           } @else {
-            {{ t()('player.qualities.auto') }} @if (playerStore.quality()) { ({{ playerStore.quality()!.height }}p) }
+            {{ t()('player.qualities.auto') }} @if (playerStore.quality()) { ({{ playerStore.quality()!.height |
+              qualityLabel:0:playerStore.quality()!.id }}) }
           }
         </span>
         <i class="ms ms-navigate-next ms-icon-sm tw-ml-1"></i>
@@ -372,9 +373,9 @@
       [ngClass]="{ 'media-menu-mobile tw-w-96': playerSupports.isMobile() }" [backLabel]="t()('player.menu.quality')">
       <button *ngFor="let quality of playerStore.qualities(); trackBy: track_Id" slideMenuItemRadio
         [menuItemChecked]="quality.selected && !playerStore.autoQuality()"
-        (menuItemTriggered)="changeVideoQuality(quality.height)">
+        (menuItemTriggered)="changeVideoQualityById(quality.id)">
         <i role="checkbox" class="ms ms-icon-sm ms-check"></i>
-        <span>{{ quality.height }}p ({{ ((quality.bitrate || 0) / 1000) | number:'1.0-0' }} Kbps)</span>
+        <span>{{ quality.height | qualityLabel:quality.bitrate:quality.id }}</span>
       </button>
       <button slideMenuItemRadio [menuItemChecked]="playerStore.autoQuality()"
         (menuItemTriggered)="changeVideoQuality(0)">

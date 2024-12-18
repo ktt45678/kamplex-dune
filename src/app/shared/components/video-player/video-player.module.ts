@@ -9,6 +9,7 @@ import { RadioButtonModule } from 'primeng/radiobutton';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { SliderAltModule } from 'primeng/slideralt';
 import { TooltipModule } from 'primeng/tooltip';
+import { SelectButtonModule } from 'primeng/selectbutton';
 
 import { VideoPlayerComponent } from './video-player.component';
 import { SlideMenuModule } from '../../components/slide-menu';
@@ -27,7 +28,7 @@ import { SettingsIconComponent } from './icons/settings-icon/settings-icon.compo
 import { FillIconComponent } from './icons/fill-icon/fill-icon.component';
 import { PlayCircleIconComponent } from './icons/play-circle-icon/play-circle-icon.component';
 import { BaseVideoPlayerComponent } from './base-video-player/base-video-player.component';
-import { SelectButtonModule } from 'primeng/selectbutton';
+import { QualityLabelPipe } from './pipes/quality-label.pipe';
 
 @NgModule({
   declarations: [
@@ -57,6 +58,7 @@ import { SelectButtonModule } from 'primeng/selectbutton';
     StringPipeModule,
     PlaceholderPipeModule,
     CommonDirectiveModule,
+    QualityLabelPipe,
     InputSwitchModule,
     RadioButtonModule,
     SelectButtonModule,
