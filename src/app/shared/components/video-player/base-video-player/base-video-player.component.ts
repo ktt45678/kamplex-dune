@@ -165,7 +165,8 @@ export class BaseVideoPlayerComponent implements OnInit, OnDestroy {
               abr: { autoSwitchBitrate: { audio: false } },
               trackSwitchMode: { video: 'alwaysReplace', audio: 'alwaysReplace' },
               buffer: {
-                resetSourceBuffersForTrackSwitch: true
+                resetSourceBuffersForTrackSwitch: true,
+                useChangeTypeForTrackSwitch: false
               }
             }
           };
