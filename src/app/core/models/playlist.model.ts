@@ -1,4 +1,4 @@
-import { Media } from '.';
+import type { Media } from './media.model';
 
 export interface Playlist {
   _id: string;

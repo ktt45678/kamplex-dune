@@ -1,7 +1,7 @@
-import {
+import type {
   HistoryListOptions, HistoryOptions, MediaPlayerOptions, PlaylistListOptions, PlaylistOptions, RatingListOptions,
   RatingOptions, SubtitleOptions
-} from '.';
+} from './user-settings-options.model';
 
 export interface UserSettings {
   player: MediaPlayerOptions;

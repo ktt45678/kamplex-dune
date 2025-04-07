@@ -3,11 +3,10 @@ import { Injectable } from '@angular/core';
 
 import { CursorPageHistoryDto, FindWatchTimeDto, UpdateHistoryDto, UpdateWatchTimeDto } from '../dto/history';
 import { History, HistoryGroupable, HistoryWatchTime, CursorPaginated } from '../models';
+import { StorageKey } from '../enums';
 
 @Injectable()
 export class HistoryService {
-  localStorageKey = 'LocalHistoryStore';
-
   constructor(private http: HttpClient) { }
 
   findPage(cursorPageHistoryDto?: CursorPageHistoryDto) {
@@ -59,7 +58,7 @@ export class HistoryService {
     } else {
       historyList.push(updateHistoryDto);
     }
-    localStorage.setItem(this.localStorageKey, JSON.stringify(historyList));
+    localStorage.setItem(StorageKey.LOCAL_HISTORY_STORE, JSON.stringify(historyList));
   }
 
   updateToServer() {
@@ -68,11 +67,11 @@ export class HistoryService {
       this.updateWatchTime(historyList[i]).subscribe();
       historyList.splice(i, 1);
     }
-    localStorage.setItem(this.localStorageKey, JSON.stringify(historyList));
+    localStorage.setItem(StorageKey.LOCAL_HISTORY_STORE, JSON.stringify(historyList));
   }
 
   private getLocalHistory() {
-    const historyJson = localStorage.getItem(this.localStorageKey);
+    const historyJson = localStorage.getItem(StorageKey.LOCAL_HISTORY_STORE);
     let historyList: UpdateWatchTimeDto[] = [];
     if (historyJson) {
       try {

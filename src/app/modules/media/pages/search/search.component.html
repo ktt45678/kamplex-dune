@@ -2,7 +2,7 @@
   <div class="tw-mx-4">
     <app-media-filter #mediaFilter (onChange)="onMediaFilterUpdate($event)"></app-media-filter>
     <div class="tw-my-8">
-      <app-media-list [mediaList]="mediaList" [loading]="loadingMediaList"></app-media-list>
+      <app-media-list [mediaList]="mediaList?.results" [loading]="loadingMediaList"></app-media-list>
     </div>
     <p-paginator *ngIf="mediaList" [rows]="itemsPerPage" [totalRecords]="mediaList.totalResults"
       (onPageChange)="onPageChange($event)">

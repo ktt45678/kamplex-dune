@@ -1,1 +1,1 @@
-type NullablePartial<T> = { [P in keyof T]?: T[P] | null };
+declare type NullablePartial<T> = { [P in keyof T]?: T[P] | null };

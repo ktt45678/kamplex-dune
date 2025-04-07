@@ -9,6 +9,8 @@ export * from './history-watch-time.model';
 export * from './history.model';
 export * from './jwt-with-payload.model';
 export * from './jwt.model';
+export * from './media-collection-details.model';
+export * from './media-collection.model';
 export * from './media-details.model';
 export * from './media-external-ids.model';
 export * from './media-external-streams.model';

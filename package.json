@@ -30,11 +30,11 @@
     "@ngneat/transloco-messageformat": "5.0.0",
     "@ngneat/transloco-persist-translations": "5.0.0",
     "@ngrx/signals": "17.1.1",
-    "dashjs": "4.7.4",
-    "date-fns": "2.30.0",
+    "dashjs": "5.0.0",
+    "date-fns": "4.1.0",
     "dompurify": "3.0.11",
     "fflate": "0.8.2",
-    "jassub": "1.7.15",
+    "jassub": "1.7.17",
     "jwt-decode": "4.0.0",
     "lodash-es": "4.17.21",
     "marked": "11.2.0",
@@ -48,7 +48,7 @@
     "socket.io-client": "4.7.5",
     "swiper": "8.4.7",
     "tslib": "2.6.2",
-    "vidstack": "npm:@ktt45678/vidstack@1.11.30-F3",
+    "vidstack": "npm:@ktt45678/vidstack@1.11.30-F4",
     "zone.js": "0.14.4"
   },
   "devDependencies": {

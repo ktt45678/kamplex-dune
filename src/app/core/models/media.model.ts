@@ -1,4 +1,7 @@
-import { Genre, MovieStatus, ShortDate, TVShowListInfo } from '.';
+import type { Genre } from './genre.model';
+import type { MovieStatus } from './movie-status.model';
+import type { ShortDate } from './short-date.model';
+import type { TVShowListInfo } from './tv-show-list-info.model';
 
 export interface Media {
   _id: string;

@@ -107,7 +107,7 @@ export class StreamManifestHelper {
       for (let j = 0; j < videoTracks.length; j++) {
         const track = videoTracks[j];
         const fileUrl = baseUrl.replace(':path', track.uri).replace(/&/, '&amp;');
-        mpdStr += `   <Representation id="${track.height}p" mimeType="${track.mimeType}" codecs="${track.codec}" `;
+        mpdStr += `   <Representation id="${track.height}p - ${track.codecID}" mimeType="${track.mimeType}" codecs="${track.codec}" `;
         mpdStr += `width="${track.width}" height="${track.height}" frameRate="${track.frameRate}" sar="${track.sar}" `;
         mpdStr += `bandwidth="${track.bandwidth}">\n`;
         mpdStr += `    <BaseURL>${fileUrl}</BaseURL>\n`;
@@ -143,32 +143,38 @@ export class StreamManifestHelper {
       const adaptationSet: DashManifestData = {};
       const representation: DashManifestData = {};
       const audioChannelConfiguration: DashManifestData = {
-        '__children': [],
+        'tagName': 'AudioChannelConfiguration',
         'schemeIdUri': 'urn:mpeg:dash:23003:3:audio_channel_configuration:2011',
-        'value': track.channels.toString()
+        'value': track.channels,
+        '__children': []
+      };
+      const representationBaseUrl = {
+        'tagName': 'BaseURL',
+        '__text': fileUrl,
+        '__children': []
+      };
+      const segmentBaseInitialization = {
+        'tagName': 'Initialization',
+        'range': `${track.dashSegment.initRange.start}-${track.dashSegment.initRange.end}`,
+        '__children': []
       };
       const segmentBase: DashManifestData = {
-        'Initialization': { '__children': [], 'range': `${track.dashSegment.initRange.start}-${track.dashSegment.initRange.end}` },
-        'Initialization_asArray': [
-          { '__children': [], 'range': `${track.dashSegment.initRange.start}-${track.dashSegment.initRange.end}` }
-        ],
-        '__children': [{
-          'Initialization': { '__children': [], 'range': `${track.dashSegment.initRange.start}-${track.dashSegment.initRange.end}` }
-        }],
+        'tagName': 'SegmentBase',
+        'Initialization': segmentBaseInitialization,
+        '__children': [segmentBaseInitialization],
         'indexRangeExact': 'true',
-        'indexRange': `${track.dashSegment.indexRange.start}-${track.dashSegment.indexRange.end}`
+        'indexRange': `${track.dashSegment.indexRange.start}-${track.dashSegment.indexRange.end}`,
+        '__text': ''
       };
 
-      representation['AudioChannelConfiguration'] = audioChannelConfiguration;
-      representation['AudioChannelConfiguration_asArray'] = [audioChannelConfiguration];
-      representation['BaseURL'] = fileUrl;
-      representation['BaseURL_asArray'] = [fileUrl];
+      representation['tagName'] = 'Representation';
+      representation['AudioChannelConfiguration'] = [audioChannelConfiguration];
+      representation['BaseURL'] = [representationBaseUrl];
       representation['SegmentBase'] = segmentBase;
-      representation['SegmentBase_asArray'] = [segmentBase];
       representation['__children'] = [
-        { 'AudioChannelConfiguration': audioChannelConfiguration },
-        { 'BaseURL': fileUrl },
-        { 'SegmentBase': segmentBase },
+        audioChannelConfiguration,
+        representationBaseUrl,
+        segmentBase
       ];
       representation['id'] = this.getTrackName(i, track.name, track.codecID, track.language, trackTitle);
       representation['mimeType'] = track.mimeType;
@@ -176,22 +182,24 @@ export class StreamManifestHelper {
       representation['audioSamplingRate'] = track.samplingRate;
       representation['bandwidth'] = track.bandwidth;
       representation['startWithSAP'] = 1;
+      representation['__text'] = '';
 
-      adaptationSet['Representation'] = representation;
-      adaptationSet['Representation_asArray'] = [representation];
-      adaptationSet['__children'] = [{ 'Representation': representation }];
+      adaptationSet['tagName'] = 'AdaptationSet';
+      adaptationSet['Representation'] = [representation];
+      adaptationSet['__children'] = [representation];
       adaptationSet['segmentAlignment'] = 'true';
       adaptationSet['id'] = this.getTrackName(i, track.name, track.codecID, track.language, trackTitle);
       adaptationSet['lang'] = track.language;
       adaptationSet['startWithSAP'] = 1;
       adaptationSet['subsegmentAlignment'] = 'true';
       adaptationSet['subsegmentStartsWithSAP'] = 1;
+      adaptationSet['__text'] = '';
 
       adaptationSetList.push(adaptationSet);
     }
 
     const codecTrackListGroup = groupBy(manifest.videoTracks, (track) => track.codecID);
-    const codecTrackList = Object.values(codecTrackListGroup);
+    const codecTrackList = [manifest.videoTracks];
     for (let i = 0; i < codecTrackList.length; i++) {
       const videoTracks = codecTrackList[i];
       if (!options.av1 && videoTracks.length && videoTracks[0].codecID === VideoCodec.AV1)
@@ -204,25 +212,31 @@ export class StreamManifestHelper {
         const track = videoTracks[j];
         const fileUrl = baseUrl.replace(':path', track.uri);
         const representation: DashManifestData = {};
+        const representationBaseUrl = {
+          'tagName': 'BaseURL',
+          '__text': fileUrl,
+          '__children': []
+        };
+        const segmentBaseInitialization = {
+          'tagName': 'Initialization',
+          'range': `${track.dashSegment.initRange.start}-${track.dashSegment.initRange.end}`,
+          '__children': []
+        };
         const segmentBase: DashManifestData = {
-          'Initialization': { '__children': [], 'range': `${track.dashSegment.initRange.start}-${track.dashSegment.initRange.end}` },
-          'Initialization_asArray': [
-            { '__children': [], 'range': `${track.dashSegment.initRange.start}-${track.dashSegment.initRange.end}` }
-          ],
-          '__children': [{
-            'Initialization': { '__children': [], 'range': `${track.dashSegment.initRange.start}-${track.dashSegment.initRange.end}` }
-          }],
+          'tagName': 'SegmentBase',
+          'Initialization': segmentBaseInitialization,
+          '__children': [segmentBaseInitialization],
           'indexRangeExact': 'true',
-          'indexRange': `${track.dashSegment.indexRange.start}-${track.dashSegment.indexRange.end}`
+          'indexRange': `${track.dashSegment.indexRange.start}-${track.dashSegment.indexRange.end}`,
+          '__text': ''
         };
 
-        representation['BaseURL'] = fileUrl;
-        representation['BaseURL_asArray'] = [fileUrl];
+        representation['tagName'] = 'Representation';
+        representation['BaseURL'] = [representationBaseUrl];
         representation['SegmentBase'] = segmentBase;
-        representation['SegmentBase_asArray'] = [segmentBase];
         representation['__children'] = [
-          { 'BaseURL': fileUrl },
-          { 'SegmentBase': segmentBase },
+          representationBaseUrl,
+          segmentBase
         ];
         representation['id'] = track.height + 'p' + ' - ' + track.codecID;
         representation['mimeType'] = track.mimeType;
@@ -234,13 +248,14 @@ export class StreamManifestHelper {
         representation['frameRate'] = track.frameRate;
         representation['bandwidth'] = track.bandwidth;
         representation['startWithSAP'] = 1;
+        representation['__text'] = '';
 
         representationList.push(representation);
-        adaptationSetChildrenList.push({ 'Representation': representation });
+        adaptationSetChildrenList.push(representation);
       }
 
+      adaptationSet['tagName'] = 'AdaptationSet';
       adaptationSet['Representation'] = representationList;
-      adaptationSet['Representation_asArray'] = representationList;
       adaptationSet['__children'] = adaptationSetChildrenList;
       adaptationSet['segmentAlignment'] = 'true';
       adaptationSet['minWidth'] = Math.min(...videoTracks.map(t => t.width));
@@ -253,25 +268,27 @@ export class StreamManifestHelper {
       adaptationSet['startWithSAP'] = 1;
       adaptationSet['subsegmentAlignment'] = 'true';
       adaptationSet['subsegmentStartsWithSAP'] = 1;
+      adaptationSet['__text'] = '';
       adaptationSetList.push(adaptationSet);
     }
 
-    periodData['AdaptationSet'] = adaptationSetList;
-    periodData['AdaptationSet_asArray'] = adaptationSetList;
-    periodData['__children'] = adaptationSetList.map(a => ({ 'AdaptationSet': a }));
+    periodData['tagName'] = 'Period';
     periodData['duration'] = manifest.totalDuration;
+    periodData['__text'] = '';
+    periodData['AdaptationSet'] = adaptationSetList;
+    periodData['__children'] = adaptationSetList;
 
-    parsedManifest['Period'] = periodData;
-    parsedManifest['Period_asArray'] = [periodData];
-    parsedManifest['__children'] = [{ 'Period': periodData }];
+    parsedManifest['Period'] = [periodData];
+    parsedManifest['__children'] = [periodData];
 
+    parsedManifest['tagName'] = 'MPD';
     parsedManifest['xmlns'] = 'urn:mpeg:dash:schema:mpd:2011';
     parsedManifest['minBufferTime'] = manifest.videoTracks[0]?.dashSegment.minBufferTime;
     parsedManifest['type'] = 'static';
     parsedManifest['mediaPresentationDuration'] = manifest.videoTracks[0]?.dashSegment.mediaPresentationDuration;
     parsedManifest['maxSubsegmentDuration'] = manifest.videoTracks[0]?.dashSegment.maxSubsegmentDuration;
     parsedManifest['profiles'] = 'urn:mpeg:dash:profile:isoff-on-demand:2011';
-    parsedManifest['url'] = '';
+    parsedManifest['url'] = baseUrl.replace(':path', '');
     parsedManifest['originalUrl'] = '';
     parsedManifest['baseUri'] = baseUrl.replace(':path', '');
     parsedManifest['loadedTime'] = new Date();

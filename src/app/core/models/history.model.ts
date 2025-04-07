@@ -1,4 +1,5 @@
-import { Media, TVEpisode } from '.';
+import type { Media } from './media.model';
+import type { TVEpisode } from './tv-episode.model';
 
 export interface History {
   _id: string;

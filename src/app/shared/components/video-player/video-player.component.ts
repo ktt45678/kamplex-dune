@@ -1,17 +1,18 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject, viewChild, effect, signal, computed, input, output, untracked } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject, viewChild, effect, signal, computed, input, output } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { Platform } from '@angular/cdk/platform';
 import { TRANSLOCO_SCOPE, TranslocoService } from '@ngneat/transloco';
 import { patchState } from '@ngrx/signals';
 import { DeepSignal } from '@ngrx/signals/src/deep-signal';
-import { type TextTrackInit, type MediaPlayEvent, type AudioTrack, type MediaLoadedMetadataEvent, type PlayerSrc, type AudioTrackList, type TextTrack, type TextTrackList } from 'vidstack';
-import { debounceTime, filter, first, forkJoin, fromEvent, Observable, of, switchMap, takeUntil, tap } from 'rxjs';
+import { type TextTrackInit, type MediaPlayEvent, type AudioTrack, type MediaLoadedMetadataEvent, type PlayerSrc, type TextTrack, MediaLoadedDataEvent, MediaCanPlayThroughEvent } from 'vidstack';
+import { debounceTime, filter, first, forkJoin, fromEvent, Observable, of, switchMap, takeUntil, takeWhile, tap } from 'rxjs';
 import { supportsMediaSource } from 'dashjs';
 import { isEqual } from 'lodash-es';
 
 import type { MediaDetails, MediaStream, UserSettings } from '../../../core/models';
 import type { UpdateUserSettingsDto } from '../../../core/dto/users';
 import type { KPSubtitleTrack, PlayerSettings, PlayerStore, PlayerSupports, ThumbnailStore } from './interfaces';
+import type { LocalPlayerSettings } from '../../../core/interfaces/video-player';
 import { AuthService, DestroyService, UsersService } from '../../../core/services';
 import { VideoPlayerService } from './video-player.service';
 import { VideoPlayerStore } from './video-player.store';
@@ -56,6 +57,7 @@ export class VideoPlayerComponent implements OnInit {
 
   playerSrc = signal<PlayerSrc>('');
   userSettings = signal<UserSettings | null>(null);
+  localSettings = signal<LocalPlayerSettings | null>(null);
   thumbnailPlaceholderSize = signal<{ width: string, height: string }>({ width: '0', height: '0' });
 
   player = computed(() => this.baseVideoPlayer()?.player() || null);
@@ -73,6 +75,24 @@ export class VideoPlayerComponent implements OnInit {
       autoNext: this.playerSettings.autoNext()
     }
   }));
+  pendingLocalSettings = computed<LocalPlayerSettings>(() => {
+    const subtitleSettings = this.localSettings()?.subtitle || {};
+    return {
+      player: {
+        muted: this.playerSettings.isMuted(),
+        volume: Math.round(this.playerSettings.activeVolume() * 100),
+        audioGain: this.playerSettings.audioGain(),
+        subtitle: this.playerSettings.showSubtitle(),
+        subtitleLang: this.playerSettings.activeTrackValue(),
+        speed: this.playerSettings.activeSpeedValue() * 100,
+        audioTrack: this.playerSettings.activeAudioCodec(),
+        audioSurround: this.playerSettings.isSurroundAudio(),
+        quality: this.playerSettings.activeQualityValue(),
+        autoNext: this.playerSettings.autoNext()
+      },
+      subtitle: { ...subtitleSettings }
+    }
+  });
 
   baseVideoPlayer = viewChild<BaseVideoPlayerComponent>('basePlayerComponent');
 
@@ -83,6 +103,7 @@ export class VideoPlayerComponent implements OnInit {
 
   streamData?: MediaStream;
   userSettingsLoaded: boolean = false;
+  localSettingsLoaded: boolean = false;
 
   private platform = inject(Platform);
   private videoPlayerStore = inject(VideoPlayerStore);
@@ -136,14 +157,27 @@ export class VideoPlayerComponent implements OnInit {
       switchMap(updateUserSettingsDto => this.updateUserSettings(updateUserSettingsDto)),
       takeUntil(this.destroyService)
     ).subscribe();
+    // On local settings change
+    toObservable(this.pendingLocalSettings).pipe(
+      filter(() => this.localSettingsLoaded),
+      debounceTime(2000),
+      filter(updateLocalSettings => !isEqual(updateLocalSettings.player, this.localSettings()?.player)),
+      tap(updateLocalSettings => this.videoPlayerService.updateLocalSettings(updateLocalSettings)),
+      takeUntil(this.destroyService)
+    ).subscribe();
   }
 
   ngOnInit(): void {
-    this.authService.currentUser$.pipe(takeUntil(this.destroyService)).subscribe(user => {
+    const localSettings = this.videoPlayerService.getLocalSettings();
+    if (localSettings) {
+      this.localSettings.set(localSettings);
+      this.applyLocalSettings();
+    }
+    this.localSettingsLoaded = true;
+    this.authService.currentUser$.pipe(takeWhile(() => !this.userSettingsLoaded)).subscribe(user => {
       if (!user) return;
       this.userSettings.set(user.settings || null);
       this.applyUserSettings();
-      this.updateSubtitleStyles();
       this.userSettingsLoaded = true;
     });
   }
@@ -195,31 +229,76 @@ export class VideoPlayerComponent implements OnInit {
 
   applyUserSettings(): void {
     const userSettings = this.userSettings();
+    const localSettings = this.localSettings();
     if (!userSettings) return;
-    if (userSettings.player.speed != undefined && userSettings.player.speed >= 0)
-      patchState(this.videoPlayerStore.settingsState, { activeSpeedValue: userSettings.player.speed / 100 });
-    if (userSettings.player.muted)
-      patchState(this.videoPlayerStore.settingsState, { isMuted: userSettings.player.muted });
-    if (userSettings.player.audioTrack != undefined)
-      patchState(this.videoPlayerStore.settingsState, { initAudioValue: userSettings.player.audioTrack });
-    if (userSettings.player.audioSurround != undefined)
-      patchState(this.videoPlayerStore.settingsState, { initAudioSurround: userSettings.player.audioSurround });
-    if (userSettings.player.quality != undefined)
-      patchState(this.videoPlayerStore.settingsState, { activeQualityValue: userSettings.player.quality });
-    if (userSettings.player.subtitle != undefined)
-      patchState(this.videoPlayerStore.settingsState, { showSubtitle: userSettings.player.subtitle });
-    if (userSettings.player.volume != undefined)
-      patchState(this.videoPlayerStore.settingsState, { activeVolume: userSettings.player.volume / 100 });
-    if (userSettings.player.autoNext != undefined)
-      patchState(this.videoPlayerStore.settingsState, { autoNext: userSettings.player.autoNext });
-    if (userSettings.player.prefAudioLang != undefined)
-      patchState(this.videoPlayerStore.settingsState, { prefAudioLang: userSettings.player.prefAudioLang });
-    if (userSettings.player.prefAudioLangList != undefined)
-      patchState(this.videoPlayerStore.settingsState, { prefAudioLangList: userSettings.player.prefAudioLangList });
-    if (userSettings.player.prefSubtitleLang != undefined)
-      patchState(this.videoPlayerStore.settingsState, { prefSubtitleLang: userSettings.player.prefSubtitleLang });
-    if (userSettings.player.prefSubtitleLangList != undefined)
-      patchState(this.videoPlayerStore.settingsState, { prefSubtitleLangList: userSettings.player.prefSubtitleLangList });
+    const overrideLocalSettings: LocalPlayerSettings = {
+      player: {
+        audioGain: localSettings?.player?.audioGain,
+        speed: userSettings.player.speed,
+        muted: userSettings.player.muted,
+        audioTrack: userSettings.player.audioTrack,
+        audioSurround: userSettings.player.audioSurround,
+        quality: userSettings.player.quality,
+        subtitle: userSettings.player.subtitle,
+        volume: userSettings.player.volume,
+        autoNext: userSettings.player.autoNext,
+        prefAudioLang: userSettings.player.prefAudioLang,
+        prefAudioLangList: userSettings.player.prefAudioLangList,
+        prefSubtitleLang: userSettings.player.prefSubtitleLang,
+        prefSubtitleLangList: userSettings.player.prefSubtitleLangList
+      },
+      subtitle: {
+        fontSize: userSettings.subtitle.fontSize,
+        fontFamily: userSettings.subtitle.fontFamily,
+        fontWeight: userSettings.subtitle.fontWeight,
+        textColor: userSettings.subtitle.textColor,
+        textAlpha: userSettings.subtitle.textAlpha,
+        textEdge: userSettings.subtitle.textEdge,
+        bgColor: userSettings.subtitle.bgColor,
+        bgAlpha: userSettings.subtitle.bgAlpha,
+        winColor: userSettings.subtitle.winColor,
+        winAlpha: userSettings.subtitle.winAlpha
+      }
+    };
+    this.videoPlayerService.updateLocalSettings(overrideLocalSettings);
+    this.localSettings.set(overrideLocalSettings);
+    this.applyLocalSettings();
+  }
+
+  applyLocalSettings(): void {
+    const localSettings = this.localSettings();
+    if (!localSettings) return;
+    if (localSettings.player) {
+      if (localSettings.player.speed != undefined && localSettings.player.speed >= 0)
+        patchState(this.videoPlayerStore.settingsState, { activeSpeedValue: localSettings.player.speed / 100 });
+      if (localSettings.player.muted)
+        patchState(this.videoPlayerStore.settingsState, { isMuted: localSettings.player.muted });
+      if (localSettings.player.audioGain != undefined)
+        patchState(this.videoPlayerStore.settingsState, { audioGain: localSettings.player.audioGain });
+      if (localSettings.player.audioTrack != undefined)
+        patchState(this.videoPlayerStore.settingsState, { initAudioValue: localSettings.player.audioTrack });
+      if (localSettings.player.audioSurround != undefined)
+        patchState(this.videoPlayerStore.settingsState, { initAudioSurround: localSettings.player.audioSurround });
+      if (localSettings.player.quality != undefined)
+        patchState(this.videoPlayerStore.settingsState, { activeQualityValue: localSettings.player.quality });
+      if (localSettings.player.subtitle != undefined)
+        patchState(this.videoPlayerStore.settingsState, { showSubtitle: localSettings.player.subtitle });
+      if (localSettings.player.volume != undefined)
+        patchState(this.videoPlayerStore.settingsState, { activeVolume: localSettings.player.volume / 100 });
+      if (localSettings.player.autoNext != undefined)
+        patchState(this.videoPlayerStore.settingsState, { autoNext: localSettings.player.autoNext });
+      if (localSettings.player.prefAudioLang != undefined)
+        patchState(this.videoPlayerStore.settingsState, { prefAudioLang: localSettings.player.prefAudioLang });
+      if (localSettings.player.prefAudioLangList != undefined)
+        patchState(this.videoPlayerStore.settingsState, { prefAudioLangList: localSettings.player.prefAudioLangList });
+      if (localSettings.player.prefSubtitleLang != undefined)
+        patchState(this.videoPlayerStore.settingsState, { prefSubtitleLang: localSettings.player.prefSubtitleLang });
+      if (localSettings.player.prefSubtitleLangList != undefined)
+        patchState(this.videoPlayerStore.settingsState, { prefSubtitleLangList: localSettings.player.prefSubtitleLangList });
+    }
+    if (localSettings.subtitle) {
+      this.updateSubtitleStyles();
+    }
   }
 
   setPlayerTrackList(): void {
@@ -251,7 +330,7 @@ export class VideoPlayerComponent implements OnInit {
         type: track.type,
         mimeType: track.mimeType,
       };
-      if (!defaultTrackSelected) {
+      if (this.playerSettings.showSubtitle() && !defaultTrackSelected) {
         // Select by preferred setting
         if (prefSubtitleLang && prefSubtitleTrack) {
           if (track.lang === prefSubtitleTrack.lang) {
@@ -373,7 +452,7 @@ export class VideoPlayerComponent implements OnInit {
 
   applySourceSettingsOnLoaded() {
     const player = this.player()!;
-    fromEvent<MediaLoadedMetadataEvent>(player, 'loaded-data').pipe(first()).subscribe(() => {
+    fromEvent<MediaCanPlayThroughEvent>(player, 'can-play-through').pipe(first()).subscribe(() => {
       player.muted = this.playerSettings.isMuted();
       player.volume = this.playerSettings.activeVolume();
       // Set audio track when the source is changed
@@ -385,14 +464,15 @@ export class VideoPlayerComponent implements OnInit {
         this.baseVideoPlayer()?.changeVideoQuality(this.playerSettings.activeQualityValue());
       }
       // Set subtitle when the source is changed
-      if (this.playerSettings.activeTrackValue() !== null) {
+      if (this.playerSettings.showSubtitle() && this.playerSettings.activeTrackValue() !== null) {
         this.baseVideoPlayer()?.setPlayerTrack(this.playerSettings.activeTrackValue());
       }
+      player.playbackRate = this.playerSettings.activeSpeedValue();
     });
     // Move set time to play event because of some issues with autoplay
     fromEvent<MediaPlayEvent>(player, 'play').pipe(first()).subscribe(() => {
       player.currentTime = this.playerSettings.initPlaytime();
-      player.playbackRate = this.playerSettings.activeSpeedValue();
+      player.setAudioGain(this.playerSettings.audioGain());
     });
   }
 
@@ -498,8 +578,8 @@ export class VideoPlayerComponent implements OnInit {
   }
 
   updateSubtitleStyles(): void {
-    if (!this.userSettings()) return;
-    const settings = this.userSettings()!.subtitle;
+    if (!this.localSettings()?.subtitle) return;
+    const settings = this.localSettings()!.subtitle!;
     const textColor = settings.textColor != undefined ? ('#' + settings.textColor.toString(16)) : null;
     const backgroundColor = settings.bgColor != undefined ? ('#' + settings.bgColor.toString(16)) : null;
     const windowColor = settings.winColor != undefined ? ('#' + settings.winColor.toString(16)) : null;

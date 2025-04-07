@@ -48,3 +48,4 @@ export const SEND_RECOVERY_EMAIL_LIMIT_TTL = 120;
 export const HTTP_CACHE_TTL = 300000;
 export const SUBTITLE_FONT_LIST_URL = 'https://cdn.jsdelivr.net/gh/kamplex-site/subtitle-fonts@master';
 export const SUBTITLE_FONT_LIST_FILE = 'fonts.min.json';
+export const SUBTITLE_FALLBACK_FONT = 'noto sans jp';

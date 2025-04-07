@@ -17,6 +17,7 @@ import { VideoPlayerStore } from '../video-player.store';
 import { SelectOption } from '../../../../core/interfaces/primeng';
 import { AudioCodec, MediaBreakpoints, VideoCodec } from '../../../../core/enums';
 import { track_Id } from '../../../../core/utils';
+import { SUBTITLE_FALLBACK_FONT } from '../../../../../environments/config';
 
 import 'vidstack/player';
 import 'vidstack/player/ui';
@@ -102,10 +103,10 @@ export class BaseVideoPlayerComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.breakpointObserver.observe(MediaBreakpoints.LANDSCAPE).pipe(takeUntil(this.destroyService)).subscribe(state => {
+    this.breakpointObserver.observe(MediaBreakpoints.SMALL).pipe(takeUntil(this.destroyService)).subscribe(state => {
       const isMobilePlatform = this.platform.ANDROID || this.platform.IOS;
       const isTouchDevice = (('ontouchstart' in window) || (navigator.maxTouchPoints > 0));
-      patchState(this.videoPlayerStore.supportsState, { isMobile: (state.matches && isTouchDevice) || isMobilePlatform });
+      patchState(this.videoPlayerStore.supportsState, { isMobile: (!state.matches && isTouchDevice) || isMobilePlatform });
     });
     this.audioCodecOptions.set([
       { label: this.t()('player.audioCodecOptions.off'), value: 1 },
@@ -139,13 +140,14 @@ export class BaseVideoPlayerComponent implements OnInit, OnDestroy {
       workerUrl: '../../../../../assets/js/jassub/jassub-worker.js',
       legacyWasmUrl: '../../../../../assets/js/jassub/jassub-worker-legacy.js',
       modernWasmUrl: '../../../../../assets/js/jassub/jassub-worker-modern.wasm',
-      offscreenRender: this.playerSupports.isMobile() ? false : true
+      offscreenRender: this.playerSupports.isMobile() ? false : true,
+      fallbackFont: SUBTITLE_FALLBACK_FONT
     }, {
       onSubtitleReady: (instance => {
         instance.getStyles((error, event) => {
           if (error) return;
           const styleList = Array.isArray(event) ? event : [event];
-          this.videoPlayerService.findSubtitleFontList(styleList).subscribe(fontUrls => {
+          this.videoPlayerService.findSubtitleFontList(styleList, SUBTITLE_FALLBACK_FONT).subscribe(fontUrls => {
             fontUrls.forEach(fontUrl => {
               instance.addFont(fontUrl);
             });
@@ -164,10 +166,7 @@ export class BaseVideoPlayerComponent implements OnInit, OnDestroy {
             streaming: {
               abr: { autoSwitchBitrate: { audio: false } },
               trackSwitchMode: { video: 'alwaysReplace', audio: 'alwaysReplace' },
-              buffer: {
-                resetSourceBuffersForTrackSwitch: true,
-                useChangeTypeForTrackSwitch: false
-              }
+              saveLastMediaSettingsForCurrentStreamingSession: false
             }
           };
         }
@@ -494,9 +493,13 @@ export class BaseVideoPlayerComponent implements OnInit, OnDestroy {
       patchState(this.videoPlayerStore.settingsState, { showSubtitle: false });
     }
     if (lang !== null) {
-      const nextTrack = this.playerSettings.subtitleTracks().find(t => t.lang === lang)!;
-      player.textTracks.getById(nextTrack._id)!.mode = 'showing';
-      patchState(this.videoPlayerStore.settingsState, { activeTrackValue: lang, showSubtitle: true });
+      const nextTrack = this.playerSettings.subtitleTracks().find(t => t.lang === lang);
+      if (nextTrack) {
+        player.textTracks.getById(nextTrack._id)!.mode = 'showing';
+        patchState(this.videoPlayerStore.settingsState, { activeTrackValue: lang, showSubtitle: true });
+      } else {
+        patchState(this.videoPlayerStore.settingsState, { showSubtitle: false });
+      }
     } else {
       patchState(this.videoPlayerStore.settingsState, { showSubtitle: false });
     }

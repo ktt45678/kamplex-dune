@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, ChangeDetectorRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, ChangeDetectorRef, ViewChild, signal } from '@angular/core';
 import { Location } from '@angular/common';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { Meta, Title } from '@angular/platform-browser';
@@ -30,31 +30,31 @@ export class WatchComponent implements OnInit, OnDestroy {
   @ViewChild('videoPlayer') videoPlayer?: VideoPlayerComponent;
   @ViewChild('starRating') set _starRating(value: StarRatingComponent) {
     this.starRating = value;
-    if (!this.userRating) return;
-    this.starRating.setRating(this.userRating.score / 2);
+    if (!this.userRating()) return;
+    this.starRating.setRating(this.userRating()!.score / 2);
   };
   starRating?: StarRatingComponent;
   MediaType = MediaType;
-  loading: boolean = false;
-  loadingMoreRelatedMedia: boolean = false;
-  currentUser!: UserDetails | null;
-  playerPreviewThumbnail?: string;
-  media?: MediaDetails;
-  relatedMediaList?: CursorPaginated<Media>;
-  episodes?: TVEpisode[];
-  streams?: MediaStream;
-  userRating?: Rating;
-  initPlayTime: number = 0;
-  ratingAverage: number = 0;
-  ratingScore: number = 0;
-  ratingCount: number = 0;
-  showMoreDetails: boolean = false;
-  autoNext: boolean = false;
-  canFitWindow: boolean = true;
-  fitWindow: boolean = false;
-  loadingRating: boolean = false;
-  prevEpIndex: number = -1;
-  nextEpIndex: number = -1;
+  loading = signal(false);
+  loadingMoreRelatedMedia = signal(false);
+  currentUser = signal<UserDetails | null>(null);
+  playerPreviewThumbnail = signal<string | undefined>(undefined);
+  media = signal<MediaDetails | undefined>(undefined);
+  relatedMediaList = signal<CursorPaginated<Media> | undefined>(undefined);
+  episodes = signal<TVEpisode[] | undefined>(undefined);
+  streams = signal<MediaStream | undefined>(undefined);
+  userRating = signal<Rating | undefined>(undefined);
+  initPlayTime = signal(0);
+  ratingAverage = signal(0);
+  ratingScore = signal(0);
+  ratingCount = signal(0);
+  showMoreDetails = signal(false);
+  autoNext = signal(false);
+  canFitWindow = signal(true);
+  fitWindow = signal(false);
+  loadingRating = signal(false);
+  prevEpIndex = signal(-1);
+  nextEpIndex = signal(-1);
   relatedMediaLimit: number = 20;
   watchTimeUpdateSub?: Subscription;
   serverWatchTimeUpdateSub?: Subscription;
@@ -69,12 +69,12 @@ export class WatchComponent implements OnInit, OnDestroy {
     this.initWatch();
     this.initWatchTimeUpdater();
     this.authService.currentUser$.pipe(takeUntil(this.destroyService)).subscribe(user => {
-      this.currentUser = user;
+      this.currentUser.set(user);
       this.initServerWatchTimeUpdater();
       this.ref.markForCheck();
     });
     this.breakpointObserver.observe(MediaBreakpoints.MEDIUM_2).pipe(takeUntil(this.destroyService)).subscribe(state => {
-      this.canFitWindow = state.matches;
+      this.canFitWindow.set(state.matches);
       this.ref.markForCheck();
     });
   }
@@ -85,24 +85,24 @@ export class WatchComponent implements OnInit, OnDestroy {
       filter((params): params is { id: string, epNumber: string | null, time: number } => params.id !== null),
       switchMap(params => {
         // Unset current source and start loading
-        this.streams = undefined;
-        this.initPlayTime = params.time;
-        this.loading = true;
+        this.streams.set(undefined);
+        this.initPlayTime.set(params.time);
+        this.loading.set(true);
         this.ref.markForCheck();
-        if (params.id === this.media?._id) return of(this.media).pipe(map(media => ({ media, params })));
+        if (params.id === this.media()?._id) return of(this.media()!).pipe(map(media => ({ media, params })));
         const mediaId = params.id.split('-')[0];
-        return this.mediaService.findOne(mediaId).pipe(map(media => ({ media, params })));
+        return this.mediaService.findOne(mediaId, { appendToResponse: 'inCollections' }).pipe(map(media => ({ media, params })));
       }),
       takeUntil(this.destroyService)
     ).subscribe({
       next: ({ media, params }) => {
-        if (this.media?._id !== media._id)
+        if (this.media()?._id !== media._id)
           this.findMediaRating(media);
         // Assign media
-        this.media = media;
-        this.ratingCount = media.ratingCount;
-        this.ratingScore = media.ratingScore;
-        this.ratingAverage = media.ratingAverage;
+        this.media.set(media);
+        this.ratingCount.set(media.ratingCount);
+        this.ratingScore.set(media.ratingScore);
+        this.ratingAverage.set(media.ratingAverage);
         // Find relasted media list
         this.findRelatedMedia(true);
         // Start watching
@@ -112,7 +112,7 @@ export class WatchComponent implements OnInit, OnDestroy {
           this.watchMovie(media);
         } else if (media.type === MediaType.TV) {
           if (!media.tv.episodes.length) return;
-          this.episodes = media.tv.episodes;
+          this.episodes.set(media.tv.episodes);
           // Play first episode by default
           if (!params.epNumber) {
             const ep = media.tv.episodes[0].epNumber;
@@ -123,11 +123,11 @@ export class WatchComponent implements OnInit, OnDestroy {
           }
           this.watchTVEpisode(media, params.epNumber);
         }
-        this.loading = false;
+        this.loading.set(false);
         this.ref.markForCheck();
       },
       error: () => {
-        this.loading = false;
+        this.loading.set(false);
         this.ref.markForCheck();
       }
     });
@@ -142,8 +142,8 @@ export class WatchComponent implements OnInit, OnDestroy {
   }
 
   initServerWatchTimeUpdater(): void {
-    if (this.currentUser) {
-      if (this.currentUser.settings?.history.paused) {
+    if (this.currentUser()) {
+      if (this.currentUser()!.settings?.history.paused) {
         this.watchTimeUpdateSub?.unsubscribe();
         return
       };
@@ -156,19 +156,19 @@ export class WatchComponent implements OnInit, OnDestroy {
   }
 
   updateLocalWatchTime() {
-    if (!this.loading && this.media && this.videoPlayer?.player) {
+    if (!this.loading() && this.media() && this.videoPlayer?.player) {
       const updateWatchTimeDto: UpdateWatchTimeDto = {
-        media: this.media._id,
+        media: this.media()!._id,
         time: ~~(this.videoPlayer.player()?.currentTime || 0)
       };
-      if (this.streams?.episode)
-        updateWatchTimeDto.episode = this.streams.episode._id;
+      if (this.streams()?.episode)
+        updateWatchTimeDto.episode = this.streams()!.episode!._id;
       this.historyService.updateLocal(updateWatchTimeDto);
     }
   }
 
   updateWatchTimeToServer() {
-    if (!this.currentUser || this.loading) return;
+    if (!this.currentUser() || this.loading()) return;
     this.historyService.updateToServer();
   }
 
@@ -176,39 +176,39 @@ export class WatchComponent implements OnInit, OnDestroy {
     this.title.setTitle(`${media.title} - ${SITE_NAME}`);
     this.setMediaMeta(media);
     this.mediaService.findMovieStreams(media._id).subscribe(movieStreams => {
-      this.streams = movieStreams;
+      this.streams.set(movieStreams);
       this.ref.markForCheck();
     });
   }
 
   watchTVEpisode(media: MediaDetails, epNumber: string | number): void {
     epNumber = Number(epNumber);
-    if (this.media && media._id === this.media._id && this.streams?.episode
-      && this.streams.episode.epNumber === epNumber) return;
+    if (this.media() && media._id === this.media()!._id && this.streams()?.episode
+      && this.streams()!.episode!.epNumber === epNumber) return;
     this.translocoService.selectTranslation('media').pipe(first()).subscribe(t => {
       this.title.setTitle(`${media.title} ${t['episode.episodePrefix']} ${epNumber} - ${SITE_NAME}`);
     });
     this.setMediaMeta(media);
     this.findPrevAndNextEpisodes(media.tv.episodes, epNumber);
     this.mediaService.findTVStreams(media._id, epNumber).subscribe(episodeStreams => {
-      this.streams = episodeStreams;
+      this.streams.set(episodeStreams);
       this.ref.markForCheck();
     });
   }
 
   findPrevAndNextEpisodes(episodes: TVEpisode[], epNumber: number): void {
-    this.prevEpIndex = episodes.findIndex(e => e.epNumber === epNumber - 1);
-    this.nextEpIndex = episodes.findIndex(e => e.epNumber === epNumber + 1);
+    this.prevEpIndex.set(episodes.findIndex(e => e.epNumber === epNumber - 1));
+    this.nextEpIndex.set(episodes.findIndex(e => e.epNumber === epNumber + 1));
   }
 
   changeEpisode(episodeIndex: number): void {
-    if (!this.episodes) return;
-    const ep = this.episodes[episodeIndex].epNumber;
+    if (!this.episodes()) return;
+    const ep = this.episodes()![episodeIndex].epNumber;
     this.router.navigate([], { queryParams: { ep } });
   }
 
   toggleFitWindow(event: boolean): void {
-    this.fitWindow = event;
+    this.fitWindow.set(event);
   }
 
   setMediaMeta(media: MediaDetails): void {
@@ -229,13 +229,13 @@ export class WatchComponent implements OnInit, OnDestroy {
   }
 
   showAddToPlaylistDialog() {
-    if (!this.media) return;
+    if (!this.media()) return;
     if (!this.authService.currentUser) {
-      this.router.navigate(['/sign-in'], { queryParams: { continue: `/details/${this.media._id}` } });
+      this.router.navigate(['/sign-in'], { queryParams: { continue: `/details/${this.media()!._id}` } });
       return;
     }
     this.dialogService.open(AddToPlaylistComponent, {
-      data: { ...this.media },
+      data: { ...this.media() },
       header: this.translocoService.translate('media.playlists.addToPlaylists'),
       width: '320px',
       modal: true,
@@ -245,7 +245,7 @@ export class WatchComponent implements OnInit, OnDestroy {
   }
 
   showShareMediaLinkDialog() {
-    if (!this.media) return;
+    if (!this.media()) return;
     const currentTimeUrl = new URL(window.location.href);
     currentTimeUrl.searchParams.append('t', Math.trunc(this.videoPlayer?.playerStore().currentTime || 0).toString());
     const sharingOptions: SharingOption[] = [{
@@ -272,7 +272,7 @@ export class WatchComponent implements OnInit, OnDestroy {
     this.ratingsService.findMedia({ media: media._id }).subscribe({
       next: (rating) => {
         if (!rating) return;
-        this.userRating = rating;
+        this.userRating.set(rating);
         this.starRating?.setRating(rating.score / 2);
         this.ref.markForCheck();
       }
@@ -280,79 +280,82 @@ export class WatchComponent implements OnInit, OnDestroy {
   }
 
   onRating(ratingScore: number | null): void {
-    if (!this.media) return;
-    this.loadingRating = true;
+    if (!this.media()) return;
+    this.loadingRating.set(true);
     this.ratingsService.create({
-      media: this.media._id,
+      media: this.media()!._id,
       score: ratingScore !== null ? ratingScore * 2 : null
     }).subscribe({
       next: (rating) => {
         // Update client side rating
         let score = rating.score;
-        if (!this.userRating) {
-          this.ratingCount += 1;
+        if (!this.userRating()) {
+          this.ratingCount.update(value => value + 1);
         } else {
-          score -= this.userRating.score;
+          score -= this.userRating()!.score;
         }
-        this.ratingScore += score;
-        this.ratingAverage = this.ratingScore / this.ratingCount;
-        this.userRating = rating;
+        this.ratingScore.update(value => value + score);
+        this.ratingAverage.set(this.ratingScore() / this.ratingCount());
+        this.userRating.set(rating);
         this.ref.markForCheck();
       }
     }).add(() => {
-      this.loadingRating = false;
+      this.loadingRating.set(false);
     });
   }
 
   deleteRating(): void {
-    if (!this.userRating) return;
-    this.loadingRating = true;
-    this.ratingsService.remove(this.userRating._id).subscribe(() => {
-      const oldScore = this.userRating!.score;
-      this.ratingCount -= 1;
-      this.ratingScore -= oldScore;
-      this.ratingAverage = this.ratingCount ? this.ratingScore / this.ratingCount : 0;
-      this.userRating = undefined;
+    if (!this.userRating()) return;
+    this.loadingRating.set(true);
+    this.ratingsService.remove(this.userRating()!._id).subscribe(() => {
+      const oldScore = this.userRating()!.score;
+      this.ratingCount.update(value => value - 1);
+      this.ratingScore.update(value => value - oldScore);
+      this.ratingAverage.set(this.ratingCount() ? this.ratingScore() / this.ratingCount() : 0);
+      this.userRating.set(undefined);
       this.ref.markForCheck();
     }).add(() => {
-      this.loadingRating = false;
+      this.loadingRating.set(false);
     });
   }
 
   findRelatedMedia(resetList: boolean, pageToken?: string): void {
-    if (!this.media) return;
-    const tagIds = this.media.tags.map(t => t._id);
+    if (!this.media()) return;
+    const tagIds = this.media()!.tags.map(t => t._id);
     if (!tagIds.length) return;
-    this.loadingMoreRelatedMedia = true;
+    this.loadingMoreRelatedMedia.set(true);
     this.mediaService.findPageCursor({
       pageToken,
       limit: this.relatedMediaLimit,
       preset: 'related',
-      presetParams: this.media._id
+      presetParams: this.media()!._id
     }).subscribe(mediaList => {
       this.appendRelatedMedia(mediaList, resetList);
     }).add(() => {
-      this.loadingMoreRelatedMedia = false;
+      this.loadingMoreRelatedMedia.set(false);
       this.ref.markForCheck();
     });
   }
 
   appendRelatedMedia(newList: CursorPaginated<Media>, resetList?: boolean): void {
-    if (!this.relatedMediaList || resetList) {
-      this.relatedMediaList = newList;
+    if (!this.relatedMediaList() || resetList) {
+      this.relatedMediaList.set(newList);
       return;
     }
-    this.relatedMediaList = {
-      hasNextPage: newList.hasNextPage,
-      nextPageToken: newList.nextPageToken,
-      prevPageToken: newList.prevPageToken,
-      totalResults: newList.totalResults,
-      results: [...this.relatedMediaList.results, ...newList.results]
-    };
+    this.relatedMediaList.update(oldList => {
+      if (!oldList) return newList;
+      return {
+        hasNextPage: newList.hasNextPage,
+        nextPageToken: newList.nextPageToken,
+        prevPageToken: newList.prevPageToken,
+        totalResults: newList.totalResults,
+        results: [...oldList.results, ...newList.results]
+      };
+    });
   }
 
   toggleShowMoreDetails(): void {
-    this.showMoreDetails = !this.showMoreDetails;
+    this.showMoreDetails.update(value => !value);
   }
 
   ngOnDestroy(): void {
@@ -369,7 +372,7 @@ export class WatchComponent implements OnInit, OnDestroy {
     this.meta.removeTag('property="og:image:type"');
     this.meta.removeTag('property="og:image:alt"');
     this.meta.updateTag({ name: 'theme-color', content: SITE_THEME_COLOR });
-    this.currentUser && this.updateWatchTimeToServer();
+    this.currentUser() && this.updateWatchTimeToServer();
     this.watchTimeUpdateSub?.unsubscribe();
     this.serverWatchTimeUpdateSub?.unsubscribe();
   }

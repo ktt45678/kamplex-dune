@@ -16,6 +16,7 @@ export * from './queue-upload-status.enum';
 export * from './regex-pattern.enum';
 export * from './socket-message.enum';
 export * from './socket-room.enum';
+export * from './storage-key.enum';
 export * from './text-edge-style.enum';
 export * from './toast-key.enum';
 export * from './user-permission.enum';

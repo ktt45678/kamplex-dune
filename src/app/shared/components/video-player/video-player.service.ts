@@ -6,11 +6,12 @@ import type { ASS_Style } from 'jassub';
 import type { ThumbnailImageInit } from 'vidstack';
 
 import type { FontInfo } from '../../../core/interfaces/subtitles';
-import type { DashConverterOptions, M3U8ConverterOptions, StreamManifest } from '../../../core/interfaces/video-player';
+import type { DashConverterOptions, LocalPlayerSettings, M3U8ConverterOptions, StreamManifest } from '../../../core/interfaces/video-player';
 import type { ThumbnailFrame } from './interfaces';
 import { streamManifestHelper } from '../../../core/utils';
 import { SUBTITLE_FONT_LIST_FILE, SUBTITLE_FONT_LIST_URL } from '../../../../environments/config';
 import { CAN_INTERCEPT } from '../../../core/tokens';
+import { StorageKey } from '../../../core/enums';
 
 @Injectable()
 export class VideoPlayerService implements OnDestroy {
@@ -158,7 +159,7 @@ export class VideoPlayerService implements OnDestroy {
   //   );
   // }
 
-  findSubtitleFontList(styles: ASS_Style[]) {
+  findSubtitleFontList(styles: ASS_Style[], fallbackFont?: string) {
     return this.http.get<FontInfo[]>(`${SUBTITLE_FONT_LIST_URL}/${SUBTITLE_FONT_LIST_FILE}`,
       { context: new HttpContext().set(CAN_INTERCEPT, []) }
     ).pipe(
@@ -170,15 +171,39 @@ export class VideoPlayerService implements OnDestroy {
           const fontNameLowerCase = assStyle.FontName.toLowerCase();
           if (addedFonts.includes(fontNameLowerCase))
             continue;
-          const matchedFonts = fontList.filter(f => f.family.toLowerCase() === fontNameLowerCase);
+          const matchedFonts = this.findFontsByName(fontNameLowerCase, fontList);
           if (!matchedFonts.length) continue;
           const matchedFontUrls = matchedFonts.map(f => `${SUBTITLE_FONT_LIST_URL}/${f.path.woff2}`);
           fontUrls.push(...matchedFontUrls);
           addedFonts.push(fontNameLowerCase);
         }
+        if (fallbackFont) {
+          const fontNameLowerCase = fallbackFont.toLowerCase();
+          const matchedFonts = this.findFontsByName(fontNameLowerCase, fontList);
+          if (matchedFonts.length) {
+            const matchedFontUrls = matchedFonts.map(f => `${SUBTITLE_FONT_LIST_URL}/${f.path.woff2}`);
+            fontUrls.push(...matchedFontUrls);
+            addedFonts.push(fontNameLowerCase);
+          }
+        }
         return fontUrls;
       })
     );
+  }
+
+  updateLocalSettings(localSettings: LocalPlayerSettings): LocalPlayerSettings {
+    localStorage.setItem(StorageKey.LOCAL_PLAYER_SETTINGS, JSON.stringify(localSettings));
+    return localSettings;
+  }
+
+  getLocalSettings(): LocalPlayerSettings | null {
+    const localSettings = localStorage.getItem(StorageKey.LOCAL_PLAYER_SETTINGS);
+    if (!localSettings) return null;
+    return JSON.parse(localSettings);
+  }
+
+  private findFontsByName(fontName: string, fontList: FontInfo[]) {
+    return fontList.filter(f => f.family.toLowerCase() === fontName);
   }
 
   private manifestToM3U8(manifest: StreamManifest, baseUrl: string, options: M3U8ConverterOptions) {

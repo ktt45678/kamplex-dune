@@ -1,4 +1,5 @@
 export * from './auth.service';
+export * from './collection.service';
 export * from './destroy.service';
 export * from './genres.service';
 export * from './history.service';

@@ -1,0 +1,49 @@
+<ng-container *ngLet="t() as t">
+  @for (collection of collectionList(); track collection._id; let last = $last) {
+    <div class="tw-rounded-lg tw-shadow-xl tw-overflow-hidden tw-flex" [ngClass]="{ 'tw-mb-4': !last }" [ngStyle]="{
+        '--collection-backdrop-color': collection.backdropColor ? (collection.backdropColor | hslColor:{ lightness: 20 }) : '#212121',
+        '--collection-backdrop-color-60': collection.backdropColor ? (collection.backdropColor | hslColor:{ opacity: 60, lightness: 20 }) : '#212121',
+        'background-image': 'linear-gradient(to right, var(--collection-backdrop-color) 0%, var(--collection-backdrop-color-60) 100%), url(\'' + collection.thumbnailBackdropUrl + '\')'
+      }">
+
+      <div class="tw-w-1/5">
+        <div class="tw-aspect-w-2 tw-aspect-h-3">
+          <img *ngIf="collection.thumbnailPosterUrl; else noPoster"
+            class="tw-object-cover tw-rounded-lg tw-m-2 2md:tw-rounded-none 2md:tw-m-0"
+            [lazyLoad]="collection.thumbnailPosterUrl" [defaultImage]="collection.posterPlaceholder | thumbhashUrl"
+            [alt]="collection.name" errorImage="assets/images/media-poster-md.png">
+          <ng-template #noPoster>
+            <img class="tw-object-cover" lazyLoad="assets/images/media-poster-md.png"
+              defaultImage="assets/images/media-poster-sm.png" [alt]="collection.name">
+          </ng-template>
+        </div>
+      </div>
+
+      <div class="tw-w-2/3 tw-p-8 tw-text-white">
+        <p class="tw-text-2xl tw-font-bold tw-mb-2" [appTextResize]="collection.name"
+          [resizeOptions]="collectionNameResizes()">{{ collection.name }}</p>
+
+        <div class="tw-text-sm tw-text-gray-300">
+          <span>{{ t('media.details.collectionIncludes') }} </span>
+          @for (media of collection.media; track media._id; let lastMedia = $last) {
+            @if (currentMedia()?._id !== media._id) {
+              <a [routerLink]="['/details', media._id]" class="hover:tw-underline">{{ media.title }}</a>
+            } @else {
+              <span class="tw-font-bold">{{ media.title }}</span>
+            }
+            @if (!lastMedia) {
+              <span>, </span>
+            }
+          }
+        </div>
+
+        <div class="tw-mt-8">
+          <button type="button" role="navigation" aria-label="View collection"
+            [routerLink]="['/list', 'collection', collection._id]" pButton [label]="t('media.actions.viewCollection')"
+            class="p-button-secondary p-button-rounded p-button-shrink tw-px-8">
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</ng-container>

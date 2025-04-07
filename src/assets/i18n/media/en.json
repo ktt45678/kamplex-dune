@@ -5,7 +5,8 @@
     "playlist": "Playlist",
     "share": "Share",
     "showMore": "Show more",
-    "showLess": "Show less"
+    "showLess": "Show less",
+    "viewCollection": "View collection"
   },
   "list": {
     "runtimeValue": "{{ runtime }} min",
@@ -19,6 +20,7 @@
     "producer": "Producer",
     "studio": "Studio",
     "tag": "Tag",
+    "collection": "Collection",
     "movie": "Movies",
     "tv": "TV Shows",
     "added": "Recently Added",
@@ -52,7 +54,10 @@
     "viewCountValue": "{{ viewCount }} views",
     "viewCount": "views",
     "noEpisodes": "No episodes found",
-    "originalTitle": "Original title"
+    "originalTitle": "Original title",
+    "collections": "Collections",
+    "partOfCountCollections": "Part of { count, plural, one {1 collection} other {# collections} }",
+    "collectionIncludes": "Includes"
   },
   "video": {
     "name": "Name",

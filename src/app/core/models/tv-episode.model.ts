@@ -1,4 +1,4 @@
-import { ShortDate } from '.';
+import type { ShortDate } from './short-date.model';
 
 export interface TVEpisode {
   _id: string;

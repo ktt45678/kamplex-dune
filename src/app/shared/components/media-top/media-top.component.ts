@@ -20,7 +20,7 @@ import { track_Id } from '../../../core/utils';
 export class MediaTopComponent implements OnInit {
   MediaType = MediaType;
   @Input() loading: boolean = false;
-  @Input() mediaList?: Paginated<Media>;
+  @Input() mediaList?: Media[];
   @Input() itemLimit: number = 5;
   @Input() elements: string[] = [];
   track_Id = track_Id;

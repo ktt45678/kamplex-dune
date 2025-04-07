@@ -1,2 +1,4 @@
-export type * from './manifest-converter-options.interface';
-export type * from './stream-manifest.interface';
+export * from './local-player-settings-options.interface';
+export * from './local-player-settings.interface';
+export * from './manifest-converter-options.interface';
+export * from './stream-manifest.interface';

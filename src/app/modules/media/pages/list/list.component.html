@@ -11,7 +11,7 @@
         </h2>
         <div infiniteScroll [infiniteScrollDistance]="2" [infiniteScrollDisabled]="!mediaList?.hasNextPage"
           (scrolled)="onScroll()">
-          <app-media-list [mediaList]="mediaList" [loading]="loadingMediaList"
+          <app-media-list [mediaList]="mediaList?.results" [loading]="loadingMediaList"
             [loadingMore]="loadingMoreMediaList"></app-media-list>
         </div>
       </div>

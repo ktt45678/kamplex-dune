@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { TranslocoService } from '@ngneat/transloco';
-import { formatRelative } from 'date-fns';
+import { formatRelative, Locale } from 'date-fns';
 
 import { enUSDateRelative, viDateRelative } from '../../../../core/utils/date-fns-locales';
 

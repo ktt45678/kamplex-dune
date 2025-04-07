@@ -1,4 +1,4 @@
-import { Duration } from 'date-fns';
+import { Duration, FormatDistanceToken, Locale } from 'date-fns';
 
 export function formatDurationZero(
   duration: Duration,
@@ -6,7 +6,7 @@ export function formatDurationZero(
     format: string[]
     zero?: boolean
     delimiter?: string
-    locale: Locale
+    locale: Pick<Locale, 'formatDistance'>
   }
 ): string {
   const locale = options.locale;
@@ -24,7 +24,7 @@ export function formatDurationZero(
     .reduce((acc, unit) => {
       const token = `x${unit.replace(/(^.)/, (m) =>
         m.toUpperCase()
-      )}`;
+      )}` as FormatDistanceToken;
       const value = (<any>duration)[unit];
       if (value !== undefined && ((zero || nonZeroFound) || (<any>duration)[unit])) {
         return acc.concat(locale.formatDistance!(token, value));

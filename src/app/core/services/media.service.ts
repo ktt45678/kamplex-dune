@@ -66,9 +66,12 @@ export class MediaService {
   findOne(id: string, findOneMediaDto?: FindOneMediaDto) {
     const params: { [key: string]: any } = {};
     if (findOneMediaDto) {
-      const { includeHiddenEps, includeUnprocessedEps } = findOneMediaDto;
+      const { includeHiddenEps, includeUnprocessedEps, includeHiddenMedia, includeUnprocessedMedia, appendToResponse } = findOneMediaDto;
       includeHiddenEps !== undefined && (params['includeHiddenEps'] = includeHiddenEps);
       includeUnprocessedEps !== undefined && (params['includeUnprocessedEps'] = includeUnprocessedEps);
+      includeHiddenMedia !== undefined && (params['includeHiddenMedia'] = includeHiddenMedia);
+      includeUnprocessedMedia !== undefined && (params['includeUnprocessedMedia'] = includeUnprocessedMedia);
+      appendToResponse !== undefined && (params['appendToResponse'] = appendToResponse);
     }
     return this.http.get<MediaDetails>(`media/${id}`, { params });
   }
@@ -137,7 +140,7 @@ export class MediaService {
   addMovieSubtitle(id: string, addMediaSubtitleDto: AddMediaSubtitleDto) {
     const data = new FormData();
     data.set('language', addMediaSubtitleDto.lang);
-    data.set('file', addMediaSubtitleDto.file);
+    data.set('file', new Blob([addMediaSubtitleDto.file], { type: 'text/plain' }), addMediaSubtitleDto.file.name);
     return this.http.post<MediaSubtitle[]>(`media/${id}/movie/subtitles`, data);
   }
 
@@ -192,7 +195,7 @@ export class MediaService {
   addTVSubtitle(id: string, episodeId: string, addMediaSubtitleDto: AddMediaSubtitleDto) {
     const data = new FormData();
     data.set('language', addMediaSubtitleDto.lang);
-    data.set('file', addMediaSubtitleDto.file);
+    data.set('file', new Blob([addMediaSubtitleDto.file], { type: 'text/plain' }), addMediaSubtitleDto.file.name);
     return this.http.post<MediaSubtitle[]>(`media/${id}/tv/episodes/${episodeId}/subtitles`, data);
   }
 

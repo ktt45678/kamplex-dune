@@ -1,175 +1,225 @@
 <ng-container *transloco="let t">
-  <div class="tw-mb-8" [ngClass]="{ '2md:tw-mt-8 tw-max-w-8xl tw-mx-auto': !fitWindow }">
-    <div class="tw-flex tw-flex-wrap" [ngClass]="{ '2md:tw-flex-nowrap': !fitWindow }">
-      <div class="tw-w-full" [ngClass]="{ '2md:tw-w-9/12': !fitWindow }">
-        <app-video-player #videoPlayer [media]="media" [stream]="streams" [canReqNext]="this.nextEpIndex > -1"
-          [canReqPrev]="this.prevEpIndex > -1" [canFitWindow]="canFitWindow" [initPlaytime]="initPlayTime"
-          [ngClass]="{ '2md:tw-mx-4': !fitWindow }" (requestFitWindow)="toggleFitWindow($event)"
-          (requestNext)="changeEpisode(this.nextEpIndex)" (requestPrev)="changeEpisode(this.prevEpIndex)">
+  <div class="tw-mb-8" [ngClass]="{ '2md:tw-mt-8 tw-max-w-8xl tw-mx-auto': !fitWindow() }">
+    <div class="tw-flex tw-flex-wrap" [ngClass]="{ '2md:tw-flex-nowrap': !fitWindow() }">
+      <div class="tw-w-full" [ngClass]="{ '2md:tw-w-9/12': !fitWindow() }">
+        <app-video-player #videoPlayer [media]="media()" [stream]="streams()" [canReqNext]="nextEpIndex() > -1"
+          [canReqPrev]="prevEpIndex() > -1" [canFitWindow]="canFitWindow()" [initPlaytime]="initPlayTime()"
+          [ngClass]="{ '2md:tw-mx-4': !fitWindow() }" (requestFitWindow)="toggleFitWindow($event)"
+          (requestNext)="changeEpisode(nextEpIndex())" (requestPrev)="changeEpisode(prevEpIndex())">
         </app-video-player>
-        <div *ngIf="media" class="tw-text-white tw-mx-2 sm:tw-mx-4">
-          <div *ngIf="media.type === MediaType.TV && streams?.episode as episode" class="tw-mt-2">
-            <p class="tw-text-sm sm:tw-text-base md:tw-text-lg tw-font-semibold">{{
-              t('media.episode.episodePrefix') + ' ' + episode.epNumber }}{{ episode.name ? ': ' + episode.name : ''
-              }}</p>
-            <p class="tw-text-slate-400 tw-text-sm sm:tw-text-base tw-mt-1">{{ episode.overview }}</p>
-          </div>
-          <div class="tw-flex tw-flex-wrap tw-mt-2">
-            <div class="max-md:tw-w-full">
-              <p class="tw-text-base tw-font-medium">
-                <ng-container *ngIf="media.type === MediaType.MOVIE; else tvEpisodeViewsTpl">
-                  <span>{{ media.views | number }} {{ t('media.details.viewCount') }}</span>
-                  <span class="tw-ml-2">{{ media.releaseDate | shortDate }}</span>
-                </ng-container>
-                <ng-template #tvEpisodeViewsTpl>
-                  <ng-container *ngIf="streams?.episode as episode">
-                    <span>{{ episode.views | number }} {{ t('media.details.viewCount') }}</span>
-                    <span class="tw-ml-2">{{ episode.airDate | shortDate }}</span>
-                  </ng-container>
-                </ng-template>
-              </p>
-              <div class="tw-mt-4">
-                <button type="button" role="button" aria-label="Share this show or episode" pButton icon="ms ms-share"
-                  [label]="t('media.actions.share')" (click)="showShareMediaLinkDialog()"
-                  class="p-button-secondary p-button-sm p-button-rounded p-button-shrink">
-                </button>
-                <button type="button" role="button" aria-label="Add media to playlist" pButton icon="ms ms-playlist-add"
-                  [label]="t('media.playlists.addToPlaylistShort')" (click)="showAddToPlaylistDialog()"
-                  class="p-button-secondary p-button-sm p-button-rounded p-button-shrink tw-ml-2">
-                </button>
+        @if (media(); as media) {
+          <div class="tw-text-white tw-mx-2 sm:tw-mx-4">
+            @if (media.type === MediaType.TV && streams()?.episode; as episode) {
+              <div class="tw-mt-2">
+                <p class="tw-text-sm sm:tw-text-base md:tw-text-lg tw-font-semibold">{{
+                  t('media.episode.episodePrefix') + ' ' + episode.epNumber }}{{ episode.name ? ': ' + episode.name : ''
+                }}</p>
+                <p class="tw-text-slate-400 tw-text-sm sm:tw-text-base tw-mt-1">{{ episode.overview }}</p>
               </div>
-            </div>
-            <div class="tw-flex-shrink-0 max-md:tw-w-full md:tw-ml-auto">
-              <p class="tw-text-xl xs:tw-text-2xl 2md:tw-text-3xl 2md:tw-leading-6 tw-text-right [&>*]:tw-align-middle">
-                <i class="ms ms-star ms-fill tw-text-3xl 2md:tw-text-4xl tw-text-yellow-500 -tw-mt-0.5"></i>
-                <span class="tw-text-white tw-font-medium tw-ml-1.5">{{ ratingAverage }}</span>
-                <i class="ms ms-people ms-fill tw-text-3xl 2md:tw-text-4xl tw-text-yellow-500 tw-ml-2"></i>
-                <span class="tw-text-white tw-font-medium tw-ml-1.5">{{ ratingCount }}</span>
-              </p>
-              <ng-container *ngIf="currentUser; else notLoggedIn">
-                <div class="tw-flex tw-items-center tw-justify-end tw-mt-2">
-                  <app-star-rating #starRating [maxStars]="5" [size]="2.5" [disabled]="loadingRating"
-                    (ratingOutput)="onRating($event)">
-                  </app-star-rating>
-                  <!--p class="tw-text-white tw-text-2xl tw-text-right tw-font-medium tw-w-8">{{ starRating.hoverRating * 2
-                      }}</p-->
-                </div>
-                <p *ngIf="userRating" class="tw-text-xs tw-text-right tw-font-medium">
-                  <span>{{ t('media.rating.youRated', { score: userRating.score}) }}</span>
-                  <button pButton [label]="t('media.rating.clear')" [disabled]="loadingRating" (click)="deleteRating()"
-                    class="p-button-link p-button-shrink tw-p-0 tw-text-xs tw-font-medium
-                    tw-min-w-0 tw-ml-1 disabled:!tw-bg-transparent">
+            }
+            <div class="tw-flex tw-flex-wrap tw-mt-2">
+              <div class="max-md:tw-w-full">
+                <p class="tw-text-base tw-font-medium">
+                  @if (media.type === MediaType.MOVIE) {
+                    <span>{{ media.views | number }} {{ t('media.details.viewCount') }}</span>
+                    <span class="tw-ml-2">{{ media.releaseDate | shortDate }}</span>
+                  } @else {
+                    @if (streams()?.episode; as episode) {
+                      <span>{{ episode.views | number }} {{ t('media.details.viewCount') }}</span>
+                      <span class="tw-ml-2">{{ episode.airDate | shortDate }}</span>
+                    }
+                  }
+                </p>
+                <div class="tw-mt-4">
+                  <button type="button" role="button" aria-label="Share this show or episode" pButton icon="ms ms-share"
+                    [label]="t('media.actions.share')" (click)="showShareMediaLinkDialog()"
+                    class="p-button-secondary p-button-sm p-button-rounded p-button-shrink">
                   </button>
-                </p>
-              </ng-container>
-              <ng-template #notLoggedIn>
-                <p class="tw-text-white tw-text-base tw-text-right tw-font-medium">{{ t('media.rating.anonUsers')
-                  }}</p>
-              </ng-template>
-            </div>
-          </div>
-          <div class="tw-bg-neutral-850 tw-flex tw-mt-4 tw-p-4 tw-rounded-md">
-            <div class="tw-w-24">
-              <div class="tw-aspect-w-2 tw-aspect-h-3 tw-rounded-md tw-overflow-hidden">
-                <img *ngIf="media.thumbnailPosterUrl; else noPoster" class="tw-object-cover"
-                  [lazyLoad]="media.thumbnailPosterUrl" [defaultImage]="media.posterPlaceholder | thumbhashUrl"
-                  [alt]="media.title" errorImage="assets/images/media-poster-md.png">
-                <ng-template #noPoster>
-                  <img class="tw-object-cover" src="assets/images/media-poster-md.png" loading="lazy"
-                    [alt]="media.title">
-                </ng-template>
-              </div>
-            </div>
-            <div class="tw-text-white tw-flex-1 tw-mx-2 sm:tw-mx-4">
-              <div class="tw-flex tw-flex-wrap">
-                <div class="tw-flex-1 max-md:tw-w-full">
-                  <p class="tw-text-lg sm:tw-text-2xl tw-font-semibold tw-leading-6">{{ media.title }}</p>
-                  <p *ngIf="media.originalTitle && showMoreDetails" class="tw-text-sm sm:tw-text-lg tw-mt-1">{{
-                    media.originalTitle }}</p>
+                  <button type="button" role="button" aria-label="Add media to playlist" pButton
+                    icon="ms ms-playlist-add" [label]="t('media.playlists.addToPlaylistShort')"
+                    (click)="showAddToPlaylistDialog()"
+                    class="p-button-secondary p-button-sm p-button-rounded p-button-shrink tw-ml-2">
+                  </button>
                 </div>
               </div>
-              <p class="tw-text-sm sm:tw-text-base tw-mt-2" [ngClass]="{ 'tw-line-clamp-2': !showMoreDetails }">{{
-                media.overview }}</p>
-              @if (showMoreDetails) {
-                <div *ngIf="media.genres.length" class="tw-text-white tw-flex tw-flex-wrap tw-gap-1 tw-mt-2">
-                  <p-tag *ngFor="let genre of media.genres; let first = first; trackBy: track_Id" [value]="genre.name"
-                    [link]="['/list', 'genre', genre._id]"
-                    styleClass="p-tag-secondary tw-text-sm tw-font-medium tw-px-2.5 tw-rounded-full"></p-tag>
+              <div class="tw-flex-shrink-0 max-md:tw-w-full md:tw-ml-auto">
+                <p
+                  class="tw-text-xl xs:tw-text-2xl 2md:tw-text-3xl 2md:tw-leading-6 tw-text-right [&>*]:tw-align-middle">
+                  <i class="ms ms-star ms-fill tw-text-3xl 2md:tw-text-4xl tw-text-yellow-500 -tw-mt-0.5"></i>
+                  <span class="tw-text-white tw-font-medium tw-ml-1.5">{{ ratingAverage() }}</span>
+                  <i class="ms ms-people ms-fill tw-text-3xl 2md:tw-text-4xl tw-text-yellow-500 tw-ml-2"></i>
+                  <span class="tw-text-white tw-font-medium tw-ml-1.5">{{ ratingCount() }}</span>
+                </p>
+                @if (currentUser()) {
+                  <div class="tw-flex tw-items-center tw-justify-end tw-mt-2">
+                    <app-star-rating #starRating [maxStars]="5" [size]="2.5" [disabled]="loadingRating()"
+                      (ratingOutput)="onRating($event)">
+                    </app-star-rating>
+                    <!--p class="tw-text-white tw-text-2xl tw-text-right tw-font-medium tw-w-8">{{ starRating.hoverRating * 2
+                  }}</p-->
+                  </div>
+                  @if (userRating()) {
+                    <p class="tw-text-xs tw-text-right tw-font-medium">
+                      <span>{{ t('media.rating.youRated', { score: userRating()!.score}) }}</span>
+                      <button pButton [label]="t('media.rating.clear')" [disabled]="loadingRating()"
+                        (click)="deleteRating()" class="p-button-link p-button-shrink tw-p-0 tw-text-xs tw-font-medium
+                    tw-min-w-0 tw-ml-1 disabled:!tw-bg-transparent">
+                      </button>
+                    </p>
+                  }
+                } @else {
+                  <p class="tw-text-white tw-text-base tw-text-right tw-font-medium">{{ t('media.rating.anonUsers')
+                    }}</p>
+                }
+              </div>
+            </div>
+
+            <div class="tw-bg-neutral-850 tw-flex tw-mt-4 tw-p-4 tw-rounded-md">
+              <div class="tw-w-24">
+                <div class="tw-aspect-w-2 tw-aspect-h-3 tw-rounded-md tw-overflow-hidden">
+                  @if (media.thumbnailPosterUrl) {
+                    <img class="tw-object-cover" [lazyLoad]="media.thumbnailPosterUrl!"
+                      [defaultImage]="media.posterPlaceholder | thumbhashUrl" [alt]="media.title"
+                      errorImage="assets/images/media-poster-md.png">
+                  } @else {
+                    <img class="tw-object-cover" src="assets/images/media-poster-md.png" loading="lazy"
+                      [alt]="media.title">
+                  }
                 </div>
-                <p *ngIf="media.studios.length" class="tw-text-base tw-leading-5 tw-mt-4">
-                  <span>{{ t('media.details.studios') }}: </span>
-                  <ng-container
-                    *ngFor="let studio of media.studios; let first = first; let last = last; trackBy: track_Id">
-                    <a class="hover:tw-underline focus-visible:tw-underline tw-font-semibold" [class.tw-ml-2]="!first"
-                      [routerLink]="['/list', 'studio', studio._id]">{{ studio.name }}</a>
-                    <span *ngIf="!last">,</span>
-                  </ng-container>
-                </p>
-                <p *ngIf="media.producers.length" class="tw-text-base tw-leading-5 tw-mt-2">
-                  <span>{{ t('media.details.producers') }}: </span>
-                  <ng-container
-                    *ngFor="let producer of media.producers; let first = first; let last = last; trackBy: track_Id">
-                    <a class="hover:tw-underline focus-visible:tw-underline tw-font-semibold" [class.tw-ml-2]="!first"
-                      [routerLink]="['/list', 'producer', producer._id]">{{ producer.name }}</a>
-                    <span *ngIf="!last">,</span>
-                  </ng-container>
-                </p>
-                <p class="tw-text-base tw-leading-5 tw-mt-2">
-                  <span>{{ t('media.details.releaseDate') }}: </span>
-                  <span>{{ media.releaseDate | shortDate }}</span>
-                  <span *ngIf="media.type === MediaType.TV"> {{ t('media.details.releaseDateTo') }}
-                    @if (media.tv.lastAirDate) {
-                      {{ media.tv.lastAirDate | shortDate }}
+              </div>
+              <div class="tw-text-white tw-flex-1 tw-mx-2 sm:tw-mx-4">
+                <div class="tw-flex tw-flex-wrap">
+                  <div class="tw-flex-1 max-md:tw-w-full">
+                    <p class="tw-text-lg sm:tw-text-2xl tw-font-semibold tw-leading-6">{{ media.title }}</p>
+                    @if (media.originalTitle && showMoreDetails()) {
+                      <p class="tw-text-sm sm:tw-text-lg tw-mt-1">{{
+                        media.originalTitle }}</p>
+                    }
+                  </div>
+                </div>
+                <p class="tw-text-sm sm:tw-text-base tw-mt-2" [ngClass]="{ 'tw-line-clamp-2': !showMoreDetails() }">{{
+                  media.overview }}</p>
+                @if (showMoreDetails()) {
+                  @if (media.genres.length) {
+                    <div class="tw-text-white tw-flex tw-flex-wrap tw-gap-1 tw-mt-2">
+                      @for (genre of media.genres; track genre._id; let first = $first) {
+                        <p-tag [value]="genre.name" [link]="['/list', 'genre', genre._id]"
+                          styleClass="p-tag-secondary tw-text-sm tw-font-medium tw-px-2.5 tw-rounded-full"></p-tag>
+                      }
+                    </div>
+                  }
+                  @if (media.studios.length) {
+                    <p class="tw-text-base tw-leading-5 tw-mt-4">
+                      <span>{{ t('media.details.studios') }}: </span>
+                      @for (studio of media.studios; track studio._id; let first = $first; let last = $last) {
+                        <a class="hover:tw-underline focus-visible:tw-underline tw-font-semibold"
+                          [class.tw-ml-2]="!first" [routerLink]="['/list', 'studio', studio._id]">{{ studio.name }}</a>
+                        @if (!last) {
+                          <span>,</span>
+                        }
+                      }
+                    </p>
+                  }
+                  @if (media.producers.length) {
+                    <p class="tw-text-base tw-leading-5 tw-mt-2">
+                      <span>{{ t('media.details.producers') }}: </span>
+                      @for (producer of media.producers; track producer._id; let first = $first; let last = $last) {
+                        <a class="hover:tw-underline focus-visible:tw-underline tw-font-semibold"
+                          [class.tw-ml-2]="!first"
+                          [routerLink]="['/list', 'producer', producer._id]">{{ producer.name }}</a>
+                        @if (!last) {
+                          <span>,</span>
+                        }
+                      }
+                    </p>
+                  }
+                  <p class="tw-text-base tw-leading-5 tw-mt-2">
+                    <span>{{ t('media.details.releaseDate') }}: </span>
+                    <span>{{ media.releaseDate | shortDate }}</span>
+                    @if (media.type === MediaType.TV) {
+                      <span> {{ t('media.details.releaseDateTo') }}
+                        @if (media.tv.lastAirDate) {
+                          {{ media.tv.lastAirDate | shortDate }}
+                        }
+                        @else {
+                          {{ t('media.details.releaseDateToNow') }}
+                        }
+                      </span>
+                    }
+                  </p>
+                  <p class="tw-text-base tw-leading-5 tw-mt-2">
+                    <span>{{ t('media.details.status') }}: </span>
+                    <span>{{ t('media.statusOptions.' + media.status) }}</span>
+                  </p>
+                  @if (media.tags.length) {
+                    <p class="tw-text-base tw-leading-5 tw-mt-2">
+                      <span>{{ t('media.details.tags') }}: </span>
+                      @for (tag of media.tags; track tag._id; let first = $first; let last = $last) {
+                        <a class="hover:tw-underline focus-visible:tw-underline tw-font-semibold"
+                          [class.tw-ml-2]="!first" [routerLink]="['/list', 'tag', tag._id]">{{ tag.name }}</a>
+                        @if (!last) {
+                          <span>,</span>
+                        }
+                      }
+                    </p>
+                  }
+                  <p class="tw-text-base tw-leading-5 tw-mt-2">
+                    <span>{{ t('media.details.releaseYear') }}: </span>
+                    <a class="hover:tw-underline focus-visible:tw-underline tw-font-semibold"
+                      [routerLink]="['/list', 'year', media.releaseDate.year]">{{ media.releaseDate.year }}</a>
+                  </p>
+                }
+                <div class="tw-mt-2">
+                  <button pButton class="p-button-text p-button-plain p-button-sm tw-block !tw-p-0 tw-text-left"
+                    (click)="toggleShowMoreDetails()">
+                    @if (!showMoreDetails()) {
+                      {{ t('media.actions.showMore') }}
                     }
                     @else {
-                      {{ t('media.details.releaseDateToNow') }}
+                      {{ t('media.actions.showLess') }}
                     }
-                  </span>
-                </p>
-                <p class="tw-text-base tw-leading-5 tw-mt-2">
-                  <span>{{ t('media.details.status') }}: </span>
-                  <span>{{ t('media.statusOptions.' + media.status) }}</span>
-                </p>
-                <p *ngIf="media.tags.length" class="tw-text-base tw-leading-5 tw-mt-2">
-                  <span>{{ t('media.details.tags') }}: </span>
-                  <ng-container *ngFor="let tag of media.tags; let first = first; let last = last; trackBy: track_Id">
-                    <a class="hover:tw-underline focus-visible:tw-underline tw-font-semibold" [class.tw-ml-2]="!first"
-                      [routerLink]="['/list', 'tag', tag._id]">{{ tag.name }}</a>
-                    <span *ngIf="!last">,</span>
-                  </ng-container>
-                </p>
-                <p class="tw-text-base tw-leading-5 tw-mt-2">
-                  <span>{{ t('media.details.releaseYear') }}: </span>
-                  <a class="hover:tw-underline focus-visible:tw-underline tw-font-semibold"
-                    [routerLink]="['/list', 'year', media.releaseDate.year]">{{ media.releaseDate.year }}</a>
-                </p>
-              }
-              <div class="tw-mt-2">
-                <button pButton class="p-button-text p-button-plain p-button-sm tw-block !tw-p-0 tw-text-left"
-                  (click)="toggleShowMoreDetails()">
-                  @if (!showMoreDetails) {
-                    {{ t('media.actions.showMore') }}
-                  }
-                  @else {
-                    {{ t('media.actions.showLess') }}
-                  }
-                </button>
+                  </button>
+                </div>
               </div>
             </div>
+            @if (media.inCollections && media.inCollections.length) {
+              <app-expansion-panel [initExpanded]="true" styleClass="tw-bg-neutral-850 tw-mt-4"
+                buttonStyleClass="hover:tw-bg-neutral-800 focus-visible:tw-bg-neutral-800 tw-transition-colors tw-duration-200">
+                <ng-template appTemplateFor="button" let-expanded>
+                  <p>{{ t('media.details.partOfCountCollections', { count: media.inCollections.length }) }}</p>
+                  <span class="ms tw-ml-auto"
+                    [ngClass]="{ 'ms-keyboard-arrow-down': !expanded, 'ms-keyboard-arrow-up': expanded }"></span>
+                </ng-template>
+                <ng-template appTemplateFor="body">
+                  @for (inCollection of media.inCollections; track inCollection._id; let last = $last) {
+                    <div class="tw-flex-1 max-md:tw-w-full" [ngClass]="{ 'tw-mb-4': !last }">
+                      <p class="tw-text-lg sm:tw-text-2xl tw-font-semibold tw-leading-6 tw-mt-1">{{
+                        inCollection.name }}</p>
+                      <app-collection-media-list [t]="t" [mediaList]="inCollection.media"></app-collection-media-list>
+                    </div>
+                  }
+                </ng-template>
+              </app-expansion-panel>
+            }
+            <div class="tw-hidden tw-h-96" [ngClass]="{ '2md:tw-block': !fitWindow() }"></div>
           </div>
-        </div>
+        }
       </div>
-      <div *ngIf="media" class="tw-w-full 2md:tw-w-3/12 tw-mt-4 tw-mx-2" [ngClass]="{ '2md:tw-mt-0': !fitWindow }">
-        <div class="p-scrollbar tw-bg-neutral-850 tw-max-h-[600px] tw-overflow-y-auto tw-rounded-md">
-          <app-episode-list *ngIf="media.type === MediaType.TV" [media]="media" [episodeList]="media.tv.episodes"
-            stillStyleClass="tw-w-28 tw-flex-shrink-0" infoStyleClass="tw-w-full xs:tw-w-3/5 tw-pl-2">
-          </app-episode-list>
+      @if (media(); as media) {
+        <div class="tw-w-full 2md:tw-w-3/12 tw-mt-4 tw-mx-2" [ngClass]="{ '2md:tw-mt-0': !fitWindow() }">
+          <div class="p-scrollbar tw-bg-neutral-850 tw-max-h-[600px] tw-overflow-y-auto tw-rounded-md">
+            @if (media.type === MediaType.TV) {
+              <app-episode-list [media]="media" [episodeList]="media.tv.episodes"
+                stillStyleClass="tw-w-28 tw-flex-shrink-0" infoStyleClass="tw-w-full xs:tw-w-3/5 tw-pl-2">
+              </app-episode-list>
+            }
+          </div>
+          <p [ngClass]="{ 'tw-mt-2': media.type === MediaType.TV }"
+            class="tw-text-white tw-text-xl tw-font-semibold tw-mb-2">{{ t('media.list.relatedShows') }}</p>
+          <app-media-list [mediaList]="relatedMediaList()?.results" [loadingMore]="loadingMoreRelatedMedia()"
+            [viewMode]="2"></app-media-list>
         </div>
-        <p [ngClass]="{ 'tw-mt-2': media.type === MediaType.TV }"
-          class="tw-text-white tw-text-xl tw-font-semibold tw-mb-2">{{ t('media.list.relatedShows') }}</p>
-        <app-media-list [mediaList]="relatedMediaList" [loadingMore]="loadingMoreRelatedMedia"
-          [viewMode]="2"></app-media-list>
-      </div>
+      }
     </div>
   </div>
 </ng-container>

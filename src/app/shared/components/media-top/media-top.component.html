@@ -1,9 +1,9 @@
 <ng-container *transloco="let t; loadingTpl: skeletonLoading">
   <ng-container *ngIf="loading; then skeletonLoading; else mediaLoaded"></ng-container>
   <ng-template #mediaLoaded>
-    <ng-container *ngIf="mediaList && mediaList.results.length; else noResults">
+    <ng-container *ngIf="mediaList && mediaList.length; else noResults">
       <ul class="tw-bg-neutral-875 tw-overflow-hidden tw-rounded-md tw-list-none">
-        <li *ngFor="let media of mediaList.results; let index = index; trackBy: track_Id">
+        <li *ngFor="let media of mediaList; let index = index; trackBy: track_Id">
           <a [routerLink]="['/details', media._id]" class="tw-bg-neutral-875 hover:tw-bg-neutral-800
             focus-visible:tw-bg-neutral-800 tw-transition-colors tw-duration-200 tw-p-1 tw-block">
             <div class="tw-flex">

@@ -1,4 +1,6 @@
-import { ShortDate, User, UserSettings } from '.';
+import type { ShortDate } from './short-date.model';
+import type { User } from './user.model';
+import type { UserSettings } from './user-settings.model';
 
 export interface UserDetails extends User {
   email?: string;

@@ -111,10 +111,10 @@
                 <span *ngIf="media.type === MediaType.TV"> {{ t('media.details.releaseDateTo')
                   }}
                   @if (media.tv.lastAirDate) {
-                  {{ media.tv.lastAirDate | shortDate }}
+                    {{ media.tv.lastAirDate | shortDate }}
                   }
                   @else {
-                  {{ t('media.details.releaseDateToNow') }}
+                    {{ t('media.details.releaseDateToNow') }}
                   }
                 </span>
               </p>
@@ -158,6 +158,10 @@
             <p-tabPanel *ngIf="media.type === MediaType.TV" [header]="t('media.details.episodes')">
               <app-episode-list [media]="media" [episodeList]="media.tv.episodes">
               </app-episode-list>
+            </p-tabPanel>
+            <p-tabPanel *ngIf="media.inCollections" [header]="t('media.details.collections')">
+              <app-collection-list [t]="t" [collectionList]="media.inCollections"
+                [currentMedia]="media"></app-collection-list>
             </p-tabPanel>
           </p-tabView>
         </ng-template>

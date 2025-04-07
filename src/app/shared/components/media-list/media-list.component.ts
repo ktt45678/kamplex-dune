@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { TranslocoService, TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { DialogService } from 'primeng/dynamicdialog';
 
-import { CursorPaginated, Media, Paginated } from '../../../core/models';
+import { Media } from '../../../core/models';
 import { AuthService } from '../../../core/services';
 import { MediaType } from '../../../core/enums';
 import { AddToPlaylistComponent } from '../../dialogs/add-to-playlist';
@@ -27,7 +27,7 @@ export class MediaListComponent implements OnInit, OnDestroy {
   MediaType = MediaType;
   @Input() loading: boolean = false;
   @Input() loadingMore: boolean = false;
-  @Input() mediaList?: Paginated<Media> | CursorPaginated<Media>;
+  @Input() mediaList?: Media[];
   @Input() itemLimit: number = 30;
   @Input() viewMode: number = 1;
   skeletonArray: Array<any>;

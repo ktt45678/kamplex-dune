@@ -146,7 +146,7 @@ media-player [data-media-slider][data-focus] [part='track'], [data-media-button]
 }
 
 /* mouse or touchpad */
-media-player:not([data-touch-device]) {
+media-player:not([data-mobile]) {
   /* Show controls when not idling */
   &[data-controls] .media-controls {
     opacity: 1;
@@ -159,7 +159,7 @@ media-player:not([data-touch-device]) {
 }
 
 /* smartphones or touchscreens */
-media-player[data-touch-device] {
+media-player[data-mobile] {
   /* Hide controls when idling */
   &:not([data-touch-controls]) .media-controls {
     opacity: 0;

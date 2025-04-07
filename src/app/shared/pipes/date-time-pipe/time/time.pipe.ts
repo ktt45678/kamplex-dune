@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { TranslocoService } from '@ngneat/transloco';
-import { formatDuration, intervalToDuration } from 'date-fns';
+import { DurationUnit, formatDuration, intervalToDuration, Locale } from 'date-fns';
 import { enUS, vi } from 'date-fns/locale';
 
 import { enUSShort } from '../../../../core/utils/date-fns-locales';
@@ -9,7 +9,7 @@ import { formatDurationZero } from '../../../../core/utils';
 type TimeDisplay = 'long' | 'short' | 'shortColon';
 
 interface TimeOptions {
-  format?: string[];
+  format?: DurationUnit[];
   display?: TimeDisplay;
   zero?: boolean;
   zeroPad?: boolean;
@@ -21,7 +21,7 @@ interface TimeOptions {
 })
 export class TimePipe implements PipeTransform {
   locales: { [key: string]: Locale } = { en: enUS, vi: vi };
-  shortLocales: { [key: string]: Locale } = { en: enUSShort };
+  shortLocales: { [key: string]: Pick<Locale, 'formatDistance'> } = { en: enUSShort };
 
   constructor(private translocoService: TranslocoService) { }
 

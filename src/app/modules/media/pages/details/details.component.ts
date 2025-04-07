@@ -56,7 +56,7 @@ export class DetailsComponent implements OnInit, OnDestroy {
 
   loadMedia(id: string) {
     const mediaId = id.split('-')[0];
-    this.mediaService.findOne(mediaId).subscribe(media => {
+    this.mediaService.findOne(mediaId, { appendToResponse: 'inCollections' }).subscribe(media => {
       this.media = media;
       this.title.setTitle(`${media.title} - ${SITE_NAME}`);
       this.meta.updateTag({ name: 'description', content: media.overview });

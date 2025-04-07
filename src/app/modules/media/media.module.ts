@@ -21,6 +21,7 @@ import { EpisodeListModule } from '../../shared/components/episode-list';
 import { VideoPlayerModule } from '../../shared/components/video-player';
 import { StarRatingModule } from '../../shared/components/star-rating';
 import { SkeletonModule } from '../../shared/components/skeleton';
+import { ExpansionPanelComponent } from '../../shared/components/expansion-panel';
 import { AddToPlaylistModule } from '../../shared/dialogs/add-to-playlist';
 import { ShareMediaLinkModule } from '../../shared/dialogs/share-media-link';
 import { SearchComponent } from './pages/search/search.component';
@@ -28,7 +29,11 @@ import { WatchComponent } from './pages/watch/watch.component';
 import { DetailsComponent } from './pages/details/details.component';
 import { PlaylistsComponent } from './pages/playlists/playlists.component';
 import { ListComponent } from './pages/list/list.component';
+import { CollectionListComponent } from './components/collection-list/collection-list.component';
+import { CollectionMediaListComponent } from './components/collection-media-list/collection-media-list.component';
 import { CdkMenuCustomModule } from '../../shared/directives/cdk-menu-custom';
+import { CommonDirectiveModule } from '../../shared/directives/common-directive';
+import { OverlayPanelModule } from '../../shared/directives/overlay-panel';
 import { TextDirectiveModule } from '../../shared/directives/text-directive';
 import { NumberPipeModule } from '../../shared/pipes/number-pipe';
 import { DateTimePipeModule } from '../../shared/pipes/date-time-pipe';
@@ -42,7 +47,9 @@ import { PlaceholderPipeModule } from '../../shared/pipes/placeholder-pipe';
     DetailsComponent,
     SearchComponent,
     PlaylistsComponent,
-    ListComponent
+    ListComponent,
+    CollectionListComponent,
+    CollectionMediaListComponent
   ],
   imports: [
     CommonModule,
@@ -55,12 +62,15 @@ import { PlaceholderPipeModule } from '../../shared/pipes/placeholder-pipe';
     VideoPlayerModule,
     StarRatingModule,
     SkeletonModule,
+    ExpansionPanelComponent,
     AddToPlaylistModule,
     ShareMediaLinkModule,
     TranslocoModule,
     LazyLoadImageModule,
     InfiniteScrollModule,
     CdkMenuCustomModule,
+    CommonDirectiveModule,
+    OverlayPanelModule,
     TextDirectiveModule,
     NumberPipeModule,
     DateTimePipeModule,

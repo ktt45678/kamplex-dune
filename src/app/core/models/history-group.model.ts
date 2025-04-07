@@ -1,4 +1,4 @@
-import { HistoryGroupable } from '.';
+import type { HistoryGroupable } from './history-groupable.model';
 
 export interface HistoryGroup {
   groupByDate: string;

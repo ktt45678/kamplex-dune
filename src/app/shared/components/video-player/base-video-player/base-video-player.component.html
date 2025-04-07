@@ -4,7 +4,7 @@
   [attr.data-full-window]="playerSettings.fullWindow() || null" [attr.data-mobile]="playerSupports.isMobile() || null"
   [attr.data-touch-device]="playerSupports.isTouchDevice() || null">
   <media-provider></media-provider>
-  @if (!playerSupports.isTouchDevice()) {
+  @if (!playerSupports.isMobile()) {
     @if (playerStore.canPlay()) {
       <media-gesture class="media-gesture" event="click" action="toggle:paused"></media-gesture>
     }
@@ -20,7 +20,7 @@
       <p-progressSpinner strokeWidth="3px" styleClass="max-sm:!tw-w-20 max-sm:!tw-h-20"></p-progressSpinner>
     </div>
   }
-  @if (playerSupports.isTouchDevice()) {
+  @if (playerSupports.isMobile()) {
     <div class="media-controls player-center-controls tw-flex tw-items-center
         tw-absolute tw-absolute-center tw-z-2 tw-transition-opacity tw-ease-linear tw-duration-200"
       aria-label="Mobile center controls">
@@ -118,7 +118,7 @@
       <div #bottomControls role="group" class="player-bottom-controls tw-flex tw-justify-between tw-w-full"
         [ngClass]="{ 'tw-pointer-events-auto': !playerSupports.isMobile() }" (mouseleave)="toggleVolumeSlider(false)">
         <div class="tw-flex tw-items-center" aria-label="Left controls">
-          @if (!playerSupports.isTouchDevice()) {
+          @if (!playerSupports.isMobile()) {
             @if (canNavigateMedia()) {
               <ng-container [ngTemplateOutlet]="prevEpButtonTpl"
                 [ngTemplateOutletContext]="{ styleClass: 'tw-w-14 tw-p-2' }">

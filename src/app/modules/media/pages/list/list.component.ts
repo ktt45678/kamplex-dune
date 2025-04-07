@@ -6,12 +6,12 @@ import { map, takeUntil } from 'rxjs';
 
 import { CursorPageMediaDto, OffsetPageMediaDto } from '../../../../core/dto/media';
 import { CursorPaginated, Media } from '../../../../core/models';
-import { DestroyService, GenresService, MediaService, ProductionsService, TagsService } from '../../../../core/services';
+import { DestroyService, GenresService, MediaService, ProductionsService, TagsService, CollectionService } from '../../../../core/services';
 import { SITE_NAME } from '../../../../../environments/config';
 import { MediaType } from '../../../../core/enums';
 
 type ListPath = 'movie' | 'tv' | 'added' | 'updated' | 'newReleases' | 'mostViewed' | 'topRated' | 'genre' | 'studio' | 'producer'
-  | 'tag' | 'year';
+  | 'tag' | 'collection' | 'year';
 
 type HandleListOptions = HandleListPath | HandleListSubPath;
 
@@ -27,7 +27,7 @@ interface HandleListPath extends HandleListBase {
 }
 
 interface HandleListSubPath extends HandleListBase {
-  path: 'genre' | 'studio' | 'producer' | 'tag' | 'year';
+  path: 'genre' | 'studio' | 'producer' | 'tag' | 'collection' | 'year';
   subPath: string;
   resetSubPath: boolean;
 }
@@ -51,7 +51,8 @@ export class ListComponent implements OnInit, OnDestroy {
 
   constructor(private ref: ChangeDetectorRef, private title: Title, private meta: Meta, private translocoService: TranslocoService,
     private mediaService: MediaService, private genresService: GenresService, private productionsService: ProductionsService,
-    private tagsService: TagsService, private route: ActivatedRoute, private destroyService: DestroyService) { }
+    private tagsService: TagsService, private collectionService: CollectionService, private route: ActivatedRoute,
+    private destroyService: DestroyService) { }
 
   ngOnInit(): void {
     this.route.params.pipe(takeUntil(this.destroyService)).subscribe(params => {
@@ -108,6 +109,10 @@ export class ListComponent implements OnInit, OnDestroy {
         options.resetSubPath && this.findTagName(options.subPath);
         this.loadMediaByTag(options.subPath, options.resetList, options.nextPageToken);
         break;
+      case 'collection':
+        options.resetSubPath && this.findCollectionName(options.subPath);
+        this.loadMediaByCollection(options.subPath, options.resetList, options.nextPageToken);
+        break;
       case 'year':
         options.resetSubPath && (this.subPathLabel = options.subPath);
         this.loadMediaByYear(options.subPath, options.resetList, { year: +options.subPath, pageToken: options.nextPageToken });
@@ -135,6 +140,14 @@ export class ListComponent implements OnInit, OnDestroy {
     this.tagsService.findOne(id).subscribe(tag => {
       this.subPathLabel = tag.name;
       this.setTitleAndMeta(tag.name);
+      this.ref.markForCheck();
+    });
+  }
+
+  findCollectionName(id: string): void {
+    this.collectionService.findOne(id).subscribe(collection => {
+      this.subPathLabel = collection.name;
+      this.setTitleAndMeta(collection.name);
       this.ref.markForCheck();
     });
   }
@@ -211,6 +224,16 @@ export class ListComponent implements OnInit, OnDestroy {
     });
   }
 
+  loadMediaByCollection(id: string, resetList: boolean, pageToken?: string): void {
+    this.preMediaLoad(resetList);
+    this.collectionService.findAllMedia(id, { pageToken, limit: this.itemsPerPage }).subscribe(mediaList => {
+      this.appendMediaList(mediaList);
+    }).add(() => {
+      this.postMediaLoad(resetList);
+      this.ref.markForCheck();
+    });
+  }
+
   loadMediaByYear(year: string, resetList: boolean, options?: CursorPageMediaDto): void {
     this.setTitleAndMeta(year);
     this.preMediaLoad(resetList);
@@ -227,7 +250,7 @@ export class ListComponent implements OnInit, OnDestroy {
     if (!this.currentPath || !this.mediaList) return;
     if (!this.mediaList.hasNextPage) return;
     if (this.currentPath === 'genre' || this.currentPath === 'studio' || this.currentPath === 'producer' ||
-      this.currentPath === 'tag' || this.currentPath === 'year') {
+      this.currentPath === 'tag' || this.currentPath === 'collection' || this.currentPath === 'year') {
       if (!this.currentSubPath) return;
       this.handlePath({
         path: this.currentPath, subPath: this.currentSubPath, resetList: false,

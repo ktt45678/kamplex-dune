@@ -1,4 +1,4 @@
-import { Playlist } from '.';
+import type { Playlist } from './playlist.model';
 
 export interface PlaylistToAdd extends Pick<Playlist, PlaylistToAddProps> {
   hasMedia: boolean;

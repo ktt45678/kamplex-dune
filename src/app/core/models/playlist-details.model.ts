@@ -1,4 +1,5 @@
-import { Playlist, User } from '.';
+import type { Playlist } from './playlist.model';
+import type { User } from './user.model';
 
 export interface PlaylistDetails extends Playlist {
   description: string;

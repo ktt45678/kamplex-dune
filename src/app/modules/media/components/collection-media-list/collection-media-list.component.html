@@ -1,0 +1,68 @@
+<ng-container *ngLet="t() as t">
+  <div class="tw-text-white tw-grid tw-grid-cols-2 xs:tw-grid-cols-3 md:tw-grid-cols-4 lg:tw-grid-cols-5
+    xl:tw-grid-cols-6">
+    @for (media of mediaList(); track media._id) {
+      <a class="tw-group tw-block tw-bg-transparent hover:tw-bg-neutral-725 focus-visible:tw-bg-neutral-725
+        tw-transition-colors tw-duration-200 tw-rounded-sm tw-px-1.5 tw-py-2"
+        [appOverlayOrigin]="overlayCollectionMediaInfo" [overlayData]="media" overlayShowDelay="500"
+        overlayHideDelay="0" [overlayOffsetY]="100" overlayTriggerOn="hover" overlayTouchGestures="off"
+        [routerLink]="['/details', media._id]">
+        <div>
+          <div class="tw-aspect-w-2 tw-aspect-h-3 tw-rounded-md tw-overflow-hidden">
+            @if (media.thumbnailPosterUrl) {
+              <img class="tw-object-cover" [lazyLoad]="media.thumbnailPosterUrl"
+                [defaultImage]="media.posterPlaceholder | thumbhashUrl" [alt]="media.title"
+                errorImage="assets/images/media-poster-md.png">
+            } @else {
+              <img class="tw-object-cover" src="assets/images/media-poster-md.png" loading="lazy" [alt]="media.title">
+            }
+          </div>
+        </div>
+        <div class="tw-flex tw-mt-2">
+          <div class="tw-flex-grow tw-cursor-pointer">
+            <p class="tw-text-xs sm:tw-text-sm tw-font-bold tw-line-clamp-2">{{ media.title }}</p>
+          </div>
+        </div>
+      </a>
+    }
+  </div>
+  <!-- Collection media info overlay -->
+  <ng-template #overlayCollectionMediaInfo appConnectedOverlay let-media="overlayData">
+    <div class="tw-p-4 tw-w-80">
+      <p class="tw-text-base sm:tw-text-lg tw-font-semibold">{{ media.title }}</p>
+      <div class="tw-flex tw-text-base tw-mt-2">
+        <p class="[&>*]:tw-align-middle">
+          <i class="ms ms-star tw-text-xl tw-text-yellow-500 -tw-mt-0.5"></i>
+          <span class="tw-font-medium tw-ml-1.5">{{ media.ratingAverage }}</span>
+        </p>
+        <p class="[&>*]:tw-align-middle tw-ml-2">
+          <i class="ms ms-visibility tw-text-xl tw-text-green-500"></i>
+          <span class="tw-font-medium tw-ml-1.5">{{ media.views | number }}</span>
+        </p>
+      </div>
+      <p class="tw-text-sm tw-line-clamp-5">{{ media.overview }}</p>
+      <p class="tw-text-sm tw-mt-2">
+        <span class="tw-font-light">{{ t('media.details.releaseDate') }}: </span>
+        <span>{{ media.releaseDate | shortDate }}</span>
+        @if (media.type === MediaType.TV) {
+          <span> {{ t('media.details.releaseDateTo') }}
+            @if (media.tv.lastAirDate) {
+              {{ media.tv.lastAirDate | shortDate }}
+            } @else {
+              {{ t('media.details.releaseDateToNow') }}
+            }
+          </span>
+        }
+      </p>
+      <div class="tw-flex tw-mt-4">
+        <button type="button" role="navigation" aria-label="Play media" pButton icon="ms ms-play-arrow" iconPos="left"
+          [label]="t('media.actions.play')" [routerLink]="['/watch', media._id]"
+          class="p-button-shrink tw-flex-1 tw-text-lg">
+        </button>
+        <button type="button" role="button" aria-label="Add media to playlist" pButton icon="ms ms-playlist-add"
+          class="p-button-secondary p-button-shrink tw-text-lg tw-ml-2" (click)="showAddToPlaylistDialog(media)">
+        </button>
+      </div>
+    </div>
+  </ng-template>
+</ng-container>

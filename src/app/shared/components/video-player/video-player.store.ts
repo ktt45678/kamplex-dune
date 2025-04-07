@@ -92,10 +92,10 @@ export class VideoPlayerStore {
 
   initPlayerSupports(): PlayerSupports {
     const isTouchDevice = (('ontouchstart' in window) || (navigator.maxTouchPoints > 0));
-    const isMinMobileScreen = this.breakpointObserver.isMatched(MediaBreakpoints.SMALL);
+    const isMobileScreen = !this.breakpointObserver.isMatched(MediaBreakpoints.SMALL);
     const videoEl = this.document.createElement('video');
     return {
-      isMobile: this.platform.ANDROID || this.platform.IOS || (isTouchDevice && isMinMobileScreen),
+      isMobile: this.platform.ANDROID || this.platform.IOS || (isTouchDevice && isMobileScreen),
       isSafari: this.platform.SAFARI,
       isTouchDevice: isTouchDevice,
       hlsOpus: !this.platform.SAFARI,

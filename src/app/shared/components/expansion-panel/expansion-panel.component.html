@@ -1,0 +1,13 @@
+<div class="tw-flex tw-rounded-md tw-overflow-hidden" [class]="styleClass()">
+  <div class="tw-text-white tw-flex-1 tw-relative">
+    <button class="tw-w-full tw-flex tw-py-4 tw-px-2 sm:tw-px-4" [class]="buttonStyleClass()"
+      (click)="toggleExpansion()">
+      <ng-container *ngTemplateOutlet="buttonTemplate() || null; context: { $implicit: isExpanded() }"></ng-container>
+    </button>
+    @if (isExpanded()) {
+      <div class="tw-pb-4 tw-px-2 sm:tw-px-4" [class]="bodyStyleClass()">
+        <ng-container *ngTemplateOutlet="bodyTemplate() || null"></ng-container>
+      </div>
+    }
+  </div>
+</div>
